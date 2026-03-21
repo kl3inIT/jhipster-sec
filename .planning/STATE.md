@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 01-identity-and-authority-baseline 01-02-PLAN.md
-last_updated: "2026-03-21T07:48:29.260Z"
+stopped_at: Completed 02-security-metadata-management/02-01-PLAN.md
+last_updated: "2026-03-21T08:43:10.015Z"
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 6
+  completed_plans: 3
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
-**Current focus:** Phase 01 — identity-and-authority-baseline
+**Current focus:** Phase 02 — security-metadata-management
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
+Phase: 02 (security-metadata-management) — EXECUTING
+Plan: 2 of 4
 
 ## Performance Metrics
 
@@ -47,6 +47,7 @@ Plan: Not started
 
 | Phase 01-identity-and-authority-baseline P01 | 13 | 2 tasks | 5 files |
 | Phase 01-identity-and-authority-baseline P02 | 4 | 2 tasks | 4 files |
+| Phase 02-security-metadata-management P01 | 5 | 3 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -62,6 +63,9 @@ Recent decisions affecting current work:
 - [Phase 01-identity-and-authority-baseline]: integrationTest Gradle task required explicit testClassesDirs + classpath for Gradle 9 NO-SOURCE fix
 - [Phase 01-identity-and-authority-baseline]: JHipsterSecurityContextBridge uses @Component (not @Primary) so Phase 2 can provide @Primary override without modifying Phase 1 code
 - [Phase 01-identity-and-authority-baseline]: SecurityContextBridge interface exposes Collection<String> raw authority names only — no typed AuthorityDescriptor per D-01/D-07
+- [Phase 02-security-metadata-management]: SecPermission uses String authorityName FK (not @ManyToOne) to stay decoupled from Authority lifecycle and compatible with SecurityContextBridge Collection<String>
+- [Phase 02-security-metadata-management]: RoleType enum placed in com.vn.core.domain (not security.domain) to avoid ArchUnit layer ambiguity
+- [Phase 02-security-metadata-management]: SecPermission and SecRowPolicy have no @Cache annotation - admin-managed entities where stale cache would cause incorrect security decisions
 
 ### Pending Todos
 
@@ -74,6 +78,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T07:45:12.041Z
-Stopped at: Completed 01-identity-and-authority-baseline 01-02-PLAN.md
+Last session: 2026-03-21T08:43:10.011Z
+Stopped at: Completed 02-security-metadata-management/02-01-PLAN.md
 Resume file: None

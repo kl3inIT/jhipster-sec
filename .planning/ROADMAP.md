@@ -43,7 +43,7 @@ Plans:
   3. Admin can create, update, list, and delete supported row policies through stable backend contracts.
 **Plans:** 4 plans
 Plans:
-- [ ] 02-01-PLAN.md — Liquibase schema evolution, JPA entities, enums, and repositories
+- [x] 02-01-PLAN.md — Liquibase schema evolution, JPA entities, enums, and repositories
 - [ ] 02-02-PLAN.md — DTOs, MapStruct mappers, MergedSecurityService, and MergedSecurityContextBridge
 - [ ] 02-03-PLAN.md — Admin REST controllers (roles, permissions, row policies) and seed data
 - [ ] 02-04-PLAN.md — Integration tests for all three admin endpoints
