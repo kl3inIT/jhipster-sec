@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260321000800-1" author="dev">
+        <insert tableName="jhi_authority">
+            <column name="name" value="ROLE_PROOF_READER"/>
+            <column name="display_name" value="Proof Reader"/>
+            <column name="type" value="RESOURCE"/>
+        </insert>
+        <insert tableName="jhi_authority">
+            <column name="name" value="ROLE_PROOF_EDITOR"/>
+            <column name="display_name" value="Proof Editor"/>
+            <column name="type" value="RESOURCE"/>
+        </insert>
+        <insert tableName="jhi_authority">
+            <column name="name" value="ROLE_PROOF_NONE"/>
+            <column name="display_name" value="Proof None"/>
+            <column name="type" value="RESOURCE"/>
+        </insert>
+
+        <insert tableName="proof_organization">
+            <column name="id" valueNumeric="100"/>
+            <column name="code" value="ORG-OWNED"/>
+            <column name="name" value="Owned Org"/>
+            <column name="owner_login" value="proof-owner"/>
+            <column name="budget" valueNumeric="100000.00"/>
+        </insert>
+        <insert tableName="proof_organization">
+            <column name="id" valueNumeric="101"/>
+            <column name="code" value="ORG-OTHER"/>
+            <column name="name" value="Other Org"/>
+            <column name="owner_login" value="other-user"/>
+            <column name="budget" valueNumeric="250000.00"/>
+        </insert>
+
+        <insert tableName="proof_department">
+            <column name="id" valueNumeric="200"/>
+            <column name="code" value="DEPT-OWNED"/>
+            <column name="name" value="Owned Department"/>
+            <column name="cost_center" value="FIN"/>
+            <column name="organization_id" valueNumeric="100"/>
+        </insert>
+        <insert tableName="proof_department">
+            <column name="id" valueNumeric="201"/>
+            <column name="code" value="DEPT-OTHER"/>
+            <column name="name" value="Other Department"/>
+            <column name="cost_center" value="SALES"/>
+            <column name="organization_id" valueNumeric="101"/>
+        </insert>
+
+        <insert tableName="proof_employee">
+            <column name="id" valueNumeric="300"/>
+            <column name="employee_number" value="EMP-001"/>
+            <column name="first_name" value="Alice"/>
+            <column name="last_name" value="Owner"/>
+            <column name="email" value="alice@example.com"/>
+            <column name="salary" valueNumeric="9000.00"/>
+            <column name="department_id" valueNumeric="200"/>
+        </insert>
+        <insert tableName="proof_employee">
+            <column name="id" valueNumeric="301"/>
+            <column name="employee_number" value="EMP-002"/>
+            <column name="first_name" value="Bob"/>
+            <column name="last_name" value="Other"/>
+            <column name="email" value="bob@example.com"/>
+            <column name="salary" valueNumeric="12000.00"/>
+            <column name="department_id" valueNumeric="201"/>
+        </insert>
+
+        <insert tableName="sec_permission">
+            <column name="id" valueNumeric="1000"/>
+            <column name="authority_name" value="ROLE_PROOF_READER"/>
+            <column name="target_type" value="ENTITY"/>
+            <column name="target" value="ORGANIZATION"/>
+            <column name="action" value="READ"/>
+            <column name="effect" value="ALLOW"/>
+        </insert>
+        <insert tableName="sec_permission">
+            <column name="id" valueNumeric="1001"/>
+            <column name="authority_name" value="ROLE_PROOF_READER"/>
+            <column name="target_type" value="ENTITY"/>
+            <column name="target" value="DEPARTMENT"/>
+            <column name="action" value="READ"/>
+            <column name="effect" value="ALLOW"/>
+        </insert>
+        <insert tableName="sec_permission">
+            <column name="id" valueNumeric="1002"/>
+            <column name="authority_name" value="ROLE_PROOF_READER"/>
+            <column name="target_type" value="ENTITY"/>
+            <column name="target" value="EMPLOYEE"/>
+            <column name="action" value="READ"/>
+            <column name="effect" value="ALLOW"/>
+        </insert>
+        <insert tableName="sec_permission">
+            <column name="id" valueNumeric="1003"/>
+            <column name="authority_name" value="ROLE_PROOF_READER"/>
+            <column name="target_type" value="ATTRIBUTE"/>
+            <column name="target" value="ORGANIZATION.BUDGET"/>
+            <column name="action" value="VIEW"/>
+            <column name="effect" value="DENY"/>
+        </insert>
+        <insert tableName="sec_permission">
+            <column name="id" valueNumeric="1004"/>
+            <column name="authority_name" value="ROLE_PROOF_READER"/>
+            <column name="target_type" value="ATTRIBUTE"/>
+            <column name="target" value="EMPLOYEE.SALARY"/>
+            <column name="action" value="VIEW"/>
+            <column name="effect" value="DENY"/>
+        </insert>
+
+        <insert tableName="sec_permission">
+            <column name="id" valueNumeric="1010"/>
+            <column name="authority_name" value="ROLE_PROOF_EDITOR"/>
+            <column name="target_type" value="ENTITY"/>
+            <column name="target" value="ORGANIZATION"/>
+            <column name="action" value="CREATE"/>
+            <column name="effect" value="ALLOW"/>
+        </insert>
+        <insert tableName="sec_permission">
+            <column name="id" valueNumeric="1011"/>
+            <column name="authority_name" value="ROLE_PROOF_EDITOR"/>
+            <column name="target_type" value="ENTITY"/>
+            <column name="target" value="ORGANIZATION"/>
+            <column name="action" value="READ"/>
+            <column name="effect" value="ALLOW"/>
+        </insert>
+        <insert tableName="sec_permission">
+            <column name="id" valueNumeric="1012"/>
+            <column name="authority_name" value="ROLE_PROOF_EDITOR"/>
+            <column name="target_type" value="ENTITY"/>
+            <column name="target" value="ORGANIZATION"/>
+            <column name="action" value="UPDATE"/>
+            <column name="effect" value="ALLOW"/>
+        </insert>
+        <insert tableName="sec_permission">
+            <column name="id" valueNumeric="1013"/>
+            <column name="authority_name" value="ROLE_PROOF_EDITOR"/>
+            <column name="target_type" value="ENTITY"/>
+            <column name="target" value="ORGANIZATION"/>
+            <column name="action" value="DELETE"/>
+            <column name="effect" value="ALLOW"/>
+        </insert>
+        <insert tableName="sec_permission">
+            <column name="id" valueNumeric="1014"/>
+            <column name="authority_name" value="ROLE_PROOF_EDITOR"/>
+            <column name="target_type" value="ENTITY"/>
+            <column name="target" value="DEPARTMENT"/>
+            <column name="action" value="READ"/>
+            <column name="effect" value="ALLOW"/>
+        </insert>
+        <insert tableName="sec_permission">
+            <column name="id" valueNumeric="1015"/>
+            <column name="authority_name" value="ROLE_PROOF_EDITOR"/>
+            <column name="target_type" value="ENTITY"/>
+            <column name="target" value="EMPLOYEE"/>
+            <column name="action" value="READ"/>
+            <column name="effect" value="ALLOW"/>
+        </insert>
+        <insert tableName="sec_permission">
+            <column name="id" valueNumeric="1016"/>
+            <column name="authority_name" value="ROLE_PROOF_EDITOR"/>
+            <column name="target_type" value="ATTRIBUTE"/>
+            <column name="target" value="ORGANIZATION.BUDGET"/>
+            <column name="action" value="EDIT"/>
+            <column name="effect" value="DENY"/>
+        </insert>
+
+        <insert tableName="sec_row_policy">
+            <column name="id" valueNumeric="1100"/>
+            <column name="code" value="PROOF_ORG_READ_OWNERSHIP"/>
+            <column name="entity_name" value="Organization"/>
+            <column name="operation" value="READ"/>
+            <column name="policy_type" value="SPECIFICATION"/>
+            <column name="expression" value="ownerLogin = CURRENT_USER_LOGIN"/>
+        </insert>
+        <insert tableName="sec_row_policy">
+            <column name="id" valueNumeric="1101"/>
+            <column name="code" value="PROOF_ORG_UPDATE_OWNERSHIP"/>
+            <column name="entity_name" value="Organization"/>
+            <column name="operation" value="UPDATE"/>
+            <column name="policy_type" value="SPECIFICATION"/>
+            <column name="expression" value="ownerLogin = CURRENT_USER_LOGIN"/>
+        </insert>
+        <insert tableName="sec_row_policy">
+            <column name="id" valueNumeric="1102"/>
+            <column name="code" value="PROOF_ORG_DELETE_OWNERSHIP"/>
+            <column name="entity_name" value="Organization"/>
+            <column name="operation" value="DELETE"/>
+            <column name="policy_type" value="SPECIFICATION"/>
+            <column name="expression" value="ownerLogin = CURRENT_USER_LOGIN"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
