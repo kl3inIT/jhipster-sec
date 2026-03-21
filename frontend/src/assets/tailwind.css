@@ -1,0 +1,4 @@
+/* Tailwind v3 entry (project uses tailwindcss ^3.x) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -1,0 +1,164 @@
+@use './_mixins' as *;
+
+.layout-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 997;
+  padding: 0 1rem;
+  background-color: var(--surface-ground);
+  border-bottom: 1px solid var(--surface-border);
+  flex-shrink: 0;
+
+  .layout-menubar,
+  .layout-menubar.p-menubar {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    min-height: 3.5rem;
+    padding: 0;
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+
+    display: flex !important;
+    flex-direction: row;
+    justify-content: flex-end !important;
+    align-items: center;
+
+    /* Wrapper bên trong: row-reverse để thứ tự thành [Sun, Green, Language, Account] */
+    > * {
+      display: flex !important;
+      flex: 1;
+      min-width: 0;
+      flex-direction: row-reverse !important;
+      justify-content: flex-end !important;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    /* Ẩn nút hamburger mặc định của PrimeNG menubar (chỉ dùng 1 nút drawer bên trái) */
+    .p-menubar-button {
+      display: none !important;
+    }
+
+    .p-menubar-root-list {
+      gap: 0.25rem;
+      margin-left: 0;
+      margin-right: auto;
+    }
+
+    .p-menuitem-link {
+      padding: 0.5rem 0.75rem;
+    }
+  }
+
+  .layout-topbar-config-wrapper {
+    position: relative;
+    z-index: 998;
+  }
+
+  .layout-topbar-config-panel {
+    &.hidden {
+      display: none !important;
+    }
+
+    &:not(.hidden) {
+      animation: layout-panel-scalein 0.15s ease-out;
+
+      app-configurator {
+        display: block !important;
+      }
+    }
+  }
+
+  /* Color swatches in configurator: always solid circles (no stripes/gradients) */
+  app-configurator {
+    .config-color-swatch {
+      width: 1.25rem !important;
+      height: 1.25rem !important;
+      border-radius: 9999px !important;
+      border-width: 0 !important;
+      border-style: none !important;
+      padding: 0 !important;
+      background-image: none !important;
+      box-shadow: 0 0 0 1px var(--surface-border);
+    }
+  }
+
+  .primary-button {
+    background: var(--primary-color);
+    color: var(--primary-contrast-color);
+
+    &:hover {
+      background: var(--primary-600);
+      color: var(--primary-contrast-color);
+    }
+  }
+}
+
+@keyframes layout-panel-scalein {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Menubar overlay above content */
+.p-menubar-overlay {
+  z-index: 1100 !important;
+}
+
+@media (max-width: 991px) {
+  .layout-topbar .layout-menubar {
+    .p-menubar-button {
+      display: flex !important;
+    }
+    > * {
+      flex-direction: row !important;
+    }
+  }
+}
+
+.config-panel {
+  .config-panel-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary-color);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .config-panel-colors > div {
+    padding-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    button {
+      border: none;
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 50%;
+      padding: 0;
+      cursor: pointer;
+      outline-color: transparent;
+      outline-width: 2px;
+      outline-style: solid;
+      outline-offset: 1px;
+
+      &.active-color {
+        outline-color: var(--primary-color);
+      }
+    }
+  }
+
+  .config-panel-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
