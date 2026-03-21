@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Identity And Authority Baseline** - Preserve current account/admin behavior while bridging existing authorities into the merged security runtime. (completed 2026-03-21)
 - [x] **Phase 2: Security Metadata Management** - Deliver backend administration for merged roles, permission rules, and supported row policies. (completed 2026-03-21)
 - [x] **Phase 3: Secure Enforcement Core** - Route protected data through centralized CRUD, row-level, attribute-level, and fetch-plan enforcement. (completed 2026-03-21)
-- [ ] **Phase 4: Protected Entity Proof** - Prove the merged engine on sample entities with secured APIs and automated allow/deny coverage.
+- [x] **Phase 4: Protected Entity Proof** - Prove the merged engine on sample entities with secured APIs and automated allow/deny coverage. (completed 2026-03-21)
 - [ ] **Phase 5: Standalone Frontend Delivery** - Ship the Angular app with auth, security administration, and protected entity screens.
 
 ## Phase Details
@@ -74,12 +74,12 @@ Plans:
   1. Sample protected entities exist and exercise CRUD, row-level, and attribute-level security end to end.
   2. Secured sample-entity APIs demonstrate both allowed and denied behaviors against real scenarios.
   3. Automated backend tests cover allow and deny paths for secured entity reads and writes.
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 Plans:
 - [x] 04-01-PLAN.md - Proof-domain persistence baseline
 - [x] 04-02-PLAN.md - Secured catalog registration, loadOne path, and nested proof fetch plans
 - [x] 04-03-PLAN.md - Proof services and authenticated REST resources
-- [ ] 04-04-PLAN.md - End-to-end proof-entity enforcement integration coverage
+- [x] 04-04-PLAN.md - End-to-end proof-entity enforcement integration coverage
 
 ### Phase 5: Standalone Frontend Delivery
 **Goal**: A standalone Angular frontend exposes the migrated auth and security-management experience and proves protected-entity behavior end to end.
@@ -99,5 +99,5 @@ Plans:
 | 1. Identity And Authority Baseline | 2/2 | Complete   | 2026-03-21 |
 | 2. Security Metadata Management | 4/4 | Complete   | 2026-03-21 |
 | 3. Secure Enforcement Core | 5/5 | Complete   | 2026-03-21 |
-| 4. Protected Entity Proof | 3/4 | In Progress |   |
+| 4. Protected Entity Proof | 4/4 | Complete   | 2026-03-21 |
 | 5. Standalone Frontend Delivery | 0/TBD | Not started | - |

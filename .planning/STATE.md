@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-21T15:56:01.752Z"
+status: ready_for_next_phase
+stopped_at: Phase 4 complete
+last_updated: "2026-03-21T16:24:17.000Z"
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 15
-  completed_plans: 14
+  completed_plans: 15
 ---
 
 # Project State
@@ -19,18 +19,18 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
-**Current focus:** Phase 04 — protected-entity-proof
+**Current focus:** Phase 05 - standalone-frontend-delivery
 
 ## Current Position
 
-Phase: 04 (protected-entity-proof) — EXECUTING
-Plan: 4 of 4
+Phase: 05 (standalone-frontend-delivery) - READY TO PLAN
+Plan: 0 of TBD
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 0
+- Total plans completed: 15
 - Average duration: 0 min
 - Total execution time: 0.0 hours
 
@@ -42,7 +42,7 @@ Plan: 4 of 4
 
 **Recent Trend:**
 
-- Last 5 plans: none
+- Last 5 plans: 04-01, 04-02, 04-03, 04-04
 - Trend: Stable
 
 | Phase 01-identity-and-authority-baseline P01 | 13 | 2 tasks | 5 files |
@@ -57,6 +57,7 @@ Plan: 4 of 4
 | Phase 04 P01 | 19 | 2 tasks | 10 files |
 | Phase 04 P02 | 32 | 2 tasks | 11 files |
 | Phase 04 P03 | 5 | 2 tasks | 6 files |
+| Phase 04 P04 | 24 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -86,12 +87,14 @@ Recent decisions affecting current work:
 - [Phase 03-02]: AttributePermissionEvaluatorImpl uses permissive-default: empty permission list returns true (no rules = allowed) while entity-level evaluator uses DENY-default
 - [Phase 03-02]: RowLevelPolicyProviderDbImpl is fail-closed: JAVA policyType and any unparseable SPECIFICATION/JPQL expression throw AccessDeniedException
 - [Phase 03-02]: YamlFetchPlanRepository keyed as entityClassName.toLowerCase()#planName matching plan spec
-- [Phase 03-02]: DefaultSecuredEntityCatalog returns empty list — Phase 4 provides @Primary override with real entity registrations
+- [Phase 03-02]: DefaultSecuredEntityCatalog returns empty list - Phase 4 provides @Primary override with real entity registrations
 - [Phase 03-03]: SecureEntitySerializerImpl uses @Component (not @Service) per plan spec, consistent with phase 3 pattern
 - [Phase 03-03]: SecureMergeServiceImpl skips id silently (not AccessDeniedException) - identity immutability is structural, not a permission violation
-- [Phase 03-04]: SecureDataManagerImpl uses @SuppressWarnings(unchecked) for generic JPA repository casts — unavoidable due to type erasure in RepositoryRegistry generic signatures
-- [Phase 03-04]: JPQL-to-Specification conversion deferred to Phase 4 — Phase 3 logs a warning and applies only row spec when JPQL is provided
-- [Phase 03-05]: RowLevelSpecificationBuilder uses lambda no-op spec instead of Specification.where(null) — Java 25 added ambiguous overload and null-check enforcement
+- [Phase 03-04]: SecureDataManagerImpl uses @SuppressWarnings(unchecked) for generic JPA repository casts - unavoidable due to type erasure in RepositoryRegistry generic signatures
+- [Phase 03-04]: JPQL-to-Specification conversion deferred to Phase 4 - Phase 3 logs a warning and applies only row spec when JPQL is provided
+- [Phase 03-05]: RowLevelSpecificationBuilder uses lambda no-op spec instead of Specification.where(null) - Java 25 added ambiguous overload and null-check enforcement
+- [Phase 04-04]: `TechnicalStructureTest` ignores `com.vn.core.security.catalog.SecuredEntity` so proof entity opt-in annotations do not violate the domain-layer ArchUnit rule
+- [Phase 04-04]: `LiquibaseConfiguration` must honor `LiquibaseProperties.changeLog` so tests can use a dedicated `test-master.xml` overlay for proof security fixtures
 
 ### Pending Todos
 
@@ -103,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T14:23:02.436Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-protected-entity-proof/04-CONTEXT.md
+Last session: 2026-03-21T16:24:17.000Z
+Stopped at: Phase 4 complete
+Resume file: .planning/ROADMAP.md
