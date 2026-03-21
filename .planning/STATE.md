@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 02-security-metadata-management/02-01-PLAN.md
-last_updated: "2026-03-21T08:43:10.015Z"
+stopped_at: Completed 02-security-metadata-management/02-02-PLAN.md
+last_updated: "2026-03-21T08:50:03.666Z"
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 6
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 02 (security-metadata-management) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 
 ## Performance Metrics
 
@@ -48,6 +48,7 @@ Plan: 2 of 4
 | Phase 01-identity-and-authority-baseline P01 | 13 | 2 tasks | 5 files |
 | Phase 01-identity-and-authority-baseline P02 | 4 | 2 tasks | 4 files |
 | Phase 02-security-metadata-management P01 | 5 | 3 tasks | 13 files |
+| Phase 02-security-metadata-management P02 | 7 | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -66,6 +67,8 @@ Recent decisions affecting current work:
 - [Phase 02-security-metadata-management]: SecPermission uses String authorityName FK (not @ManyToOne) to stay decoupled from Authority lifecycle and compatible with SecurityContextBridge Collection<String>
 - [Phase 02-security-metadata-management]: RoleType enum placed in com.vn.core.domain (not security.domain) to avoid ArchUnit layer ambiguity
 - [Phase 02-security-metadata-management]: SecPermission and SecRowPolicy have no @Cache annotation - admin-managed entities where stale cache would cause incorrect security decisions
+- [Phase 02-security-metadata-management]: String types for enum fields in DTOs: keeps REST contract decoupled from entity enum changes; controllers convert String to enum at the service boundary
+- [Phase 02-security-metadata-management]: MergedSecurityContextBridge is @Primary and filters phantom JWT authorities via authorityRepository.findAllById - Phase 3 programs against MergedSecurityService interface, not the bridge directly
 
 ### Pending Todos
 
@@ -78,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T08:43:10.011Z
-Stopped at: Completed 02-security-metadata-management/02-01-PLAN.md
+Last session: 2026-03-21T08:50:03.662Z
+Stopped at: Completed 02-security-metadata-management/02-02-PLAN.md
 Resume file: None
