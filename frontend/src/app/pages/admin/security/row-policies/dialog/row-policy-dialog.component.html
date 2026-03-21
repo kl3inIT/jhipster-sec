@@ -1,0 +1,91 @@
+<p-toast />
+
+<p-dialog
+  [header]="rowPolicy ? 'Edit Row Policy' : 'New Row Policy'"
+  [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [style]="{ width: '560px' }"
+  [closable]="true"
+>
+  <form [formGroup]="editForm" (ngSubmit)="save()">
+    <div class="flex flex-col gap-4 pt-2">
+      <div class="flex flex-col gap-1">
+        <label for="policyCode" class="font-semibold">Code</label>
+        <input pInputText id="policyCode" formControlName="code" placeholder="Unique policy code" class="w-full" />
+        @if (editForm.get('code')?.invalid && editForm.get('code')?.touched) {
+          <small class="text-red-500">Code is required (max 100 characters).</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="policyEntityName" class="font-semibold">Entity</label>
+        <p-select
+          inputId="policyEntityName"
+          formControlName="entityName"
+          [options]="catalogEntries()"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select entity"
+          [emptyMessage]="'No entities available'"
+          class="w-full"
+        />
+        @if (editForm.get('entityName')?.invalid && editForm.get('entityName')?.touched) {
+          <small class="text-red-500">Entity is required.</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="policyOperation" class="font-semibold">Operation</label>
+        <p-select
+          inputId="policyOperation"
+          formControlName="operation"
+          [options]="operationOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select operation"
+          class="w-full"
+        />
+        @if (editForm.get('operation')?.invalid && editForm.get('operation')?.touched) {
+          <small class="text-red-500">Operation is required.</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="policyType" class="font-semibold">Policy Type</label>
+        <p-select
+          inputId="policyType"
+          formControlName="policyType"
+          [options]="policyTypeOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select policy type"
+          class="w-full"
+        />
+        @if (editForm.get('policyType')?.invalid && editForm.get('policyType')?.touched) {
+          <small class="text-red-500">Policy type is required.</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="policyExpression" class="font-semibold">Expression</label>
+        <textarea
+          pTextarea
+          id="policyExpression"
+          formControlName="expression"
+          rows="5"
+          placeholder="Enter SPECIFICATION or JPQL expression"
+          class="w-full"
+        ></textarea>
+        @if (editForm.get('expression')?.invalid && editForm.get('expression')?.touched) {
+          <small class="text-red-500">Expression is required (max 1000 characters).</small>
+        }
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Discard Changes" severity="secondary" [outlined]="true" (onClick)="close()" />
+    <p-button label="Save Row Policy" [loading]="isSaving" (onClick)="save()" />
+  </ng-template>
+</p-dialog>
