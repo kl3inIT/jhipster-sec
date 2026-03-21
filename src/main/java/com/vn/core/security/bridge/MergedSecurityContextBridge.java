@@ -1,0 +1,72 @@
+package com.vn.core.security.bridge;
+
+import com.vn.core.domain.Authority;
+import com.vn.core.repository.AuthorityRepository;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.springframework.context.annotation.Primary;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+
+/**
+ * {@code @Primary} {@link SecurityContextBridge} implementation that filters out phantom authority
+ * names — JWT claims that are not backed by a row in {@code jhi_authority} — before returning
+ * authority names to callers.
+ * <p>
+ * This bean supersedes {@link JHipsterSecurityContextBridge} (which remains as a non-primary
+ * fallback). Phase 3 enforcement code should depend on
+ * {@link com.vn.core.security.MergedSecurityService} rather than this class directly.
+ */
+@Primary
+@Component
+public class MergedSecurityContextBridge implements SecurityContextBridge {
+
+    private final AuthorityRepository authorityRepository;
+
+    public MergedSecurityContextBridge(AuthorityRepository authorityRepository) {
+        this.authorityRepository = authorityRepository;
+    }
+
+    @Override
+    public Optional<String> getCurrentUserLogin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(auth.getName());
+    }
+
+    @Override
+    public Collection<String> getCurrentUserAuthorities() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            return List.of();
+        }
+        Set<String> jwtAuthorities = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+        // D-16: validate against jhi_authority table; drop phantom names not backed by a DB row
+        Set<String> validNames = authorityRepository
+            .findAllById(jwtAuthorities)
+            .stream()
+            .map(Authority::getName)
+            .collect(Collectors.toSet());
+        return jwtAuthorities.stream().filter(validNames::contains).toList();
+    }
+
+    @Override
+    public boolean isAuthenticated() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (
+            auth != null &&
+            auth.isAuthenticated() &&
+            auth
+                .getAuthorities()
+                .stream()
+                .noneMatch(a -> "ROLE_ANONYMOUS".equals(a.getAuthority()))
+        );
+    }
+}
