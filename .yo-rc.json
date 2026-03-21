@@ -1,0 +1,30 @@
+{
+  "generator-jhipster": {
+    "applicationType": "monolith",
+    "authenticationType": "jwt",
+    "baseName": "jhipster-sec",
+    "buildTool": "gradle",
+    "cacheProvider": "hazelcast",
+    "creationTimestamp": 1774067419577,
+    "databaseType": "sql",
+    "devDatabaseType": "postgresql",
+    "enableGradleDevelocity": false,
+    "enableHibernateCache": true,
+    "enableTranslation": true,
+    "entities": [],
+    "feignClient": null,
+    "gradleDevelocityHost": null,
+    "jhipsterVersion": "9.0.0",
+    "jwtSecretKey": "NDRmOTU2NmI2YTA1ZWQyNzM2NDZjZGYyZjgzMzM1ZWVlN2M1ZjAxYTYwMzE4NjY4OWQ3MDhlYmE1YTA0YTY0Y2FkZDdjNmZiMjRlYjVhNTM0M2JjY2EyN2VkNWQ4NTBjZDU4MWZjOTE0OTYwZTdhODRkY2Y4ODM5MTI4YjNhYzQ=",
+    "languages": ["vi"],
+    "nativeLanguage": "vi",
+    "packageName": "com.vn.core",
+    "prodDatabaseType": "postgresql",
+    "reactive": false,
+    "serverPort": null,
+    "serviceDiscoveryType": null,
+    "skipClient": true,
+    "syncUserWithIdp": null,
+    "testFrameworks": []
+  }
+}

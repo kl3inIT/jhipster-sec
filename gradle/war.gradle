@@ -1,0 +1,12 @@
+apply plugin: "war"
+
+bootWar {
+    mainClass = "com.vn.core.JhipsterSecApp"
+    includes = ["WEB-INF/**", "META-INF/**"]
+}
+
+war {
+    enabled = true
+    archiveExtension = "war.original"
+    includes = ["WEB-INF/**", "META-INF/**"]
+}

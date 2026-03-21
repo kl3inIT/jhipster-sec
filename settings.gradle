@@ -1,0 +1,20 @@
+
+pluginManagement {
+    repositories {
+        // jhipster-needle-gradle-plugin-management-repositories - JHipster will add additional entries here
+    }
+    buildscript {
+        repositories {
+            mavenCentral()
+        }
+        dependencies {
+            classpath "org.liquibase:liquibase-core:${liquibaseVersion}"
+        }
+    }
+    plugins {
+        id "org.liquibase.gradle" version "${liquibasePluginVersion}"
+        // jhipster-needle-gradle-plugin-management-plugins - JHipster will add additional entries here
+    }
+}
+
+rootProject.name = "jhipster-sec"

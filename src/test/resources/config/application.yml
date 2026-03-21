@@ -1,0 +1,94 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# This configuration is used for unit/integration tests.
+#
+# More information on profiles: https://www.jhipster.tech/profiles/
+# More information on configuration properties: https://www.jhipster.tech/common-application-properties/
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# https://docs.spring.io/spring-boot/appendix/application-properties/index.html
+# ===================================================================
+
+spring:
+  application:
+    name: jhipster-sec
+  # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
+  liquibase:
+    contexts: test
+  jackson2:
+    serialization:
+      write-durations-as-timestamps: false
+  mail:
+    host: localhost
+  main:
+    allow-bean-definition-overriding: true
+  messages:
+    basename: i18n/messages
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          authority-prefix: ''
+          authorities-claim-name: auth
+  task:
+    execution:
+      thread-name-prefix: jhipster-sec-task-
+      pool:
+        core-size: 1
+        max-size: 50
+        queue-capacity: 10000
+    scheduling:
+      thread-name-prefix: jhipster-sec-scheduling-
+      pool:
+        size: 20
+  thymeleaf:
+    mode: HTML
+
+server:
+  port: 10344
+  address: localhost
+
+# ===================================================================
+# JHipster specific properties
+#
+# Full reference is available at: https://www.jhipster.tech/common-application-properties/
+# ===================================================================
+jhipster:
+  mail:
+    from: jhipster-sec@localhost.com
+    base-url: http://127.0.0.1:8080
+  logging:
+    # To test json console appender
+    use-json-format: false
+    logstash:
+      enabled: false
+      host: localhost
+      port: 5000
+      ring-buffer-size: 512
+  security:
+    authentication:
+      jwt:
+        # This token must be encoded using Base64 (you can type `echo 'secret-key'|base64` on your command line)
+        base64-secret: NDRmOTU2NmI2YTA1ZWQyNzM2NDZjZGYyZjgzMzM1ZWVlN2M1ZjAxYTYwMzE4NjY4OWQ3MDhlYmE1YTA0YTY0Y2FkZDdjNmZiMjRlYjVhNTM0M2JjY2EyN2VkNWQ4NTBjZDU4MWZjOTE0OTYwZTdhODRkY2Y4ODM5MTI4YjNhYzQ=
+        # Token is valid 24 hours
+        token-validity-in-seconds: 86400
+        token-validity-in-seconds-for-remember-me: 86400
+
+# ===================================================================
+# Application specific properties
+# Add your own application properties here, see the ApplicationProperties class
+# to have type-safe configuration, like in the JHipsterProperties above
+#
+# More documentation is available at:
+# https://www.jhipster.tech/common-application-properties/
+# ===================================================================
+
+# application:
+management:
+  health:
+    mail:
+      enabled: false
