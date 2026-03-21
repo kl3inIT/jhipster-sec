@@ -18,7 +18,7 @@ Requirements for the first migration milestone. Each will be mapped to a roadmap
 - [ ] **SEC-01**: Admin can create, update, list, and delete merged security roles
 - [ ] **SEC-02**: Admin can create, update, list, and delete permission rules for entity CRUD and attribute view/edit actions
 - [ ] **SEC-03**: Admin can create, update, list, and delete row policies for the supported policy model
-- [ ] **SEC-04**: User authority assignments are bridged into the merged security engine so runtime access decisions reflect admin configuration
+- [x] **SEC-04**: User authority assignments are bridged into the merged security engine so runtime access decisions reflect admin configuration
 
 ### Secure Data Enforcement
 
@@ -72,7 +72,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEC-01 | Phase 2 | Pending |
 | SEC-02 | Phase 2 | Pending |
 | SEC-03 | Phase 2 | Pending |
-| SEC-04 | Phase 1 | Pending |
+| SEC-04 | Phase 1 | Complete |
 | DATA-01 | Phase 3 | Pending |
 | DATA-02 | Phase 3 | Pending |
 | DATA-03 | Phase 3 | Pending |

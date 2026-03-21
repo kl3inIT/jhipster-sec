@@ -12,7 +12,7 @@ This roadmap delivers the brownfield migration in dependency order: preserve the
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Identity And Authority Baseline** - Preserve current account/admin behavior while bridging existing authorities into the merged security runtime.
+- [x] **Phase 1: Identity And Authority Baseline** - Preserve current account/admin behavior while bridging existing authorities into the merged security runtime. (completed 2026-03-21)
 - [ ] **Phase 2: Security Metadata Management** - Deliver backend administration for merged roles, permission rules, and supported row policies.
 - [ ] **Phase 3: Secure Enforcement Core** - Route protected data through centralized CRUD, row-level, attribute-level, and fetch-plan enforcement.
 - [ ] **Phase 4: Protected Entity Proof** - Prove the merged engine on sample entities with secured APIs and automated allow/deny coverage.
@@ -28,10 +28,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. User can still register, activate an account, reset a forgotten password, and change password after the migration without flow regressions.
   2. Admin can still manage users and base authorities without regressing the current backend behavior.
   3. Runtime access decisions reflect admin-managed authority assignments through the merged security engine instead of a disconnected role store.
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [x] 01-01-PLAN.md — Regression test baseline for account lifecycle and admin user management
-- [ ] 01-02-PLAN.md — SecurityContextBridge interface, default implementation, and unit/integration tests
+- [x] 01-02-PLAN.md — SecurityContextBridge interface, default implementation, and unit/integration tests
 
 ### Phase 2: Security Metadata Management
 **Goal**: Admin can manage the merged security metadata that drives runtime authorization decisions.
@@ -80,7 +80,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Identity And Authority Baseline | 1/2 | In Progress|  |
+| 1. Identity And Authority Baseline | 2/2 | Complete   | 2026-03-21 |
 | 2. Security Metadata Management | 0/TBD | Not started | - |
 | 3. Secure Enforcement Core | 0/TBD | Not started | - |
 | 4. Protected Entity Proof | 0/TBD | Not started | - |

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 01-identity-and-authority-baseline 01-01-PLAN.md
-last_updated: "2026-03-21T07:36:57.079Z"
+stopped_at: Completed 01-identity-and-authority-baseline 01-02-PLAN.md
+last_updated: "2026-03-21T07:45:12.044Z"
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -46,6 +46,7 @@ Plan: 2 of 2
 - Trend: Stable
 
 | Phase 01-identity-and-authority-baseline P01 | 13 | 2 tasks | 5 files |
+| Phase 01-identity-and-authority-baseline P02 | 4 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -59,6 +60,8 @@ Recent decisions affecting current work:
 - Phase 5: Build the new client as a standalone `frontend/` Angular app using `aef-main` as the structure reference.
 - [Phase 01-identity-and-authority-baseline]: Unactivated user login returns 500 (UserNotActivatedException propagates through controller) — locked as baseline per D-13
 - [Phase 01-identity-and-authority-baseline]: integrationTest Gradle task required explicit testClassesDirs + classpath for Gradle 9 NO-SOURCE fix
+- [Phase 01-identity-and-authority-baseline]: JHipsterSecurityContextBridge uses @Component (not @Primary) so Phase 2 can provide @Primary override without modifying Phase 1 code
+- [Phase 01-identity-and-authority-baseline]: SecurityContextBridge interface exposes Collection<String> raw authority names only — no typed AuthorityDescriptor per D-01/D-07
 
 ### Pending Todos
 
@@ -71,6 +74,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T07:36:57.075Z
-Stopped at: Completed 01-identity-and-authority-baseline 01-01-PLAN.md
+Last session: 2026-03-21T07:45:12.041Z
+Stopped at: Completed 01-identity-and-authority-baseline 01-02-PLAN.md
 Resume file: None
