@@ -56,7 +56,10 @@ public class LiquibaseConfiguration {
                 dataSourceProperties
             );
         }
-        liquibase.setChangeLog("classpath:config/liquibase/master.xml");
+        String changeLog = StringUtils.hasText(liquibaseProperties.getChangeLog())
+            ? liquibaseProperties.getChangeLog()
+            : "classpath:config/liquibase/master.xml";
+        liquibase.setChangeLog(changeLog);
         if (!CollectionUtils.isEmpty(liquibaseProperties.getContexts())) {
             liquibase.setContexts(StringUtils.collectionToCommaDelimitedString(liquibaseProperties.getContexts()));
         }

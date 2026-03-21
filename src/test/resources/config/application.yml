@@ -18,6 +18,7 @@ spring:
     name: jhipster-sec
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
+    change-log: classpath:config/liquibase/test-master.xml
     contexts: test
   jackson2:
     serialization:
