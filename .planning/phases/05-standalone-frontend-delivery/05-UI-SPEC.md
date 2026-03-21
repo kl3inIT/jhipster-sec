@@ -214,8 +214,12 @@ Bottom panel is empty with a "Select an entity above to view its attributes" mes
 | Primary CTA — role create | "New Role" |
 | Primary CTA — row policy create | "New Row Policy" |
 | Refresh button label | "Refresh" |
-| Save / update button | "Save" |
-| Cancel button | "Cancel" |
+| Save / update button — Organization form | "Save Organization" |
+| Save / update button — Department form | "Save Department" |
+| Save / update button — Employee form | "Save Employee" |
+| Save / update button — Role form | "Save Role" |
+| Save / update button — Row Policy form | "Save Row Policy" |
+| Cancel / discard button on all forms | "Discard Changes" |
 | Delete button label | "Delete" |
 | View button aria-label | "View" |
 | Edit button aria-label | "Edit" |
@@ -256,7 +260,7 @@ All confirmations use `p-confirmDialog` (global, single instance via `<p-confirm
 | Delete Role | "Delete Role" | "Are you sure you want to delete this role? All permissions assigned to this role will also be removed." |
 | Delete Row Policy | "Delete Row Policy" | "Are you sure you want to delete this row policy? This action cannot be undone." |
 
-Confirmation buttons: Accept = "Delete" (danger severity), Reject = "Cancel".
+Confirmation buttons: Accept = "Delete" (danger severity), Reject = "Keep [Entity]" (e.g. "Keep Organization", "Keep Department", "Keep Employee", "Keep Role", "Keep Row Policy").
 
 ---
 
