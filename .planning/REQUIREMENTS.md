@@ -10,8 +10,8 @@ Requirements for the first migration milestone. Each will be mapped to a roadmap
 ### Authentication And Account
 
 - [ ] **AUTH-01**: User can log in from the standalone `frontend/` app using the existing JWT authentication flow
-- [ ] **AUTH-02**: User can complete the existing account lifecycle flows after the migration, including register, activate, password reset, and password change
-- [ ] **AUTH-03**: Admin can manage users and base authorities without regressing the current backend behavior
+- [x] **AUTH-02**: User can complete the existing account lifecycle flows after the migration, including register, activate, password reset, and password change
+- [x] **AUTH-03**: Admin can manage users and base authorities without regressing the current backend behavior
 
 ### Security Administration
 
@@ -67,8 +67,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | AUTH-01 | Phase 5 | Pending |
-| AUTH-02 | Phase 1 | Pending |
-| AUTH-03 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Complete |
+| AUTH-03 | Phase 1 | Complete |
 | SEC-01 | Phase 2 | Pending |
 | SEC-02 | Phase 2 | Pending |
 | SEC-03 | Phase 2 | Pending |
