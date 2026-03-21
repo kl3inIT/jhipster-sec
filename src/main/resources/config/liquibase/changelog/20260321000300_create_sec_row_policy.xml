@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260321000300-1" author="dev">
+        <createTable tableName="sec_row_policy">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="code" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entity_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operation" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="policy_type" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expression" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20260321000300-2" author="dev">
+        <addUniqueConstraint
+            tableName="sec_row_policy"
+            columnNames="code"
+            constraintName="ux_sec_row_policy_code"/>
+    </changeSet>
+
+</databaseChangeLog>
