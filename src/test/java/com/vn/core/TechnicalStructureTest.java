@@ -32,6 +32,7 @@ class TechnicalStructureTest {
 
         .ignoreDependency(belongToAnyOf(JhipsterSecApp.class), alwaysTrue())
         .ignoreDependency(alwaysTrue(), belongToAnyOf(
+            com.vn.core.security.catalog.SecuredEntity.class,
             com.vn.core.config.Constants.class,
             com.vn.core.config.ApplicationProperties.class
         ));
