@@ -9,7 +9,7 @@ Requirements for the first migration milestone. Each will be mapped to a roadmap
 
 ### Authentication And Account
 
-- [ ] **AUTH-01**: User can log in from the standalone `frontend/` app using the existing JWT authentication flow
+- [x] **AUTH-01**: User can log in from the standalone `frontend/` app using the existing JWT authentication flow
 - [x] **AUTH-02**: User can complete the existing account lifecycle flows after the migration, including register, activate, password reset, and password change
 - [x] **AUTH-03**: Admin can manage users and base authorities without regressing the current backend behavior
 
@@ -36,9 +36,9 @@ Requirements for the first migration milestone. Each will be mapped to a roadmap
 
 ### Frontend Experience
 
-- [ ] **UI-01**: A standalone Angular app exists under `frontend/` and follows the `aef-main/aef-main` structure direction
+- [x] **UI-01**: A standalone Angular app exists under `frontend/` and follows the `aef-main/aef-main` structure direction
 - [x] **UI-02**: The frontend provides end-to-end role, permission, and row-policy management screens
-- [ ] **UI-03**: The frontend handles authentication state, route protection, and expected 401/403/404 flows correctly
+- [x] **UI-03**: The frontend handles authentication state, route protection, and expected 401/403/404 flows correctly
 
 ## v2 Requirements
 
@@ -66,7 +66,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 5 | Pending |
+| AUTH-01 | Phase 5 | Complete |
 | AUTH-02 | Phase 1 | Complete |
 | AUTH-03 | Phase 1 | Complete |
 | SEC-01 | Phase 2 | Complete |
@@ -81,9 +81,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENT-01 | Phase 4 | Pending |
 | ENT-02 | Phase 4 | Pending |
 | ENT-03 | Phase 5 | Pending |
-| UI-01 | Phase 5 | Pending |
+| UI-01 | Phase 5 | Complete |
 | UI-02 | Phase 5 | Complete |
-| UI-03 | Phase 5 | Pending |
+| UI-03 | Phase 5 | Complete |
 
 **Coverage:**
 - v1 requirements: 18 total
