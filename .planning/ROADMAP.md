@@ -30,8 +30,8 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Runtime access decisions reflect admin-managed authority assignments through the merged security engine instead of a disconnected role store.
 **Plans:** 2/2 plans complete
 Plans:
-- [x] 01-01-PLAN.md — Regression test baseline for account lifecycle and admin user management
-- [x] 01-02-PLAN.md — SecurityContextBridge interface, default implementation, and unit/integration tests
+- [x] 01-01-PLAN.md - Regression test baseline for account lifecycle and admin user management
+- [x] 01-02-PLAN.md - SecurityContextBridge interface, default implementation, and unit/integration tests
 
 ### Phase 2: Security Metadata Management
 **Goal**: Admin can manage the merged security metadata that drives runtime authorization decisions.
@@ -43,10 +43,10 @@ Plans:
   3. Admin can create, update, list, and delete supported row policies through stable backend contracts.
 **Plans:** 4/4 plans complete
 Plans:
-- [x] 02-01-PLAN.md — Liquibase schema evolution, JPA entities, enums, and repositories
-- [x] 02-02-PLAN.md — DTOs, MapStruct mappers, MergedSecurityService, and MergedSecurityContextBridge
-- [x] 02-03-PLAN.md — Admin REST controllers (roles, permissions, row policies) and seed data
-- [x] 02-04-PLAN.md — Integration tests for all three admin endpoints
+- [x] 02-01-PLAN.md - Liquibase schema evolution, JPA entities, enums, and repositories
+- [x] 02-02-PLAN.md - DTOs, MapStruct mappers, MergedSecurityService, and MergedSecurityContextBridge
+- [x] 02-03-PLAN.md - Admin REST controllers (roles, permissions, row policies) and seed data
+- [x] 02-04-PLAN.md - Integration tests for all three admin endpoints
 
 ### Phase 3: Secure Enforcement Core
 **Goal**: Protected business data is enforced consistently through one security-aware access path using merged permissions, row policies, and fetch plans.
@@ -60,11 +60,11 @@ Plans:
   5. Row-level policies constrain which records a user can read, update, and delete for secured entities.
 **Plans:** 5/5 plans complete
 Plans:
-- [x] 03-01-PLAN.md — Interface contracts: access pipeline, catalog, data managers, fetch plan types, permission/merge/row/serialize interfaces
-- [x] 03-02-PLAN.md — Permission evaluators, row-policy provider, fetch-plan stack, repository registry, and catalog default
-- [x] 03-03-PLAN.md — Secure serializer (attribute filtering) and secure merge service (write enforcement)
-- [x] 03-04-PLAN.md — SecureDataManager and UnconstrainedDataManager implementations
-- [x] 03-05-PLAN.md — Unit tests for all enforcement components
+- [x] 03-01-PLAN.md - Interface contracts: access pipeline, catalog, data managers, fetch plan types, permission/merge/row/serialize interfaces
+- [x] 03-02-PLAN.md - Permission evaluators, row-policy provider, fetch-plan stack, repository registry, and catalog default
+- [x] 03-03-PLAN.md - Secure serializer (attribute filtering) and secure merge service (write enforcement)
+- [x] 03-04-PLAN.md - SecureDataManager and UnconstrainedDataManager implementations
+- [x] 03-05-PLAN.md - Unit tests for all enforcement components
 
 ### Phase 4: Protected Entity Proof
 **Goal**: The merged security engine is proven against real sample entities and verified by backend allow/deny coverage.
@@ -74,7 +74,12 @@ Plans:
   1. Sample protected entities exist and exercise CRUD, row-level, and attribute-level security end to end.
   2. Secured sample-entity APIs demonstrate both allowed and denied behaviors against real scenarios.
   3. Automated backend tests cover allow and deny paths for secured entity reads and writes.
-**Plans**: TBD
+**Plans**: 1/4 plans executed
+Plans:
+- [x] 04-01-PLAN.md - Proof-domain persistence baseline
+- [ ] 04-02-PLAN.md - Secured catalog registration, loadOne path, and nested proof fetch plans
+- [ ] 04-03-PLAN.md - Proof services and authenticated REST resources
+- [ ] 04-04-PLAN.md - End-to-end proof-entity enforcement integration coverage
 
 ### Phase 5: Standalone Frontend Delivery
 **Goal**: A standalone Angular frontend exposes the migrated auth and security-management experience and proves protected-entity behavior end to end.
@@ -94,5 +99,5 @@ Plans:
 | 1. Identity And Authority Baseline | 2/2 | Complete   | 2026-03-21 |
 | 2. Security Metadata Management | 4/4 | Complete   | 2026-03-21 |
 | 3. Secure Enforcement Core | 5/5 | Complete   | 2026-03-21 |
-| 4. Protected Entity Proof | 0/TBD | Not started | - |
+| 4. Protected Entity Proof | 1/4 | In Progress |   |
 | 5. Standalone Frontend Delivery | 0/TBD | Not started | - |
