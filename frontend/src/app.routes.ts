@@ -40,5 +40,5 @@ export const appRoutes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: '404' },
 ];
