@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { Component, NgZone, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -12,6 +12,8 @@ import { ToastModule } from 'primeng/toast';
 
 import { SortService } from 'app/shared/sort/sort.service';
 import { SortState, sortStateSignal } from 'app/shared/sort/sort-state';
+import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
+import { SecuredEntityCapabilityService } from '../../shared/service/secured-entity-capability.service';
 import { IDepartment } from '../department.model';
 import { EntityArrayResponseType, DepartmentService } from '../service/department.service';
 
@@ -31,15 +33,22 @@ const DEFAULT_SORT_DATA = 'defaultSort';
 export default class DepartmentListComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   departments = signal<IDepartment[]>([]);
+  capability = signal<ISecuredEntityCapability | null>(null);
   loading = signal(false);
 
   sortState = sortStateSignal({});
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
   page = 1;
+  canCreate = computed(() => this.capability()?.canCreate ?? false);
+  canRead = computed(() => this.capability()?.canRead ?? false);
+  canUpdate = computed(() => this.capability()?.canUpdate ?? false);
+  canDelete = computed(() => this.capability()?.canDelete ?? false);
+  showRowActions = computed(() => this.canRead() || this.canUpdate() || this.canDelete());
 
   readonly router = inject(Router);
   protected readonly departmentService = inject(DepartmentService);
+  protected readonly securedEntityCapabilityService = inject(SecuredEntityCapabilityService);
   protected readonly activatedRoute = inject(ActivatedRoute);
   protected readonly sortService = inject(SortService);
   protected readonly ngZone = inject(NgZone);
@@ -49,6 +58,7 @@ export default class DepartmentListComponent implements OnInit, OnDestroy {
   trackId = (item: IDepartment): number => this.departmentService.getDepartmentIdentifier(item);
 
   ngOnInit(): void {
+    this.loadCapability();
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
@@ -175,6 +185,12 @@ export default class DepartmentListComponent implements OnInit, OnDestroy {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'An unexpected error occurred. Please try again.' });
         }
       },
+    });
+  }
+
+  private loadCapability(): void {
+    this.securedEntityCapabilityService.getEntityCapability('department').subscribe(capability => {
+      this.capability.set(capability);
     });
   }
 }

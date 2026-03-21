@@ -12,6 +12,8 @@ import { ToastModule } from 'primeng/toast';
 
 import { SortService } from 'app/shared/sort/sort.service';
 import { SortState, sortStateSignal } from 'app/shared/sort/sort-state';
+import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
+import { SecuredEntityCapabilityService } from '../../shared/service/secured-entity-capability.service';
 import { IOrganization } from '../organization.model';
 import { EntityArrayResponseType, OrganizationService } from '../service/organization.service';
 
@@ -31,6 +33,7 @@ const DEFAULT_SORT_DATA = 'defaultSort';
 export default class OrganizationListComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
   organizations = signal<IOrganization[]>([]);
+  capability = signal<ISecuredEntityCapability | null>(null);
   loading = signal(false);
 
   sortState = sortStateSignal({});
@@ -39,9 +42,15 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
   page = 1;
 
   showBudgetColumn = computed(() => this.organizations().some(o => o.budget !== undefined));
+  canCreate = computed(() => this.capability()?.canCreate ?? false);
+  canRead = computed(() => this.capability()?.canRead ?? false);
+  canUpdate = computed(() => this.capability()?.canUpdate ?? false);
+  canDelete = computed(() => this.capability()?.canDelete ?? false);
+  showRowActions = computed(() => this.canRead() || this.canUpdate() || this.canDelete());
 
   readonly router = inject(Router);
   protected readonly organizationService = inject(OrganizationService);
+  protected readonly securedEntityCapabilityService = inject(SecuredEntityCapabilityService);
   protected readonly activatedRoute = inject(ActivatedRoute);
   protected readonly sortService = inject(SortService);
   protected readonly ngZone = inject(NgZone);
@@ -51,6 +60,7 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
   trackId = (item: IOrganization): number => this.organizationService.getOrganizationIdentifier(item);
 
   ngOnInit(): void {
+    this.loadCapability();
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
@@ -177,6 +187,12 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'An unexpected error occurred. Please try again.' });
         }
       },
+    });
+  }
+
+  private loadCapability(): void {
+    this.securedEntityCapabilityService.getEntityCapability('organization').subscribe(capability => {
+      this.capability.set(capability);
     });
   }
 }

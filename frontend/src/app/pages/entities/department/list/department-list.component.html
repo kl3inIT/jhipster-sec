@@ -7,7 +7,9 @@
       <h1 class="m-0 text-2xl font-semibold">Departments</h1>
     </div>
     <div class="flex gap-2">
-      <button pButton type="button" icon="pi pi-plus" label="New Department" (click)="create()"></button>
+      @if (canCreate()) {
+        <button pButton type="button" icon="pi pi-plus" label="New Department" (click)="create()"></button>
+      }
     </div>
   </div>
 
@@ -37,7 +39,9 @@
           <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
           <th>Organization</th>
           <th pSortableColumn="costCenter">Cost Center <p-sortIcon field="costCenter" /></th>
-          <th style="width: 10rem; text-align: center">Actions</th>
+          @if (showRowActions()) {
+            <th style="width: 10rem; text-align: center">Actions</th>
+          }
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-row>
@@ -49,25 +53,33 @@
           <td>{{ row.name }}</td>
           <td>{{ row.organization?.name }}</td>
           <td>{{ row.costCenter }}</td>
-          <td style="text-align: center">
-            <div class="flex items-center justify-center gap-2">
-              <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-eye" aria-label="View" (click)="view(row)"></button>
-              <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-pencil" aria-label="Edit" (click)="edit(row)"></button>
-              <button
-                pButton
-                type="button"
-                class="p-button-text p-button-danger p-button-sm"
-                icon="pi pi-trash"
-                aria-label="Delete"
-                (click)="confirmDelete(row)"
-              ></button>
-            </div>
-          </td>
+          @if (showRowActions()) {
+            <td style="text-align: center">
+              <div class="flex items-center justify-center gap-2">
+                @if (canRead()) {
+                  <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-eye" aria-label="View" (click)="view(row)"></button>
+                }
+                @if (canUpdate()) {
+                  <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-pencil" aria-label="Edit" (click)="edit(row)"></button>
+                }
+                @if (canDelete()) {
+                  <button
+                    pButton
+                    type="button"
+                    class="p-button-text p-button-danger p-button-sm"
+                    icon="pi pi-trash"
+                    aria-label="Delete"
+                    (click)="confirmDelete(row)"
+                  ></button>
+                }
+              </div>
+            </td>
+          }
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="6" class="text-center py-4">
+          <td [attr.colspan]="5 + (showRowActions() ? 1 : 0)" class="text-center py-4">
             No departments found. Create the first department using the New Department button.
           </td>
         </tr>
