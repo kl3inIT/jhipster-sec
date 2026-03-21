@@ -9,67 +9,69 @@
     }
   </h1>
 
-  <p-card class="shadow-sm">
-    <form [formGroup]="form" (ngSubmit)="save()" class="space-y-4">
-      <div class="grid grid-cols-1 gap-4">
-        <div>
-          <label for="code" class="block text-sm font-medium mb-1">Code</label>
-          <input
-            id="code"
-            type="text"
-            pInputText
-            formControlName="code"
-            class="w-full"
-            [ngClass]="{ 'ng-invalid ng-dirty': form.controls['code'].invalid && form.controls['code'].touched }"
-          />
-          @if (form.controls['code'].invalid && form.controls['code'].touched) {
-            <p-message severity="error" class="mt-1" text="Code is required"></p-message>
-          }
+  @if (isCapabilityReady()) {
+    <p-card class="shadow-sm">
+      <form [formGroup]="form" (ngSubmit)="save()" class="space-y-4">
+        <div class="grid grid-cols-1 gap-4">
+          <div>
+            <label for="code" class="block text-sm font-medium mb-1">Code</label>
+            <input
+              id="code"
+              type="text"
+              pInputText
+              formControlName="code"
+              class="w-full"
+              [ngClass]="{ 'ng-invalid ng-dirty': form.controls['code'].invalid && form.controls['code'].touched }"
+            />
+            @if (form.controls['code'].invalid && form.controls['code'].touched) {
+              <p-message severity="error" class="mt-1" text="Code is required"></p-message>
+            }
+          </div>
+          <div>
+            <label for="name" class="block text-sm font-medium mb-1">Name</label>
+            <input
+              id="name"
+              type="text"
+              pInputText
+              formControlName="name"
+              class="w-full"
+              [ngClass]="{ 'ng-invalid ng-dirty': form.controls['name'].invalid && form.controls['name'].touched }"
+            />
+            @if (form.controls['name'].invalid && form.controls['name'].touched) {
+              <p-message severity="error" class="mt-1" text="Name is required"></p-message>
+            }
+          </div>
+          <div>
+            <label for="organizationId" class="block text-sm font-medium mb-1">Organization</label>
+            <p-select
+              id="organizationId"
+              formControlName="organizationId"
+              [options]="organizationOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select organization"
+              class="w-full"
+            ></p-select>
+          </div>
+          <div>
+            <label for="costCenter" class="block text-sm font-medium mb-1">Cost Center</label>
+            <input id="costCenter" type="text" pInputText formControlName="costCenter" class="w-full" />
+          </div>
         </div>
-        <div>
-          <label for="name" class="block text-sm font-medium mb-1">Name</label>
-          <input
-            id="name"
-            type="text"
-            pInputText
-            formControlName="name"
-            class="w-full"
-            [ngClass]="{ 'ng-invalid ng-dirty': form.controls['name'].invalid && form.controls['name'].touched }"
-          />
-          @if (form.controls['name'].invalid && form.controls['name'].touched) {
-            <p-message severity="error" class="mt-1" text="Name is required"></p-message>
-          }
-        </div>
-        <div>
-          <label for="organizationId" class="block text-sm font-medium mb-1">Organization</label>
-          <p-select
-            id="organizationId"
-            formControlName="organizationId"
-            [options]="organizationOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Select organization"
-            class="w-full"
-          ></p-select>
-        </div>
-        <div>
-          <label for="costCenter" class="block text-sm font-medium mb-1">Cost Center</label>
-          <input id="costCenter" type="text" pInputText formControlName="costCenter" class="w-full" />
-        </div>
-      </div>
 
-      <div class="flex justify-end gap-2 pt-2">
-        <button
-          type="button"
-          pButton
-          class="p-button-outlined"
-          icon="pi pi-times"
-          label="Discard Changes"
-          (click)="cancel()"
-          [disabled]="isSaving()"
-        ></button>
-        <button type="submit" pButton icon="pi pi-check" label="Save Department" [disabled]="isSaving()"></button>
-      </div>
-    </form>
-  </p-card>
+        <div class="flex justify-end gap-2 pt-2">
+          <button
+            type="button"
+            pButton
+            class="p-button-outlined"
+            icon="pi pi-times"
+            label="Discard Changes"
+            (click)="cancel()"
+            [disabled]="isSaving()"
+          ></button>
+          <button type="submit" pButton icon="pi pi-check" label="Save Department" [disabled]="isSaving()"></button>
+        </div>
+      </form>
+    </p-card>
+  }
 </div>

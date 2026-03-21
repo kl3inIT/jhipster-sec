@@ -8,10 +8,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { finalize } from 'rxjs';
+import { finalize, take } from 'rxjs';
 
 import { IOrganization, NewOrganization } from '../organization.model';
 import { OrganizationService } from '../service/organization.service';
+import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
+import { SecuredEntityCapabilityService } from '../../shared/service/secured-entity-capability.service';
 
 @Component({
   selector: 'app-organization-update',
@@ -25,6 +27,7 @@ export default class OrganizationUpdateComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly organizationService = inject(OrganizationService);
+  private readonly securedEntityCapabilityService = inject(SecuredEntityCapabilityService);
   private readonly messageService = inject(MessageService);
 
   form: FormGroup = this.fb.group({
@@ -37,20 +40,48 @@ export default class OrganizationUpdateComponent implements OnInit {
 
   isSaving = signal(false);
   isEdit = signal(false);
+  isCapabilityReady = signal(false);
   showBudgetField = signal(false);
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
+      this.isCapabilityReady.set(false);
+      this.showBudgetField.set(false);
       if (idParam) {
-        const id = Number(idParam);
         this.isEdit.set(true);
-        this.load(id);
       } else {
         this.isEdit.set(false);
-        this.showBudgetField.set(true);
       }
+      this.loadCapability(idParam);
     });
+  }
+
+  private loadCapability(idParam: string | null): void {
+    this.securedEntityCapabilityService
+      .getEntityCapability('organization')
+      .pipe(take(1))
+      .subscribe({
+        next: capability => {
+          if (!capability) {
+            this.navigateToAccessDenied();
+            return;
+          }
+
+          if (idParam ? !capability.canUpdate : !capability.canCreate) {
+            this.navigateToAccessDenied();
+            return;
+          }
+
+          this.showBudgetField.set(this.canEditAttribute(capability, 'budget'));
+          this.isCapabilityReady.set(true);
+
+          if (idParam) {
+            this.load(Number(idParam));
+          }
+        },
+        error: () => this.navigateToAccessDenied(),
+      });
   }
 
   private load(id: number): void {
@@ -59,7 +90,6 @@ export default class OrganizationUpdateComponent implements OnInit {
         const org = res.body;
         if (org) {
           this.form.patchValue(org);
-          this.showBudgetField.set(org.budget !== undefined);
         }
       },
       error: () => {
@@ -74,10 +104,17 @@ export default class OrganizationUpdateComponent implements OnInit {
       return;
     }
     this.isSaving.set(true);
-    const value = this.form.value as IOrganization | NewOrganization;
-    const request$ = value.id
-      ? this.organizationService.update(value as IOrganization)
-      : this.organizationService.create(value as NewOrganization);
+    const formValue = this.form.getRawValue();
+    const payload: IOrganization | NewOrganization = {
+      id: formValue.id,
+      code: formValue.code,
+      name: formValue.name,
+      ownerLogin: formValue.ownerLogin,
+      ...(this.showBudgetField() && formValue.budget !== null ? { budget: formValue.budget } : {}),
+    };
+    const request$ = payload.id
+      ? this.organizationService.update(payload as IOrganization)
+      : this.organizationService.create(payload as NewOrganization);
     request$.pipe(finalize(() => this.isSaving.set(false))).subscribe({
       next: () => {
         this.router.navigate(['/entities/organization']);
@@ -90,5 +127,13 @@ export default class OrganizationUpdateComponent implements OnInit {
 
   cancel(): void {
     this.router.navigate(['/entities/organization']);
+  }
+
+  private canEditAttribute(capability: ISecuredEntityCapability, attributeName: string): boolean {
+    return capability.attributes.some(attribute => attribute.name === attributeName && attribute.canEdit);
+  }
+
+  private navigateToAccessDenied(): void {
+    this.router.navigate(['/accessdenied']);
   }
 }

@@ -9,12 +9,13 @@ import { MessageModule } from 'primeng/message';
 import { SelectModule } from 'primeng/select';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { finalize } from 'rxjs';
+import { finalize, take } from 'rxjs';
 
 import { IOrganization } from '../../organization/organization.model';
 import { OrganizationService } from '../../organization/service/organization.service';
 import { IDepartment, NewDepartment } from '../department.model';
 import { DepartmentService } from '../service/department.service';
+import { SecuredEntityCapabilityService } from '../../shared/service/secured-entity-capability.service';
 
 @Component({
   selector: 'app-department-update',
@@ -39,6 +40,7 @@ export default class DepartmentUpdateComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly departmentService = inject(DepartmentService);
   private readonly organizationService = inject(OrganizationService);
+  private readonly securedEntityCapabilityService = inject(SecuredEntityCapabilityService);
   private readonly messageService = inject(MessageService);
 
   form: FormGroup = this.fb.group({
@@ -51,20 +53,47 @@ export default class DepartmentUpdateComponent implements OnInit {
 
   isSaving = signal(false);
   isEdit = signal(false);
+  isCapabilityReady = signal(false);
   organizations = signal<IOrganization[]>([]);
 
   ngOnInit(): void {
-    this.loadOrganizations();
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
+      this.isCapabilityReady.set(false);
       if (idParam) {
-        const id = Number(idParam);
         this.isEdit.set(true);
-        this.load(id);
       } else {
         this.isEdit.set(false);
       }
+      this.loadCapability(idParam);
     });
+  }
+
+  private loadCapability(idParam: string | null): void {
+    this.securedEntityCapabilityService
+      .getEntityCapability('department')
+      .pipe(take(1))
+      .subscribe({
+        next: capability => {
+          if (!capability) {
+            this.navigateToAccessDenied();
+            return;
+          }
+
+          if (idParam ? !capability.canUpdate : !capability.canCreate) {
+            this.navigateToAccessDenied();
+            return;
+          }
+
+          this.loadOrganizations();
+          this.isCapabilityReady.set(true);
+
+          if (idParam) {
+            this.load(Number(idParam));
+          }
+        },
+        error: () => this.navigateToAccessDenied(),
+      });
   }
 
   private loadOrganizations(): void {
@@ -128,6 +157,10 @@ export default class DepartmentUpdateComponent implements OnInit {
 
   cancel(): void {
     this.router.navigate(['/entities/department']);
+  }
+
+  private navigateToAccessDenied(): void {
+    this.router.navigate(['/accessdenied']);
   }
 
   get organizationOptions(): { label: string; value: number }[] {
