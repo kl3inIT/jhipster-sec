@@ -1,0 +1,30 @@
+fetch-plans:
+  - entity: com.vn.core.security.fetch.YamlFetchPlanRepositoryTest$TestEntity
+    name: base
+    properties:
+      - id
+      - name
+
+  - entity: com.vn.core.security.fetch.YamlFetchPlanRepositoryTest$TestEntity
+    name: detail
+    extends: base
+    properties:
+      - email
+
+  - entity: com.vn.core.security.fetch.YamlFetchPlanRepositoryTest$TestEntity
+    name: with-child
+    properties:
+      - id
+      - name
+
+  - entity: com.vn.core.security.fetch.YamlFetchPlanRepositoryTest$ParentEntity
+    name: base
+    properties:
+      - id
+      - name
+
+  - entity: com.vn.core.security.fetch.YamlFetchPlanRepositoryTest$ParentEntity
+    name: full
+    properties:
+      - id
+      - name
