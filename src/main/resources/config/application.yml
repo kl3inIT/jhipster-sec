@@ -220,4 +220,6 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  fetch-plans:
+    config: classpath:fetch-plans.yml

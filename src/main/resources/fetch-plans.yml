@@ -1,0 +1,4 @@
+# Fetch plan definitions for secured entities.
+# Phase 4 will add sample entity fetch plans here.
+# Format: list of {entity, name, properties, extends?}
+fetch-plans: []
