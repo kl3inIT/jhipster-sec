@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 03-04-PLAN.md
-last_updated: "2026-03-21T13:28:32.488Z"
+stopped_at: Completed 03-05-PLAN.md
+last_updated: "2026-03-21T13:42:27.857Z"
 progress:
   total_phases: 5
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 11
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -53,6 +53,7 @@ Plan: 5 of 5
 | Phase 03 P02 | 4 | 2 tasks | 16 files |
 | Phase 03 P03 | 1 | 2 tasks | 2 files |
 | Phase 03 P04 | 2 | 2 tasks | 2 files |
+| Phase 03 P05 | 12 | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,7 @@ Recent decisions affecting current work:
 - [Phase 03-03]: SecureMergeServiceImpl skips id silently (not AccessDeniedException) - identity immutability is structural, not a permission violation
 - [Phase 03-04]: SecureDataManagerImpl uses @SuppressWarnings(unchecked) for generic JPA repository casts — unavoidable due to type erasure in RepositoryRegistry generic signatures
 - [Phase 03-04]: JPQL-to-Specification conversion deferred to Phase 4 — Phase 3 logs a warning and applies only row spec when JPQL is provided
+- [Phase 03-05]: RowLevelSpecificationBuilder uses lambda no-op spec instead of Specification.where(null) — Java 25 added ambiguous overload and null-check enforcement
 
 ### Pending Todos
 
@@ -98,6 +100,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T13:28:32.485Z
-Stopped at: Completed 03-04-PLAN.md
+Last session: 2026-03-21T13:42:27.853Z
+Stopped at: Completed 03-05-PLAN.md
 Resume file: None
