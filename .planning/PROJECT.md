@@ -22,6 +22,11 @@ Security rules must be enforced correctly in the data access layer so frontend a
 - SEC-02: Admin can create, update, list, and delete permission rules through stable backend contracts (Validated in Phase 02: security-metadata-management)
 - SEC-03: Admin can create, update, list, and delete supported row policies through stable backend contracts (Validated in Phase 02: security-metadata-management)
 - SEC-04: SecurityContextBridge interface and JHipsterSecurityContextBridge implementation established as the integration seam for Phase 2's security engine (Validated in Phase 01: identity-and-authority-baseline)
+- DATA-01: CRUD permission evaluation (DENY-wins, fail-closed) locked in via unit tests (Validated in Phase 03: secure-enforcement-core)
+- DATA-02: Row-level policy enforcement with Specification composition validated (Validated in Phase 03: secure-enforcement-core)
+- DATA-03: Attribute-level read filtering (silent omission, id always visible) validated (Validated in Phase 03: secure-enforcement-core)
+- DATA-04: Attribute-level write enforcement (fail-closed, AccessDeniedException) validated (Validated in Phase 03: secure-enforcement-core)
+- DATA-05: Fetch-plan-driven reads via YAML repository and code builder validated (Validated in Phase 03: secure-enforcement-core)
 
 ### Active
 

@@ -22,11 +22,11 @@ Requirements for the first migration milestone. Each will be mapped to a roadmap
 
 ### Secure Data Enforcement
 
-- [ ] **DATA-01**: Secured business entity reads go through a central security-aware data access layer
-- [ ] **DATA-02**: Secured reads use fetch plans defined in YAML or code builders rather than database-stored fetch-plan metadata
-- [ ] **DATA-03**: Unauthorized attributes are excluded from secured read payloads
-- [ ] **DATA-04**: Unauthorized attribute updates are rejected or stripped before persistence
-- [ ] **DATA-05**: Row-level policies constrain read, update, and delete access for secured entities
+- [x] **DATA-01**: Secured business entity reads go through a central security-aware data access layer
+- [x] **DATA-02**: Secured reads use fetch plans defined in YAML or code builders rather than database-stored fetch-plan metadata
+- [x] **DATA-03**: Unauthorized attributes are excluded from secured read payloads
+- [x] **DATA-04**: Unauthorized attribute updates are rejected or stripped before persistence
+- [x] **DATA-05**: Row-level policies constrain read, update, and delete access for secured entities
 
 ### Sample Protected Entities
 
@@ -73,11 +73,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEC-02 | Phase 2 | Complete |
 | SEC-03 | Phase 2 | Complete |
 | SEC-04 | Phase 1 | Complete |
-| DATA-01 | Phase 3 | Pending |
-| DATA-02 | Phase 3 | Pending |
-| DATA-03 | Phase 3 | Pending |
-| DATA-04 | Phase 3 | Pending |
-| DATA-05 | Phase 3 | Pending |
+| DATA-01 | Phase 3 | Complete |
+| DATA-02 | Phase 3 | Complete |
+| DATA-03 | Phase 3 | Complete |
+| DATA-04 | Phase 3 | Complete |
+| DATA-05 | Phase 3 | Complete |
 | ENT-01 | Phase 4 | Pending |
 | ENT-02 | Phase 4 | Pending |
 | ENT-03 | Phase 5 | Pending |

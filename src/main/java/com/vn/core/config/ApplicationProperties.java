@@ -13,10 +13,16 @@ public class ApplicationProperties {
 
     private final Liquibase liquibase = new Liquibase();
 
+    private final FetchPlans fetchPlans = new FetchPlans();
+
     // jhipster-needle-application-properties-property
 
     public Liquibase getLiquibase() {
         return liquibase;
+    }
+
+    public FetchPlans getFetchPlans() {
+        return fetchPlans;
     }
 
     // jhipster-needle-application-properties-property-getter
@@ -31,6 +37,19 @@ public class ApplicationProperties {
 
         public void setAsyncStart(Boolean asyncStart) {
             this.asyncStart = asyncStart;
+        }
+    }
+
+    public static class FetchPlans {
+
+        private String config = "classpath:fetch-plans.yml";
+
+        public String getConfig() {
+            return config;
+        }
+
+        public void setConfig(String config) {
+            this.config = config;
         }
     }
 
