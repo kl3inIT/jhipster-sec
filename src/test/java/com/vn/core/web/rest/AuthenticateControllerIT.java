@@ -99,4 +99,27 @@ class AuthenticateControllerIT {
             .andExpect(jsonPath("$.id_token").doesNotExist())
             .andExpect(header().doesNotExist("Authorization"));
     }
+
+    @Test
+    @Transactional
+    void testAuthorizeWithNotActivatedUser() throws Exception {
+        User user = new User();
+        user.setLogin("not-activated-user");
+        user.setEmail("not-activated-user@example.com");
+        user.setActivated(false);
+        user.setPassword(passwordEncoder.encode("test-password"));
+
+        userRepository.saveAndFlush(user);
+
+        LoginVM login = new LoginVM();
+        login.setUsername("not-activated-user");
+        login.setPassword("test-password");
+        // Known behavior: UserNotActivatedException propagates through the controller and is translated to 500.
+        // This baseline locks in the current behavior before Phase 1 changes.
+        mockMvc
+            .perform(post("/api/authenticate").contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(login)))
+            .andExpect(status().isInternalServerError())
+            .andExpect(jsonPath("$.id_token").doesNotExist())
+            .andExpect(header().doesNotExist("Authorization"));
+    }
 }

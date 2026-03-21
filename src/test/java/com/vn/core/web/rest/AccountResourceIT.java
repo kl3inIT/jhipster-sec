@@ -531,6 +531,32 @@ class AccountResourceIT {
 
     @Test
     @Transactional
+    @WithMockUser("change-password-incorrect-current")
+    void testChangePasswordWithIncorrectCurrentPassword() throws Exception {
+        User user = new User();
+        String currentPassword = RandomStringUtils.insecure().nextAlphanumeric(60);
+        user.setPassword(passwordEncoder.encode(currentPassword));
+        user.setLogin("change-password-incorrect-current");
+        user.setEmail("change-password-incorrect-current@example.com");
+        userRepository.saveAndFlush(user);
+
+        restAccountMockMvc
+            .perform(
+                post("/api/account/change-password")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsBytes(new PasswordChangeDTO("wrong-password-that-does-not-match", "new-valid-password")))
+            )
+            .andExpect(status().isBadRequest());
+
+        User updatedUser = userRepository.findOneByLogin("change-password-incorrect-current").orElse(null);
+        assertThat(passwordEncoder.matches("new-valid-password", updatedUser.getPassword())).isFalse();
+        assertThat(passwordEncoder.matches(currentPassword, updatedUser.getPassword())).isTrue();
+
+        userService.deleteUser("change-password-incorrect-current");
+    }
+
+    @Test
+    @Transactional
     @WithMockUser("change-password-wrong-existing-password")
     void testChangePasswordWrongExistingPassword() throws Exception {
         User user = new User();
