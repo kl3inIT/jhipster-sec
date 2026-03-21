@@ -1,0 +1,37 @@
+<div class="max-w-2xl mx-auto space-y-4">
+  <h1 class="m-0 text-2xl font-semibold">Organization</h1>
+
+  @if (organization(); as org) {
+    <p-card class="shadow-sm">
+      <div class="grid grid-cols-1 gap-4">
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">ID</span>
+          <span>{{ org.id }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">Code</span>
+          <span>{{ org.code }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">Name</span>
+          <span>{{ org.name }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">Owner Login</span>
+          <span>{{ org.ownerLogin }}</span>
+        </div>
+        @if (org.budget !== undefined) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">Budget</span>
+            <span>{{ org.budget | number: '1.2-2' }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="flex gap-2 mt-4 pt-4" style="border-top: 1px solid var(--surface-border)">
+        <button type="button" pButton class="p-button-outlined" icon="pi pi-arrow-left" label="Back" (click)="back()"></button>
+        <button type="button" pButton icon="pi pi-pencil" label="Edit" (click)="edit(org)"></button>
+      </div>
+    </p-card>
+  }
+</div>

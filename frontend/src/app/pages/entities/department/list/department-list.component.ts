@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import { Component, NgZone, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -12,8 +12,8 @@ import { ToastModule } from 'primeng/toast';
 
 import { SortService } from 'app/shared/sort/sort.service';
 import { SortState, sortStateSignal } from 'app/shared/sort/sort-state';
-import { IEmployee } from '../employee.model';
-import { EntityArrayResponseType, EmployeeService } from '../service/employee.service';
+import { IDepartment } from '../department.model';
+import { EntityArrayResponseType, DepartmentService } from '../service/department.service';
 
 const ITEMS_PER_PAGE = 20;
 const TOTAL_COUNT_RESPONSE_HEADER = 'X-Total-Count';
@@ -22,15 +22,15 @@ const SORT = 'sort';
 const DEFAULT_SORT_DATA = 'defaultSort';
 
 @Component({
-  selector: 'app-employee-list',
+  selector: 'app-department-list',
   standalone: true,
   imports: [CommonModule, RouterModule, CardModule, TableModule, ButtonModule, ConfirmDialogModule, ToastModule],
   providers: [ConfirmationService, MessageService],
-  templateUrl: './employee-list.component.html',
+  templateUrl: './department-list.component.html',
 })
-export default class EmployeeListComponent implements OnInit, OnDestroy {
+export default class DepartmentListComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
-  employees = signal<IEmployee[]>([]);
+  departments = signal<IDepartment[]>([]);
   loading = signal(false);
 
   sortState = sortStateSignal({});
@@ -38,17 +38,15 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
   totalItems = 0;
   page = 1;
 
-  showSalaryColumn = computed(() => this.employees().some(e => e.salary !== undefined));
-
   readonly router = inject(Router);
-  protected readonly employeeService = inject(EmployeeService);
+  protected readonly departmentService = inject(DepartmentService);
   protected readonly activatedRoute = inject(ActivatedRoute);
   protected readonly sortService = inject(SortService);
   protected readonly ngZone = inject(NgZone);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
 
-  trackId = (item: IEmployee): number => this.employeeService.getEmployeeIdentifier(item);
+  trackId = (item: IDepartment): number => this.departmentService.getDepartmentIdentifier(item);
 
   ngOnInit(): void {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
@@ -107,7 +105,7 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
   protected onResponseSuccess(response: EntityArrayResponseType): void {
     this.fillComponentAttributesFromResponseHeader(response.headers);
     const dataFromBody = response.body ?? [];
-    this.employees.set(dataFromBody);
+    this.departments.set(dataFromBody);
   }
 
   protected fillComponentAttributesFromResponseHeader(headers: HttpHeaders): void {
@@ -123,7 +121,7 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
       size: this.itemsPerPage,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
-    return this.employeeService.query(queryObject).pipe(finalize(() => this.loading.set(false)));
+    return this.departmentService.query(queryObject).pipe(finalize(() => this.loading.set(false)));
   }
 
   protected handleNavigation(page: number, sortState: SortState): void {
@@ -141,33 +139,33 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
   }
 
   create(): void {
-    this.router.navigate(['/entities/employee/new']);
+    this.router.navigate(['/entities/department/new']);
   }
 
-  view(emp: IEmployee): void {
-    this.router.navigate(['/entities/employee', emp.id, 'view']);
+  view(dept: IDepartment): void {
+    this.router.navigate(['/entities/department', dept.id, 'view']);
   }
 
-  edit(emp: IEmployee): void {
-    this.router.navigate(['/entities/employee', emp.id, 'edit']);
+  edit(dept: IDepartment): void {
+    this.router.navigate(['/entities/department', dept.id, 'edit']);
   }
 
-  confirmDelete(emp: IEmployee): void {
+  confirmDelete(dept: IDepartment): void {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete this employee? This action cannot be undone.',
-      header: 'Delete Employee',
+      message: 'Are you sure you want to delete this department? This action cannot be undone.',
+      header: 'Delete Department',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Delete',
       acceptButtonStyleClass: 'p-button-danger',
-      rejectLabel: 'Keep Employee',
-      accept: () => this.deleteEmp(emp),
+      rejectLabel: 'Keep Department',
+      accept: () => this.deleteDept(dept),
     });
   }
 
-  private deleteEmp(emp: IEmployee): void {
-    this.employeeService.delete(emp.id ?? 0).subscribe({
+  private deleteDept(dept: IDepartment): void {
+    this.departmentService.delete(dept.id ?? 0).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Employee deleted successfully.' });
+        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Department deleted successfully.' });
         this.load();
       },
       error: (err: any) => {

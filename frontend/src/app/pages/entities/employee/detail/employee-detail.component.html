@@ -1,0 +1,49 @@
+<div class="max-w-2xl mx-auto space-y-4">
+  <h1 class="m-0 text-2xl font-semibold">Employee</h1>
+
+  @if (employee(); as emp) {
+    <p-card class="shadow-sm">
+      <div class="grid grid-cols-1 gap-4">
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">ID</span>
+          <span>{{ emp.id }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">Employee Number</span>
+          <span>{{ emp.employeeNumber }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">First Name</span>
+          <span>{{ emp.firstName }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">Last Name</span>
+          <span>{{ emp.lastName }}</span>
+        </div>
+        @if (emp.department) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">Department</span>
+            <span>{{ emp.department.name }}</span>
+          </div>
+        }
+        @if (emp.email !== undefined) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">Email</span>
+            <span>{{ emp.email }}</span>
+          </div>
+        }
+        @if (emp.salary !== undefined) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">Salary</span>
+            <span>{{ emp.salary | number: '1.2-2' }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="flex gap-2 mt-4 pt-4" style="border-top: 1px solid var(--surface-border)">
+        <button type="button" pButton class="p-button-outlined" icon="pi pi-arrow-left" label="Back" (click)="back()"></button>
+        <button type="button" pButton icon="pi pi-pencil" label="Edit" (click)="edit(emp)"></button>
+      </div>
+    </p-card>
+  }
+</div>

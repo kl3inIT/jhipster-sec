@@ -12,8 +12,8 @@ import { ToastModule } from 'primeng/toast';
 
 import { SortService } from 'app/shared/sort/sort.service';
 import { SortState, sortStateSignal } from 'app/shared/sort/sort-state';
-import { IEmployee } from '../employee.model';
-import { EntityArrayResponseType, EmployeeService } from '../service/employee.service';
+import { IOrganization } from '../organization.model';
+import { EntityArrayResponseType, OrganizationService } from '../service/organization.service';
 
 const ITEMS_PER_PAGE = 20;
 const TOTAL_COUNT_RESPONSE_HEADER = 'X-Total-Count';
@@ -22,15 +22,15 @@ const SORT = 'sort';
 const DEFAULT_SORT_DATA = 'defaultSort';
 
 @Component({
-  selector: 'app-employee-list',
+  selector: 'app-organization-list',
   standalone: true,
   imports: [CommonModule, RouterModule, CardModule, TableModule, ButtonModule, ConfirmDialogModule, ToastModule],
   providers: [ConfirmationService, MessageService],
-  templateUrl: './employee-list.component.html',
+  templateUrl: './organization-list.component.html',
 })
-export default class EmployeeListComponent implements OnInit, OnDestroy {
+export default class OrganizationListComponent implements OnInit, OnDestroy {
   subscription: Subscription | null = null;
-  employees = signal<IEmployee[]>([]);
+  organizations = signal<IOrganization[]>([]);
   loading = signal(false);
 
   sortState = sortStateSignal({});
@@ -38,17 +38,17 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
   totalItems = 0;
   page = 1;
 
-  showSalaryColumn = computed(() => this.employees().some(e => e.salary !== undefined));
+  showBudgetColumn = computed(() => this.organizations().some(o => o.budget !== undefined));
 
   readonly router = inject(Router);
-  protected readonly employeeService = inject(EmployeeService);
+  protected readonly organizationService = inject(OrganizationService);
   protected readonly activatedRoute = inject(ActivatedRoute);
   protected readonly sortService = inject(SortService);
   protected readonly ngZone = inject(NgZone);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
 
-  trackId = (item: IEmployee): number => this.employeeService.getEmployeeIdentifier(item);
+  trackId = (item: IOrganization): number => this.organizationService.getOrganizationIdentifier(item);
 
   ngOnInit(): void {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
@@ -107,7 +107,7 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
   protected onResponseSuccess(response: EntityArrayResponseType): void {
     this.fillComponentAttributesFromResponseHeader(response.headers);
     const dataFromBody = response.body ?? [];
-    this.employees.set(dataFromBody);
+    this.organizations.set(dataFromBody);
   }
 
   protected fillComponentAttributesFromResponseHeader(headers: HttpHeaders): void {
@@ -123,7 +123,7 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
       size: this.itemsPerPage,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
-    return this.employeeService.query(queryObject).pipe(finalize(() => this.loading.set(false)));
+    return this.organizationService.query(queryObject).pipe(finalize(() => this.loading.set(false)));
   }
 
   protected handleNavigation(page: number, sortState: SortState): void {
@@ -141,33 +141,33 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
   }
 
   create(): void {
-    this.router.navigate(['/entities/employee/new']);
+    this.router.navigate(['/entities/organization/new']);
   }
 
-  view(emp: IEmployee): void {
-    this.router.navigate(['/entities/employee', emp.id, 'view']);
+  view(org: IOrganization): void {
+    this.router.navigate(['/entities/organization', org.id, 'view']);
   }
 
-  edit(emp: IEmployee): void {
-    this.router.navigate(['/entities/employee', emp.id, 'edit']);
+  edit(org: IOrganization): void {
+    this.router.navigate(['/entities/organization', org.id, 'edit']);
   }
 
-  confirmDelete(emp: IEmployee): void {
+  confirmDelete(org: IOrganization): void {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete this employee? This action cannot be undone.',
-      header: 'Delete Employee',
+      message: 'Are you sure you want to delete this organization? This action cannot be undone.',
+      header: 'Delete Organization',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Delete',
       acceptButtonStyleClass: 'p-button-danger',
-      rejectLabel: 'Keep Employee',
-      accept: () => this.deleteEmp(emp),
+      rejectLabel: 'Keep Organization',
+      accept: () => this.deleteOrg(org),
     });
   }
 
-  private deleteEmp(emp: IEmployee): void {
-    this.employeeService.delete(emp.id ?? 0).subscribe({
+  private deleteOrg(org: IOrganization): void {
+    this.organizationService.delete(org.id ?? 0).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Employee deleted successfully.' });
+        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Organization deleted successfully.' });
         this.load();
       },
       error: (err: any) => {

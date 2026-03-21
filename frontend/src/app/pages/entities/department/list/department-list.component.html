@@ -1,0 +1,77 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="space-y-4">
+  <div class="flex items-center justify-between gap-3">
+    <div>
+      <h1 class="m-0 text-2xl font-semibold">Departments</h1>
+    </div>
+    <div class="flex gap-2">
+      <button pButton type="button" icon="pi pi-plus" label="New Department" (click)="create()"></button>
+    </div>
+  </div>
+
+  <p-card class="shadow-sm">
+    <p-table
+      [value]="departments()"
+      [lazy]="true"
+      [paginator]="true"
+      [rows]="itemsPerPage"
+      [totalRecords]="totalItems"
+      [first]="firstRow"
+      [loading]="loading()"
+      [sortField]="sortState().predicate ?? 'id'"
+      [sortOrder]="(sortState().order === 'desc' ? -1 : 1)"
+      [tableStyle]="{ 'min-width': '100%' }"
+      styleClass="p-datatable-gridlines p-datatable-sm"
+      dataKey="id"
+      (onLazyLoad)="onLazyLoad($event)"
+      [rowsPerPageOptions]="[10, 20, 30]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="id" style="width: 6rem">ID <p-sortIcon field="id" /></th>
+          <th pSortableColumn="code">Code <p-sortIcon field="code" /></th>
+          <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
+          <th>Organization</th>
+          <th pSortableColumn="costCenter">Cost Center <p-sortIcon field="costCenter" /></th>
+          <th style="width: 10rem; text-align: center">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>
+            <a [routerLink]="['/entities/department', row.id, 'view']" class="font-medium">{{ row.id }}</a>
+          </td>
+          <td>{{ row.code }}</td>
+          <td>{{ row.name }}</td>
+          <td>{{ row.organization?.name }}</td>
+          <td>{{ row.costCenter }}</td>
+          <td style="text-align: center">
+            <div class="flex items-center justify-center gap-2">
+              <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-eye" aria-label="View" (click)="view(row)"></button>
+              <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-pencil" aria-label="Edit" (click)="edit(row)"></button>
+              <button
+                pButton
+                type="button"
+                class="p-button-text p-button-danger p-button-sm"
+                icon="pi pi-trash"
+                aria-label="Delete"
+                (click)="confirmDelete(row)"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center py-4">
+            No departments found. Create the first department using the New Department button.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>

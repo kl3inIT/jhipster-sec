@@ -4,28 +4,28 @@ import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 
-import { IEmployee } from '../employee.model';
-import { EmployeeService } from '../service/employee.service';
+import { IOrganization } from '../organization.model';
+import { OrganizationService } from '../service/organization.service';
 
 @Component({
-  selector: 'app-employee-detail',
+  selector: 'app-organization-detail',
   standalone: true,
   imports: [CommonModule, RouterModule, CardModule, ButtonModule],
-  templateUrl: './employee-detail.component.html',
+  templateUrl: './organization-detail.component.html',
 })
-export default class EmployeeDetailComponent implements OnInit {
-  employee = signal<IEmployee | null>(null);
+export default class OrganizationDetailComponent implements OnInit {
+  organization = signal<IOrganization | null>(null);
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly employeeService = inject(EmployeeService);
+  private readonly organizationService = inject(OrganizationService);
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
-        this.employeeService.find(Number(id)).subscribe({
-          next: res => this.employee.set(res.body ?? null),
+        this.organizationService.find(Number(id)).subscribe({
+          next: res => this.organization.set(res.body ?? null),
           error: (err: any) => {
             if (err.status === 404) {
               this.router.navigate(['/404']);
@@ -37,10 +37,10 @@ export default class EmployeeDetailComponent implements OnInit {
   }
 
   back(): void {
-    this.router.navigate(['/entities/employee']);
+    this.router.navigate(['/entities/organization']);
   }
 
-  edit(emp: IEmployee): void {
-    this.router.navigate(['/entities/employee', emp.id, 'edit']);
+  edit(org: IOrganization): void {
+    this.router.navigate(['/entities/organization', org.id, 'edit']);
   }
 }

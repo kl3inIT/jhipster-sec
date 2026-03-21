@@ -1,0 +1,95 @@
+<p-toast></p-toast>
+
+<div class="max-w-xl mx-auto space-y-4">
+  <h1 class="m-0 text-2xl font-semibold">
+    @if (isEdit()) {
+      Edit Employee
+    } @else {
+      New Employee
+    }
+  </h1>
+
+  <p-card class="shadow-sm">
+    <form [formGroup]="form" (ngSubmit)="save()" class="space-y-4">
+      <div class="grid grid-cols-1 gap-4">
+        <div>
+          <label for="employeeNumber" class="block text-sm font-medium mb-1">Employee Number</label>
+          <input
+            id="employeeNumber"
+            type="text"
+            pInputText
+            formControlName="employeeNumber"
+            class="w-full"
+            [ngClass]="{ 'ng-invalid ng-dirty': form.controls['employeeNumber'].invalid && form.controls['employeeNumber'].touched }"
+          />
+          @if (form.controls['employeeNumber'].invalid && form.controls['employeeNumber'].touched) {
+            <p-message severity="error" class="mt-1" text="Employee Number is required"></p-message>
+          }
+        </div>
+        <div>
+          <label for="firstName" class="block text-sm font-medium mb-1">First Name</label>
+          <input
+            id="firstName"
+            type="text"
+            pInputText
+            formControlName="firstName"
+            class="w-full"
+            [ngClass]="{ 'ng-invalid ng-dirty': form.controls['firstName'].invalid && form.controls['firstName'].touched }"
+          />
+          @if (form.controls['firstName'].invalid && form.controls['firstName'].touched) {
+            <p-message severity="error" class="mt-1" text="First Name is required"></p-message>
+          }
+        </div>
+        <div>
+          <label for="lastName" class="block text-sm font-medium mb-1">Last Name</label>
+          <input
+            id="lastName"
+            type="text"
+            pInputText
+            formControlName="lastName"
+            class="w-full"
+            [ngClass]="{ 'ng-invalid ng-dirty': form.controls['lastName'].invalid && form.controls['lastName'].touched }"
+          />
+          @if (form.controls['lastName'].invalid && form.controls['lastName'].touched) {
+            <p-message severity="error" class="mt-1" text="Last Name is required"></p-message>
+          }
+        </div>
+        <div>
+          <label for="departmentId" class="block text-sm font-medium mb-1">Department</label>
+          <p-select
+            id="departmentId"
+            formControlName="departmentId"
+            [options]="departmentOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select department"
+            class="w-full"
+          ></p-select>
+        </div>
+        <div>
+          <label for="email" class="block text-sm font-medium mb-1">Email</label>
+          <input id="email" type="email" pInputText formControlName="email" class="w-full" />
+        </div>
+        @if (showSalaryField()) {
+          <div>
+            <label for="salary" class="block text-sm font-medium mb-1">Salary</label>
+            <input id="salary" type="number" pInputText formControlName="salary" class="w-full" />
+          </div>
+        }
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button
+          type="button"
+          pButton
+          class="p-button-outlined"
+          icon="pi pi-times"
+          label="Discard Changes"
+          (click)="cancel()"
+          [disabled]="isSaving()"
+        ></button>
+        <button type="submit" pButton icon="pi pi-check" label="Save Employee" [disabled]="isSaving()"></button>
+      </div>
+    </form>
+  </p-card>
+</div>
