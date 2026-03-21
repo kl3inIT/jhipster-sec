@@ -5,6 +5,7 @@ import com.vn.core.security.AuthoritiesConstants;
 import com.vn.core.security.repository.SecPermissionRepository;
 import com.vn.core.service.dto.security.SecPermissionDTO;
 import com.vn.core.service.mapper.security.SecPermissionMapper;
+import com.vn.core.service.security.SecPermissionUiContractService;
 import com.vn.core.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -16,7 +17,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
@@ -42,14 +51,18 @@ public class SecPermissionAdminResource {
 
     private final AuthorityRepository authorityRepository;
 
+    private final SecPermissionUiContractService secPermissionUiContractService;
+
     public SecPermissionAdminResource(
         SecPermissionRepository secPermissionRepository,
         SecPermissionMapper secPermissionMapper,
-        AuthorityRepository authorityRepository
+        AuthorityRepository authorityRepository,
+        SecPermissionUiContractService secPermissionUiContractService
     ) {
         this.secPermissionRepository = secPermissionRepository;
         this.secPermissionMapper = secPermissionMapper;
         this.authorityRepository = authorityRepository;
+        this.secPermissionUiContractService = secPermissionUiContractService;
     }
 
     /**
@@ -68,7 +81,8 @@ public class SecPermissionAdminResource {
         if (authorityRepository.findById(dto.getAuthorityName()).isEmpty()) {
             throw new BadRequestAlertException("The specified role does not exist", ENTITY_NAME, "rolenotfound");
         }
-        var entity = secPermissionMapper.toEntity(dto);
+        SecPermissionDTO normalizedDto = secPermissionUiContractService.normalizeIncoming(dto);
+        var entity = secPermissionMapper.toEntity(normalizedDto);
         entity = secPermissionRepository.save(entity);
         SecPermissionDTO result = secPermissionMapper.toDto(entity);
         return ResponseEntity.created(new URI("/api/admin/sec/permissions/" + result.getId()))
@@ -91,7 +105,7 @@ public class SecPermissionAdminResource {
         } else {
             permissions = secPermissionMapper.toDto(secPermissionRepository.findAll());
         }
-        return ResponseEntity.ok(permissions);
+        return ResponseEntity.ok(permissions.stream().map(secPermissionUiContractService::normalizeOutgoing).toList());
     }
 
     /**
@@ -103,7 +117,7 @@ public class SecPermissionAdminResource {
     @GetMapping("/{id}")
     public ResponseEntity<SecPermissionDTO> getPermission(@PathVariable("id") Long id) {
         LOG.debug("REST request to get SecPermission : {}", id);
-        Optional<SecPermissionDTO> dto = secPermissionRepository.findById(id).map(secPermissionMapper::toDto);
+        Optional<SecPermissionDTO> dto = secPermissionRepository.findById(id).map(secPermissionMapper::toDto).map(secPermissionUiContractService::normalizeOutgoing);
         return ResponseUtil.wrapOrNotFound(dto);
     }
 
@@ -129,7 +143,8 @@ public class SecPermissionAdminResource {
         if (authorityRepository.findById(dto.getAuthorityName()).isEmpty()) {
             throw new BadRequestAlertException("The specified role does not exist", ENTITY_NAME, "rolenotfound");
         }
-        var entity = secPermissionMapper.toEntity(dto);
+        SecPermissionDTO normalizedDto = secPermissionUiContractService.normalizeIncoming(dto);
+        var entity = secPermissionMapper.toEntity(normalizedDto);
         entity = secPermissionRepository.save(entity);
         return ResponseEntity.ok(secPermissionMapper.toDto(entity));
     }

@@ -1,6 +1,7 @@
 package com.vn.core.web.rest;
 
 import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -10,11 +11,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.core.IntegrationTest;
+import com.vn.core.security.AuthoritiesConstants;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,6 +76,41 @@ class SecuredEntityEnforcementIT {
     }
 
     @Test
+    void getOrganizations_matrixCreatedPermissionChangesForbiddenToOk() throws Exception {
+        Map<String, Object> permissionPayload = Map.of(
+            "authorityName",
+            "ROLE_PROOF_NONE",
+            "targetType",
+            "ENTITY",
+            "target",
+            "organization",
+            "action",
+            "READ",
+            "effect",
+            "GRANT"
+        );
+
+        restMockMvc
+            .perform(get(ORGANIZATION_API_URL + "?sort=id,asc").with(user("proof-owner").authorities(new SimpleGrantedAuthority("ROLE_PROOF_NONE"))))
+            .andExpect(status().isForbidden());
+
+        restMockMvc
+            .perform(
+                post("/api/admin/sec/permissions")
+                    .with(user("admin").authorities(new SimpleGrantedAuthority(AuthoritiesConstants.ADMIN)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsBytes(permissionPayload))
+            )
+            .andExpect(status().isCreated());
+
+        restMockMvc
+            .perform(get(ORGANIZATION_API_URL + "?sort=id,asc").with(user("proof-owner").authorities(new SimpleGrantedAuthority("ROLE_PROOF_NONE"))))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].code").value("ORG-OWNED"));
+    }
+
+    @Test
     @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
     void getOrganization_outsideRowPolicy_returnsNotFound() throws Exception {
         restMockMvc.perform(get(ORGANIZATION_API_URL + "/{id}", 101)).andExpect(status().isNotFound());
@@ -96,9 +134,7 @@ class SecuredEntityEnforcementIT {
         Map<String, Object> payload = Map.of("name", "Owned Org Updated", "budget", 999999.00);
 
         restMockMvc
-            .perform(
-                put(ORGANIZATION_API_URL + "/{id}", 100).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload))
-            )
+            .perform(put(ORGANIZATION_API_URL + "/{id}", 100).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
             .andExpect(status().isForbidden());
     }
 

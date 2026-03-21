@@ -38,9 +38,12 @@ class SecPermissionAdminResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static final String DEFAULT_AUTHORITY_NAME = AuthoritiesConstants.ADMIN;
+    private static final String MATRIX_AUTHORITY_NAME = "ROLE_PROOF_NONE";
     private static final String DEFAULT_TARGET_TYPE = "ENTITY";
     private static final String DEFAULT_TARGET = "Organization";
     private static final String UPDATED_TARGET = "Department";
+    private static final String NORMALIZED_DEFAULT_TARGET = "ORGANIZATION";
+    private static final String NORMALIZED_UPDATED_TARGET = "DEPARTMENT";
     private static final String DEFAULT_ACTION = "READ";
     private static final String DEFAULT_EFFECT = "ALLOW";
 
@@ -62,7 +65,7 @@ class SecPermissionAdminResourceIT {
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.authorityName").value(DEFAULT_AUTHORITY_NAME))
             .andExpect(jsonPath("$.targetType").value(DEFAULT_TARGET_TYPE))
-            .andExpect(jsonPath("$.target").value(DEFAULT_TARGET))
+            .andExpect(jsonPath("$.target").value(NORMALIZED_DEFAULT_TARGET))
             .andExpect(jsonPath("$.action").value(DEFAULT_ACTION))
             .andExpect(jsonPath("$.effect").value(DEFAULT_EFFECT))
             .andReturn()
@@ -73,7 +76,7 @@ class SecPermissionAdminResourceIT {
         SecPermission persisted = secPermissionRepository.findById(created.getId()).orElseThrow();
         assertThat(persisted.getAuthorityName()).isEqualTo(DEFAULT_AUTHORITY_NAME);
         assertThat(persisted.getTargetType()).isEqualTo(TargetType.ENTITY);
-        assertThat(persisted.getTarget()).isEqualTo(DEFAULT_TARGET);
+        assertThat(persisted.getTarget()).isEqualTo(NORMALIZED_DEFAULT_TARGET);
     }
 
     @Test
@@ -124,6 +127,72 @@ class SecPermissionAdminResourceIT {
     }
 
     @Test
+    void createPermission_matrixEntityGrantStoresAllowAndRoundTripsAsGrant() throws Exception {
+        SecPermissionDTO created = createPermission(createMatrixPermissionDto("ENTITY", "organization", "READ"));
+
+        SecPermission persisted = secPermissionRepository.findById(created.getId()).orElseThrow();
+        assertThat(persisted.getTarget()).isEqualTo("ORGANIZATION");
+        assertThat(persisted.getEffect()).isEqualTo("ALLOW");
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL + "?authorityName=" + MATRIX_AUTHORITY_NAME))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].target").value("organization"))
+            .andExpect(jsonPath("$[0].effect").value("GRANT"));
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL_ID, created.getId()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.target").value("organization"))
+            .andExpect(jsonPath("$.effect").value("GRANT"));
+    }
+
+    @Test
+    void createPermission_matrixAttributeGrantStoresAllowAndRoundTripsAsGrant() throws Exception {
+        SecPermissionDTO created = createPermission(createMatrixPermissionDto("ATTRIBUTE", "organization.budget", "VIEW"));
+
+        SecPermission persisted = secPermissionRepository.findById(created.getId()).orElseThrow();
+        assertThat(persisted.getTarget()).isEqualTo("ORGANIZATION.BUDGET");
+        assertThat(persisted.getEffect()).isEqualTo("ALLOW");
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL + "?authorityName=" + MATRIX_AUTHORITY_NAME))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].target").value("organization.budget"))
+            .andExpect(jsonPath("$[0].effect").value("GRANT"));
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL_ID, created.getId()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.target").value("organization.budget"))
+            .andExpect(jsonPath("$.effect").value("GRANT"));
+    }
+
+    @Test
+    void createPermission_matrixAttributeGrantForSecondEntityStoresAllowAndRoundTripsAsGrant() throws Exception {
+        SecPermissionDTO created = createPermission(createMatrixPermissionDto("ATTRIBUTE", "employee.salary", "VIEW"));
+
+        SecPermission persisted = secPermissionRepository.findById(created.getId()).orElseThrow();
+        assertThat(persisted.getTarget()).isEqualTo("EMPLOYEE.SALARY");
+        assertThat(persisted.getEffect()).isEqualTo("ALLOW");
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL + "?authorityName=" + MATRIX_AUTHORITY_NAME))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].target").value("employee.salary"))
+            .andExpect(jsonPath("$[0].effect").value("GRANT"));
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL_ID, created.getId()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.target").value("employee.salary"))
+            .andExpect(jsonPath("$.effect").value("GRANT"));
+    }
+
+    @Test
     void testGetNonExistingPermission() throws Exception {
         restMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
@@ -139,10 +208,10 @@ class SecPermissionAdminResourceIT {
             .perform(put(ENTITY_API_URL_ID, inserted.getId()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dto)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(inserted.getId()))
-            .andExpect(jsonPath("$.target").value(UPDATED_TARGET));
+            .andExpect(jsonPath("$.target").value(NORMALIZED_UPDATED_TARGET));
 
         SecPermission persisted = secPermissionRepository.findById(inserted.getId()).orElseThrow();
-        assertThat(persisted.getTarget()).isEqualTo(UPDATED_TARGET);
+        assertThat(persisted.getTarget()).isEqualTo(NORMALIZED_UPDATED_TARGET);
     }
 
     @Test
@@ -236,4 +305,25 @@ class SecPermissionAdminResourceIT {
         dto.setEffect(DEFAULT_EFFECT);
         return dto;
     }
+
+    private SecPermissionDTO createPermission(SecPermissionDTO dto) throws Exception {
+        String response = restMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dto)))
+            .andExpect(status().isCreated())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        return om.readValue(response, SecPermissionDTO.class);
+    }
+
+    private static SecPermissionDTO createMatrixPermissionDto(String targetType, String target, String action) {
+        SecPermissionDTO dto = new SecPermissionDTO();
+        dto.setAuthorityName(MATRIX_AUTHORITY_NAME);
+        dto.setTargetType(targetType);
+        dto.setTarget(target);
+        dto.setAction(action);
+        dto.setEffect("GRANT");
+        return dto;
+    }
 }
+
