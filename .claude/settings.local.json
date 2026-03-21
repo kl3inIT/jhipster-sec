@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node ~/.claude/get-shit-done/bin/gsd-tools.cjs state-update --phase 1 --event \"context_gathered\" --note \"Phase 1 CONTEXT.md written — SecurityContextBridge seam, additive posture, integration test baseline decisions locked\")"
+      "Bash(node ~/.claude/get-shit-done/bin/gsd-tools.cjs state-update --phase 1 --event \"context_gathered\" --note \"Phase 1 CONTEXT.md written — SecurityContextBridge seam, additive posture, integration test baseline decisions locked\")",
+      "Bash(ls \".planning/phases/03-secure-enforcement-core/\"*-PLAN.md)",
+      "Bash(grep -h \"requirements:\" \".planning/phases/03-secure-enforcement-core/\"*-PLAN.md)"
     ]
   }
 }
