@@ -96,7 +96,7 @@ Plans:
 - [x] 05-02-PLAN.md — Angular scaffold, auth core, layout, login, error pages, dashboard stub
 - [x] 05-03-PLAN.md — Protected entity screens: Organization, Department, Employee
 - [x] 05-04-PLAN.md — Security admin: roles list/dialog, row policies list/dialog, shared services
-- [ ] 05-05-PLAN.md — Permission matrix editor (Jmix-style two-panel checkbox matrix)
+- [x] 05-05-PLAN.md — Permission matrix editor (Jmix-style two-panel checkbox matrix)
 
 ## Progress
 
