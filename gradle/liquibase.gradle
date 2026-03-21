@@ -21,16 +21,18 @@ liquibase {
   activities {
     main {
       driver "org.postgresql.Driver"
-      url "jdbc:postgresql://localhost:5432/jhipster-sec"
-      username "jhipster-sec"
+      url "jdbc:postgresql://157.230.42.136:5555/jhipster-sec"
+      username "postgres"
+      password "admin123"
       changelogFile "src/main/resources/config/liquibase/master.xml"
       logLevel "debug"
       classpath "src/main/resources/"
     }
     diffLog {
       driver "org.postgresql.Driver"
-      url "jdbc:postgresql://localhost:5432/jhipster-sec"
-      username "jhipster-sec"
+      url "jdbc:postgresql://157.230.42.136:5555/jhipster-sec"
+      username "postgres"
+      password "admin123"
       changelogFile project.ext.diffChangelogFile
       referenceUrl "hibernate:spring:com.vn.core.domain?dialect=org.hibernate.dialect.PostgreSQLDialect&hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy&hibernate.implicit_naming_strategy=org.springframework.boot.hibernate.SpringImplicitNamingStrategy"
       logLevel "debug"

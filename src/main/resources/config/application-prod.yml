@@ -33,7 +33,9 @@ spring:
       enabled: false
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/jhipster-sec
+    url: jdbc:postgresql://157.230.42.136:5555/jhipster-sec
+    username: postgres
+    password: admin123
     hikari:
       poolName: Hikari
       auto-commit: false

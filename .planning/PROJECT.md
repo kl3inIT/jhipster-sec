@@ -18,6 +18,9 @@ Security rules must be enforced correctly in the data access layer so frontend a
 - existing: PostgreSQL- and Liquibase-backed Spring Boot/JHipster security service is already running in this repository
 - AUTH-02: Password change validation and account lifecycle edge cases locked in via regression tests (Validated in Phase 01: identity-and-authority-baseline)
 - AUTH-03: Non-admin access denials (403) for admin user and authority endpoints locked in via regression tests (Validated in Phase 01: identity-and-authority-baseline)
+- SEC-01: Admin can create, update, list, and delete merged security roles through stable backend contracts (Validated in Phase 02: security-metadata-management)
+- SEC-02: Admin can create, update, list, and delete permission rules through stable backend contracts (Validated in Phase 02: security-metadata-management)
+- SEC-03: Admin can create, update, list, and delete supported row policies through stable backend contracts (Validated in Phase 02: security-metadata-management)
 - SEC-04: SecurityContextBridge interface and JHipsterSecurityContextBridge implementation established as the integration seam for Phase 2's security engine (Validated in Phase 01: identity-and-authority-baseline)
 
 ### Active
@@ -44,6 +47,10 @@ The current repository is a backend-only JHipster/Spring Boot service with JWT a
 `aef-main/aef-main` is the reference for the new frontend structure. It combines the PrimeNG Sakai layout approach with the standard JHipster Angular organization, including `core`, `shared`, `layout`, route-based features, and i18n assets.
 
 This project also has an existing codebase map under `.planning/codebase/`, which captures the current backend stack and architecture and should be treated as the baseline brownfield state.
+
+## Current State
+
+Phase 02 is complete. The backend now has merged security metadata schema, service and bridge layers, admin REST endpoints for roles, permissions, and row policies, and end-to-end integration coverage proving SEC-01, SEC-02, and SEC-03.
 
 ## Constraints
 
@@ -80,5 +87,8 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-21 after Phase 01 (identity-and-authority-baseline) complete*
+*Last updated: 2026-03-21 after Phase 02 (security-metadata-management) complete*
+
+
+
 
