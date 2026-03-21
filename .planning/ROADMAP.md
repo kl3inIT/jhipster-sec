@@ -74,11 +74,11 @@ Plans:
   1. Sample protected entities exist and exercise CRUD, row-level, and attribute-level security end to end.
   2. Secured sample-entity APIs demonstrate both allowed and denied behaviors against real scenarios.
   3. Automated backend tests cover allow and deny paths for secured entity reads and writes.
-**Plans**: 2/4 plans executed
+**Plans**: 3/4 plans executed
 Plans:
 - [x] 04-01-PLAN.md - Proof-domain persistence baseline
 - [x] 04-02-PLAN.md - Secured catalog registration, loadOne path, and nested proof fetch plans
-- [ ] 04-03-PLAN.md - Proof services and authenticated REST resources
+- [x] 04-03-PLAN.md - Proof services and authenticated REST resources
 - [ ] 04-04-PLAN.md - End-to-end proof-entity enforcement integration coverage
 
 ### Phase 5: Standalone Frontend Delivery
@@ -99,5 +99,5 @@ Plans:
 | 1. Identity And Authority Baseline | 2/2 | Complete   | 2026-03-21 |
 | 2. Security Metadata Management | 4/4 | Complete   | 2026-03-21 |
 | 3. Secure Enforcement Core | 5/5 | Complete   | 2026-03-21 |
-| 4. Protected Entity Proof | 2/4 | In Progress |   |
+| 4. Protected Entity Proof | 3/4 | In Progress |   |
 | 5. Standalone Frontend Delivery | 0/TBD | Not started | - |
