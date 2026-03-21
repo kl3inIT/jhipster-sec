@@ -14,8 +14,7 @@ import com.vn.core.security.serialize.SecureEntitySerializer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
@@ -36,8 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class SecureDataManagerImpl implements SecureDataManager {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SecureDataManagerImpl.class);
 
     private final AccessManager accessManager;
     private final SecuredEntityCatalog catalog;
@@ -92,14 +89,7 @@ public class SecureDataManagerImpl implements SecureDataManager {
             if (!entry.jpqlAllowed()) {
                 throw new AccessDeniedException("JPQL queries not allowed for " + query.entityCode());
             }
-            // Phase 3: JPQL-to-Specification conversion is not yet implemented.
-            // Log a warning and proceed with only the row spec (Phase 4 will refine this).
-            LOG.warn(
-                "JPQL query provided for entity={} but JPQL-to-Specification conversion is not yet implemented in Phase 3; " +
-                    "only row policies are applied. JPQL={}",
-                query.entityCode(),
-                query.jpql()
-            );
+            throw new AccessDeniedException("JPQL query translation is not implemented for secured queries: " + query.jpql());
         }
 
         Page<Object> page = specRepo.findAll(finalSpec, query.pageable());
@@ -113,6 +103,29 @@ public class SecureDataManagerImpl implements SecureDataManager {
             serializedList.add(secureEntitySerializer.serialize(entity, fetchPlan));
         }
         return new PageImpl<>(serializedList, query.pageable(), page.getTotalElements());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
+    public Optional<Map<String, Object>> loadOne(String entityCode, Object id, String fetchPlanCode) {
+        SecuredEntityEntry entry = resolveEntry(entityCode);
+        Class<?> entityClass = entry.entityClass();
+
+        checkCrud(entityClass, EntityOp.READ);
+
+        JpaSpecificationExecutor<Object> specRepo = (JpaSpecificationExecutor<Object>) repositoryRegistry.getSpecificationExecutor(
+            entityClass
+        );
+        Specification<Object> idSpec = (root, query, cb) -> cb.equal(root.get("id"), id);
+        Specification<Object> rowSpec = (Specification<Object>) rowLevelSpecificationBuilder.build(entityClass, EntityOp.READ);
+
+        return specRepo
+            .findOne(idSpec.and(rowSpec))
+            .map(entity -> {
+                FetchPlan fetchPlan = fetchPlanResolver.resolve(entityClass, fetchPlanCode);
+                return secureEntitySerializer.serialize(entity, fetchPlan);
+            });
     }
 
     /**

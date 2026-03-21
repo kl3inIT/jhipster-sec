@@ -1,6 +1,7 @@
 package com.vn.core.security.data;
 
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 
 /**
@@ -13,6 +14,16 @@ public interface SecureDataManager {
      * CRUD, row-level, and attribute checks are applied before data is returned.
      */
     <T> Page<Map<String, Object>> loadByQuery(SecuredLoadQuery query);
+
+    /**
+     * Load a single entity by id, applying CRUD, row-level, and attribute checks.
+     *
+     * @param entityCode    logical code of the entity type
+     * @param id            entity id to load
+     * @param fetchPlanCode fetch plan to use when serializing the response
+     * @return serialized entity when visible to the caller; empty when the row is missing or filtered by row policy
+     */
+    Optional<Map<String, Object>> loadOne(String entityCode, Object id, String fetchPlanCode);
 
     /**
      * Save (create or update) an entity from a payload map, enforcing attribute-level write guards.

@@ -117,7 +117,10 @@ public class YamlFetchPlanRepository implements FetchPlanRepository {
                     properties.add(new FetchPlanProperty(propNode.asText()));
                 } else if (propNode.isObject()) {
                     String propName = propNode.get("name").asText();
-                    if (propNode.has("fetchPlan")) {
+                    if (propNode.has("properties")) {
+                        FetchPlan nestedPlan = new FetchPlan(planName + ":" + propName, null, parseProperties(propNode.get("properties"), entityName, rawPlans, buildStack));
+                        properties.add(new FetchPlanProperty(propName, nestedPlan, FetchMode.AUTO));
+                    } else if (propNode.has("fetchPlan")) {
                         String nestedPlanName = propNode.get("fetchPlan").asText();
                         String nestedKey = buildKey(entityName, nestedPlanName);
                         FetchPlan nestedPlan;
@@ -141,6 +144,48 @@ public class YamlFetchPlanRepository implements FetchPlanRepository {
         plans.put(key, plan);
         buildStack.remove(key);
         return plan;
+    }
+
+    private List<FetchPlanProperty> parseProperties(
+        JsonNode propsNode,
+        String entityName,
+        Map<String, JsonNode> rawPlans,
+        List<String> buildStack
+    ) {
+        List<FetchPlanProperty> properties = new ArrayList<>();
+        if (propsNode == null || !propsNode.isArray()) {
+            return properties;
+        }
+
+        for (JsonNode propNode : propsNode) {
+            if (propNode.isTextual()) {
+                properties.add(new FetchPlanProperty(propNode.asText()));
+            } else if (propNode.isObject()) {
+                String propName = propNode.get("name").asText();
+                if (propNode.has("properties")) {
+                    FetchPlan nestedPlan = new FetchPlan(
+                        buildStack.get(buildStack.size() - 1).substring(buildStack.get(buildStack.size() - 1).lastIndexOf('#') + 1) + ":" + propName,
+                        null,
+                        parseProperties(propNode.get("properties"), entityName, rawPlans, buildStack)
+                    );
+                    properties.add(new FetchPlanProperty(propName, nestedPlan, FetchMode.AUTO));
+                } else if (propNode.has("fetchPlan")) {
+                    String nestedPlanName = propNode.get("fetchPlan").asText();
+                    String nestedKey = buildKey(entityName, nestedPlanName);
+                    FetchPlan nestedPlan;
+                    if (rawPlans.containsKey(nestedKey)) {
+                        nestedPlan = buildPlan(nestedKey, rawPlans, new ArrayList<>(buildStack));
+                    } else {
+                        nestedPlan = new FetchPlan(nestedPlanName, null, List.of());
+                    }
+                    properties.add(new FetchPlanProperty(propName, nestedPlan, FetchMode.AUTO));
+                } else {
+                    properties.add(new FetchPlanProperty(propName));
+                }
+            }
+        }
+
+        return List.copyOf(properties);
     }
 
     private Class<?> resolveEntityClass(String entityName) {

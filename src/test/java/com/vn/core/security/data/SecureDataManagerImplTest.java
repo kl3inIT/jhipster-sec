@@ -164,6 +164,101 @@ class SecureDataManagerImplTest {
 
     @Test
     @SuppressWarnings("unchecked")
+    void testLoadOneReturnsSerializedEntity() {
+        when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
+        doAnswer(invoc -> {
+            CrudEntityContext ctx = invoc.getArgument(0);
+            ctx.setPermitted(true);
+            return ctx;
+        })
+            .when(accessManager)
+            .applyRegisteredConstraints(any(CrudEntityContext.class));
+
+        Specification<Object> mockSpec = (root, query, cb) -> null;
+        when(rowLevelSpecificationBuilder.build(eq(TestEntity.class), eq(EntityOp.READ))).thenReturn((Specification) mockSpec);
+
+        JpaSpecificationExecutor<Object> specRepo = mock(JpaSpecificationExecutor.class);
+        when(repositoryRegistry.getSpecificationExecutor(TestEntity.class)).thenReturn((JpaSpecificationExecutor) specRepo);
+
+        TestEntity entity = new TestEntity();
+        entity.setId(1L);
+        when(specRepo.findOne(any(Specification.class))).thenReturn(Optional.of(entity));
+        when(fetchPlanResolver.resolve(TestEntity.class, "base")).thenReturn(testFetchPlan);
+        when(secureEntitySerializer.serialize(entity, testFetchPlan)).thenReturn(Map.of("id", 1L));
+
+        Optional<Map<String, Object>> result = dataManager.loadOne("TEST_ENTITY", 1L, "base");
+
+        assertThat(result).contains(Map.of("id", 1L));
+
+        InOrder order = inOrder(accessManager, rowLevelSpecificationBuilder, specRepo, fetchPlanResolver, secureEntitySerializer);
+        order.verify(accessManager).applyRegisteredConstraints(any(CrudEntityContext.class));
+        order.verify(rowLevelSpecificationBuilder).build(TestEntity.class, EntityOp.READ);
+        order.verify(specRepo).findOne(any(Specification.class));
+        order.verify(fetchPlanResolver).resolve(TestEntity.class, "base");
+        order.verify(secureEntitySerializer).serialize(entity, testFetchPlan);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testLoadOneReturnsEmptyWhenRowIsFilteredOut() {
+        when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
+        doAnswer(invoc -> {
+            CrudEntityContext ctx = invoc.getArgument(0);
+            ctx.setPermitted(true);
+            return ctx;
+        })
+            .when(accessManager)
+            .applyRegisteredConstraints(any(CrudEntityContext.class));
+
+        Specification<Object> mockSpec = (root, query, cb) -> null;
+        when(rowLevelSpecificationBuilder.build(eq(TestEntity.class), eq(EntityOp.READ))).thenReturn((Specification) mockSpec);
+
+        JpaSpecificationExecutor<Object> specRepo = mock(JpaSpecificationExecutor.class);
+        when(repositoryRegistry.getSpecificationExecutor(TestEntity.class)).thenReturn((JpaSpecificationExecutor) specRepo);
+        when(specRepo.findOne(any(Specification.class))).thenReturn(Optional.empty());
+
+        assertThat(dataManager.loadOne("TEST_ENTITY", 99L, "base")).isEmpty();
+        verify(fetchPlanResolver, org.mockito.Mockito.never()).resolve(any(), any());
+        verify(secureEntitySerializer, org.mockito.Mockito.never()).serialize(any(), any());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testLoadByQueryUnsupportedJpqlFailsClosed() {
+        SecuredEntityEntry jpqlEntry = SecuredEntityEntry.builder()
+            .entityClass(TestEntity.class)
+            .code("TEST_ENTITY")
+            .operations(EnumSet.allOf(EntityOp.class))
+            .fetchPlanCodes(List.of("base"))
+            .jpqlAllowed(true)
+            .build();
+        when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(jpqlEntry));
+        doAnswer(invoc -> {
+            CrudEntityContext ctx = invoc.getArgument(0);
+            ctx.setPermitted(true);
+            return ctx;
+        })
+            .when(accessManager)
+            .applyRegisteredConstraints(any(CrudEntityContext.class));
+        Specification<Object> mockSpec = (root, query, cb) -> null;
+        when(rowLevelSpecificationBuilder.build(eq(TestEntity.class), eq(EntityOp.READ))).thenReturn((Specification) mockSpec);
+
+        SecuredLoadQuery query = new SecuredLoadQuery(
+            "TEST_ENTITY",
+            "select e from TestEntity e",
+            Map.of(),
+            PageRequest.of(0, 10),
+            PageRequest.of(0, 10).getSort(),
+            "base"
+        );
+
+        assertThatThrownBy(() -> dataManager.loadByQuery(query))
+            .isInstanceOf(AccessDeniedException.class)
+            .hasMessage("JPQL query translation is not implemented for secured queries: select e from TestEntity e");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
     void testSaveEnforcesWriteOrder() {
         when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
         doAnswer(invoc -> {

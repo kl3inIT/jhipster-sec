@@ -1,4 +1,75 @@
-# Fetch plan definitions for secured entities.
-# Phase 4 will add sample entity fetch plans here.
-# Format: list of {entity, name, properties, extends?}
-fetch-plans: []
+fetch-plans:
+  - entity: com.vn.core.domain.proof.Organization
+    name: organization-list
+    properties:
+      - id
+      - code
+      - name
+      - ownerLogin
+
+  - entity: com.vn.core.domain.proof.Organization
+    name: organization-detail
+    extends: organization-list
+    properties:
+      - budget
+      - name: departments
+        properties:
+          - id
+          - code
+          - name
+          - costCenter
+          - name: employees
+            properties:
+              - id
+              - employeeNumber
+              - firstName
+              - lastName
+              - email
+              - salary
+
+  - entity: com.vn.core.domain.proof.Department
+    name: department-list
+    properties:
+      - id
+      - code
+      - name
+      - costCenter
+
+  - entity: com.vn.core.domain.proof.Department
+    name: department-detail
+    extends: department-list
+    properties:
+      - name: organization
+        properties:
+          - id
+          - code
+          - name
+          - ownerLogin
+      - name: employees
+        properties:
+          - id
+          - employeeNumber
+          - firstName
+          - lastName
+          - email
+          - salary
+
+  - entity: com.vn.core.domain.proof.Employee
+    name: employee-list
+    properties:
+      - id
+      - employeeNumber
+      - firstName
+      - lastName
+      - email
+
+  - entity: com.vn.core.domain.proof.Employee
+    name: employee-detail
+    extends: employee-list
+    properties:
+      - salary
+      - name: department
+        properties:
+          - id
+          - code
+          - name

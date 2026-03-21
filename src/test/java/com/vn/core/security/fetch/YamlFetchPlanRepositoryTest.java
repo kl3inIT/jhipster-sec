@@ -3,6 +3,7 @@ package com.vn.core.security.fetch;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vn.core.config.ApplicationProperties;
+import com.vn.core.domain.proof.Organization;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -123,5 +124,33 @@ class YamlFetchPlanRepositoryTest {
         // Both exist as separate entries
         assertThat(parentPlan.get().getName()).isEqualTo("base");
         assertThat(entityPlan.get().getName()).isEqualTo("base");
+    }
+
+    @Test
+    void testNestedInlinePropertiesAreParsedRecursively() {
+        ApplicationProperties applicationProperties = new ApplicationProperties();
+        applicationProperties.getFetchPlans().setConfig("classpath:fetch-plans.yml");
+        YamlFetchPlanRepository proofRepository = new YamlFetchPlanRepository(applicationProperties, new DefaultResourceLoader());
+        proofRepository.init();
+
+        Optional<FetchPlan> plan = proofRepository.findByEntityAndName(Organization.class, "organization-detail");
+
+        assertThat(plan).isPresent();
+        FetchPlan departmentsPlan = plan.get().getProperty("departments").orElseThrow().fetchPlan();
+        assertThat(departmentsPlan).isNotNull();
+        assertThat(departmentsPlan.getName()).isEqualTo("organization-detail:departments");
+        assertThat(departmentsPlan.getProperties()).extracting(FetchPlanProperty::name).contains("id", "code", "name", "costCenter", "employees");
+
+        FetchPlan employeesPlan = departmentsPlan.getProperty("employees").orElseThrow().fetchPlan();
+        assertThat(employeesPlan).isNotNull();
+        assertThat(employeesPlan.getName()).isEqualTo("organization-detail:employees");
+        assertThat(employeesPlan.getProperties()).extracting(FetchPlanProperty::name).contains(
+            "id",
+            "employeeNumber",
+            "firstName",
+            "lastName",
+            "email",
+            "salary"
+        );
     }
 }
