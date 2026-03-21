@@ -83,7 +83,8 @@ Layout: two-panel page within AppLayout
 
 **Save strategy:**
 - **D-23:** Optimistic immediate saves — each checkbox toggle fires individual POST/DELETE to the permission API. No "Save All" button. This avoids bulk API complexity while keeping the UX responsive.
-- **D-24:** Load matrix state on page entry: `GET /api/admin/sec/permissions?authorityName={name}` *(query param filter — backend gap — see below)*; build in-memory Set of granted `{target}:{action}` keys; checkboxes derive their state from this Set
+- **D-24:** Load matrix state on page entry: `GET /api/admin/sec/perm
+- issions?authorityName={name}` *(query param filter — backend gap — see below)*; build in-memory Set of granted `{target}:{action}` keys; checkboxes derive their state from this Set
 
 **Visual:**
 - **D-25:** Checked checkbox = green-tinted cell or checkmark icon (PrimeNG `p-checkbox` with `binary=true`); unchecked = grey. No partial/inherited state in Phase 5.
