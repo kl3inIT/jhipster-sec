@@ -1,0 +1,55 @@
+<p-toast />
+
+<p-dialog
+  [header]="role ? 'Edit Role' : 'New Role'"
+  [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [style]="{ width: '480px' }"
+  [closable]="true"
+>
+  <form [formGroup]="editForm" (ngSubmit)="save()">
+    <div class="flex flex-col gap-4 pt-2">
+      <div class="flex flex-col gap-1">
+        <label for="roleName" class="font-semibold">Name</label>
+        <input
+          pInputText
+          id="roleName"
+          formControlName="name"
+          placeholder="UPPER_SNAKE_CASE, e.g. SALES_MANAGER"
+          [readonly]="role !== null"
+          class="w-full"
+        />
+        @if (editForm.get('name')?.invalid && editForm.get('name')?.touched) {
+          <small class="text-red-500">Name is required (max 50 characters).</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="roleDisplayName" class="font-semibold">Display Name</label>
+        <input pInputText id="roleDisplayName" formControlName="displayName" placeholder="Human-readable label" class="w-full" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="roleType" class="font-semibold">Type</label>
+        <p-select
+          inputId="roleType"
+          formControlName="type"
+          [options]="typeOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select type"
+          class="w-full"
+        />
+        @if (editForm.get('type')?.invalid && editForm.get('type')?.touched) {
+          <small class="text-red-500">Type is required. Choose RESOURCE or ROW_LEVEL.</small>
+        }
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Discard Changes" severity="secondary" [outlined]="true" (onClick)="close()" />
+    <p-button label="Save Role" [loading]="isSaving" (onClick)="save()" />
+  </ng-template>
+</p-dialog>
