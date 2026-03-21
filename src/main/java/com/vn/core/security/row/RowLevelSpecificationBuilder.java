@@ -37,10 +37,10 @@ public class RowLevelSpecificationBuilder {
         List<RowPolicyDefinition> policies = rowLevelPolicyProvider.getPolicies(entityClass.getSimpleName(), op);
         if (policies.isEmpty()) {
             LOG.debug("No row policies for entity={} op={}", entityClass.getSimpleName(), op);
-            return Specification.where(null);
+            return (root, query, cb) -> null;
         }
         LOG.debug("Composing {} row policy/policies for entity={} op={}", policies.size(), entityClass.getSimpleName(), op);
-        Specification<T> combined = Specification.where(null);
+        Specification<T> combined = (root, query, cb) -> null;
         for (RowPolicyDefinition def : policies) {
             combined = combined.and(def.getSpecification());
         }
