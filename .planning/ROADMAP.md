@@ -62,7 +62,7 @@ Plans:
 Plans:
 - [x] 03-01-PLAN.md — Interface contracts: access pipeline, catalog, data managers, fetch plan types, permission/merge/row/serialize interfaces
 - [x] 03-02-PLAN.md — Permission evaluators, row-policy provider, fetch-plan stack, repository registry, and catalog default
-- [ ] 03-03-PLAN.md — Secure serializer (attribute filtering) and secure merge service (write enforcement)
+- [x] 03-03-PLAN.md — Secure serializer (attribute filtering) and secure merge service (write enforcement)
 - [ ] 03-04-PLAN.md — SecureDataManager and UnconstrainedDataManager implementations
 - [ ] 03-05-PLAN.md — Unit tests for all enforcement components
 
