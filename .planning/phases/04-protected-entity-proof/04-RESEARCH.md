@@ -18,15 +18,16 @@
 - **D-05:** Minimal but realistic CRUD surface per entity: list, single read, save/update, and delete. No partial-update or extra endpoints needed.
 - **D-06:** No DTO layer. The service returns the fetch-plan-shaped result (entity/graph shaped by `SecureDataManager`) and the controller returns it directly as JSON. No MapStruct mappers or typed DTO classes for these entities.
 - **D-07:** REST endpoints require only `isAuthenticated()` at the controller level. All entity-level, row-level, and attribute-level access decisions are made by `SecureDataManager`.
-- **D-08:** Phase 4 provides a `@Primary` implementation of `SecuredEntityCatalog` that registers the three sample entities, replacing the `DefaultSecuredEntityCatalog` empty placeholder.
-- **D-09:** Each catalog entry declares: entity class, entity code, allowed operations, fetch-plan code(s), and the row-policy specification. JPQL association entry not used.
-- **D-10:** Fetch plans for the three entities are defined in `fetch-plans.yml` (YAML) and/or via `FetchPlanBuilder` (code). The currently empty `fetch-plans.yml` is populated in Phase 4.
-- **D-11:** Row policies for the proof are `SPECIFICATION` type only. JPQL-based row policy conversion remains deferred to a future phase.
-- **D-12:** The existing JPQL stub in `SecureDataManagerImpl` (currently: logs warning and skips) is changed to fail-closed: throws `AccessDeniedException` when a stored `SecRowPolicy` of type `JPQL` is encountered and no conversion is available.
-- **D-13:** All allow/deny coverage lives in integration tests backed by Testcontainers + PostgreSQL.
-- **D-14:** Security context for tests: `@WithMockUser` provides the principal; Liquibase test fixtures (under `src/test/resources/config/liquibase/`) seed the `sec_permission` and `sec_row_policy` rows needed for each scenario.
-- **D-15:** Coverage must prove all four enforcement dimensions: CRUD allow/deny, attribute read omission, attribute write rejection (403 not silent strip), row-level restriction.
-- **D-16:** All security proof tests are in a dedicated `SecuredEntityEnforcementIT` class.
+- **D-08:** Phase 4 provides a `@Primary` implementation of `SecuredEntityCatalog` that discovers candidate entities from the live JPA runtime metamodel (`EntityManager.getMetamodel().getEntities()`), replacing the `DefaultSecuredEntityCatalog` empty placeholder without relying on a hand-built `List.of(...)` per proof class.
+- **D-09:** Metamodel discovery is still fail-closed. The catalog filters scanned entities through an explicit secured-entity gate before exposing them to the engine. Preferred gate: a marker such as `@SecuredEntity` on the proof entities. Acceptable fallback: a local allowlist. Exposing every JPA `@Entity` automatically is explicitly rejected.
+- **D-10:** `SecuredEntityCatalog` still owns runtime enforcement metadata after filtering. Approved entities are enriched into `SecuredEntityEntry` values with logical code, allowed operations, fetch-plan code(s), and `jpqlAllowed = false`. Discovery comes from metamodel scanning; security participation remains code-controlled.
+- **D-11:** Fetch plans for the three entities are defined in `fetch-plans.yml` (YAML) and/or via `FetchPlanBuilder` (code). The currently empty `fetch-plans.yml` is populated in Phase 4.
+- **D-12:** Row policies for the proof are `SPECIFICATION` type only. JPQL-based row policy conversion remains deferred to a future phase.
+- **D-13:** The existing JPQL stub in `SecureDataManagerImpl` (currently: logs warning and skips) is changed to fail-closed: throws `AccessDeniedException` when a stored `SecRowPolicy` of type `JPQL` is encountered and no conversion is available.
+- **D-14:** All allow/deny coverage lives in integration tests backed by Testcontainers + PostgreSQL.
+- **D-15:** Security context for tests: `@WithMockUser` provides the principal; Liquibase test fixtures (under `src/test/resources/config/liquibase/`) seed the `sec_permission` and `sec_row_policy` rows needed for each scenario.
+- **D-16:** Coverage must prove all four enforcement dimensions: CRUD allow/deny, attribute read omission, attribute write rejection (403 not silent strip), row-level restriction.
+- **D-17:** All security proof tests are in a dedicated `SecuredEntityEnforcementIT` class.
 
 ### Claude's Discretion
 
@@ -50,7 +51,7 @@
 
 | ID | Description | Research Support |
 |----|-------------|------------------|
-| ENT-01 | Sample entities exist that can exercise CRUD, row-level, and attribute-level security end to end | Domain design, fetch plan wiring, catalog registration patterns |
+| ENT-01 | Sample entities exist that can exercise CRUD, row-level, and attribute-level security end to end | Domain design, fetch plan wiring, secured catalog discovery and enrichment patterns |
 | ENT-02 | Secured entity APIs have automated backend tests for allow and deny scenarios | Integration test infrastructure, `@WithMockUser` + Liquibase fixture patterns, MockMvc request/response assertions |
 </phase_requirements>
 
@@ -58,13 +59,13 @@
 
 ## Summary
 
-Phase 4 builds on the fully-verified Phase 3 enforcement core by introducing three real JPA entities (`Organization`, `Department`, `Employee`) that exercise every security dimension. The entities are wired through the existing `SecureDataManager` pipeline, registered in a `@Primary` catalog implementation, and proven by a dedicated integration test suite (`SecuredEntityEnforcementIT`).
+Phase 4 builds on the fully-verified Phase 3 enforcement core by introducing three real JPA entities (`Organization`, `Department`, `Employee`) that exercise every security dimension. The entities are wired through the existing `SecureDataManager` pipeline, discovered from the live JPA metamodel by a `@Primary` secured catalog implementation, filtered fail-closed to the approved proof targets, and proven by a dedicated integration test suite (`SecuredEntityEnforcementIT`).
 
 The central challenge is not the enforcement logic (Phase 3 handled that) but correct wiring: the entities must be JPA-persisted with Liquibase-managed tables, their fetch plans must be correctly keyed in `fetch-plans.yml`, their repositories must extend both `JpaRepository` and `JpaSpecificationExecutor` so the `RepositoryRegistry` can find them, and the integration tests must seed permission and row-policy fixture rows that match exactly what the security evaluators query for (entity simple names, authority names present in `jhi_authority`).
 
 The JPQL fail-closed fix to `SecureDataManagerImpl` is a one-line targeted change: the current `LOG.warn` path after the `!entry.jpqlAllowed()` guard needs to throw `AccessDeniedException` instead of continuing with only the row spec applied.
 
-**Primary recommendation:** Stand up three lean entities with flat scalar fields plus the required associations, register them in the catalog, populate `fetch-plans.yml`, and write the `SecuredEntityEnforcementIT` using the existing `@IntegrationTest` + `@AutoConfigureMockMvc` + `@WithMockUser` pattern with `@Sql` or `EntityManager`-seeded fixture data for `sec_permission` and `sec_row_policy`.
+**Primary recommendation:** Stand up three lean entities with flat scalar fields plus the required associations, mark or allowlist them for the secured catalog, derive the catalog candidates from the JPA metamodel, populate `fetch-plans.yml`, and write the `SecuredEntityEnforcementIT` using the existing `@IntegrationTest` + `@AutoConfigureMockMvc` + `@WithMockUser` pattern with `@Sql` or `EntityManager`-seeded fixture data for `sec_permission` and `sec_row_policy`.
 
 ---
 
@@ -117,7 +118,7 @@ src/main/java/com/vn/core/
 │   │   └── EmployeeResource.java
 └── security/
     └── catalog/
-        └── SampleEntityCatalog.java   # @Primary @Component
+        └── MetamodelSecuredEntityCatalog.java   # @Primary, EntityManager-backed
 src/main/resources/
 └── fetch-plans.yml                    # Populated with 3-entity plans
 src/main/resources/config/liquibase/
@@ -283,42 +284,32 @@ public class OrganizationResource {
 }
 ```
 
-### Pattern 5: @Primary Catalog Implementation
+### Pattern 5: @Primary Metamodel-Backed Catalog Implementation
 
-**What:** A `@Component @Primary` class implementing `SecuredEntityCatalog` that overrides `DefaultSecuredEntityCatalog` by taking Spring's primary bean selection.
-**When to use:** Single class for all three entity registrations.
+**What:** A `@Component @Primary` class implementing `SecuredEntityCatalog` that overrides `DefaultSecuredEntityCatalog`, reads managed entities from `EntityManager.getMetamodel().getEntities()`, filters them through an explicit secured-entity gate, then enriches the approved proof entities into `SecuredEntityEntry` values.
+**When to use:** Single catalog implementation for Phase 4 proof entities when discovery must stay aligned with the JPA runtime model.
 
 ```java
-// Source: Phase 3 DefaultSecuredEntityCatalog.java, CONTEXT.md D-08, D-09
+// Source: Phase 3 DefaultSecuredEntityCatalog.java, CONTEXT.md D-08 through D-10
 @Component
 @Primary
-public class SampleEntityCatalog implements SecuredEntityCatalog {
+public class MetamodelSecuredEntityCatalog implements SecuredEntityCatalog {
+
+    private final EntityManager entityManager;
+
+    public MetamodelSecuredEntityCatalog(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     @Override
     public List<SecuredEntityEntry> entries() {
-        return List.of(
-            SecuredEntityEntry.builder()
-                .entityClass(Organization.class)
-                .code("organization")
-                .operations(EnumSet.of(EntityOp.READ, EntityOp.CREATE, EntityOp.UPDATE, EntityOp.DELETE))
-                .fetchPlanCodes(List.of("organization-list", "organization-detail"))
-                .jpqlAllowed(false)
-                .build(),
-            SecuredEntityEntry.builder()
-                .entityClass(Department.class)
-                .code("department")
-                .operations(EnumSet.of(EntityOp.READ, EntityOp.CREATE, EntityOp.UPDATE, EntityOp.DELETE))
-                .fetchPlanCodes(List.of("department-list"))
-                .jpqlAllowed(false)
-                .build(),
-            SecuredEntityEntry.builder()
-                .entityClass(Employee.class)
-                .code("employee")
-                .operations(EnumSet.of(EntityOp.READ, EntityOp.CREATE, EntityOp.UPDATE, EntityOp.DELETE))
-                .fetchPlanCodes(List.of("employee-list"))
-                .jpqlAllowed(false)
-                .build()
-        );
+        return entityManager
+            .getMetamodel()
+            .getEntities()
+            .stream()
+            .filter(this::isSecuredProofEntity)
+            .map(this::toEntry)
+            .toList();
     }
 
     @Override
@@ -330,8 +321,34 @@ public class SampleEntityCatalog implements SecuredEntityCatalog {
     public Optional<SecuredEntityEntry> findByCode(String code) {
         return entries().stream().filter(e -> e.code().equals(code)).findFirst();
     }
+
+    private boolean isSecuredProofEntity(EntityType<?> entityType) {
+        Class<?> javaType = entityType.getJavaType();
+        return javaType.isAnnotationPresent(SecuredEntity.class);
+    }
+
+    private SecuredEntityEntry toEntry(EntityType<?> entityType) {
+        Class<?> javaType = entityType.getJavaType();
+        String code = javaType.getSimpleName().toLowerCase(Locale.ROOT);
+        List<String> fetchPlans = switch (code) {
+            case "organization" -> List.of("organization-list", "organization-detail");
+            case "department" -> List.of("department-list");
+            case "employee" -> List.of("employee-list");
+            default -> List.of();
+        };
+
+        return SecuredEntityEntry.builder()
+            .entityClass(javaType)
+            .code(code)
+            .operations(EnumSet.of(EntityOp.READ, EntityOp.CREATE, EntityOp.UPDATE, EntityOp.DELETE))
+            .fetchPlanCodes(fetchPlans)
+            .jpqlAllowed(false)
+            .build();
+    }
 }
 ```
+
+If a dedicated `@SecuredEntity` marker feels like unnecessary ceremony for Phase 4, replace `isAnnotationPresent(...)` with a small local allowlist. The critical point is unchanged: discover through the JPA metamodel, then filter fail-closed before creating any security target.
 
 ### Pattern 6: fetch-plans.yml Population
 
@@ -511,7 +528,7 @@ class SecuredEntityEnforcementIT {
 | Fetch plan loading | Code-only fetch plan | Populate `fetch-plans.yml` | `YamlFetchPlanRepository` already loads from classpath; YAML is the declared standard |
 | Dynamic repository lookup | `@Autowired` per entity repository in enforcement code | `RepositoryRegistry.getRepository()` / `getSpecificationExecutor()` | Proof entity services use `SecureDataManager` which uses `RepositoryRegistry` internally |
 
-**Key insight:** The entire enforcement pipeline is wired in Phase 3. Phase 4's job is to provide real entities, catalog entries, fetch plans, and REST endpoints — not to re-implement any enforcement logic.
+**Key insight:** The entire enforcement pipeline is wired in Phase 3. Phase 4's job is to provide real entities, metamodel-filtered catalog entries, fetch plans, and REST endpoints — not to re-implement any enforcement logic.
 
 ---
 
@@ -533,7 +550,7 @@ class SecuredEntityEnforcementIT {
 
 **Why it happens:** Phase 3 `SecureDataManager` was intentionally kept lean — `loadByQuery` with a `SecuredLoadQuery` is the entry point. Single-entity reads need the caller to add an ID predicate.
 
-**How to avoid:** For `GET /{id}`, either: (a) use `secureDataManager.save(entityCode, id, emptyMap, planCode)` which does a row-constrained update check and is not ideal, or (b) load by ID through a combination of row-constrained spec and the repository spec executor directly after CRUD check (acceptable since the service owns the logic), or (c) use the `SecuredLoadQuery` with a `Specification` — note Phase 3 `SecuredLoadQuery` does not carry a `Specification` field directly. The practical pattern is to use `secureDataManager.loadByQuery()` with pagination and trust that the caller filters using a JPQL (with `jpqlAllowed=true`) or via separate repository call after checking permissions. Given `jpqlAllowed=false` for proof entities (D-09), the cleanest approach is to expose a service method that calls `checkCrud` + `rowSpec` then fetches by ID using the entity's own repository directly, without re-implementing the full pipeline. Alternatively, add an `id` filter using the spec executor pattern after calling `checkCrud` manually.
+**How to avoid:** For `GET /{id}`, either: (a) use `secureDataManager.save(entityCode, id, emptyMap, planCode)` which does a row-constrained update check and is not ideal, or (b) load by ID through a combination of row-constrained spec and the repository spec executor directly after CRUD check (acceptable since the service owns the logic), or (c) use the `SecuredLoadQuery` with a `Specification` — note Phase 3 `SecuredLoadQuery` does not carry a `Specification` field directly. The practical pattern is to use `secureDataManager.loadByQuery()` with pagination and trust that the caller filters using a JPQL (with `jpqlAllowed=true`) or via separate repository call after checking permissions. Given `jpqlAllowed=false` for proof entities (D-10), the cleanest approach is to expose a service method that calls `checkCrud` + `rowSpec` then fetches by ID using the entity's own repository directly, without re-implementing the full pipeline. Alternatively, add an `id` filter using the spec executor pattern after calling `checkCrud` manually.
 
 **Recommended approach:** Delegate single-entity read entirely to `secureDataManager.loadByQuery()` with a limit-1 approach after accepting this is a design boundary — or do a targeted call through the entity's repository with a row-policy spec applied. Document the chosen approach clearly.
 
@@ -657,7 +674,7 @@ Source: `RolePermissionServiceDbImpl` confirms `TargetType.ENTITY` and entity cl
 | Old Approach | Current Approach | When Changed | Impact |
 |--------------|------------------|--------------|--------|
 | JPQL stub logs warning and continues | JPQL stub throws `AccessDeniedException` (D-12 fix) | Phase 4 | Previously: JPQL query silently ignored if JPQL-to-Spec not implemented; After: fail-closed prevents unintended access widening |
-| Empty `DefaultSecuredEntityCatalog` (returns `List.of()`) | `@Primary SampleEntityCatalog` with three real entity registrations | Phase 4 | All secured entity API calls now route through real catalog entries |
+| Empty `DefaultSecuredEntityCatalog` (returns `List.of()`) | `@Primary` metamodel-backed secured catalog with filtered proof entities | Phase 4 | All secured entity API calls now route through JPA-runtime-discovered, fail-closed catalog entries |
 | Empty `fetch-plans.yml` (`fetch-plans: []`) | Populated with six+ fetch plan definitions for three entities | Phase 4 | Fetch plan resolver no longer throws on first secured read |
 
 ---
