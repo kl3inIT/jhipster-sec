@@ -486,6 +486,13 @@ class UserResourceIT {
     }
 
     @Test
+    @Transactional
+    @WithMockUser(authorities = AuthoritiesConstants.USER)
+    void testNonAdminCannotAccessAdminEndpoints() throws Exception {
+        restUserMockMvc.perform(get("/api/admin/users?sort=id,desc").accept(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+    }
+
+    @Test
     void testUserEquals() throws Exception {
         TestUtil.equalsVerifier(User.class);
         User user1 = new User();

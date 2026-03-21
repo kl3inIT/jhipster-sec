@@ -160,6 +160,13 @@ class AuthorityResourceIT {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = { "ROLE_USER" })
+    void testNonAdminCannotListAuthorities() throws Exception {
+        restAuthorityMockMvc.perform(get(ENTITY_API_URL).accept(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Transactional
     void deleteAuthority() throws Exception {
         // Initialize the database
         authority.setName(UUID.randomUUID().toString());
