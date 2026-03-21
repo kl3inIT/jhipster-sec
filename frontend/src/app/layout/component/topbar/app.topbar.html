@@ -1,0 +1,25 @@
+<div class="layout-topbar flex items-center w-full">
+  <button
+    type="button"
+    class="inline-flex items-center justify-center p-2 rounded-lg border-0 cursor-pointer"
+    (click)="layoutService.onMenuToggle()"
+    aria-label="Toggle menu"
+  >
+    <i class="pi pi-bars text-xl"></i>
+  </button>
+  <div class="ml-auto flex items-center gap-2">
+    <button type="button" class="inline-flex items-center justify-center p-2 rounded-lg border-0 cursor-pointer" (click)="toggleDarkMode()" aria-label="Toggle dark mode">
+      <i [ngClass]="{ 'pi text-xl': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme() }"></i>
+    </button>
+    @if (currentAccount) {
+      <span class="text-sm font-medium">{{ currentAccount.login }}</span>
+      <button type="button" class="inline-flex items-center justify-center p-2 rounded-lg border-0 cursor-pointer" (click)="logout()" aria-label="Logout">
+        <i class="pi pi-sign-out text-xl"></i>
+      </button>
+    } @else {
+      <button type="button" class="inline-flex items-center justify-center p-2 rounded-lg border-0 cursor-pointer" (click)="login()" aria-label="Login">
+        <i class="pi pi-sign-in text-xl"></i>
+      </button>
+    }
+  </div>
+</div>
