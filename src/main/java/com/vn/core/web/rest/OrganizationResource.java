@@ -1,6 +1,6 @@
-package com.vn.core.web.rest.proof;
+package com.vn.core.web.rest;
 
-import com.vn.core.service.proof.OrganizationService;
+import com.vn.core.service.OrganizationService;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +25,10 @@ import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
 /**
- * REST controller exposing secured CRUD endpoints for proof organizations.
+ * REST controller exposing secured CRUD endpoints for organizations.
  */
 @RestController
-@RequestMapping("/api/proof/organizations")
+@RequestMapping("/api/organizations")
 @PreAuthorize("isAuthenticated()")
 public class OrganizationResource {
 
@@ -42,7 +42,7 @@ public class OrganizationResource {
 
     @GetMapping("")
     public ResponseEntity<List<Map<String, Object>>> getAllOrganizations(@ParameterObject Pageable pageable) {
-        LOG.debug("REST request to get proof organizations");
+        LOG.debug("REST request to get organizations");
         Page<Map<String, Object>> page = organizationService.list(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
@@ -50,26 +50,29 @@ public class OrganizationResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getOrganization(@PathVariable("id") Long id) {
-        LOG.debug("REST request to get proof organization : {}", id);
+        LOG.debug("REST request to get organization : {}", id);
         return ResponseUtil.wrapOrNotFound(organizationService.findOne(id));
     }
 
     @PostMapping("")
     public ResponseEntity<Map<String, Object>> createOrganization(@RequestBody Map<String, Object> attributes) {
-        LOG.debug("REST request to create proof organization : {}", attributes);
+        LOG.debug("REST request to create organization : {}", attributes);
         Map<String, Object> result = organizationService.create(attributes);
-        return ResponseEntity.created(URI.create("/api/proof/organizations/" + result.get("id"))).body(result);
+        return ResponseEntity.created(URI.create("/api/organizations/" + result.get("id"))).body(result);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updateOrganization(@PathVariable("id") Long id, @RequestBody Map<String, Object> attributes) {
-        LOG.debug("REST request to update proof organization : {}", id);
+    public ResponseEntity<Map<String, Object>> updateOrganization(
+        @PathVariable("id") Long id,
+        @RequestBody Map<String, Object> attributes
+    ) {
+        LOG.debug("REST request to update organization : {}", id);
         return ResponseEntity.ok(organizationService.update(id, attributes));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrganization(@PathVariable("id") Long id) {
-        LOG.debug("REST request to delete proof organization : {}", id);
+        LOG.debug("REST request to delete organization : {}", id);
         organizationService.delete(id);
         return ResponseEntity.noContent().build();
     }

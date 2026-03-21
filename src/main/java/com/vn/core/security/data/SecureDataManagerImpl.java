@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -60,6 +61,30 @@ public class SecureDataManagerImpl implements SecureDataManager {
         this.secureEntitySerializer = secureEntitySerializer;
         this.secureMergeService = secureMergeService;
         this.repositoryRegistry = repositoryRegistry;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
+    public Page<Map<String, Object>> loadList(String entityCode, String fetchPlanCode, Pageable pageable) {
+        SecuredEntityEntry entry = resolveEntry(entityCode);
+        Class<?> entityClass = entry.entityClass();
+
+        checkCrud(entityClass, EntityOp.READ);
+
+        Specification<Object> rowSpec = (Specification<Object>) rowLevelSpecificationBuilder.build(entityClass, EntityOp.READ);
+        JpaSpecificationExecutor<Object> specRepo = (JpaSpecificationExecutor<Object>) repositoryRegistry.getSpecificationExecutor(
+            entityClass
+        );
+
+        Page<Object> page = specRepo.findAll(rowSpec, pageable);
+
+        FetchPlan fetchPlan = fetchPlanResolver.resolve(entityClass, fetchPlanCode);
+        List<Map<String, Object>> serializedList = new ArrayList<>();
+        for (Object entity : page.getContent()) {
+            serializedList.add(secureEntitySerializer.serialize(entity, fetchPlan));
+        }
+        return new PageImpl<>(serializedList, pageable, page.getTotalElements());
     }
 
     /**

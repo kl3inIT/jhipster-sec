@@ -1,6 +1,6 @@
-package com.vn.core.web.rest.proof;
+package com.vn.core.web.rest;
 
-import com.vn.core.service.proof.DepartmentService;
+import com.vn.core.service.DepartmentService;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +25,10 @@ import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
 /**
- * REST controller exposing secured CRUD endpoints for proof departments.
+ * REST controller exposing secured CRUD endpoints for departments.
  */
 @RestController
-@RequestMapping("/api/proof/departments")
+@RequestMapping("/api/departments")
 @PreAuthorize("isAuthenticated()")
 public class DepartmentResource {
 
@@ -42,7 +42,7 @@ public class DepartmentResource {
 
     @GetMapping("")
     public ResponseEntity<List<Map<String, Object>>> getAllDepartments(@ParameterObject Pageable pageable) {
-        LOG.debug("REST request to get proof departments");
+        LOG.debug("REST request to get departments");
         Page<Map<String, Object>> page = departmentService.list(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
@@ -50,26 +50,26 @@ public class DepartmentResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getDepartment(@PathVariable("id") Long id) {
-        LOG.debug("REST request to get proof department : {}", id);
+        LOG.debug("REST request to get department : {}", id);
         return ResponseUtil.wrapOrNotFound(departmentService.findOne(id));
     }
 
     @PostMapping("")
     public ResponseEntity<Map<String, Object>> createDepartment(@RequestBody Map<String, Object> attributes) {
-        LOG.debug("REST request to create proof department : {}", attributes);
+        LOG.debug("REST request to create department : {}", attributes);
         Map<String, Object> result = departmentService.create(attributes);
-        return ResponseEntity.created(URI.create("/api/proof/departments/" + result.get("id"))).body(result);
+        return ResponseEntity.created(URI.create("/api/departments/" + result.get("id"))).body(result);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updateDepartment(@PathVariable("id") Long id, @RequestBody Map<String, Object> attributes) {
-        LOG.debug("REST request to update proof department : {}", id);
+        LOG.debug("REST request to update department : {}", id);
         return ResponseEntity.ok(departmentService.update(id, attributes));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDepartment(@PathVariable("id") Long id) {
-        LOG.debug("REST request to delete proof department : {}", id);
+        LOG.debug("REST request to delete department : {}", id);
         departmentService.delete(id);
         return ResponseEntity.noContent().build();
     }

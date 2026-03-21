@@ -1,6 +1,5 @@
-package com.vn.core.service.proof;
+package com.vn.core.service;
 
-import com.vn.core.security.data.SecuredLoadQuery;
 import com.vn.core.security.data.SecureDataManager;
 import java.util.Map;
 import java.util.Optional;
@@ -12,48 +11,48 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Secured Employee application service backed only by {@link SecureDataManager}.
+ * Secured Organization application service backed only by {@link SecureDataManager}.
  */
 @Service
 @Transactional
-public class EmployeeService {
+public class OrganizationService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EmployeeService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OrganizationService.class);
 
-    private static final String ENTITY_CODE = "employee";
-    private static final String LIST_FETCH_PLAN = "employee-list";
-    private static final String DETAIL_FETCH_PLAN = "employee-detail";
+    private static final String ENTITY_CODE = "organization";
+    private static final String LIST_FETCH_PLAN = "organization-list";
+    private static final String DETAIL_FETCH_PLAN = "organization-detail";
 
     private final SecureDataManager secureDataManager;
 
-    public EmployeeService(SecureDataManager secureDataManager) {
+    public OrganizationService(SecureDataManager secureDataManager) {
         this.secureDataManager = secureDataManager;
     }
 
     @Transactional(readOnly = true)
     public Page<Map<String, Object>> list(Pageable pageable) {
-        LOG.debug("Request to list proof employees");
-        return secureDataManager.loadByQuery(SecuredLoadQuery.of(ENTITY_CODE, LIST_FETCH_PLAN, pageable));
+        LOG.debug("Request to list organizations");
+        return secureDataManager.loadList(ENTITY_CODE, LIST_FETCH_PLAN, pageable);
     }
 
     @Transactional(readOnly = true)
     public Optional<Map<String, Object>> findOne(Long id) {
-        LOG.debug("Request to get proof employee : {}", id);
+        LOG.debug("Request to get organization : {}", id);
         return secureDataManager.loadOne(ENTITY_CODE, id, DETAIL_FETCH_PLAN);
     }
 
     public Map<String, Object> create(Map<String, Object> attributes) {
-        LOG.debug("Request to create proof employee : {}", attributes);
+        LOG.debug("Request to create organization : {}", attributes);
         return secureDataManager.save(ENTITY_CODE, null, attributes, DETAIL_FETCH_PLAN);
     }
 
     public Map<String, Object> update(Long id, Map<String, Object> attributes) {
-        LOG.debug("Request to update proof employee : {}", id);
+        LOG.debug("Request to update organization : {}", id);
         return secureDataManager.save(ENTITY_CODE, id, attributes, DETAIL_FETCH_PLAN);
     }
 
     public void delete(Long id) {
-        LOG.debug("Request to delete proof employee : {}", id);
+        LOG.debug("Request to delete organization : {}", id);
         secureDataManager.delete(ENTITY_CODE, id);
     }
 }

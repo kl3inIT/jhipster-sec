@@ -1,4 +1,4 @@
-package com.vn.core.domain.proof;
+package com.vn.core.domain;
 
 import com.vn.core.security.catalog.SecuredEntity;
 import jakarta.persistence.*;
@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Proof organization entity used to exercise secured CRUD and row-level rules.
+ * Organization entity used to exercise secured CRUD and row-level rules.
  */
 @SecuredEntity
 @Entity

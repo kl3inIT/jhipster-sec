@@ -1,8 +1,8 @@
 package com.vn.core.security.catalog;
 
-import com.vn.core.domain.proof.Department;
-import com.vn.core.domain.proof.Employee;
-import com.vn.core.domain.proof.Organization;
+import com.vn.core.domain.Department;
+import com.vn.core.domain.Employee;
+import com.vn.core.domain.Organization;
 import com.vn.core.security.permission.EntityOp;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.EntityType;
@@ -51,12 +51,18 @@ public class MetamodelSecuredEntityCatalog implements SecuredEntityCatalog {
 
     @Override
     public Optional<SecuredEntityEntry> findByEntityClass(Class<?> entityClass) {
-        return entries().stream().filter(entry -> entry.entityClass().equals(entityClass)).findFirst();
+        return entries()
+            .stream()
+            .filter(entry -> entry.entityClass().equals(entityClass))
+            .findFirst();
     }
 
     @Override
     public Optional<SecuredEntityEntry> findByCode(String code) {
-        return entries().stream().filter(entry -> entry.code().equals(code)).findFirst();
+        return entries()
+            .stream()
+            .filter(entry -> entry.code().equals(code))
+            .findFirst();
     }
 
     private boolean isSecuredEntity(Class<?> entityClass) {
@@ -64,8 +70,7 @@ public class MetamodelSecuredEntityCatalog implements SecuredEntityCatalog {
     }
 
     private static SecuredEntityEntry entryFor(Class<?> entityClass, String code, List<String> fetchPlanCodes) {
-        return SecuredEntityEntry
-            .builder()
+        return SecuredEntityEntry.builder()
             .entityClass(entityClass)
             .code(code)
             .operations(EnumSet.of(EntityOp.READ, EntityOp.CREATE, EntityOp.UPDATE, EntityOp.DELETE))

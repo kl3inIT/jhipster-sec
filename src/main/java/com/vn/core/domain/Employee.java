@@ -1,4 +1,4 @@
-package com.vn.core.domain.proof;
+package com.vn.core.domain;
 
 import com.vn.core.security.catalog.SecuredEntity;
 import jakarta.persistence.*;
@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * Proof employee entity with a sensitive salary field for attribute checks.
+ * Employee entity with a sensitive salary field for attribute checks.
  */
 @SecuredEntity
 @Entity

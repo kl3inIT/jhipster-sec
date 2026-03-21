@@ -1,5 +1,5 @@
 fetch-plans:
-  - entity: com.vn.core.domain.proof.Organization
+  - entity: com.vn.core.domain.Organization
     name: organization-list
     properties:
       - id
@@ -7,7 +7,7 @@ fetch-plans:
       - name
       - ownerLogin
 
-  - entity: com.vn.core.domain.proof.Organization
+  - entity: com.vn.core.domain.Organization
     name: organization-detail
     extends: organization-list
     properties:
@@ -27,7 +27,7 @@ fetch-plans:
               - email
               - salary
 
-  - entity: com.vn.core.domain.proof.Department
+  - entity: com.vn.core.domain.Department
     name: department-list
     properties:
       - id
@@ -35,7 +35,7 @@ fetch-plans:
       - name
       - costCenter
 
-  - entity: com.vn.core.domain.proof.Department
+  - entity: com.vn.core.domain.Department
     name: department-detail
     extends: department-list
     properties:
@@ -54,7 +54,7 @@ fetch-plans:
           - email
           - salary
 
-  - entity: com.vn.core.domain.proof.Employee
+  - entity: com.vn.core.domain.Employee
     name: employee-list
     properties:
       - id
@@ -63,7 +63,7 @@ fetch-plans:
       - lastName
       - email
 
-  - entity: com.vn.core.domain.proof.Employee
+  - entity: com.vn.core.domain.Employee
     name: employee-detail
     extends: employee-list
     properties:

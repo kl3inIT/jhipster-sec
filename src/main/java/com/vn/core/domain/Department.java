@@ -1,4 +1,4 @@
-package com.vn.core.domain.proof;
+package com.vn.core.domain;
 
 import com.vn.core.security.catalog.SecuredEntity;
 import jakarta.persistence.*;
@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Proof department entity linked to an organization and its employees.
+ * Department entity linked to an organization and its employees.
  */
 @SecuredEntity
 @Entity

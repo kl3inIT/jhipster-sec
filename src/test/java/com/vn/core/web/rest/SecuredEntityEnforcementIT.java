@@ -1,4 +1,4 @@
-package com.vn.core.web.rest.proof;
+package com.vn.core.web.rest;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -20,16 +20,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Integration tests proving allow and deny behavior for the proof entities.
+ * Integration tests proving allow and deny behavior for the secured entities.
  */
 @IntegrationTest
 @AutoConfigureMockMvc
 @Transactional
 class SecuredEntityEnforcementIT {
 
-    private static final String ORGANIZATION_API_URL = "/api/proof/organizations";
-    private static final String DEPARTMENT_API_URL = "/api/proof/departments";
-    private static final String EMPLOYEE_API_URL = "/api/proof/employees";
+    private static final String ORGANIZATION_API_URL = "/api/organizations";
+    private static final String DEPARTMENT_API_URL = "/api/departments";
+    private static final String EMPLOYEE_API_URL = "/api/employees";
 
     @Autowired
     private MockMvc restMockMvc;
@@ -96,7 +96,9 @@ class SecuredEntityEnforcementIT {
         Map<String, Object> payload = Map.of("name", "Owned Org Updated", "budget", 999999.00);
 
         restMockMvc
-            .perform(put(ORGANIZATION_API_URL + "/{id}", 100).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
+            .perform(
+                put(ORGANIZATION_API_URL + "/{id}", 100).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload))
+            )
             .andExpect(status().isForbidden());
     }
 
