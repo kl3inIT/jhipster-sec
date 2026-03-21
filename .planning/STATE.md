@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 05-07-PLAN.md
-last_updated: "2026-03-21T19:39:38.878Z"
+stopped_at: Completed 05-09-PLAN.md
+last_updated: "2026-03-21T20:04:27.847Z"
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 24
-  completed_plans: 21
+  completed_plans: 24
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 05 (standalone-frontend-delivery) — EXECUTING
-Plan: 7 of 9
+Plan: 9 of 9
 
 ## Performance Metrics
 
@@ -61,6 +61,9 @@ Plan: 7 of 9
 | Phase 05 P01 | 11 | 2 tasks | 6 files |
 | Phase 05 P02 | 11 | 3 tasks | 53 files |
 | Phase 05 P07 | resumed | 2 tasks | 8 files |
+| Phase 05 P06 | parallel | 2 tasks | 6 files |
+| Phase 05 P08 | parallel | 2 tasks | 14 files |
+| Phase 05 P09 | parallel | 1 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -104,6 +107,9 @@ Recent decisions affecting current work:
 - [Phase 05]: ErrorHandlerInterceptor simplified to console.warn; NotificationInterceptor simplified - EventManager/AlertService not yet wired
 - [Phase 05]: Capability payloads derive from SecuredEntityCatalog plus JPA metamodel enumeration. — Keeps organization, department, and employee gating aligned with the secured entity allowlist and backend attribute names.
 - [Phase 05]: Frontend entity screens will reuse one cached capability response via shareReplay(1). — List, detail, and update screens can gate from one authenticated capability fetch instead of refetching per component.
+- [Phase 05]: Matrix UI payloads stay on the locked GRANT contract while the backend normalizes to runtime ALLOW and canonical stored targets. — This fixes end-to-end permission enforcement without changing the frontend matrix model from D-23 and D-24.
+- [Phase 05]: Protected-entity actions stay hidden until the shared capability response loads. — List, detail, and update screens should not briefly expose actions before permission state is known.
+- [Phase 05]: Create and edit routes redirect to /accessdenied before rendering forms when capability denies access. — Route-level gating must happen before form controls or sensitive inputs appear on screen.
 
 ### Pending Todos
 
@@ -115,6 +121,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T19:39:38.873Z
-Stopped at: Completed 05-07-PLAN.md
+Last session: 2026-03-21T20:04:27.844Z
+Stopped at: Completed 05-09-PLAN.md
 Resume file: None
