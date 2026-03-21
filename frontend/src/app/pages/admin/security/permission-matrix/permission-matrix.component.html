@@ -1,0 +1,116 @@
+<p-toast />
+
+<div class="p-6">
+  <div class="mb-6 flex items-center gap-4">
+    <button pButton type="button" label="Back to Roles" icon="pi pi-arrow-left" class="p-button-text" routerLink="/admin/security/roles"></button>
+    <h1 class="text-2xl font-semibold">Permissions for {{ roleName }}</h1>
+  </div>
+
+  @if (loading) {
+    <div class="flex justify-center p-8">
+      <p-progressSpinner />
+    </div>
+  } @else {
+    <p-splitter [panelSizes]="[60, 40]" layout="vertical" [style]="{ height: 'calc(100vh - 200px)' }">
+      <ng-template pTemplate>
+        <div class="h-full overflow-auto p-4">
+          <h2 class="mb-4 text-base font-semibold">Entity Permissions</h2>
+
+          <p-table [value]="catalogEntries" dataKey="code" [scrollable]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Entity</th>
+                <th class="text-center" style="width: 80px">Create</th>
+                <th class="text-center" style="width: 80px">Read</th>
+                <th class="text-center" style="width: 80px">Update</th>
+                <th class="text-center" style="width: 80px">Delete</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-entry>
+              <tr (click)="onEntitySelect(entry)" style="cursor: pointer" [class.surface-100]="selectedEntity?.code === entry.code">
+                <td>{{ entry.displayName }}</td>
+                <td class="text-center">
+                  <p-checkbox
+                    [binary]="true"
+                    [ngModel]="isGranted(entry.code, 'CREATE')"
+                    [disabled]="isPending(entry.code, 'CREATE')"
+                    (onChange)="togglePermission('ENTITY', entry.code, 'CREATE', !!$event.checked)"
+                  />
+                </td>
+                <td class="text-center">
+                  <p-checkbox
+                    [binary]="true"
+                    [ngModel]="isGranted(entry.code, 'READ')"
+                    [disabled]="isPending(entry.code, 'READ')"
+                    (onChange)="togglePermission('ENTITY', entry.code, 'READ', !!$event.checked)"
+                  />
+                </td>
+                <td class="text-center">
+                  <p-checkbox
+                    [binary]="true"
+                    [ngModel]="isGranted(entry.code, 'UPDATE')"
+                    [disabled]="isPending(entry.code, 'UPDATE')"
+                    (onChange)="togglePermission('ENTITY', entry.code, 'UPDATE', !!$event.checked)"
+                  />
+                </td>
+                <td class="text-center">
+                  <p-checkbox
+                    [binary]="true"
+                    [ngModel]="isGranted(entry.code, 'DELETE')"
+                    [disabled]="isPending(entry.code, 'DELETE')"
+                    (onChange)="togglePermission('ENTITY', entry.code, 'DELETE', !!$event.checked)"
+                  />
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate>
+        <div class="h-full overflow-auto p-4">
+          @if (!selectedEntity) {
+            <p class="text-color-secondary">Select an entity above to view its attribute permissions.</p>
+          } @else if (selectedEntity.attributes.length === 0) {
+            <p class="text-color-secondary">This entity has no enumerated attributes.</p>
+          } @else if (selectedEntity; as entity) {
+            <h2 class="mb-4 text-base font-semibold">Attribute Permissions: {{ entity.displayName }}</h2>
+
+            <p-table [value]="getAttributeRows(entity)" [scrollable]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Attribute</th>
+                  <th class="text-center" style="width: 80px">View</th>
+                  <th class="text-center" style="width: 80px">Modify</th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-row>
+                <tr>
+                  <td>{{ row.isWildcard ? 'All attributes (*)' : row.label }}</td>
+                  <td class="text-center">
+                    <p-checkbox
+                      [binary]="true"
+                      [ngModel]="isGranted(row.target, 'VIEW')"
+                      [disabled]="isPending(row.target, 'VIEW') || (!row.isWildcard && isWildcardGranted(entity.code, 'VIEW'))"
+                      (onChange)="togglePermission('ATTRIBUTE', row.target, 'VIEW', !!$event.checked)"
+                    />
+                  </td>
+                  <td class="text-center">
+                    <p-checkbox
+                      [binary]="true"
+                      [ngModel]="isGranted(row.target, 'EDIT')"
+                      [disabled]="isPending(row.target, 'EDIT') || (!row.isWildcard && isWildcardGranted(entity.code, 'EDIT'))"
+                      (onChange)="togglePermission('ATTRIBUTE', row.target, 'EDIT', !!$event.checked)"
+                    />
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          }
+        </div>
+      </ng-template>
+    </p-splitter>
+  }
+</div>
