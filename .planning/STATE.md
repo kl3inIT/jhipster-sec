@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 05-02-PLAN.md
-last_updated: "2026-03-21T18:06:12.998Z"
+stopped_at: Completed 05-07-PLAN.md
+last_updated: "2026-03-21T19:39:38.878Z"
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 20
-  completed_plans: 17
+  total_plans: 24
+  completed_plans: 21
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 05 (standalone-frontend-delivery) — EXECUTING
-Plan: 3 of 5
+Plan: 7 of 9
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Plan: 3 of 5
 | Phase 04 P04 | 24 | 2 tasks | 6 files |
 | Phase 05 P01 | 11 | 2 tasks | 6 files |
 | Phase 05 P02 | 11 | 3 tasks | 53 files |
+| Phase 05 P07 | resumed | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,8 @@ Recent decisions affecting current work:
 - [Phase 05-01]: authorityName filter uses null/blank check — empty string treated as no-filter to prevent accidental empty-result queries
 - [Phase 05]: Angular 21 uses vitest (not Karma) via @angular/build:unit-test; test commands use ng test --watch=false without --browsers flag
 - [Phase 05]: ErrorHandlerInterceptor simplified to console.warn; NotificationInterceptor simplified - EventManager/AlertService not yet wired
+- [Phase 05]: Capability payloads derive from SecuredEntityCatalog plus JPA metamodel enumeration. — Keeps organization, department, and employee gating aligned with the secured entity allowlist and backend attribute names.
+- [Phase 05]: Frontend entity screens will reuse one cached capability response via shareReplay(1). — List, detail, and update screens can gate from one authenticated capability fetch instead of refetching per component.
 
 ### Pending Todos
 
@@ -112,6 +115,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T18:06:12.994Z
-Stopped at: Completed 05-02-PLAN.md
+Last session: 2026-03-21T19:39:38.873Z
+Stopped at: Completed 05-07-PLAN.md
 Resume file: None
