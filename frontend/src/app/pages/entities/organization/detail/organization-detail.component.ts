@@ -3,7 +3,9 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
+import { take } from 'rxjs';
 
+import { SecuredEntityCapabilityService } from '../../shared/service/secured-entity-capability.service';
 import { IOrganization } from '../organization.model';
 import { OrganizationService } from '../service/organization.service';
 
@@ -15,12 +17,16 @@ import { OrganizationService } from '../service/organization.service';
 })
 export default class OrganizationDetailComponent implements OnInit {
   organization = signal<IOrganization | null>(null);
+  capabilityLoaded = signal(false);
+  canUpdate = signal(false);
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly organizationService = inject(OrganizationService);
+  private readonly securedEntityCapabilityService = inject(SecuredEntityCapabilityService);
 
   ngOnInit(): void {
+    this.loadCapability();
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -43,4 +49,21 @@ export default class OrganizationDetailComponent implements OnInit {
   edit(org: IOrganization): void {
     this.router.navigate(['/entities/organization', org.id, 'edit']);
   }
+
+  private loadCapability(): void {
+    this.securedEntityCapabilityService
+      .getEntityCapability('organization')
+      .pipe(take(1))
+      .subscribe({
+        next: capability => {
+          this.canUpdate.set(capability?.canUpdate ?? false);
+          this.capabilityLoaded.set(true);
+        },
+        error: () => {
+          this.canUpdate.set(false);
+          this.capabilityLoaded.set(true);
+        },
+      });
+  }
 }
+
