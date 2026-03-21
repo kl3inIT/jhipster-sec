@@ -194,4 +194,10 @@
         </insert>
     </changeSet>
 
+    <changeSet id="20260321000800-2" author="dev" dbms="postgresql">
+        <!-- Advance the sequence past all seed IDs so Hibernate-generated IDs do not collide.
+             Seed data uses IDs up to 1102; restart at 2000 to be safe. -->
+        <sql>ALTER SEQUENCE sequence_generator RESTART WITH 2000</sql>
+    </changeSet>
+
 </databaseChangeLog>

@@ -161,6 +161,51 @@ class SecPermissionAdminResourceIT {
     }
 
     @Test
+    void getAllPermissions_filterByAuthorityName() throws Exception {
+        secPermissionRepository.saveAndFlush(
+            new SecPermission().authorityName(AuthoritiesConstants.ADMIN).targetType(TargetType.ENTITY).target("OrganizationFilter").action("READ").effect("ALLOW")
+        );
+        secPermissionRepository.saveAndFlush(
+            new SecPermission().authorityName(AuthoritiesConstants.USER).targetType(TargetType.ENTITY).target("OrganizationFilterUser").action("READ").effect("ALLOW")
+        );
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL + "?authorityName=" + AuthoritiesConstants.ADMIN))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$[*].authorityName").value(org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is(AuthoritiesConstants.ADMIN))))
+            .andExpect(jsonPath("$[*].authorityName").value(org.hamcrest.Matchers.not(org.hamcrest.Matchers.hasItem(AuthoritiesConstants.USER))));
+    }
+
+    @Test
+    void getAllPermissions_noFilterReturnsAll() throws Exception {
+        secPermissionRepository.saveAndFlush(
+            new SecPermission().authorityName(AuthoritiesConstants.ADMIN).targetType(TargetType.ENTITY).target("OrganizationAll1").action("READ").effect("ALLOW")
+        );
+        secPermissionRepository.saveAndFlush(
+            new SecPermission().authorityName(AuthoritiesConstants.USER).targetType(TargetType.ENTITY).target("OrganizationAll2").action("READ").effect("ALLOW")
+        );
+
+        int filteredCount = restMockMvc
+            .perform(get(ENTITY_API_URL + "?authorityName=" + AuthoritiesConstants.ADMIN))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString()
+            .split("authorityName").length - 1;
+
+        String allResponse = restMockMvc
+            .perform(get(ENTITY_API_URL))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        int totalCount = allResponse.split("authorityName").length - 1;
+        org.assertj.core.api.Assertions.assertThat(totalCount).isGreaterThanOrEqualTo(filteredCount);
+    }
+
+    @Test
     void testCreatePermissionWithInvalidData() throws Exception {
         SecPermissionDTO dto = createPermissionDto();
         dto.setTarget(" ");

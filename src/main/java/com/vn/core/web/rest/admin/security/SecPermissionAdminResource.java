@@ -77,14 +77,20 @@ public class SecPermissionAdminResource {
     }
 
     /**
-     * {@code GET /api/admin/sec/permissions} : Get all permissions.
+     * {@code GET /api/admin/sec/permissions} : Get all permissions, optionally filtered by authority name.
      *
+     * @param authorityName optional role name to filter by (e.g. "ROLE_ADMIN").
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of permissions.
      */
     @GetMapping("")
-    public ResponseEntity<List<SecPermissionDTO>> getAllPermissions() {
-        LOG.debug("REST request to get all SecPermissions");
-        List<SecPermissionDTO> permissions = secPermissionMapper.toDto(secPermissionRepository.findAll());
+    public ResponseEntity<List<SecPermissionDTO>> getAllPermissions(@RequestParam(required = false) String authorityName) {
+        LOG.debug("REST request to get all SecPermissions, authorityName={}", authorityName);
+        List<SecPermissionDTO> permissions;
+        if (authorityName != null && !authorityName.isBlank()) {
+            permissions = secPermissionMapper.toDto(secPermissionRepository.findByAuthorityName(authorityName));
+        } else {
+            permissions = secPermissionMapper.toDto(secPermissionRepository.findAll());
+        }
         return ResponseEntity.ok(permissions);
     }
 
