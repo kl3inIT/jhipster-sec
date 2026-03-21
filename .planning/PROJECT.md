@@ -16,6 +16,9 @@ Security rules must be enforced correctly in the data access layer so frontend a
 - existing: Admin user and authority management APIs already exist in the current backend
 - existing: Email-based activation and password-reset support already exists
 - existing: PostgreSQL- and Liquibase-backed Spring Boot/JHipster security service is already running in this repository
+- AUTH-02: Password change validation and account lifecycle edge cases locked in via regression tests (Validated in Phase 01: identity-and-authority-baseline)
+- AUTH-03: Non-admin access denials (403) for admin user and authority endpoints locked in via regression tests (Validated in Phase 01: identity-and-authority-baseline)
+- SEC-04: SecurityContextBridge interface and JHipsterSecurityContextBridge implementation established as the integration seam for Phase 2's security engine (Validated in Phase 01: identity-and-authority-baseline)
 
 ### Active
 
@@ -77,5 +80,5 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-21 after initialization*
+*Last updated: 2026-03-21 after Phase 01 (identity-and-authority-baseline) complete*
 
