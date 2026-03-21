@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260321000600-1" author="dev">
+        <createTable tableName="proof_department">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_proof_department"/>
+            </column>
+            <column name="code" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cost_center" type="varchar(100)"/>
+            <column name="organization_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="proof_department" columnNames="code" constraintName="ux_proof_department_code"/>
+        <addForeignKeyConstraint
+            baseTableName="proof_department"
+            baseColumnNames="organization_id"
+            constraintName="fk_proof_department_organization"
+            referencedTableName="proof_organization"
+            referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

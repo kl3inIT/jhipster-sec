@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260321000700-1" author="dev">
+        <createTable tableName="proof_employee">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_proof_employee"/>
+            </column>
+            <column name="employee_number" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)"/>
+            <column name="salary" type="decimal(21,2)"/>
+            <column name="department_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="proof_employee" columnNames="employee_number" constraintName="ux_proof_employee_number"/>
+        <addForeignKeyConstraint
+            baseTableName="proof_employee"
+            baseColumnNames="department_id"
+            constraintName="fk_proof_employee_department"
+            referencedTableName="proof_department"
+            referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

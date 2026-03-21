@@ -16,6 +16,9 @@
     <include file="config/liquibase/changelog/20260321000200_create_sec_permission.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260321000300_create_sec_row_policy.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260321000400_seed_security_roles.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260321000500_create_proof_organization.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260321000600_create_proof_department.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260321000700_create_proof_employee.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->

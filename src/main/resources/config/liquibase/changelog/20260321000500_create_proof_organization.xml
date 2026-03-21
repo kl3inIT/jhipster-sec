@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260321000500-1" author="dev">
+        <createTable tableName="proof_organization">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_proof_organization"/>
+            </column>
+            <column name="code" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_login" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="budget" type="decimal(21,2)"/>
+        </createTable>
+
+        <addUniqueConstraint tableName="proof_organization" columnNames="code" constraintName="ux_proof_organization_code"/>
+    </changeSet>
+
+</databaseChangeLog>
