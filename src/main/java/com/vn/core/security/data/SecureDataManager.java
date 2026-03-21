@@ -1,0 +1,32 @@
+package com.vn.core.security.data;
+
+import java.util.Map;
+import org.springframework.data.domain.Page;
+
+/**
+ * Central entry point for security-enforced data access.
+ * All CRUD operations on protected entities must go through this interface.
+ */
+public interface SecureDataManager {
+    /**
+     * Load a page of entities matching the query, serialized per the requested fetch plan.
+     * CRUD, row-level, and attribute checks are applied before data is returned.
+     */
+    <T> Page<Map<String, Object>> loadByQuery(SecuredLoadQuery query);
+
+    /**
+     * Save (create or update) an entity from a payload map, enforcing attribute-level write guards.
+     *
+     * @param entityCode    logical code of the entity type
+     * @param id            entity id for updates; null for new records
+     * @param attributes    field values to apply
+     * @param fetchPlanCode fetch plan to use when serializing the saved entity for the response
+     * @return serialized entity after save
+     */
+    <T> Map<String, Object> save(String entityCode, Object id, Map<String, Object> attributes, String fetchPlanCode);
+
+    /**
+     * Delete an entity by code and id, after confirming delete permission.
+     */
+    void delete(String entityCode, Object id);
+}
