@@ -33,6 +33,13 @@ public class Authority implements Serializable, Persistable<String> {
     @Transient
     private boolean isPersisted;
 
+    @Column(name = "display_name", length = 255)
+    private String displayName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, length = 20)
+    private RoleType type = RoleType.RESOURCE;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public String getName() {
@@ -71,6 +78,32 @@ public class Authority implements Serializable, Persistable<String> {
         return this;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public Authority displayName(String displayName) {
+        this.setDisplayName(displayName);
+        return this;
+    }
+
+    public RoleType getType() {
+        return type;
+    }
+
+    public void setType(RoleType type) {
+        this.type = type;
+    }
+
+    public Authority type(RoleType type) {
+        this.setType(type);
+        return this;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -94,6 +127,8 @@ public class Authority implements Serializable, Persistable<String> {
     public String toString() {
         return "Authority{" +
             "name=" + getName() +
+            ", displayName='" + getDisplayName() + "'" +
+            ", type='" + getType() + "'" +
             "}";
     }
 }
