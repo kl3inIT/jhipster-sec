@@ -90,9 +90,9 @@ Plans:
   2. User can log in from the standalone frontend and the app handles authenticated state, route protection, and expected 401/403/404 flows correctly.
   3. Admin can manage merged roles, permission rules, and row policies from the frontend end to end.
   4. Sample protected-entity screens show only the actions and fields the current user is allowed to access.
-**Plans:** 5 plans
+**Plans:** 1/5 plans executed
 Plans:
-- [ ] 05-01-PLAN.md — Backend gaps: catalog endpoint and permission filter for matrix UI
+- [x] 05-01-PLAN.md — Backend gaps: catalog endpoint and permission filter for matrix UI
 - [ ] 05-02-PLAN.md — Angular scaffold, auth core, layout, login, error pages, dashboard stub
 - [ ] 05-03-PLAN.md — Protected entity screens: Organization, Department, Employee
 - [ ] 05-04-PLAN.md — Security admin: roles list/dialog, row policies list/dialog, shared services
@@ -106,4 +106,4 @@ Plans:
 | 2. Security Metadata Management | 4/4 | Complete   | 2026-03-21 |
 | 3. Secure Enforcement Core | 5/5 | Complete   | 2026-03-21 |
 | 4. Protected Entity Proof | 4/4 | Complete   | 2026-03-21 |
-| 5. Standalone Frontend Delivery | 0/5 | In progress | - |
+| 5. Standalone Frontend Delivery | 1/5 | In Progress|  |

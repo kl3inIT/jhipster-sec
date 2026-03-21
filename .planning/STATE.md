@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Phase 5 UI-SPEC approved
-last_updated: "2026-03-21T17:13:35.430Z"
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-21T18:04:24.754Z"
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 15
-  completed_plans: 15
+  total_plans: 20
+  completed_plans: 16
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
-**Current focus:** Phase 05 - standalone-frontend-delivery
+**Current focus:** Phase 05 — standalone-frontend-delivery
 
 ## Current Position
 
-Phase: 05 (standalone-frontend-delivery) - READY TO PLAN
-Plan: 0 of TBD
+Phase: 05 (standalone-frontend-delivery) — EXECUTING
+Plan: 2 of 5
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Plan: 0 of TBD
 | Phase 04 P02 | 32 | 2 tasks | 11 files |
 | Phase 04 P03 | 5 | 2 tasks | 6 files |
 | Phase 04 P04 | 24 | 2 tasks | 6 files |
+| Phase 05 P01 | 11 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -95,6 +96,8 @@ Recent decisions affecting current work:
 - [Phase 03-05]: RowLevelSpecificationBuilder uses lambda no-op spec instead of Specification.where(null) - Java 25 added ambiguous overload and null-check enforcement
 - [Phase 04-04]: `TechnicalStructureTest` ignores `com.vn.core.security.catalog.SecuredEntity` so proof entity opt-in annotations do not violate the domain-layer ArchUnit rule
 - [Phase 04-04]: `LiquibaseConfiguration` must honor `LiquibaseProperties.changeLog` so tests can use a dedicated `test-master.xml` overlay for proof security fixtures
+- [Phase 05-01]: Attribute enumeration uses EntityManager.getMetamodel() sorted alphabetically — avoids reflection on entity class
+- [Phase 05-01]: authorityName filter uses null/blank check — empty string treated as no-filter to prevent accidental empty-result queries
 
 ### Pending Todos
 
@@ -106,6 +109,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T17:13:35.426Z
-Stopped at: Phase 5 UI-SPEC approved
-Resume file: .planning/phases/05-standalone-frontend-delivery/05-UI-SPEC.md
+Last session: 2026-03-21T18:04:24.750Z
+Stopped at: Completed 05-01-PLAN.md
+Resume file: None

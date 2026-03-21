@@ -37,7 +37,7 @@ Requirements for the first migration milestone. Each will be mapped to a roadmap
 ### Frontend Experience
 
 - [ ] **UI-01**: A standalone Angular app exists under `frontend/` and follows the `aef-main/aef-main` structure direction
-- [ ] **UI-02**: The frontend provides end-to-end role, permission, and row-policy management screens
+- [x] **UI-02**: The frontend provides end-to-end role, permission, and row-policy management screens
 - [ ] **UI-03**: The frontend handles authentication state, route protection, and expected 401/403/404 flows correctly
 
 ## v2 Requirements
@@ -82,7 +82,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENT-02 | Phase 4 | Pending |
 | ENT-03 | Phase 5 | Pending |
 | UI-01 | Phase 5 | Pending |
-| UI-02 | Phase 5 | Pending |
+| UI-02 | Phase 5 | Complete |
 | UI-03 | Phase 5 | Pending |
 
 **Coverage:**
