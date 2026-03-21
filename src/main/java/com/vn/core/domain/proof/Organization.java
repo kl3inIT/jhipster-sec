@@ -1,5 +1,6 @@
 package com.vn.core.domain.proof;
 
+import com.vn.core.security.catalog.SecuredEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,6 +13,7 @@ import java.util.Set;
 /**
  * Proof organization entity used to exercise secured CRUD and row-level rules.
  */
+@SecuredEntity
 @Entity
 @Table(name = "proof_organization")
 @SuppressWarnings("common-java:DuplicatedBlocks")

@@ -1,5 +1,6 @@
 package com.vn.core.domain.proof;
 
+import com.vn.core.security.catalog.SecuredEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -11,6 +12,7 @@ import java.util.Set;
 /**
  * Proof department entity linked to an organization and its employees.
  */
+@SecuredEntity
 @Entity
 @Table(name = "proof_department")
 @SuppressWarnings("common-java:DuplicatedBlocks")

@@ -1,5 +1,6 @@
 package com.vn.core.domain.proof;
 
+import com.vn.core.security.catalog.SecuredEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 /**
  * Proof employee entity with a sensitive salary field for attribute checks.
  */
+@SecuredEntity
 @Entity
 @Table(name = "proof_employee")
 @SuppressWarnings("common-java:DuplicatedBlocks")
