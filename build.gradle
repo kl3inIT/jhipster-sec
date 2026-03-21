@@ -17,10 +17,10 @@ version = "0.0.1-SNAPSHOT"
 description = ""
 
 java {
-    sourceCompatibility=21
-    targetCompatibility=21
+    sourceCompatibility=25
+    targetCompatibility=25
 }
-assert System.properties["java.specification.version"] == "21" || "25"
+assert System.properties["java.specification.version"] == "25"
 
 repositories {
     mavenCentral()
