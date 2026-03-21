@@ -41,7 +41,12 @@ Plans:
   1. Admin can create, update, list, and delete merged security roles through stable backend contracts.
   2. Admin can create, update, list, and delete permission rules for entity CRUD and attribute view/edit actions through stable backend contracts.
   3. Admin can create, update, list, and delete supported row policies through stable backend contracts.
-**Plans**: TBD
+**Plans:** 4 plans
+Plans:
+- [ ] 02-01-PLAN.md — Liquibase schema evolution, JPA entities, enums, and repositories
+- [ ] 02-02-PLAN.md — DTOs, MapStruct mappers, MergedSecurityService, and MergedSecurityContextBridge
+- [ ] 02-03-PLAN.md — Admin REST controllers (roles, permissions, row policies) and seed data
+- [ ] 02-04-PLAN.md — Integration tests for all three admin endpoints
 
 ### Phase 3: Secure Enforcement Core
 **Goal**: Protected business data is enforced consistently through one security-aware access path using merged permissions, row policies, and fetch plans.
@@ -81,7 +86,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Identity And Authority Baseline | 2/2 | Complete   | 2026-03-21 |
-| 2. Security Metadata Management | 0/TBD | Not started | - |
+| 2. Security Metadata Management | 0/4 | Not started | - |
 | 3. Secure Enforcement Core | 0/TBD | Not started | - |
 | 4. Protected Entity Proof | 0/TBD | Not started | - |
 | 5. Standalone Frontend Delivery | 0/TBD | Not started | - |
