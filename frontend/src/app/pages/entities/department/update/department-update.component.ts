@@ -9,13 +9,13 @@ import { MessageModule } from 'primeng/message';
 import { SelectModule } from 'primeng/select';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { finalize, take } from 'rxjs';
+import { finalize } from 'rxjs';
 
 import { IOrganization } from '../../organization/organization.model';
 import { OrganizationService } from '../../organization/service/organization.service';
 import { IDepartment, NewDepartment } from '../department.model';
 import { DepartmentService } from '../service/department.service';
-import { SecuredEntityCapabilityService } from '../../shared/service/secured-entity-capability.service';
+import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
 
 @Component({
   selector: 'app-department-update',
@@ -40,7 +40,6 @@ export default class DepartmentUpdateComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly departmentService = inject(DepartmentService);
   private readonly organizationService = inject(OrganizationService);
-  private readonly securedEntityCapabilityService = inject(SecuredEntityCapabilityService);
   private readonly messageService = inject(MessageService);
 
   form: FormGroup = this.fb.group({
@@ -65,35 +64,26 @@ export default class DepartmentUpdateComponent implements OnInit {
       } else {
         this.isEdit.set(false);
       }
-      this.loadCapability(idParam);
+
+      const capability = (this.route.snapshot.data['capability'] ?? null) as ISecuredEntityCapability | null;
+
+      if (!capability) {
+        this.navigateToAccessDenied();
+        return;
+      }
+
+      if (idParam ? !capability.canUpdate : !capability.canCreate) {
+        this.navigateToAccessDenied();
+        return;
+      }
+
+      this.loadOrganizations();
+      this.isCapabilityReady.set(true);
+
+      if (idParam) {
+        this.load(Number(idParam));
+      }
     });
-  }
-
-  private loadCapability(idParam: string | null): void {
-    this.securedEntityCapabilityService
-      .getEntityCapability('department')
-      .pipe(take(1))
-      .subscribe({
-        next: capability => {
-          if (!capability) {
-            this.navigateToAccessDenied();
-            return;
-          }
-
-          if (idParam ? !capability.canUpdate : !capability.canCreate) {
-            this.navigateToAccessDenied();
-            return;
-          }
-
-          this.loadOrganizations();
-          this.isCapabilityReady.set(true);
-
-          if (idParam) {
-            this.load(Number(idParam));
-          }
-        },
-        error: () => this.navigateToAccessDenied(),
-      });
   }
 
   private loadOrganizations(): void {

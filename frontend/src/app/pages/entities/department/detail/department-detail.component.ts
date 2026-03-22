@@ -3,9 +3,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { take } from 'rxjs';
 
-import { SecuredEntityCapabilityService } from '../../shared/service/secured-entity-capability.service';
+import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
 import { IDepartment } from '../department.model';
 import { DepartmentService } from '../service/department.service';
 
@@ -24,10 +23,19 @@ export default class DepartmentDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly departmentService = inject(DepartmentService);
-  private readonly securedEntityCapabilityService = inject(SecuredEntityCapabilityService);
 
   ngOnInit(): void {
-    this.loadCapability();
+    const capability = (this.route.snapshot.data['capability'] ?? null) as ISecuredEntityCapability | null;
+    this.canUpdate.set(capability?.canUpdate ?? false);
+    if (capability?.attributes) {
+      const vis: Record<string, boolean> = {};
+      for (const attr of capability.attributes) {
+        vis[attr.name] = attr.canView;
+      }
+      this.fieldVisibility.set(vis);
+    }
+    this.capabilityLoaded.set(true);
+
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -57,28 +65,5 @@ export default class DepartmentDetailComponent implements OnInit {
     }
     const vis = this.fieldVisibility();
     return vis[fieldName] !== false;
-  }
-
-  private loadCapability(): void {
-    this.securedEntityCapabilityService
-      .getEntityCapability('department')
-      .pipe(take(1))
-      .subscribe({
-        next: capability => {
-          this.canUpdate.set(capability?.canUpdate ?? false);
-          if (capability?.attributes) {
-            const vis: Record<string, boolean> = {};
-            for (const attr of capability.attributes) {
-              vis[attr.name] = attr.canView;
-            }
-            this.fieldVisibility.set(vis);
-          }
-          this.capabilityLoaded.set(true);
-        },
-        error: () => {
-          this.canUpdate.set(false);
-          this.capabilityLoaded.set(true);
-        },
-      });
   }
 }
