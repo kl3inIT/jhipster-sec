@@ -3,12 +3,12 @@ status: partial
 phase: 05-standalone-frontend-delivery
 source: [05-VERIFICATION.md]
 started: 2026-03-21T20:17:37.2052960Z
-updated: 2026-03-23T00:00:00.000Z
+updated: 2026-03-23T02:30:00.000Z
 ---
 
 ## Current Test
 
-[testing paused — Test 3 awaiting manual human verification]
+[testing complete — diagnosing issues]
 
 ## Tests
 
@@ -33,40 +33,106 @@ retest_result: pass
 
 ### 3. Protected-entity gating across proof roles
 expected: Reader, editor, and none users see different actions and sensitive fields, and denied create or edit routes land on /accessdenied before form controls render.
-result: pending
-automated_result: |
-  Playwright E2E suite added (frontend/e2e/proof-role-gating.spec.ts) — 6/6 tests pass:
-  - READER: org list shows no New/Edit/Delete buttons ✓
-  - READER: /entities/organization/new redirects to /accessdenied ✓
-  - EDITOR: org list shows New Organization button ✓
-  - EDITOR: /entities/organization/new renders form without redirect ✓
-  - NONE: org list shows no buttons ✓
-  - NONE: /entities/organization/new redirects to /accessdenied ✓
-manual_check_accounts: |
-  Three persistent test accounts created in dev DB for human verification:
+result: issue
+reported: "issue when i click to logout it lag and dont logout for me (i must to reload page) and why it take so long to show action column and attribute permission dont work correct i still can see code (i dont has permission) and modify name (i dont has permission)"
+severity: major
+screenshot_evidence: |
+  - proof-reader logged in can see Code field (197850) on org detail view despite READ=false
+  - Edit button visible on org detail view for proof-reader (no Update permission)
+  - ROLE_USER permission matrix shows code has no Read/Edit checked yet code displays
 
-  proof-reader / Test1234! — ROLE_PROOF_READER
-    1. Organizations list loads, no New/Edit/Delete buttons visible
-    2. Navigate to /entities/organization/new → Access Denied page
+issues_diagnosed:
+  - id: A
+    label: logout-lag
+    root_cause: |
+      app.topbar.ts:41 calls router.navigate(['']) after logout, which hits the guarded home route.
+      canActivate fires UserRouteAccessService → accountService.identity() → GET /api/account (401) →
+      catchError null → navigate ['/login'] → LoginComponent.ngOnInit fires identity() again (second 401).
+      Two sequential server round-trips before login page renders. Fix: navigate(['/login']) directly.
+    file: frontend/src/app/layout/component/topbar/app.topbar.ts:41
 
-  proof-editor / Test1234! — ROLE_PROOF_EDITOR
-    1. Organizations list shows "New Organization" button
-    2. Click New Organization → form opens (not redirected)
-    3. Budget field is absent from the form (attribute EDIT denied)
+  - id: B
+    label: action-column-slow
+    root_cause: |
+      Action column visibility is gated on canUpdate() signal populated by SecuredEntityCapabilityService.
+      Service is root-scoped with shareReplay(1) cache. On first load after a login (or cache miss)
+      it fires GET /api/... capability request before revealing buttons. No optimistic/skeleton state.
+    file: frontend/src/app/pages/entities/shared/service/secured-entity-capability.service.ts:14-20
 
-  proof-none / Test1234! — ROLE_PROOF_NONE
-    1. Organizations list: no rows, no buttons
-    2. Navigate to /entities/organization/new → Access Denied page
+  - id: C
+    label: attribute-read-permission-not-enforced
+    root_cause: |
+      Three compounding bugs:
+      1. Backend permissive-default: AttributePermissionEvaluatorImpl.checkAttributePermission() returns
+         true when no records found (line 53: if perms.isEmpty() return true). The matrix only stores
+         GRANT records — unchecking deletes the GRANT but never creates a DENY. So no records = canView=true.
+      2. Frontend detail component: organization-detail.component.ts:53-67 loadCapability() reads only
+         canUpdate from the capabilities response and discards the entire attributes array. No field-level
+         signals exist in the component.
+      3. Template has no guards: each field block renders unconditionally — no @if (canViewField('code')).
+    files:
+      - src/main/java/com/vn/core/security/permission/AttributePermissionEvaluatorImpl.java:53
+      - frontend/src/app/pages/entities/organization/detail/organization-detail.component.ts:53-67
+      - frontend/src/app/pages/entities/organization/detail/organization-detail.component.html:11-14
+
+  - id: D
+    label: edit-button-visible-for-reader
+    root_cause: |
+      SecuredEntityCapabilityService is providedIn: root with shareReplay(1) cache that is never cleared
+      on auth change. If an admin session populated canUpdate=true for organization, then the same Angular
+      runtime (SPA navigation or dev hot-reload) reuses that cached observable for proof-reader, causing
+      canUpdate() = true and the Edit button to render.
+    file: frontend/src/app/pages/entities/shared/service/secured-entity-capability.service.ts:14-20
 
 ## Summary
 
 total: 3
-passed: 2
-issues: 0
-pending: 1
+passed: 1
+issues: 2
+pending: 0
 skipped: 0
 blocked: 0
 
 ## Gaps
 
-[none — all diagnosed gaps resolved]
+- truth: "Attribute read permissions are enforced: fields with READ=false are hidden from detail and list views"
+  status: failed
+  reason: "User reported: code field (READ=false) visible on org detail view for proof-reader"
+  severity: major
+  test: 3
+  issue_id: C
+  root_cause: "Backend permissive-default evaluator + frontend detail component discards capability.attributes + no @if guards on field blocks"
+  fix:
+    - "Change AttributePermissionEvaluatorImpl to deny-default (return false when no records found)"
+    - "In organization-detail.component.ts loadCapability(), build canViewField/canEditField maps from capability.attributes"
+    - "Add @if(canViewField('code')), @if(canViewField('name')) etc. guards to each field in the detail template"
+
+- truth: "Entity-level permissions gate action buttons: proof-reader sees no Edit/Delete buttons"
+  status: failed
+  reason: "User reported: Edit button visible on org detail view while logged in as proof-reader"
+  severity: major
+  test: 3
+  issue_id: D
+  root_cause: "Root-scoped SecuredEntityCapabilityService cache never cleared on auth change — stale admin capabilities served to proof-reader"
+  fix:
+    - "In SecuredEntityCapabilityService, subscribe to AccountService auth events and reset cache on login/logout"
+
+- truth: "Logout completes immediately without requiring page reload"
+  status: failed
+  reason: "User reported: logout lags and does not complete, must reload page"
+  severity: major
+  test: 3
+  issue_id: A
+  root_cause: "app.topbar.ts:41 navigates to [''] (guarded home route) after logout, triggering 2 sequential /api/account 401 round-trips"
+  fix:
+    - "Change router.navigate(['']) to router.navigate(['/login']) in app.topbar.ts:41"
+
+- truth: "Action column renders promptly without noticeable delay"
+  status: failed
+  reason: "User reported: action column takes too long to show"
+  severity: minor
+  test: 3
+  issue_id: B
+  root_cause: "Action buttons gated on capability fetch completing; no skeleton/loading state while request in-flight"
+  fix:
+    - "Show skeleton buttons or spinner while capability loads; reveal immediately after response"
