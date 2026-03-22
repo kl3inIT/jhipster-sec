@@ -56,7 +56,7 @@ export default class PermissionMatrixComponent implements OnInit {
       catalogEntries: this.catalogService.query(),
       permissions: this.permissionService.query(this.roleName),
     })
-      .pipe(finalize(() => { this.loading = false; this.cdr.markForCheck(); }))
+      .pipe(finalize(() => { this.loading = false; this.cdr.detectChanges(); }))
       .subscribe({
         next: ({ catalogEntries, permissions }) => {
           this.catalogEntries = catalogEntries;
@@ -79,6 +79,7 @@ export default class PermissionMatrixComponent implements OnInit {
 
   onEntitySelect(entry: ISecCatalogEntry): void {
     this.selectedEntity = entry;
+    this.cdr.detectChanges();
   }
 
   isGranted(target: string, action: string): boolean {
@@ -114,6 +115,7 @@ export default class PermissionMatrixComponent implements OnInit {
 
     if (checked) {
       this.granted.set(key, -1);
+      this.cdr.detectChanges();
       const permission: ISecPermission = {
         authorityName: this.roleName,
         targetType,
@@ -131,13 +133,13 @@ export default class PermissionMatrixComponent implements OnInit {
             this.granted.delete(key);
           }
           this.pending.delete(key);
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         },
         error: () => {
           this.granted.delete(key);
           this.pending.delete(key);
           this.showSaveError();
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         },
       });
       return;
@@ -150,16 +152,17 @@ export default class PermissionMatrixComponent implements OnInit {
     }
 
     this.granted.delete(key);
+    this.cdr.detectChanges();
     this.permissionService.delete(permissionId).subscribe({
       next: () => {
         this.pending.delete(key);
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       },
       error: () => {
         this.granted.set(key, permissionId);
         this.pending.delete(key);
         this.showSaveError();
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       },
     });
   }
