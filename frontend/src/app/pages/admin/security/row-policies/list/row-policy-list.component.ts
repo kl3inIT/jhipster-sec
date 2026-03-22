@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 
 import { ButtonModule } from 'primeng/button';
@@ -18,6 +18,7 @@ import RowPolicyDialogComponent from '../dialog/row-policy-dialog.component';
   imports: [ButtonModule, TableModule, CardModule, ToastModule, ConfirmDialogModule, RowPolicyDialogComponent],
   providers: [ConfirmationService, MessageService],
   templateUrl: './row-policy-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class RowPolicyListComponent implements OnInit {
   rowPolicies: ISecRowPolicy[] = [];
@@ -28,6 +29,7 @@ export default class RowPolicyListComponent implements OnInit {
   private readonly secRowPolicyService = inject(SecRowPolicyService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.loadPolicies();
@@ -37,7 +39,7 @@ export default class RowPolicyListComponent implements OnInit {
     this.isLoading = true;
     this.secRowPolicyService
       .query()
-      .pipe(finalize(() => (this.isLoading = false)))
+      .pipe(finalize(() => { this.isLoading = false; this.cdr.markForCheck(); }))
       .subscribe({
         next: response => (this.rowPolicies = response.body ?? []),
         error: () => {

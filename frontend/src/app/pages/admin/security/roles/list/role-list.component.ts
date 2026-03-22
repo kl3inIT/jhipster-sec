@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
@@ -20,6 +20,7 @@ import RoleDialogComponent from '../dialog/role-dialog.component';
   imports: [RouterModule, ButtonModule, TableModule, CardModule, ToastModule, ConfirmDialogModule, TagModule, RoleDialogComponent],
   providers: [ConfirmationService, MessageService],
   templateUrl: './role-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class RoleListComponent implements OnInit {
   roles: ISecRole[] = [];
@@ -30,6 +31,7 @@ export default class RoleListComponent implements OnInit {
   private readonly secRoleService = inject(SecRoleService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.loadRoles();
@@ -39,7 +41,7 @@ export default class RoleListComponent implements OnInit {
     this.isLoading = true;
     this.secRoleService
       .query()
-      .pipe(finalize(() => (this.isLoading = false)))
+      .pipe(finalize(() => { this.isLoading = false; this.cdr.markForCheck(); }))
       .subscribe({
         next: response => (this.roles = response.body ?? []),
         error: () => {

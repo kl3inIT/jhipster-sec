@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { forkJoin, finalize } from 'rxjs';
@@ -29,12 +29,14 @@ interface AttributeRow {
   imports: [CommonModule, RouterModule, FormsModule, ButtonModule, CheckboxModule, ProgressSpinnerModule, SplitterModule, TableModule, ToastModule],
   providers: [MessageService],
   templateUrl: './permission-matrix.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class PermissionMatrixComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly catalogService = inject(SecCatalogService);
   private readonly permissionService = inject(SecPermissionService);
   private readonly messageService = inject(MessageService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   roleName = '';
   catalogEntries: ISecCatalogEntry[] = [];
@@ -55,7 +57,7 @@ export default class PermissionMatrixComponent implements OnInit {
       catalogEntries: this.catalogService.query(),
       permissions: this.permissionService.query(this.roleName),
     })
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(finalize(() => { this.loading = false; this.cdr.markForCheck(); }))
       .subscribe({
         next: ({ catalogEntries, permissions }) => {
           this.catalogEntries = catalogEntries;
@@ -130,11 +132,13 @@ export default class PermissionMatrixComponent implements OnInit {
             this.granted.delete(key);
           }
           this.pending.delete(key);
+          this.cdr.markForCheck();
         },
         error: () => {
           this.granted.delete(key);
           this.pending.delete(key);
           this.showSaveError();
+          this.cdr.markForCheck();
         },
       });
       return;
@@ -150,11 +154,13 @@ export default class PermissionMatrixComponent implements OnInit {
     this.permissionService.delete(permissionId).subscribe({
       next: () => {
         this.pending.delete(key);
+        this.cdr.markForCheck();
       },
       error: () => {
         this.granted.set(key, permissionId);
         this.pending.delete(key);
         this.showSaveError();
+        this.cdr.markForCheck();
       },
     });
   }
