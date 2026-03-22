@@ -11,6 +11,7 @@ import { MessageModule } from 'primeng/message';
 
 import { AuthServerProvider } from 'app/core/auth/auth-jwt.service';
 import { AccountService } from 'app/core/auth/account.service';
+import { SecuredEntityCapabilityService } from 'app/pages/entities/shared/service/secured-entity-capability.service';
 
 @Component({
   selector: 'app-login',
@@ -42,6 +43,7 @@ export default class LoginComponent implements OnInit, AfterViewInit {
   private readonly accountService = inject(AccountService);
   private readonly authServerProvider = inject(AuthServerProvider);
   private readonly router = inject(Router);
+  private readonly capabilityService = inject(SecuredEntityCapabilityService);
 
   ngOnInit(): void {
     this.accountService.identity().subscribe(() => {
@@ -60,6 +62,7 @@ export default class LoginComponent implements OnInit, AfterViewInit {
       next: () => {
         this.authenticationError.set(false);
         this.accountService.identity(true).subscribe(() => {
+          this.capabilityService.query().subscribe();
           if (!this.router.getCurrentNavigation()) {
             this.router.navigate(['']);
           }
