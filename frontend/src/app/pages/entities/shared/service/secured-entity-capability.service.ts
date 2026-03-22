@@ -4,14 +4,22 @@ import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
+import { AccountService } from 'app/core/auth/account.service';
 import { ISecuredEntityCapability } from '../secured-entity-capability.model';
 
 @Injectable({ providedIn: 'root' })
 export class SecuredEntityCapabilityService {
   private readonly resourceUrl = inject(ApplicationConfigService).getEndpointFor('api/security/entity-capabilities');
   private readonly http = inject(HttpClient);
+  private readonly accountService = inject(AccountService);
 
   private cachedCapabilities$?: Observable<ISecuredEntityCapability[]>;
+
+  constructor() {
+    this.accountService.getAuthenticationState().subscribe(() => {
+      this.cachedCapabilities$ = undefined;
+    });
+  }
 
   query(): Observable<ISecuredEntityCapability[]> {
     if (!this.cachedCapabilities$) {
