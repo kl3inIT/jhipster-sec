@@ -9,14 +9,13 @@ import { MessageModule } from 'primeng/message';
 import { SelectModule } from 'primeng/select';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { finalize, take } from 'rxjs';
+import { finalize } from 'rxjs';
 
 import { IDepartment } from '../../department/department.model';
 import { DepartmentService } from '../../department/service/department.service';
 import { IEmployee, NewEmployee } from '../employee.model';
 import { EmployeeService } from '../service/employee.service';
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
-import { SecuredEntityCapabilityService } from '../../shared/service/secured-entity-capability.service';
 
 @Component({
   selector: 'app-employee-update',
@@ -41,7 +40,6 @@ export default class EmployeeUpdateComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly employeeService = inject(EmployeeService);
   private readonly departmentService = inject(DepartmentService);
-  private readonly securedEntityCapabilityService = inject(SecuredEntityCapabilityService);
   private readonly messageService = inject(MessageService);
 
   form: FormGroup = this.fb.group({
@@ -70,36 +68,27 @@ export default class EmployeeUpdateComponent implements OnInit {
       } else {
         this.isEdit.set(false);
       }
-      this.loadCapability(idParam);
+
+      const capability = (this.route.snapshot.data['capability'] ?? null) as ISecuredEntityCapability | null;
+
+      if (!capability) {
+        this.navigateToAccessDenied();
+        return;
+      }
+
+      if (idParam ? !capability.canUpdate : !capability.canCreate) {
+        this.navigateToAccessDenied();
+        return;
+      }
+
+      this.showSalaryField.set(this.canEditAttribute(capability, 'salary'));
+      this.loadDepartments();
+      this.isCapabilityReady.set(true);
+
+      if (idParam) {
+        this.load(Number(idParam));
+      }
     });
-  }
-
-  private loadCapability(idParam: string | null): void {
-    this.securedEntityCapabilityService
-      .getEntityCapability('employee')
-      .pipe(take(1))
-      .subscribe({
-        next: capability => {
-          if (!capability) {
-            this.navigateToAccessDenied();
-            return;
-          }
-
-          if (idParam ? !capability.canUpdate : !capability.canCreate) {
-            this.navigateToAccessDenied();
-            return;
-          }
-
-          this.showSalaryField.set(this.canEditAttribute(capability, 'salary'));
-          this.loadDepartments();
-          this.isCapabilityReady.set(true);
-
-          if (idParam) {
-            this.load(Number(idParam));
-          }
-        },
-        error: () => this.navigateToAccessDenied(),
-      });
   }
 
   private loadDepartments(): void {
