@@ -36,9 +36,8 @@ export class AppTopbar {
   }
 
   logout(): void {
-    this.authServerProvider.logout().subscribe(() => {
-      this.accountService.authenticate(null);
-      this.router.navigate(['/login']);
-    });
+    this.authServerProvider.logout().subscribe();
+    this.accountService.authenticate(null);
+    this.router.navigate(['/login']);
   }
 }

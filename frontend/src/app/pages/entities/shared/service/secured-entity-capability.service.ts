@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { AccountService } from 'app/core/auth/account.service';
@@ -16,9 +16,12 @@ export class SecuredEntityCapabilityService {
   private cachedCapabilities$?: Observable<ISecuredEntityCapability[]>;
 
   constructor() {
-    this.accountService.getAuthenticationState().subscribe(() => {
-      this.cachedCapabilities$ = undefined;
-    });
+    this.accountService
+      .getAuthenticationState()
+      .pipe(distinctUntilChanged((a, b) => a?.login === b?.login))
+      .subscribe(() => {
+        this.cachedCapabilities$ = undefined;
+      });
   }
 
   query(): Observable<ISecuredEntityCapability[]> {
