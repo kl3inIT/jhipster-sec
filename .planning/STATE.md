@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 05-09-PLAN.md
-last_updated: "2026-03-21T20:04:27.847Z"
+stopped_at: Completed 05-10-PLAN.md
+last_updated: "2026-03-22T16:15:34.751Z"
 progress:
   total_phases: 5
   completed_phases: 5
-  total_plans: 24
-  completed_plans: 24
+  total_plans: 25
+  completed_plans: 25
 ---
 
 # Project State
@@ -64,6 +64,7 @@ Plan: 9 of 9
 | Phase 05 P06 | parallel | 2 tasks | 6 files |
 | Phase 05 P08 | parallel | 2 tasks | 14 files |
 | Phase 05 P09 | parallel | 1 tasks | 8 files |
+| Phase 05 P10 | 2 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,7 @@ Recent decisions affecting current work:
 - [Phase 05]: Matrix UI payloads stay on the locked GRANT contract while the backend normalizes to runtime ALLOW and canonical stored targets. — This fixes end-to-end permission enforcement without changing the frontend matrix model from D-23 and D-24.
 - [Phase 05]: Protected-entity actions stay hidden until the shared capability response loads. — List, detail, and update screens should not briefly expose actions before permission state is known.
 - [Phase 05]: Create and edit routes redirect to /accessdenied before rendering forms when capability denies access. — Route-level gating must happen before form controls or sensitive inputs appear on screen.
+- [Phase 05]: Use (ngModelChange) not (onChange) for PrimeNG p-checkbox with binary mode and ngModel binding
 
 ### Pending Todos
 
@@ -121,6 +123,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T20:04:27.844Z
-Stopped at: Completed 05-09-PLAN.md
+Last session: 2026-03-22T16:15:34.747Z
+Stopped at: Completed 05-10-PLAN.md
 Resume file: None
