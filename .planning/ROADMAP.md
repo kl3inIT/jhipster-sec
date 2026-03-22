@@ -90,7 +90,7 @@ Plans:
   2. User can log in from the standalone frontend and the app handles authenticated state, route protection, and expected 401/403/404 flows correctly.
   3. Admin can manage merged roles, permission rules, and row policies from the frontend end to end.
   4. Sample protected-entity screens show only the actions and fields the current user is allowed to access.
-**Plans:** 12 plans (10 complete, 2 gap-closure pending)
+**Plans:** 11/12 plans executed
 Plans:
 - [x] 05-01-PLAN.md — Backend gaps: catalog endpoint and permission filter for matrix UI
 - [x] 05-02-PLAN.md — Angular scaffold, auth core, layout, login, error pages, dashboard stub
@@ -103,7 +103,7 @@ Plans:
 - [x] 05-09-PLAN.md — E2E Playwright tests for capability gating
 - [x] 05-10-PLAN.md — Permission matrix template bug fixes (ngModelChange, @else)
 - [ ] 05-11-PLAN.md — Fix logout lag and capability cache invalidation on auth change
-- [ ] 05-12-PLAN.md — Attribute-level field visibility in detail views and action column loading state
+- [x] 05-12-PLAN.md — Attribute-level field visibility in detail views and action column loading state
 
 ## Progress
 
@@ -113,4 +113,4 @@ Plans:
 | 2. Security Metadata Management | 4/4 | Complete   | 2026-03-21 |
 | 3. Secure Enforcement Core | 5/5 | Complete   | 2026-03-21 |
 | 4. Protected Entity Proof | 4/4 | Complete   | 2026-03-21 |
-| 5. Standalone Frontend Delivery | 10/12 | Gap Closure | - |
+| 5. Standalone Frontend Delivery | 11/12 | In Progress|  |

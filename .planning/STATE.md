@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-stopped_at: Completed 05-10-PLAN.md
-last_updated: "2026-03-22T16:15:34.751Z"
+status: Ready to execute
+stopped_at: Completed 05-12-PLAN.md
+last_updated: "2026-03-22T18:52:27.573Z"
 progress:
   total_phases: 5
-  completed_phases: 5
-  total_plans: 25
-  completed_plans: 25
+  completed_phases: 4
+  total_plans: 27
+  completed_plans: 26
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 05 (standalone-frontend-delivery) — EXECUTING
-Plan: 9 of 9
+Plan: 3 of 12
 
 ## Performance Metrics
 
@@ -65,6 +65,8 @@ Plan: 9 of 9
 | Phase 05 P08 | parallel | 2 tasks | 14 files |
 | Phase 05 P09 | parallel | 1 tasks | 8 files |
 | Phase 05 P10 | 2 | 2 tasks | 1 files |
+| Phase 05-standalone-frontend-delivery P11 | 8 | 1 tasks | 2 files |
+| Phase 05-standalone-frontend-delivery P12 | 5 | 3 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -112,6 +114,10 @@ Recent decisions affecting current work:
 - [Phase 05]: Protected-entity actions stay hidden until the shared capability response loads. — List, detail, and update screens should not briefly expose actions before permission state is known.
 - [Phase 05]: Create and edit routes redirect to /accessdenied before rendering forms when capability denies access. — Route-level gating must happen before form controls or sensitive inputs appear on screen.
 - [Phase 05]: Use (ngModelChange) not (onChange) for PrimeNG p-checkbox with binary mode and ngModel binding
+- [Phase 05-standalone-frontend-delivery]: Navigate to /login explicitly in logout() to skip two 401 round-trips caused by navigating to guarded home route
+- [Phase 05-standalone-frontend-delivery]: Root-scoped services holding per-user caches must subscribe to AccountService.getAuthenticationState() and reset cache on each emission
+- [Phase 05-standalone-frontend-delivery]: AttributePermissionEvaluatorImpl uses deny-default (empty perms = false) because permission matrix stores only GRANT records; empty result means no GRANT was given
+- [Phase 05-standalone-frontend-delivery]: canViewField() uses capabilityLoaded() gate for optimistic display before capability resolves, then applies fieldVisibility map
 
 ### Pending Todos
 
@@ -123,6 +129,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T16:15:34.747Z
-Stopped at: Completed 05-10-PLAN.md
+Last session: 2026-03-22T18:52:27.567Z
+Stopped at: Completed 05-12-PLAN.md
 Resume file: None
