@@ -115,6 +115,8 @@ spring:
     jpa:
       repositories:
         bootstrap-mode: deferred
+  liquibase:
+    change-log: classpath:config/liquibase/master.xml
   jpa:
     open-in-view: false
     properties:
