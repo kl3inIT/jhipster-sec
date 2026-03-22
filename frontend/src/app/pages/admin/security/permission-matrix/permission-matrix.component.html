@@ -74,10 +74,10 @@
             <p class="text-color-secondary">Select an entity above to view its attribute permissions.</p>
           } @else if (selectedEntity.attributes.length === 0) {
             <p class="text-color-secondary">This entity has no enumerated attributes.</p>
-          } @else if (selectedEntity; as entity) {
-            <h2 class="mb-4 text-base font-semibold">Attribute Permissions: {{ entity.displayName }}</h2>
+          } @else {
+            <h2 class="mb-4 text-base font-semibold">Attribute Permissions: {{ selectedEntity!.displayName }}</h2>
 
-            <p-table [value]="getAttributeRows(entity)" [scrollable]="true">
+            <p-table [value]="getAttributeRows(selectedEntity!)" [scrollable]="true">
               <ng-template pTemplate="header">
                 <tr>
                   <th>Attribute</th>
@@ -93,7 +93,7 @@
                     <p-checkbox
                       [binary]="true"
                       [ngModel]="isGranted(row.target, 'VIEW')"
-                      [disabled]="isPending(row.target, 'VIEW') || (!row.isWildcard && isWildcardGranted(entity.code, 'VIEW'))"
+                      [disabled]="isPending(row.target, 'VIEW') || (!row.isWildcard && isWildcardGranted(selectedEntity!.code, 'VIEW'))"
                       (ngModelChange)="togglePermission('ATTRIBUTE', row.target, 'VIEW', $event)"
                     />
                   </td>
@@ -101,7 +101,7 @@
                     <p-checkbox
                       [binary]="true"
                       [ngModel]="isGranted(row.target, 'EDIT')"
-                      [disabled]="isPending(row.target, 'EDIT') || (!row.isWildcard && isWildcardGranted(entity.code, 'EDIT'))"
+                      [disabled]="isPending(row.target, 'EDIT') || (!row.isWildcard && isWildcardGranted(selectedEntity!.code, 'EDIT'))"
                       (ngModelChange)="togglePermission('ATTRIBUTE', row.target, 'EDIT', $event)"
                     />
                   </td>
