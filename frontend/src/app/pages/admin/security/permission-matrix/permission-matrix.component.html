@@ -35,7 +35,7 @@
                     [binary]="true"
                     [ngModel]="isGranted(entry.code, 'CREATE')"
                     [disabled]="isPending(entry.code, 'CREATE')"
-                    (onChange)="togglePermission('ENTITY', entry.code, 'CREATE', !!$event.checked)"
+                    (ngModelChange)="togglePermission('ENTITY', entry.code, 'CREATE', $event)"
                   />
                 </td>
                 <td class="text-center">
@@ -43,7 +43,7 @@
                     [binary]="true"
                     [ngModel]="isGranted(entry.code, 'READ')"
                     [disabled]="isPending(entry.code, 'READ')"
-                    (onChange)="togglePermission('ENTITY', entry.code, 'READ', !!$event.checked)"
+                    (ngModelChange)="togglePermission('ENTITY', entry.code, 'READ', $event)"
                   />
                 </td>
                 <td class="text-center">
@@ -51,7 +51,7 @@
                     [binary]="true"
                     [ngModel]="isGranted(entry.code, 'UPDATE')"
                     [disabled]="isPending(entry.code, 'UPDATE')"
-                    (onChange)="togglePermission('ENTITY', entry.code, 'UPDATE', !!$event.checked)"
+                    (ngModelChange)="togglePermission('ENTITY', entry.code, 'UPDATE', $event)"
                   />
                 </td>
                 <td class="text-center">
@@ -59,7 +59,7 @@
                     [binary]="true"
                     [ngModel]="isGranted(entry.code, 'DELETE')"
                     [disabled]="isPending(entry.code, 'DELETE')"
-                    (onChange)="togglePermission('ENTITY', entry.code, 'DELETE', !!$event.checked)"
+                    (ngModelChange)="togglePermission('ENTITY', entry.code, 'DELETE', $event)"
                   />
                 </td>
               </tr>
@@ -94,7 +94,7 @@
                       [binary]="true"
                       [ngModel]="isGranted(row.target, 'VIEW')"
                       [disabled]="isPending(row.target, 'VIEW') || (!row.isWildcard && isWildcardGranted(entity.code, 'VIEW'))"
-                      (onChange)="togglePermission('ATTRIBUTE', row.target, 'VIEW', !!$event.checked)"
+                      (ngModelChange)="togglePermission('ATTRIBUTE', row.target, 'VIEW', $event)"
                     />
                   </td>
                   <td class="text-center">
@@ -102,7 +102,7 @@
                       [binary]="true"
                       [ngModel]="isGranted(row.target, 'EDIT')"
                       [disabled]="isPending(row.target, 'EDIT') || (!row.isWildcard && isWildcardGranted(entity.code, 'EDIT'))"
-                      (onChange)="togglePermission('ATTRIBUTE', row.target, 'EDIT', !!$event.checked)"
+                      (ngModelChange)="togglePermission('ATTRIBUTE', row.target, 'EDIT', $event)"
                     />
                   </td>
                 </tr>
