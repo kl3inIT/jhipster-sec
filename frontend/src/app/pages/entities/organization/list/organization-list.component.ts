@@ -13,7 +13,6 @@ import { ToastModule } from 'primeng/toast';
 import { SortService } from 'app/shared/sort/sort.service';
 import { SortState, sortStateSignal } from 'app/shared/sort/sort-state';
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
-import { SecuredEntityCapabilityService } from '../../shared/service/secured-entity-capability.service';
 import { IOrganization } from '../organization.model';
 import { EntityArrayResponseType, OrganizationService } from '../service/organization.service';
 
@@ -51,7 +50,6 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
 
   readonly router = inject(Router);
   protected readonly organizationService = inject(OrganizationService);
-  protected readonly securedEntityCapabilityService = inject(SecuredEntityCapabilityService);
   protected readonly activatedRoute = inject(ActivatedRoute);
   protected readonly sortService = inject(SortService);
   protected readonly ngZone = inject(NgZone);
@@ -61,7 +59,8 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
   trackId = (item: IOrganization): number => this.organizationService.getOrganizationIdentifier(item);
 
   ngOnInit(): void {
-    this.loadCapability();
+    const capability = (this.activatedRoute.snapshot.data['capability'] ?? null) as ISecuredEntityCapability | null;
+    this.capability.set(capability);
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
@@ -188,12 +187,6 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'An unexpected error occurred. Please try again.' });
         }
       },
-    });
-  }
-
-  private loadCapability(): void {
-    this.securedEntityCapabilityService.getEntityCapability('organization').subscribe(capability => {
-      this.capability.set(capability);
     });
   }
 }

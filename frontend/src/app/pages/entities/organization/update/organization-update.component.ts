@@ -8,12 +8,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { finalize, take } from 'rxjs';
+import { finalize } from 'rxjs';
 
 import { IOrganization, NewOrganization } from '../organization.model';
 import { OrganizationService } from '../service/organization.service';
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
-import { SecuredEntityCapabilityService } from '../../shared/service/secured-entity-capability.service';
 
 @Component({
   selector: 'app-organization-update',
@@ -27,7 +26,6 @@ export default class OrganizationUpdateComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly organizationService = inject(OrganizationService);
-  private readonly securedEntityCapabilityService = inject(SecuredEntityCapabilityService);
   private readonly messageService = inject(MessageService);
 
   form: FormGroup = this.fb.group({
@@ -53,35 +51,26 @@ export default class OrganizationUpdateComponent implements OnInit {
       } else {
         this.isEdit.set(false);
       }
-      this.loadCapability(idParam);
+
+      const capability = (this.route.snapshot.data['capability'] ?? null) as ISecuredEntityCapability | null;
+
+      if (!capability) {
+        this.navigateToAccessDenied();
+        return;
+      }
+
+      if (idParam ? !capability.canUpdate : !capability.canCreate) {
+        this.navigateToAccessDenied();
+        return;
+      }
+
+      this.showBudgetField.set(this.canEditAttribute(capability, 'budget'));
+      this.isCapabilityReady.set(true);
+
+      if (idParam) {
+        this.load(Number(idParam));
+      }
     });
-  }
-
-  private loadCapability(idParam: string | null): void {
-    this.securedEntityCapabilityService
-      .getEntityCapability('organization')
-      .pipe(take(1))
-      .subscribe({
-        next: capability => {
-          if (!capability) {
-            this.navigateToAccessDenied();
-            return;
-          }
-
-          if (idParam ? !capability.canUpdate : !capability.canCreate) {
-            this.navigateToAccessDenied();
-            return;
-          }
-
-          this.showBudgetField.set(this.canEditAttribute(capability, 'budget'));
-          this.isCapabilityReady.set(true);
-
-          if (idParam) {
-            this.load(Number(idParam));
-          }
-        },
-        error: () => this.navigateToAccessDenied(),
-      });
   }
 
   private load(id: number): void {
