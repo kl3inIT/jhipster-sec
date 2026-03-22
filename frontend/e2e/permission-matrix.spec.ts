@@ -5,8 +5,8 @@ const ADMIN_PASS = 'admin';
 
 async function loginAsAdmin(page: Page): Promise<void> {
   await page.goto('/login');
-  await page.getByLabel('Login').fill(ADMIN_USER);
-  await page.getByLabel('Password').fill(ADMIN_PASS);
+  await page.locator('#username').fill(ADMIN_USER);
+  await page.locator('#password').fill(ADMIN_PASS);
   await page.getByRole('button', { name: /sign in/i }).click();
   await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 10000 });
 }
