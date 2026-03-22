@@ -77,7 +77,7 @@
           } @else {
             <h2 class="mb-4 text-base font-semibold">Attribute Permissions: {{ selectedEntity!.displayName }}</h2>
 
-            <p-table [value]="getAttributeRows(selectedEntity!)" [scrollable]="true">
+            <p-table [value]="selectedEntityAttributeRows" [scrollable]="true">
               <ng-template pTemplate="header">
                 <tr>
                   <th>Attribute</th>

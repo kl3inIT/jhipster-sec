@@ -41,6 +41,7 @@ export default class PermissionMatrixComponent implements OnInit {
   catalogEntries: ISecCatalogEntry[] = [];
   loading = true;
   selectedEntity: ISecCatalogEntry | null = null;
+  selectedEntityAttributeRows: AttributeRow[] = [];
 
   granted = new Map<string, number>();
   pending = new Set<string>();
@@ -79,6 +80,7 @@ export default class PermissionMatrixComponent implements OnInit {
 
   onEntitySelect(entry: ISecCatalogEntry): void {
     this.selectedEntity = entry;
+    this.selectedEntityAttributeRows = this.buildAttributeRows(entry);
     this.cdr.detectChanges();
   }
 
@@ -94,7 +96,7 @@ export default class PermissionMatrixComponent implements OnInit {
     return this.pending.has(this.permissionKey(target, action));
   }
 
-  getAttributeRows(entity: ISecCatalogEntry): AttributeRow[] {
+  private buildAttributeRows(entity: ISecCatalogEntry): AttributeRow[] {
     return [
       { label: 'All attributes (*)', target: `${entity.code}.*`, isWildcard: true },
       ...entity.attributes.map(attribute => ({
