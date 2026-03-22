@@ -19,6 +19,7 @@ export default class OrganizationDetailComponent implements OnInit {
   organization = signal<IOrganization | null>(null);
   capabilityLoaded = signal(false);
   canUpdate = signal(false);
+  fieldVisibility = signal<Record<string, boolean>>({});
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -50,6 +51,14 @@ export default class OrganizationDetailComponent implements OnInit {
     this.router.navigate(['/entities/organization', org.id, 'edit']);
   }
 
+  canViewField(fieldName: string): boolean {
+    if (!this.capabilityLoaded()) {
+      return true;
+    }
+    const vis = this.fieldVisibility();
+    return vis[fieldName] !== false;
+  }
+
   private loadCapability(): void {
     this.securedEntityCapabilityService
       .getEntityCapability('organization')
@@ -57,6 +66,13 @@ export default class OrganizationDetailComponent implements OnInit {
       .subscribe({
         next: capability => {
           this.canUpdate.set(capability?.canUpdate ?? false);
+          if (capability?.attributes) {
+            const vis: Record<string, boolean> = {};
+            for (const attr of capability.attributes) {
+              vis[attr.name] = attr.canView;
+            }
+            this.fieldVisibility.set(vis);
+          }
           this.capabilityLoaded.set(true);
         },
         error: () => {
@@ -66,4 +82,3 @@ export default class OrganizationDetailComponent implements OnInit {
       });
   }
 }
-

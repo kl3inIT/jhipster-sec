@@ -8,31 +8,37 @@
           <span class="text-sm font-medium">ID</span>
           <span>{{ emp.id }}</span>
         </div>
-        <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium">Employee Number</span>
-          <span>{{ emp.employeeNumber }}</span>
-        </div>
-        <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium">First Name</span>
-          <span>{{ emp.firstName }}</span>
-        </div>
-        <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium">Last Name</span>
-          <span>{{ emp.lastName }}</span>
-        </div>
-        @if (emp.department) {
+        @if (canViewField('employeeNumber')) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">Employee Number</span>
+            <span>{{ emp.employeeNumber }}</span>
+          </div>
+        }
+        @if (canViewField('firstName')) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">First Name</span>
+            <span>{{ emp.firstName }}</span>
+          </div>
+        }
+        @if (canViewField('lastName')) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">Last Name</span>
+            <span>{{ emp.lastName }}</span>
+          </div>
+        }
+        @if (canViewField('department') && emp.department) {
           <div class="flex flex-col gap-1">
             <span class="text-sm font-medium">Department</span>
             <span>{{ emp.department.name }}</span>
           </div>
         }
-        @if (emp.email !== undefined) {
+        @if (canViewField('email') && emp.email !== undefined) {
           <div class="flex flex-col gap-1">
             <span class="text-sm font-medium">Email</span>
             <span>{{ emp.email }}</span>
           </div>
         }
-        @if (emp.salary !== undefined) {
+        @if (canViewField('salary') && emp.salary !== undefined) {
           <div class="flex flex-col gap-1">
             <span class="text-sm font-medium">Salary</span>
             <span>{{ emp.salary | number: '1.2-2' }}</span>

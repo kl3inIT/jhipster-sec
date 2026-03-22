@@ -8,19 +8,25 @@
           <span class="text-sm font-medium">ID</span>
           <span>{{ org.id }}</span>
         </div>
-        <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium">Code</span>
-          <span>{{ org.code }}</span>
-        </div>
-        <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium">Name</span>
-          <span>{{ org.name }}</span>
-        </div>
-        <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium">Owner Login</span>
-          <span>{{ org.ownerLogin }}</span>
-        </div>
-        @if (org.budget !== undefined) {
+        @if (canViewField('code')) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">Code</span>
+            <span>{{ org.code }}</span>
+          </div>
+        }
+        @if (canViewField('name')) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">Name</span>
+            <span>{{ org.name }}</span>
+          </div>
+        }
+        @if (canViewField('ownerLogin')) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">Owner Login</span>
+            <span>{{ org.ownerLogin }}</span>
+          </div>
+        }
+        @if (canViewField('budget') && org.budget !== undefined) {
           <div class="flex flex-col gap-1">
             <span class="text-sm font-medium">Budget</span>
             <span>{{ org.budget | number: '1.2-2' }}</span>

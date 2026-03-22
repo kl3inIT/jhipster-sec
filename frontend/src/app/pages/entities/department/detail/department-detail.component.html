@@ -8,21 +8,25 @@
           <span class="text-sm font-medium">ID</span>
           <span>{{ dept.id }}</span>
         </div>
-        <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium">Code</span>
-          <span>{{ dept.code }}</span>
-        </div>
-        <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium">Name</span>
-          <span>{{ dept.name }}</span>
-        </div>
-        @if (dept.organization) {
+        @if (canViewField('code')) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">Code</span>
+            <span>{{ dept.code }}</span>
+          </div>
+        }
+        @if (canViewField('name')) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">Name</span>
+            <span>{{ dept.name }}</span>
+          </div>
+        }
+        @if (canViewField('organization') && dept.organization) {
           <div class="flex flex-col gap-1">
             <span class="text-sm font-medium">Organization</span>
             <span>{{ dept.organization.name }}</span>
           </div>
         }
-        @if (dept.costCenter !== undefined) {
+        @if (canViewField('costCenter') && dept.costCenter !== undefined) {
           <div class="flex flex-col gap-1">
             <span class="text-sm font-medium">Cost Center</span>
             <span>{{ dept.costCenter }}</span>
