@@ -13,8 +13,10 @@ import org.springframework.stereotype.Component;
 /**
  * Default implementation of {@link AttributePermissionEvaluator}.
  *
- * <p>Attribute-level permissions default to permissive: if no permission records exist
- * for the given attribute, access is allowed. When records exist, DENY-wins semantics apply.
+ * <p>Attribute-level permissions default to restrictive: if no permission records exist
+ * for the given attribute, access is denied. The permission matrix stores only GRANT records,
+ * so an empty result means no grant was given for this attribute.
+ * When records exist, DENY-wins semantics apply.
  */
 @Component
 public class AttributePermissionEvaluatorImpl implements AttributePermissionEvaluator {
@@ -48,9 +50,10 @@ public class AttributePermissionEvaluatorImpl implements AttributePermissionEval
         String target =
             entityClass.getSimpleName().toUpperCase(Locale.ROOT) + "." + attribute.toUpperCase(Locale.ROOT);
         List<SecPermission> perms = secPermissionRepository.findByRolesAndTarget(authorities, TargetType.ATTRIBUTE, target, action);
-        // No rules for this attribute = permissive default
+        // No GRANT record = denied. The permission matrix stores only GRANT records,
+        // so empty results means no grant was given for this attribute.
         if (perms.isEmpty()) {
-            return true;
+            return false;
         }
         // DENY-wins when rules exist
         boolean hasDeny = perms.stream().anyMatch(p -> "DENY".equals(p.getEffect()));

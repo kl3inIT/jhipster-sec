@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Unit tests for {@link AttributePermissionEvaluatorImpl} verifying permissive default
+ * Unit tests for {@link AttributePermissionEvaluatorImpl} verifying deny-default
  * and DENY-wins semantics for attribute-level checks.
  */
 @ExtendWith(MockitoExtension.class)
@@ -41,13 +41,23 @@ class AttributePermissionEvaluatorImplTest {
     }
 
     @Test
-    void testCanViewWithNoRulesReturnsTrue() {
+    void testCanViewWithNoRulesReturnsFalse() {
         when(mergedSecurityService.getCurrentUserAuthorityNames()).thenReturn(List.of("ROLE_USER"));
         when(secPermissionRepository.findByRolesAndTarget(anyCollection(), any(TargetType.class), any(), any())).thenReturn(List.of());
 
         boolean result = evaluator.canView(SomeEntity.class, "name");
 
-        assertThat(result).isTrue();
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void testCanEditWithNoRulesReturnsFalse() {
+        when(mergedSecurityService.getCurrentUserAuthorityNames()).thenReturn(List.of("ROLE_USER"));
+        when(secPermissionRepository.findByRolesAndTarget(anyCollection(), any(TargetType.class), any(), any())).thenReturn(List.of());
+
+        boolean result = evaluator.canEdit(SomeEntity.class, "name");
+
+        assertThat(result).isFalse();
     }
 
     @Test
