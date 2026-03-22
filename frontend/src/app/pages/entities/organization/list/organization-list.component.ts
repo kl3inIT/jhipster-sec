@@ -42,6 +42,7 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
   page = 1;
 
   showBudgetColumn = computed(() => this.organizations().some(o => o.budget !== undefined));
+  capabilityLoaded = computed(() => this.capability() !== null);
   canCreate = computed(() => this.capability()?.canCreate ?? false);
   canRead = computed(() => this.capability()?.canRead ?? false);
   canUpdate = computed(() => this.capability()?.canUpdate ?? false);

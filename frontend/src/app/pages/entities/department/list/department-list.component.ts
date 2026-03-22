@@ -40,6 +40,7 @@ export default class DepartmentListComponent implements OnInit, OnDestroy {
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
   page = 1;
+  capabilityLoaded = computed(() => this.capability() !== null);
   canCreate = computed(() => this.capability()?.canCreate ?? false);
   canRead = computed(() => this.capability()?.canRead ?? false);
   canUpdate = computed(() => this.capability()?.canUpdate ?? false);

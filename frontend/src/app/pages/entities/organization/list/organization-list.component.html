@@ -43,9 +43,7 @@
           @if (showBudgetColumn()) {
             <th pSortableColumn="budget">Budget <p-sortIcon field="budget" /></th>
           }
-          @if (showRowActions()) {
-            <th style="width: 10rem; text-align: center">Actions</th>
-          }
+          <th style="width: 10rem; text-align: center">Actions</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-row>
@@ -59,8 +57,8 @@
           @if (showBudgetColumn()) {
             <td>{{ row.budget !== undefined ? (row.budget | number: '1.2-2') : '' }}</td>
           }
-          @if (showRowActions()) {
-            <td style="text-align: center">
+          <td style="text-align: center">
+            @if (capabilityLoaded()) {
               <div class="flex items-center justify-center gap-2">
                 @if (canRead()) {
                   <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-eye" aria-label="View" (click)="view(row)"></button>
@@ -79,13 +77,15 @@
                   ></button>
                 }
               </div>
-            </td>
-          }
+            } @else {
+              <i class="pi pi-spin pi-spinner text-gray-400"></i>
+            }
+          </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td [attr.colspan]="(showBudgetColumn() ? 5 : 4) + (showRowActions() ? 1 : 0)" class="text-center py-4">
+          <td [attr.colspan]="showBudgetColumn() ? 6 : 5" class="text-center py-4">
             No organizations found. Create the first organization using the New Organization button.
           </td>
         </tr>

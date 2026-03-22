@@ -42,6 +42,7 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
   page = 1;
 
   showSalaryColumn = computed(() => this.employees().some(e => e.salary !== undefined));
+  capabilityLoaded = computed(() => this.capability() !== null);
   canCreate = computed(() => this.capability()?.canCreate ?? false);
   canRead = computed(() => this.capability()?.canRead ?? false);
   canUpdate = computed(() => this.capability()?.canUpdate ?? false);
