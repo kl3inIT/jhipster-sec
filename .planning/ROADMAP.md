@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Security Metadata Management** - Deliver backend administration for merged roles, permission rules, and supported row policies. (completed 2026-03-21)
 - [x] **Phase 3: Secure Enforcement Core** - Route protected data through centralized CRUD, row-level, attribute-level, and fetch-plan enforcement. (completed 2026-03-21)
 - [x] **Phase 4: Protected Entity Proof** - Prove the merged engine on sample entities with secured APIs and automated allow/deny coverage. (completed 2026-03-21)
-- [x] **Phase 5: Standalone Frontend Delivery** - Ship the Angular app with auth, security administration, and protected entity screens. (completed 2026-03-21)
+- [ ] **Phase 5: Standalone Frontend Delivery** - Ship the Angular app with auth, security administration, and protected entity screens. (UAT gap closure in progress)
 
 ## Phase Details
 
@@ -90,13 +90,20 @@ Plans:
   2. User can log in from the standalone frontend and the app handles authenticated state, route protection, and expected 401/403/404 flows correctly.
   3. Admin can manage merged roles, permission rules, and row policies from the frontend end to end.
   4. Sample protected-entity screens show only the actions and fields the current user is allowed to access.
-**Plans:** 9/9 plans complete
+**Plans:** 12 plans (10 complete, 2 gap-closure pending)
 Plans:
 - [x] 05-01-PLAN.md — Backend gaps: catalog endpoint and permission filter for matrix UI
 - [x] 05-02-PLAN.md — Angular scaffold, auth core, layout, login, error pages, dashboard stub
 - [x] 05-03-PLAN.md — Protected entity screens: Organization, Department, Employee
 - [x] 05-04-PLAN.md — Security admin: roles list/dialog, row policies list/dialog, shared services
 - [x] 05-05-PLAN.md — Permission matrix editor (Jmix-style two-panel checkbox matrix)
+- [x] 05-06-PLAN.md — Entity capability gating and route protection
+- [x] 05-07-PLAN.md — Organization detail/update capability enforcement
+- [x] 05-08-PLAN.md — Department and employee capability enforcement
+- [x] 05-09-PLAN.md — E2E Playwright tests for capability gating
+- [x] 05-10-PLAN.md — Permission matrix template bug fixes (ngModelChange, @else)
+- [ ] 05-11-PLAN.md — Fix logout lag and capability cache invalidation on auth change
+- [ ] 05-12-PLAN.md — Attribute-level field visibility in detail views and action column loading state
 
 ## Progress
 
@@ -106,4 +113,4 @@ Plans:
 | 2. Security Metadata Management | 4/4 | Complete   | 2026-03-21 |
 | 3. Secure Enforcement Core | 5/5 | Complete   | 2026-03-21 |
 | 4. Protected Entity Proof | 4/4 | Complete   | 2026-03-21 |
-| 5. Standalone Frontend Delivery | 9/9 | Complete   | 2026-03-21 |
+| 5. Standalone Frontend Delivery | 10/12 | Gap Closure | - |
