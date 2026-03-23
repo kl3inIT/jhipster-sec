@@ -32,7 +32,7 @@ Requirements for the first migration milestone. Each will be mapped to a roadmap
 
 - [ ] **ENT-01**: Sample entities exist that can exercise CRUD, row-level, and attribute-level security end to end
 - [ ] **ENT-02**: Secured entity APIs have automated backend tests for allow and deny scenarios
-- [ ] **ENT-03**: Sample entity screens in `frontend/` reflect allowed and denied actions and field visibility correctly
+- [x] **ENT-03**: Sample entity screens in `frontend/` reflect allowed and denied actions and field visibility correctly
 
 ### Frontend Experience
 
@@ -80,7 +80,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-05 | Phase 3 | Complete |
 | ENT-01 | Phase 4 | Pending |
 | ENT-02 | Phase 4 | Pending |
-| ENT-03 | Phase 5 | Pending |
+| ENT-03 | Phase 5 | Complete |
 | UI-01 | Phase 5 | Complete |
 | UI-02 | Phase 5 | Complete |
 | UI-03 | Phase 5 | Complete |

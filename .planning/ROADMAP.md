@@ -102,10 +102,10 @@ Plans:
 - [x] 05-08-PLAN.md — Department and employee capability enforcement
 - [x] 05-09-PLAN.md — E2E Playwright tests for capability gating
 - [x] 05-10-PLAN.md — Permission matrix template bug fixes (ngModelChange, @else)
-- [ ] 05-11-PLAN.md — Fix logout lag and capability cache invalidation on auth change
+- [x] 05-11-PLAN.md — Fix logout lag and capability cache invalidation on auth change
 - [x] 05-12-PLAN.md — Attribute-level field visibility in detail views and action column loading state
 - [ ] 05-13-PLAN.md — UAT gap closure: save confirmation dialogs and 403-aware error handling
-- [ ] 05-14-PLAN.md — UAT gap closure: sessionStorage capability cache for fast hard-reload
+- [x] 05-14-PLAN.md — UAT gap closure: sessionStorage capability cache for fast hard-reload
 
 ## Progress
 
