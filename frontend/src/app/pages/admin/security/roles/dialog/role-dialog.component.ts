@@ -11,6 +11,7 @@ import { ToastModule } from 'primeng/toast';
 
 import { ISecRole } from '../sec-role.model';
 import { SecRoleService } from '../service/sec-role.service';
+import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 @Component({
   selector: 'app-role-dialog',
@@ -75,13 +76,7 @@ export default class RoleDialogComponent implements OnChanges {
           this.saved.emit();
           this.close();
         },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'An unexpected error occurred. Please try again.',
-          });
-        },
+        error: (err: any) => handleHttpError(this.messageService, err),
       });
   }
 

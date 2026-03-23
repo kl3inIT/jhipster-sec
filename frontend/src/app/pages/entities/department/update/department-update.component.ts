@@ -16,6 +16,7 @@ import { OrganizationService } from '../../organization/service/organization.ser
 import { IDepartment, NewDepartment } from '../department.model';
 import { DepartmentService } from '../service/department.service';
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
+import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 @Component({
   selector: 'app-department-update',
@@ -139,9 +140,7 @@ export default class DepartmentUpdateComponent implements OnInit {
       next: () => {
         this.router.navigate(['/entities/department']);
       },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'An unexpected error occurred. Please try again.' });
-      },
+      error: (err: any) => handleHttpError(this.messageService, err),
     });
   }
 

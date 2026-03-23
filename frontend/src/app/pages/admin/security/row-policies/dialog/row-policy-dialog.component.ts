@@ -14,6 +14,7 @@ import { ISecRowPolicy } from '../sec-row-policy.model';
 import { SecRowPolicyService } from '../service/sec-row-policy.service';
 import { SecCatalogService } from '../../shared/service/sec-catalog.service';
 import { ISecCatalogEntry } from '../../shared/sec-catalog.model';
+import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 @Component({
   selector: 'app-row-policy-dialog',
@@ -107,13 +108,7 @@ export default class RowPolicyDialogComponent implements OnChanges, OnInit {
           this.saved.emit();
           this.close();
         },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Save failed',
-            detail: 'Could not save the row policy. Check the expression and try again.',
-          });
-        },
+        error: (err: any) => handleHttpError(this.messageService, err, 'Could not save the row policy. Check the expression and try again.'),
       });
   }
 

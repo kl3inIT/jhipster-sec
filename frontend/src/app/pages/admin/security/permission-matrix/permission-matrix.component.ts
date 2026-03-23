@@ -16,6 +16,7 @@ import { ISecCatalogEntry } from '../shared/sec-catalog.model';
 import { ISecPermission } from '../shared/sec-permission.model';
 import { SecCatalogService } from '../shared/service/sec-catalog.service';
 import { SecPermissionService } from '../shared/service/sec-permission.service';
+import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 interface AttributeRow {
   label: string;
@@ -68,13 +69,7 @@ export default class PermissionMatrixComponent implements OnInit {
             }
           });
         },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Could not load the permission matrix. Please try again.',
-          });
-        },
+        error: (err: any) => handleHttpError(this.messageService, err, 'Could not load the permission matrix. Please try again.'),
       });
   }
 
@@ -137,10 +132,10 @@ export default class PermissionMatrixComponent implements OnInit {
           this.pending.delete(key);
           this.cdr.detectChanges();
         },
-        error: () => {
+        error: (err: any) => {
           this.granted.delete(key);
           this.pending.delete(key);
-          this.showSaveError();
+          this.showSaveError(err);
           this.cdr.detectChanges();
         },
       });
@@ -160,10 +155,10 @@ export default class PermissionMatrixComponent implements OnInit {
         this.pending.delete(key);
         this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err: any) => {
         this.granted.set(key, permissionId);
         this.pending.delete(key);
-        this.showSaveError();
+        this.showSaveError(err);
         this.cdr.detectChanges();
       },
     });
@@ -173,11 +168,7 @@ export default class PermissionMatrixComponent implements OnInit {
     return `${target}:${action}`;
   }
 
-  private showSaveError(): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Save failed',
-      detail: 'Could not update the permission. Please try again.',
-    });
+  private showSaveError(err: any): void {
+    handleHttpError(this.messageService, err, 'Could not update the permission. Please try again.');
   }
 }

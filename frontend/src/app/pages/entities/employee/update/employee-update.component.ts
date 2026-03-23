@@ -16,6 +16,7 @@ import { DepartmentService } from '../../department/service/department.service';
 import { IEmployee, NewEmployee } from '../employee.model';
 import { EmployeeService } from '../service/employee.service';
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
+import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 @Component({
   selector: 'app-employee-update',
@@ -148,9 +149,7 @@ export default class EmployeeUpdateComponent implements OnInit {
       next: () => {
         this.router.navigate(['/entities/employee']);
       },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'An unexpected error occurred. Please try again.' });
-      },
+      error: (err: any) => handleHttpError(this.messageService, err),
     });
   }
 
