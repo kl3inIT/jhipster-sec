@@ -7,7 +7,8 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 
 import { ISecRowPolicy } from '../sec-row-policy.model';
@@ -19,8 +20,8 @@ import { handleHttpError } from 'app/shared/error/http-error.utils';
 @Component({
   selector: 'app-row-policy-dialog',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonModule, DialogModule, InputTextModule, SelectModule, TextareaModule, ToastModule],
-  providers: [MessageService],
+  imports: [ReactiveFormsModule, ButtonModule, ConfirmDialogModule, DialogModule, InputTextModule, SelectModule, TextareaModule, ToastModule],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './row-policy-dialog.component.html',
 })
 export default class RowPolicyDialogComponent implements OnChanges, OnInit {
@@ -53,6 +54,7 @@ export default class RowPolicyDialogComponent implements OnChanges, OnInit {
 
   private readonly secRowPolicyService = inject(SecRowPolicyService);
   private readonly catalogService = inject(SecCatalogService);
+  private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
 
   ngOnInit(): void {
@@ -90,6 +92,16 @@ export default class RowPolicyDialogComponent implements OnChanges, OnInit {
     if (this.editForm.invalid) {
       return;
     }
+    this.confirmationService.confirm({
+      header: 'Save Row Policy',
+      message: 'Do you want to save this row policy?',
+      acceptLabel: 'Save',
+      rejectLabel: 'Cancel',
+      accept: () => this.performSave(),
+    });
+  }
+
+  private performSave(): void {
     this.isSaving = true;
     const formValue = this.editForm.getRawValue();
     const policyData: ISecRowPolicy = {
