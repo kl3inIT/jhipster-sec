@@ -13,6 +13,7 @@ import { finalize } from 'rxjs';
 import { IOrganization, NewOrganization } from '../organization.model';
 import { OrganizationService } from '../service/organization.service';
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
+import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 @Component({
   selector: 'app-organization-update',
@@ -108,9 +109,7 @@ export default class OrganizationUpdateComponent implements OnInit {
       next: () => {
         this.router.navigate(['/entities/organization']);
       },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'An unexpected error occurred. Please try again.' });
-      },
+      error: (err: any) => handleHttpError(this.messageService, err),
     });
   }
 

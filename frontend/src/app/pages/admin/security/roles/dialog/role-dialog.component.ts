@@ -6,17 +6,19 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 
 import { ISecRole } from '../sec-role.model';
 import { SecRoleService } from '../service/sec-role.service';
+import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 @Component({
   selector: 'app-role-dialog',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonModule, DialogModule, InputTextModule, SelectModule, ToastModule],
-  providers: [MessageService],
+  imports: [ReactiveFormsModule, ButtonModule, ConfirmDialogModule, DialogModule, InputTextModule, SelectModule, ToastModule],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './role-dialog.component.html',
 })
 export default class RoleDialogComponent implements OnChanges {
@@ -39,6 +41,7 @@ export default class RoleDialogComponent implements OnChanges {
   });
 
   private readonly secRoleService = inject(SecRoleService);
+  private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
 
   ngOnChanges(): void {
@@ -61,6 +64,16 @@ export default class RoleDialogComponent implements OnChanges {
     if (this.editForm.invalid) {
       return;
     }
+    this.confirmationService.confirm({
+      header: 'Save Role',
+      message: 'Do you want to save this role?',
+      acceptLabel: 'Save',
+      rejectLabel: 'Cancel',
+      accept: () => this.performSave(),
+    });
+  }
+
+  private performSave(): void {
     this.isSaving = true;
     const roleData: ISecRole = {
       name: this.role ? this.role.name : this.editForm.getRawValue().name,
@@ -75,13 +88,7 @@ export default class RoleDialogComponent implements OnChanges {
           this.saved.emit();
           this.close();
         },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'An unexpected error occurred. Please try again.',
-          });
-        },
+        error: (err: any) => handleHttpError(this.messageService, err),
       });
   }
 

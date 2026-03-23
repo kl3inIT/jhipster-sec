@@ -13,6 +13,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ISecRole } from '../sec-role.model';
 import { SecRoleService } from '../service/sec-role.service';
 import RoleDialogComponent from '../dialog/role-dialog.component';
+import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 @Component({
   selector: 'app-role-list',
@@ -44,9 +45,7 @@ export default class RoleListComponent implements OnInit {
       .pipe(finalize(() => { this.isLoading = false; this.cdr.markForCheck(); }))
       .subscribe({
         next: response => (this.roles = response.body ?? []),
-        error: () => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load roles.' });
-        },
+        error: (err: any) => handleHttpError(this.messageService, err, 'Failed to load roles.'),
       });
   }
 
@@ -81,9 +80,7 @@ export default class RoleListComponent implements OnInit {
         this.messageService.add({ severity: 'success', summary: 'Deleted', detail: `Role "${role.name}" has been deleted.` });
         this.loadRoles();
       },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete role.' });
-      },
+      error: (err: any) => handleHttpError(this.messageService, err, 'Failed to delete role.'),
     });
   }
 }

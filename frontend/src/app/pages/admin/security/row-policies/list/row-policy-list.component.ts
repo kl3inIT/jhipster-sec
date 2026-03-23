@@ -11,6 +11,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ISecRowPolicy } from '../sec-row-policy.model';
 import { SecRowPolicyService } from '../service/sec-row-policy.service';
 import RowPolicyDialogComponent from '../dialog/row-policy-dialog.component';
+import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 @Component({
   selector: 'app-row-policy-list',
@@ -42,9 +43,7 @@ export default class RowPolicyListComponent implements OnInit {
       .pipe(finalize(() => { this.isLoading = false; this.cdr.markForCheck(); }))
       .subscribe({
         next: response => (this.rowPolicies = response.body ?? []),
-        error: () => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load row policies.' });
-        },
+        error: (err: any) => handleHttpError(this.messageService, err, 'Failed to load row policies.'),
       });
   }
 
@@ -89,9 +88,7 @@ export default class RowPolicyListComponent implements OnInit {
         this.messageService.add({ severity: 'success', summary: 'Deleted', detail: `Row policy "${policy.code}" has been deleted.` });
         this.loadPolicies();
       },
-      error: () => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete row policy.' });
-      },
+      error: (err: any) => handleHttpError(this.messageService, err, 'Failed to delete row policy.'),
     });
   }
 }
