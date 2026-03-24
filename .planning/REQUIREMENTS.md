@@ -1,0 +1,78 @@
+# Requirements: JHipster Security Platform
+
+**Defined:** 2026-03-25
+**Milestone:** v1.1 Enterprise Admin Experience
+**Core Value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
+
+## Milestone v1.1 Requirements
+
+### User Management
+
+- [ ] **UMGT-01**: Admin can browse, search, sort, and open existing users from `frontend/` using the preserved backend admin API.
+- [ ] **UMGT-02**: Admin can create, edit, activate, deactivate, and delete users from `frontend/` without breaking current validation or contract behavior.
+- [ ] **UMGT-03**: Admin can assign and update a user's roles or authorities from the frontend, and the persisted assignment affects downstream access decisions.
+
+### Navigation And Permissions
+
+- [ ] **ROUTE-01**: The authenticated frontend menu and navigation structure are loaded from backend-driven data rather than a hardcoded client menu definition.
+- [ ] **ROUTE-02**: Routes and visible navigation entries are denied before page render when the current user lacks the required backend-provided role or permission.
+- [ ] **ROUTE-03**: Admin and entity areas are split behind lazy-loaded route boundaries so permission-aware navigation does not force-load the entire app shell.
+
+### Enterprise UI
+
+- [ ] **UI-04**: Admin and secured-entity screens use an enterprise-style shell with Jmix-like master-detail patterns so lists and detail or edit workflows feel consistent.
+- [ ] **UI-05**: The frontend is more usable and responsive across desktop and narrower widths, with consistent actions, spacing, feedback, and loading states.
+
+### Internationalization And Migration Parity
+
+- [ ] **I18N-01**: Required JHipster support files from `angapp/` for in-scope frontend features are migrated into `frontend/` instead of being reimplemented incompletely.
+- [ ] **I18N-02**: Migrated admin, user-management, and shared shell flows can render translated UI strings and preserve language-aware behavior using copied JHipster translation assets.
+
+### Performance And Scalability
+
+- [ ] **PERF-01**: The frontend minimizes redundant API calls for auth, menu, capability, and user-management data through shared state or safe caching.
+- [ ] **PERF-02**: Initial load and route transitions improve through lazy loading, code splitting, and leaner route-level bundles.
+- [ ] **PERF-03**: Enterprise admin screens remain responsive under larger data sets through efficient rendering, pagination or filtering, and predictable state updates.
+
+### Frontend Reliability
+
+- [ ] **TEST-01**: Automated frontend tests cover user-management CRUD and role-assignment behavior across success and failure paths.
+- [ ] **TEST-02**: Automated frontend tests cover backend-driven routing, menu visibility, and permission-based access denial.
+- [ ] **TEST-03**: Automated frontend tests cover the enterprise shell and critical migrated UI components so copied JHipster support files do not regress behavior.
+
+## Future Requirements
+
+### Deferred Platform Expansion
+
+- **MIG-01**: Migrate additional `angapp` business domains beyond user management once the new shell and parity infrastructure are proven.
+- **SEC-05**: Expand row-policy authoring beyond the currently supported subset when concrete policy-authoring use cases appear.
+- **DATA-06**: Introduce fetch-plan authoring UI only if runtime administration truly needs it.
+- **API-01**: Remove remaining boundary DTOs only where public contracts and validation remain stable.
+- **ADMIN-01**: Migrate legacy ops/admin utilities such as health, metrics, logs, configuration, and docs only if operational users need them in `frontend/`.
+
+## Out of Scope
+
+Explicitly excluded from this milestone.
+
+| Feature | Reason |
+|---------|--------|
+| Literal full `angapp` clone | This milestone copies required support files and in-scope flows into `frontend/`, not every legacy page wholesale |
+| Database-backed fetch-plan metadata | Project constraints still require fetch plans to live only in YAML or code |
+| Unsupported row-policy designer variants | The platform still has no validated use case for broadening beyond the supported policy subset |
+| Arbitrary runtime page-layout builder | The milestone needs stable backend-driven navigation and user-management parity before higher-order UI composition |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+
+**Coverage:**
+- Milestone requirements: 16 total
+- Mapped to phases: 0
+- Unmapped: 16
+
+---
+*Requirements defined: 2026-03-25*
+*Last updated: 2026-03-25 after initial definition*
