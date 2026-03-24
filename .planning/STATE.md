@@ -2,14 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 05-14-PLAN.md
-last_updated: "2026-03-23T02:51:46.373Z"
+status: human verification pending
+stopped_at: Awaiting browser re-test for permission matrix save confirmation
+last_updated: "2026-03-24T17:32:42Z"
+last_activity: 2026-03-24 - Implemented 05-15 permission matrix batch save; awaiting browser re-test
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 29
-  completed_plans: 28
+  total_plans: 30
+  completed_plans: 30
 ---
 
 # Project State
@@ -19,12 +20,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
-**Current focus:** Phase 05 — standalone-frontend-delivery
+**Current focus:** Phase 05 - standalone-frontend-delivery
 
 ## Current Position
 
-Phase: 05 (standalone-frontend-delivery) — EXECUTING
-Plan: 2 of 14
+Phase: 05 (standalone-frontend-delivery) - VERIFYING
+Plan: 15 of 15
 
 ## Performance Metrics
 
@@ -68,6 +69,7 @@ Plan: 2 of 14
 | Phase 05-standalone-frontend-delivery P11 | 8 | 1 tasks | 2 files |
 | Phase 05-standalone-frontend-delivery P12 | 5 | 3 tasks | 14 files |
 | Phase 05 P14 | 1 | 1 tasks | 1 files |
+| Phase 05 P15 | 7 min | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -105,15 +107,15 @@ Recent decisions affecting current work:
 - [Phase 03-05]: RowLevelSpecificationBuilder uses lambda no-op spec instead of Specification.where(null) - Java 25 added ambiguous overload and null-check enforcement
 - [Phase 04-04]: `TechnicalStructureTest` ignores `com.vn.core.security.catalog.SecuredEntity` so proof entity opt-in annotations do not violate the domain-layer ArchUnit rule
 - [Phase 04-04]: `LiquibaseConfiguration` must honor `LiquibaseProperties.changeLog` so tests can use a dedicated `test-master.xml` overlay for proof security fixtures
-- [Phase 05-01]: Attribute enumeration uses EntityManager.getMetamodel() sorted alphabetically — avoids reflection on entity class
-- [Phase 05-01]: authorityName filter uses null/blank check — empty string treated as no-filter to prevent accidental empty-result queries
+- [Phase 05-01]: Attribute enumeration uses EntityManager.getMetamodel() sorted alphabetically - avoids reflection on entity class
+- [Phase 05-01]: authorityName filter uses null/blank check - empty string treated as no-filter to prevent accidental empty-result queries
 - [Phase 05]: Angular 21 uses vitest (not Karma) via @angular/build:unit-test; test commands use ng test --watch=false without --browsers flag
 - [Phase 05]: ErrorHandlerInterceptor simplified to console.warn; NotificationInterceptor simplified - EventManager/AlertService not yet wired
-- [Phase 05]: Capability payloads derive from SecuredEntityCatalog plus JPA metamodel enumeration. — Keeps organization, department, and employee gating aligned with the secured entity allowlist and backend attribute names.
-- [Phase 05]: Frontend entity screens will reuse one cached capability response via shareReplay(1). — List, detail, and update screens can gate from one authenticated capability fetch instead of refetching per component.
-- [Phase 05]: Matrix UI payloads stay on the locked GRANT contract while the backend normalizes to runtime ALLOW and canonical stored targets. — This fixes end-to-end permission enforcement without changing the frontend matrix model from D-23 and D-24.
-- [Phase 05]: Protected-entity actions stay hidden until the shared capability response loads. — List, detail, and update screens should not briefly expose actions before permission state is known.
-- [Phase 05]: Create and edit routes redirect to /accessdenied before rendering forms when capability denies access. — Route-level gating must happen before form controls or sensitive inputs appear on screen.
+- [Phase 05]: Capability payloads derive from SecuredEntityCatalog plus JPA metamodel enumeration. - Keeps organization, department, and employee gating aligned with the secured entity allowlist and backend attribute names.
+- [Phase 05]: Frontend entity screens will reuse one cached capability response via shareReplay(1). - List, detail, and update screens can gate from one authenticated capability fetch instead of refetching per component.
+- [Phase 05]: Matrix UI payloads stay on the locked GRANT contract while the backend normalizes to runtime ALLOW and canonical stored targets. - This fixes end-to-end permission enforcement without changing the frontend matrix model from D-23 and D-24.
+- [Phase 05]: Protected-entity actions stay hidden until the shared capability response loads. - List, detail, and update screens should not briefly expose actions before permission state is known.
+- [Phase 05]: Create and edit routes redirect to /accessdenied before rendering forms when capability denies access. - Route-level gating must happen before form controls or sensitive inputs appear on screen.
 - [Phase 05]: Use (ngModelChange) not (onChange) for PrimeNG p-checkbox with binary mode and ngModel binding
 - [Phase 05-standalone-frontend-delivery]: Navigate to /login explicitly in logout() to skip two 401 round-trips caused by navigating to guarded home route
 - [Phase 05-standalone-frontend-delivery]: Root-scoped services holding per-user caches must subscribe to AccountService.getAuthenticationState() and reset cache on each emission
@@ -128,6 +130,7 @@ None yet.
 ### Blockers/Concerns
 
 - Phase 5: Frontend capability mapping beyond coarse base authorities needs explicit design before UI rollout.
+- Phase 5: Permission matrix save confirmation needs one browser re-test before phase completion.
 
 ### Quick Tasks Completed
 
@@ -137,7 +140,7 @@ None yet.
 
 ## Session Continuity
 
-Last activity: 2026-03-24 - Completed quick task 260324-xae: Fix @SecuredEntity catalog and N+1 capability loading
-Last session: 2026-03-23T02:51:46.367Z
-Stopped at: Completed 05-14-PLAN.md
+Last activity: 2026-03-24 - Implemented 05-15 permission matrix batch save; awaiting browser re-test
+Last session: 2026-03-24T17:32:42Z
+Stopped at: Awaiting browser re-test for permission matrix save confirmation
 Resume file: None
