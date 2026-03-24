@@ -102,6 +102,7 @@ TODO            text
 .gitignore      text
 .htaccess       text
 *.npmignore     text
+.husky/**       text eol=lf
 
 ## HEROKU
 Procfile        text
