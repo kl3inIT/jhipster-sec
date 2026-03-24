@@ -10,4 +10,14 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SecuredEntity {}
+public @interface SecuredEntity {
+    /**
+     * Lowercase entity code. Defaults to lowercase simple class name if empty.
+     */
+    String code() default "";
+
+    /**
+     * Fetch-plan codes. Defaults to {code}-list and {code}-detail if empty.
+     */
+    String[] fetchPlanCodes() default {};
+}

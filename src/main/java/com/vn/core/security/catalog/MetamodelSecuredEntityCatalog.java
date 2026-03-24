@@ -1,15 +1,13 @@
 package com.vn.core.security.catalog;
 
-import com.vn.core.domain.Department;
-import com.vn.core.domain.Employee;
-import com.vn.core.domain.Organization;
 import com.vn.core.security.permission.EntityOp;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.EntityType;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.Locale;
 import java.util.Optional;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -21,55 +19,45 @@ import org.springframework.stereotype.Component;
 @Primary
 public class MetamodelSecuredEntityCatalog implements SecuredEntityCatalog {
 
-    private static final Map<Class<?>, SecuredEntityEntry> PROOF_ENTRIES = Map.of(
-        Organization.class,
-        entryFor(Organization.class, "organization", List.of("organization-list", "organization-detail")),
-        Department.class,
-        entryFor(Department.class, "department", List.of("department-list", "department-detail")),
-        Employee.class,
-        entryFor(Employee.class, "employee", List.of("employee-list", "employee-detail"))
-    );
-
-    private final EntityManager entityManager;
+    private final List<SecuredEntityEntry> cachedEntries;
 
     public MetamodelSecuredEntityCatalog(EntityManager entityManager) {
-        this.entityManager = entityManager;
+        this.cachedEntries = Collections.unmodifiableList(
+            entityManager
+                .getMetamodel()
+                .getEntities()
+                .stream()
+                .map(EntityType::getJavaType)
+                .filter(cls -> cls.isAnnotationPresent(SecuredEntity.class))
+                .map(MetamodelSecuredEntityCatalog::buildEntry)
+                .sorted(Comparator.comparing(SecuredEntityEntry::code))
+                .toList()
+        );
     }
 
     @Override
     public List<SecuredEntityEntry> entries() {
-        return entityManager
-            .getMetamodel()
-            .getEntities()
-            .stream()
-            .map(EntityType::getJavaType)
-            .filter(this::isSecuredEntity)
-            .map(PROOF_ENTRIES::get)
-            .filter(Objects::nonNull)
-            .toList();
+        return cachedEntries;
     }
 
     @Override
     public Optional<SecuredEntityEntry> findByEntityClass(Class<?> entityClass) {
-        return entries()
-            .stream()
-            .filter(entry -> entry.entityClass().equals(entityClass))
-            .findFirst();
+        return cachedEntries.stream().filter(entry -> entry.entityClass().equals(entityClass)).findFirst();
     }
 
     @Override
     public Optional<SecuredEntityEntry> findByCode(String code) {
-        return entries()
-            .stream()
-            .filter(entry -> entry.code().equals(code))
-            .findFirst();
+        return cachedEntries.stream().filter(entry -> entry.code().equals(code)).findFirst();
     }
 
-    private boolean isSecuredEntity(Class<?> entityClass) {
-        return entityClass.isAnnotationPresent(SecuredEntity.class);
-    }
-
-    private static SecuredEntityEntry entryFor(Class<?> entityClass, String code, List<String> fetchPlanCodes) {
+    private static SecuredEntityEntry buildEntry(Class<?> entityClass) {
+        SecuredEntity annotation = entityClass.getAnnotation(SecuredEntity.class);
+        String code = annotation.code().isEmpty()
+            ? entityClass.getSimpleName().toLowerCase(Locale.ROOT)
+            : annotation.code();
+        List<String> fetchPlanCodes = annotation.fetchPlanCodes().length > 0
+            ? List.of(annotation.fetchPlanCodes())
+            : List.of(code + "-list", code + "-detail");
         return SecuredEntityEntry.builder()
             .entityClass(entityClass)
             .code(code)
