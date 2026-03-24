@@ -31,4 +31,7 @@ public interface SecPermissionRepository extends JpaRepository<SecPermission, Lo
         @Param("target") String target,
         @Param("action") String action
     );
+
+    @Query("select p from SecPermission p where p.authorityName in :authorityNames")
+    List<SecPermission> findAllByAuthorityNameIn(@Param("authorityNames") Collection<String> authorityNames);
 }
