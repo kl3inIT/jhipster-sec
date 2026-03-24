@@ -2,60 +2,52 @@
 
 ## What This Is
 
-This is a brownfield migration that evolves the current JHipster security service into a fuller security platform with a standalone Angular frontend. The target system must preserve the current backend auth and admin capabilities while absorbing the Jmix-style security behavior from `angapp`, including secure data access, row-level rules, attribute-level rules, and fetch-plan-driven reads.
+This is a brownfield migration that evolved the current JHipster security service into a fuller security platform with a shipped standalone Angular frontend. `v1.0` preserves the backend auth and admin capabilities while absorbing the Jmix-style security behavior from `angapp`, including merged security metadata management, secure data access, row-level rules, attribute-level rules, and fetch-plan-driven reads.
 
 ## Core Value
 
 Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
 
+## Current State
+
+`v1.0 MVP` shipped on 2026-03-25.
+
+The repository now includes:
+
+- The original Spring Boot/JHipster auth, account, admin-user, mail, and authority flows preserved without regression.
+- Merged security metadata administration for roles, permissions, and supported row policies.
+- A secure data-access layer centered on `SecureDataManager`, with CRUD, row-level, attribute-level, and YAML/code-defined fetch-plan enforcement.
+- Proof-domain entities and APIs for Organization, Department, and Employee that verify allow/deny behavior end to end.
+- A standalone Angular frontend under `frontend/` for login, route protection, security administration, and protected-entity screens.
+
 ## Requirements
 
 ### Validated
 
-- existing: JWT-based authentication and account lifecycle flows already exist in the current backend (`/api/authenticate`, registration, activation, password reset, password change)
-- existing: Admin user and authority management APIs already exist in the current backend
-- existing: Email-based activation and password-reset support already exists
-- existing: PostgreSQL- and Liquibase-backed Spring Boot/JHipster security service is already running in this repository
-- AUTH-02: Password change validation and account lifecycle edge cases locked in via regression tests (Validated in Phase 01: identity-and-authority-baseline)
-- AUTH-03: Non-admin access denials (403) for admin user and authority endpoints locked in via regression tests (Validated in Phase 01: identity-and-authority-baseline)
-- SEC-01: Admin can create, update, list, and delete merged security roles through stable backend contracts (Validated in Phase 02: security-metadata-management)
-- SEC-02: Admin can create, update, list, and delete permission rules through stable backend contracts (Validated in Phase 02: security-metadata-management)
-- SEC-03: Admin can create, update, list, and delete supported row policies through stable backend contracts (Validated in Phase 02: security-metadata-management)
-- SEC-04: SecurityContextBridge interface and JHipsterSecurityContextBridge implementation established as the integration seam for Phase 2's security engine (Validated in Phase 01: identity-and-authority-baseline)
-- DATA-01: CRUD permission evaluation (DENY-wins, fail-closed) locked in via unit tests (Validated in Phase 03: secure-enforcement-core)
-- DATA-02: Row-level policy enforcement with Specification composition validated (Validated in Phase 03: secure-enforcement-core)
-- DATA-03: Attribute-level read filtering (silent omission, id always visible) validated (Validated in Phase 03: secure-enforcement-core)
-- DATA-04: Attribute-level write enforcement (fail-closed, AccessDeniedException) validated (Validated in Phase 03: secure-enforcement-core)
-- DATA-05: Fetch-plan-driven reads via YAML repository and code builder validated (Validated in Phase 03: secure-enforcement-core)
+- AUTH-01 through AUTH-03 shipped in `v1.0`, covering standalone frontend login plus preserved backend account and admin-user behavior.
+- SEC-01 through SEC-04 shipped in `v1.0`, covering merged security metadata CRUD and authority-bridge integration.
+- DATA-01 through DATA-05 shipped in `v1.0`, covering secured reads, secured writes, row policies, attribute permissions, and YAML/code-only fetch plans.
+- ENT-01 through ENT-03 shipped in `v1.0`, covering proof entities, backend allow/deny coverage, and frontend capability-driven screens.
+- UI-01 through UI-03 shipped in `v1.0`, covering the standalone Angular app, security-management UI, and route/error/auth handling.
 
 ### Active
 
-- [ ] Merge the `angapp` security capabilities into a single project-native security model that preserves current `angapp` behavior and fits this repository cleanly
-- [ ] Build a standalone `frontend/` Angular app that follows the `aef-main/aef-main` structure and integrates with backend authentication and security-management flows
-- [ ] Make the merged security engine fully functional end-to-end, including CRUD permissions, row-level policies, attribute-level permissions, secure merge/write guards, and fetch-plan-based reads
-- [ ] Define fetch plans only through YAML configuration or code builders; do not store fetch-plan definitions in the database
-- [ ] Add sample entities and frontend/backend flows that fully exercise the security engine
-- [ ] Minimize DTO usage by default and rely on fetch-plan-based reads, while keeping boundary models only where they are truly necessary
+- [ ] V2-01: Migrate selected existing `angapp` business screens and workflows onto the shipped security platform.
+- [ ] V2-02: Expand row-policy authoring beyond the supported v1 policy subset.
+- [ ] V2-03: Remove remaining legacy JHipster boundary DTOs only where API contracts and validation stay stable.
+- [ ] V2-04: Decide whether later milestones actually need fetch-plan authoring UI.
 
 ### Out of Scope
 
-- Migrating existing `angapp` business screens and workflows in v1 - those will be handled in later phases after the shared security foundation is stable
-- Restoring database-backed fetch-plan metadata such as `sec_fetch_plan` - fetch plans must remain YAML/code-defined only
-- Forcing a literal one-to-one copy of either stock JHipster security or `angapp` schema design - the merge should be adapted to this project
+- Database-backed fetch-plan metadata remains out of scope; fetch plans stay YAML/code-defined only.
+- A literal one-to-one schema copy of `angapp` or stock JHipster remains out of scope; the merged security model stays project-native.
+- Unsupported row-policy designer variants remain out of scope until real use cases justify broadening the policy model.
 
 ## Context
 
-The current repository is a backend-only JHipster/Spring Boot service with JWT authentication, user self-service endpoints, admin user management, PostgreSQL, Liquibase, and mail flows already in place. The repository has no generated frontend today, so the new `frontend/` app will become the main client entry point.
+`v1.0` covered 5 phases, 30 plans, 43 documented tasks, 160 milestone commits, and roughly 359 files / 45,043 inserted lines across planning, backend, tests, and the new frontend. Final human UAT passed on 2026-03-25 with 3/3 checks green: login/session behavior, admin security-management persistence, and protected-entity gating.
 
-`angapp` is the reference implementation for the desired security behavior. Its important functional traits are not limited to schema: it routes business data access through a central secure data manager, applies entity CRUD permissions, attribute view/edit permissions, row-level policies, secure merge protections, and fetch-plan-based serialization. Those behaviors must survive the merge.
-
-`aef-main/aef-main` is the reference for the new frontend structure. It combines the PrimeNG Sakai layout approach with the standard JHipster Angular organization, including `core`, `shared`, `layout`, route-based features, and i18n assets.
-
-This project also has an existing codebase map under `.planning/codebase/`, which captures the current backend stack and architecture and should be treated as the baseline brownfield state.
-
-## Current State
-
-Phase 02 is complete. The backend now has merged security metadata schema, service and bridge layers, admin REST endpoints for roles, permissions, and row policies, and end-to-end integration coverage proving SEC-01, SEC-02, and SEC-03.
+Remaining non-product debt is process-oriented: validation strategy metadata for phases 1, 3, and 4 stayed draft even though the shipped verification evidence is complete.
 
 ## Constraints
 
@@ -69,31 +61,19 @@ Phase 02 is complete. The backend now has merged security metadata schema, servi
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Merge the security models into a project-native role/permission design | The project must preserve `angapp` behavior without forcing a brittle one-to-one schema copy | - Pending |
-| Create a standalone Angular app under `frontend/` using the `aef-main` structure as reference | The user wants the Sakai + JHipster frontend combination as the new client foundation | - Pending |
-| Use fetch plans from YAML and code builders only | Database-backed fetch-plan storage has already been removed and should stay removed | - Pending |
-| Remove DTOs incrementally rather than project-wide on day one | Existing JHipster user/account APIs still benefit from contract-protecting boundary models | - Pending |
+| Merge the security models into a project-native role/permission design | The project must preserve `angapp` behavior without forcing a brittle one-to-one schema copy | Confirmed in `v1.0` |
+| Create a standalone Angular app under `frontend/` using the `aef-main` structure as reference | The new client needed a clear Angular/PrimeNG foundation that still fit JHipster conventions | Shipped in `v1.0` |
+| Use `SecureDataManager` as the single secured data path and `UnconstrainedDataManager` as the trusted bypass | Security enforcement had to stay centralized and explicit | Validated in phases 3-5 |
+| Use proof-domain entities to validate the merged security engine end to end | The platform needed real sample entities to prove CRUD, row, and attribute behavior | Validated in phase 4 |
+| Use fetch plans from YAML and code builders only | Database-backed fetch-plan storage was explicitly disallowed by project constraints | Confirmed in `v1.0` |
+| Remove DTOs incrementally rather than project-wide on day one | Existing JHipster user/account APIs still benefit from contract-protecting boundary models | Confirmed in `v1.0` |
 
-## Evolution
+## Next Milestone Goals
 
-This document evolves at phase transitions and milestone boundaries.
-
-**After each phase transition** (via `$gsd-transition`):
-1. Requirements invalidated? -> Move to Out of Scope with reason
-2. Requirements validated? -> Move to Validated with phase reference
-3. New requirements emerged? -> Add to Active
-4. Decisions to log? -> Add to Key Decisions
-5. "What This Is" still accurate? -> Update if drifted
-
-**After each milestone** (via `$gsd-complete-milestone`):
-1. Full review of all sections
-2. Core Value check - still the right priority?
-3. Audit Out of Scope - reasons still valid?
-4. Update Context with current state
+- Define the next milestone in a fresh `.planning/REQUIREMENTS.md` via `$gsd-new-milestone`.
+- Decide which `angapp` business workflows should be migrated first now that the shared security platform is shipped.
+- Revisit richer row-policy authoring and remaining DTO boundaries against concrete product needs rather than broad cleanup goals.
+- Evaluate whether any fetch-plan authoring UI is justified by real runtime administration use cases.
 
 ---
-*Last updated: 2026-03-21 after Phase 02 (security-metadata-management) complete*
-
-
-
-
+*Last updated: 2026-03-25 after v1.0 MVP milestone completion*

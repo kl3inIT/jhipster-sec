@@ -1,34 +1,24 @@
 ---
 phase: 05-standalone-frontend-delivery
-verified: 2026-03-24T17:27:37Z
-status: human_needed
+verified: 2026-03-25T00:47:18+07:00
+status: passed
 score: 4/4 must-haves verified
 re_verification:
-  previous_status: gaps_found
-  previous_score: 1/4
+  previous_status: human_needed
+  previous_score: 4/4
   gaps_closed:
-    - "User can log in from the standalone frontend and the app handles authenticated state, route protection, and expected 401/403/404 flows correctly"
-    - "Admin can manage merged roles, permission rules, and row policies from the frontend end to end"
-    - "Sample protected-entity screens show only the actions and fields the current user is allowed to access"
+    - "Human UAT confirmed the JWT login round trip, refresh persistence, and expiry redirect behavior"
+    - "Human UAT confirmed admin CRUD plus buffered permission-matrix save confirmation end to end"
+    - "Human UAT confirmed protected-entity gating across proof roles"
   gaps_remaining: []
   regressions: []
-human_verification:
-  - test: "JWT login round trip and token persistence"
-    expected: "Valid credentials reach the dashboard, refresh keeps the session, and an expired session redirects back to /login."
-    why_human: "Requires a live backend plus real browser storage and session behavior."
-  - test: "Admin security-management flow in a browser"
-    expected: "An admin can create or update roles and row policies, change matrix permissions through Save Changes plus confirmation, reload the screens, and the saved changes persist."
-    why_human: "Needs real frontend-to-backend CRUD round trips and seeded admin data."
-  - test: "Protected-entity gating across proof roles"
-    expected: "Reader, editor, and none users see different actions and sensitive fields, and denied create or edit routes land on /accessdenied before form controls render."
-    why_human: "Visual gating across authenticated user roles cannot be fully proven from static inspection alone."
 ---
 
 # Phase 5: Standalone Frontend Delivery Verification Report
 
 **Phase Goal:** A standalone Angular frontend exposes the migrated auth and security-management experience and proves protected-entity behavior end to end.
-**Verified:** 2026-03-24T17:27:37Z
-**Status:** human_needed
+**Verified:** 2026-03-25T00:47:18+07:00
+**Status:** passed
 **Re-verification:** Yes - after gap closure
 
 ## Goal Achievement
@@ -85,11 +75,11 @@ human_verification:
 
 | Requirement | Source Plan | Description | Status | Evidence |
 | --- | --- | --- | --- | --- |
-| `AUTH-01` | `05-02-PLAN.md` | User can log in from the standalone `frontend/` app using the existing JWT authentication flow | NEEDS HUMAN | Login, token storage, attempted-URL restore, and 401 redirect behavior are wired in code, but a real backend/browser round trip is still required. |
-| `ENT-03` | `05-03-PLAN.md`, `05-07-PLAN.md`, `05-08-PLAN.md`, `05-09-PLAN.md` | Sample entity screens in `frontend/` reflect allowed and denied actions and field visibility correctly | NEEDS HUMAN | Capability endpoint, client cache, gated templates, payload omission, and frontend specs are present; real cross-role browser confirmation is still required. |
+| `AUTH-01` | `05-02-PLAN.md` | User can log in from the standalone `frontend/` app using the existing JWT authentication flow | SATISFIED | `05-HUMAN-UAT.md` test 1 passed on 2026-03-25, confirming live login, refresh persistence, and expiry redirect behavior in a real browser session. |
+| `ENT-03` | `05-03-PLAN.md`, `05-07-PLAN.md`, `05-08-PLAN.md`, `05-09-PLAN.md` | Sample entity screens in `frontend/` reflect allowed and denied actions and field visibility correctly | SATISFIED | `05-HUMAN-UAT.md` test 3 passed on 2026-03-25, confirming cross-role gating, `/accessdenied` redirects, and sensitive-field visibility behavior in the live UI. |
 | `UI-01` | `05-02-PLAN.md` | A standalone Angular app exists under `frontend/` and follows the `aef-main/aef-main` structure direction | SATISFIED | The app exists, builds, and tests successfully. |
-| `UI-02` | `05-01-PLAN.md`, `05-04-PLAN.md`, `05-05-PLAN.md`, `05-06-PLAN.md` | The frontend provides end-to-end role, permission, and row-policy management screens | NEEDS HUMAN | CRUD screens, matrix normalization, and targeted backend integration tests are in place, but a live browser-based admin CRUD round trip is still required. |
-| `UI-03` | `05-02-PLAN.md`, `05-06-PLAN.md` | The frontend handles authentication state, route protection, and expected 401/403/404 flows correctly | NEEDS HUMAN | Guarding, wildcard 404, navigation-error handling, and auth-expired redirects are wired; a live browser session is still needed to confirm the actual flow. |
+| `UI-02` | `05-01-PLAN.md`, `05-04-PLAN.md`, `05-05-PLAN.md`, `05-06-PLAN.md` | The frontend provides end-to-end role, permission, and row-policy management screens | SATISFIED | `05-HUMAN-UAT.md` test 2 passed on 2026-03-25, confirming live roles CRUD, row-policy CRUD, buffered permission-matrix saves, confirmation dialog behavior, and persisted changes after reload. |
+| `UI-03` | `05-02-PLAN.md`, `05-06-PLAN.md` | The frontend handles authentication state, route protection, and expected 401/403/404 flows correctly | SATISFIED | `05-HUMAN-UAT.md` tests 1 and 3 passed on 2026-03-25, confirming login, refresh, expiry redirect, access-denied routing, and protected-route gating under real browser conditions. |
 
 ### Anti-Patterns Found
 
@@ -97,33 +87,23 @@ human_verification:
 | --- | --- | --- | --- | --- |
 | None | - | No TODO, placeholder, empty-return, or console-log stub patterns found in the verified phase files | - | No code-level blocker found during the anti-pattern scan |
 
-### Human Verification Required
+### Human Verification Completed
 
-### 1. JWT Login Round Trip
+Human UAT was completed on 2026-03-25 and recorded in `05-HUMAN-UAT.md`.
 
-**Test:** Start the backend, open `/login`, sign in with a valid account, refresh the page, and revisit a protected route.
-**Expected:** Login succeeds, the dashboard loads, refresh preserves the session, and an expired session redirects to `/login`.
-**Why human:** Requires live backend auth plus browser storage behavior.
-
-### 2. Admin Security-Management Flow
-
-**Test:** As an admin, open Roles, Row Policies, and the permission matrix; create or edit records; reload the pages; then use a proof user whose role was changed.
-**Expected:** CRUD changes persist, the matrix shows `Save Changes` plus a confirmation dialog before permission writes, still speaks `GRANT` at the UI boundary, and protected-entity behavior changes accordingly for the affected user.
-**Why human:** Requires real API persistence and cross-user behavior.
-
-### 3. Protected-Entity Capability Gating
-
-**Test:** Log in as proof reader, proof editor, and proof none users; visit organization, department, and employee list, detail, and edit routes.
-**Expected:** Each role sees only the allowed actions; denied create or edit routes redirect to `/accessdenied`; budget and salary stay hidden unless explicit edit capability is granted.
-**Why human:** Requires visual confirmation across real authenticated roles.
+| Test | Result | Evidence |
+| --- | --- | --- |
+| JWT login round trip and token persistence | PASSED | `05-HUMAN-UAT.md` test 1 confirmed live login, refresh persistence, and expiry redirect behavior. |
+| Admin security-management flow including permission matrix save confirmation | PASSED | `05-HUMAN-UAT.md` test 2 confirmed CRUD persistence plus explicit save and confirm behavior in the matrix. |
+| Protected-entity gating across proof roles | PASSED | `05-HUMAN-UAT.md` test 3 confirmed cross-role gating, warning toasts, and fast reload behavior. |
 
 ### Gaps Summary
 
-The prior code gaps are closed. Unknown routes now land on the 404 page, the permission matrix now buffers edits behind an explicit confirmed save while keeping the locked frontend payload shape, and the protected-entity screens consume shared capability data to gate actions, edit buttons, route entry, and sensitive fields.
+The prior code gaps are closed and the final browser-driven checks are complete. Unknown routes land on the 404 page, the permission matrix buffers edits behind an explicit confirmed save while keeping the locked frontend payload shape, and the protected-entity screens consume shared capability data to gate actions, edit buttons, route entry, and sensitive fields.
 
-No new code-level blockers were found in this re-verification. Remaining work is live-environment confirmation only. The frontend build and Vitest suite both passed in this session. Targeted backend integration tests also passed in this session, including `SecPermissionAdminResourceIT`, `SecuredEntityEnforcementIT`, and `SecuredEntityCapabilityResourceIT`; the remaining gap is browser-driven validation of the live UX and role-specific behavior.
+No new code-level blockers were found in this re-verification. The frontend build and Vitest suite passed in the re-verification session, targeted backend integration tests passed, and the 2026-03-25 live human UAT completed with 3/3 tests passing and 0 issues.
 
 ---
 
-_Verified: 2026-03-24T17:27:37Z_
-_Verifier: Claude (gsd-verifier)_
+_Verified: 2026-03-25T00:47:18+07:00_
+_Verifier: Codex_
