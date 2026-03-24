@@ -129,8 +129,15 @@ None yet.
 
 - Phase 5: Frontend capability mapping beyond coarse base authorities needs explicit design before UI rollout.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260324-xae | Fix @SecuredEntity catalog and N+1 capability loading | 2026-03-24 | a223896 | [260324-xae-fix-securedentity-catalog-and-n-1-capabi](.planning/quick/260324-xae-fix-securedentity-catalog-and-n-1-capabi/) |
+
 ## Session Continuity
 
+Last activity: 2026-03-24 - Completed quick task 260324-xae: Fix @SecuredEntity catalog and N+1 capability loading
 Last session: 2026-03-23T02:51:46.367Z
 Stopped at: Completed 05-14-PLAN.md
 Resume file: None
