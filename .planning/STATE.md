@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enterprise Admin Experience
-status: defining milestone requirements
-stopped_at: Milestone scope definition in progress
-last_updated: "2026-03-25T03:15:00+07:00"
-last_activity: 2026-03-25 - Started v1.1 Enterprise Admin Experience milestone planning
+status: v1.1 roadmap defined
+stopped_at: Ready for Phase 6 discussion
+last_updated: "2026-03-25T03:45:00+07:00"
+last_activity: 2026-03-25 - Initialized v1.1 Enterprise Admin Experience, defined requirements, and created the roadmap
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,15 +20,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
-**Current focus:** Defining milestone requirements
+**Current focus:** Phase 6 planning
 
 ## Current Position
 
 Milestone: v1.1 Enterprise Admin Experience
-Phase: Not started (defining requirements)
+Phase: 6 - Frontend Parity Foundation
 Plan: -
-Status: Defining requirements
-Last activity: 2026-03-25 - Milestone v1.1 Enterprise Admin Experience started
+Status: Roadmap defined, ready for phase discussion and planning
+Last activity: 2026-03-25 - Initialized v1.1 Enterprise Admin Experience, defined requirements, and created a five-phase roadmap
 
 ## Performance Metrics
 
@@ -42,12 +42,16 @@ Last activity: 2026-03-25 - Milestone v1.1 Enterprise Admin Experience started
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 6 - Frontend Parity Foundation | 0 | - | - |
+| 7 - Enterprise Navigation Shell | 0 | - | - |
+| 8 - User Management Delivery | 0 | - | - |
+| 9 - Enterprise UX And Performance Hardening | 0 | - | - |
+| 10 - Frontend Reliability And Regression Coverage | 0 | - | - |
 
 **Recent Trend:**
 
-- Milestone initialized
-- Next step: define requirements and create roadmap
+- Roadmap initialized
+- Next actionable work: discuss and plan Phase 6
 
 ## Accumulated Context
 
@@ -100,10 +104,13 @@ Recent decisions affecting current work:
 - [Phase 05-standalone-frontend-delivery]: AttributePermissionEvaluatorImpl uses deny-default (empty perms = false) because permission matrix stores only GRANT records; empty result means no GRANT was given
 - [Phase 05-standalone-frontend-delivery]: canViewField() uses capabilityLoaded() gate for optimistic display before capability resolves, then applies fieldVisibility map
 - [Phase 05]: sessionStorage as warm-start layer beneath in-memory shareReplay for entity capability cache
+- [Milestone v1.1]: `angapp/` is the canonical donor for in-scope JHipster support files, translations, and user-management flows that must be migrated into `frontend/`
+- [Milestone v1.1]: Menu visibility and route protection should move to backend-driven navigation and permission data rather than a hardcoded client menu model
+- [Milestone v1.1]: Enterprise admin usability requires a structural shell and layout upgrade, not isolated page tweaks
 
 ### Pending Todos
 
-None yet.
+- Discuss and plan Phase 6 - Frontend Parity Foundation.
 
 ### Blockers/Concerns
 
@@ -120,7 +127,7 @@ None yet.
 
 ## Session Continuity
 
-Last activity: 2026-03-25 - Started v1.1 Enterprise Admin Experience milestone planning
-Last session: 2026-03-25T03:15:00+07:00
-Stopped at: Milestone scope definition in progress
+Last activity: 2026-03-25 - Initialized v1.1 Enterprise Admin Experience and prepared Phase 6 planning
+Last session: 2026-03-25T03:45:00+07:00
+Stopped at: Ready for Phase 6 discussion
 Resume file: None

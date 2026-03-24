@@ -67,12 +67,28 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| I18N-01 | Phase 6 | Pending |
+| I18N-02 | Phase 6 | Pending |
+| ROUTE-01 | Phase 7 | Pending |
+| ROUTE-02 | Phase 7 | Pending |
+| ROUTE-03 | Phase 7 | Pending |
+| UI-04 | Phase 7 | Pending |
+| UMGT-01 | Phase 8 | Pending |
+| UMGT-02 | Phase 8 | Pending |
+| UMGT-03 | Phase 8 | Pending |
+| UI-05 | Phase 9 | Pending |
+| PERF-01 | Phase 9 | Pending |
+| PERF-02 | Phase 9 | Pending |
+| PERF-03 | Phase 9 | Pending |
+| TEST-01 | Phase 10 | Pending |
+| TEST-02 | Phase 10 | Pending |
+| TEST-03 | Phase 10 | Pending |
 
 **Coverage:**
 - Milestone requirements: 16 total
-- Mapped to phases: 0
-- Unmapped: 16
+- Mapped to phases: 16
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-25*
-*Last updated: 2026-03-25 after initial definition*
+*Last updated: 2026-03-25 after roadmap creation*
