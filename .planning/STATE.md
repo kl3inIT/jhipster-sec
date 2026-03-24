@@ -137,10 +137,11 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260324-xae | Fix @SecuredEntity catalog and N+1 capability loading | 2026-03-24 | a223896 | [260324-xae-fix-securedentity-catalog-and-n-1-capabi](.planning/quick/260324-xae-fix-securedentity-catalog-and-n-1-capabi/) |
+| 260325-0ze | append Angular/TypeScript agent instructions to CLAUDE.md and AGENTS.md | 2026-03-24 | c012a5d | [260325-0ze-append-angular-typescript-agent-instruct](.planning/quick/260325-0ze-append-angular-typescript-agent-instruct/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-24 - Implemented 05-15 permission matrix batch save; awaiting browser re-test
+Last activity: 2026-03-24 - Completed quick task 260325-0ze: append Angular/TypeScript agent instructions to CLAUDE.md and AGENTS.md
 Last session: 2026-03-24T17:32:42Z
 Stopped at: Awaiting browser re-test for permission matrix save confirmation
 Resume file: None
