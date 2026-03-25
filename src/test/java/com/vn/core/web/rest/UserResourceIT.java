@@ -487,6 +487,81 @@ class UserResourceIT {
 
     @Test
     @Transactional
+    void getAllUsersReturnsXTotalCountHeader() throws Exception {
+        // Initialize the database
+        userRepository.saveAndFlush(user);
+
+        // Get all the users and verify X-Total-Count header is present
+        restUserMockMvc
+            .perform(get("/api/admin/users?sort=id,desc").accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(header().exists("X-Total-Count"));
+    }
+
+    @Test
+    @Transactional
+    void getAllUsersWithQuery() throws Exception {
+        // Initialize the database
+        userRepository.saveAndFlush(user);
+
+        // Query by login
+        restUserMockMvc
+            .perform(get("/api/admin/users?sort=id,desc&query=" + DEFAULT_LOGIN).accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].login").value(hasItem(DEFAULT_LOGIN)))
+            .andExpect(header().exists("X-Total-Count"));
+
+        // Query by email
+        restUserMockMvc
+            .perform(get("/api/admin/users?sort=id,desc&query=" + DEFAULT_EMAIL).accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL)));
+
+        // Query by firstName
+        restUserMockMvc
+            .perform(get("/api/admin/users?sort=id,desc&query=" + DEFAULT_FIRSTNAME).accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRSTNAME)));
+
+        // Query by lastName
+        restUserMockMvc
+            .perform(get("/api/admin/users?sort=id,desc&query=" + DEFAULT_LASTNAME).accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LASTNAME)));
+
+        // Query with non-matching term returns empty result
+        restUserMockMvc
+            .perform(get("/api/admin/users?sort=id,desc&query=zzzznonexistent").accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray());
+    }
+
+    @Test
+    @Transactional
+    void getAllUsersWithBlankQuery() throws Exception {
+        // Initialize the database
+        userRepository.saveAndFlush(user);
+
+        // Blank query should behave like normal browse
+        restUserMockMvc
+            .perform(get("/api/admin/users?sort=id,desc&query=   ").accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].login").value(hasItem(DEFAULT_LOGIN)));
+    }
+
+    @Test
+    @Transactional
+    void getAllUsersWithQueryAndUnsupportedSort() throws Exception {
+        // Unsupported sort should still return 400 even with a query
+        restUserMockMvc
+            .perform(get("/api/admin/users?sort=authorities,asc&query=test").accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
     @WithMockUser(authorities = AuthoritiesConstants.USER)
     void testNonAdminCannotAccessAdminEndpoints() throws Exception {
         restUserMockMvc.perform(get("/api/admin/users?sort=id,desc").accept(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
