@@ -1,9 +1,10 @@
 import { HttpResponse } from '@angular/common/http';
-import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { vi } from 'vitest';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { provideTranslateService } from '@ngx-translate/core';
 import { NEVER, of, throwError } from 'rxjs';
+import { vi } from 'vitest';
 
 import { ISecCatalogEntry } from '../shared/sec-catalog.model';
 import { ISecPermission } from '../shared/sec-permission.model';
@@ -49,6 +50,7 @@ describe('PermissionMatrixComponent', () => {
     TestBed.configureTestingModule({
       imports: [PermissionMatrixComponent],
       providers: [
+        provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -71,8 +73,6 @@ describe('PermissionMatrixComponent', () => {
     });
   });
 
-  // ─── Initialization ───────────────────────────────────────────────────────
-
   it('loads catalog entries and clears loading flag on init', () => {
     const fixture = createFixture();
     const component = fixture.componentInstance;
@@ -85,8 +85,22 @@ describe('PermissionMatrixComponent', () => {
   it('populates the granted map from the permissions response', () => {
     permissionService.query.mockReturnValue(
       of<ISecPermission[]>([
-        { id: 10, authorityName: 'ROLE_PROOF_NONE', targetType: 'ENTITY', target: 'organization', action: 'READ', effect: 'GRANT' },
-        { id: 20, authorityName: 'ROLE_PROOF_NONE', targetType: 'ENTITY', target: 'organization', action: 'UPDATE', effect: 'GRANT' },
+        {
+          id: 10,
+          authorityName: 'ROLE_PROOF_NONE',
+          targetType: 'ENTITY',
+          target: 'organization',
+          action: 'READ',
+          effect: 'GRANT',
+        },
+        {
+          id: 20,
+          authorityName: 'ROLE_PROOF_NONE',
+          targetType: 'ENTITY',
+          target: 'organization',
+          action: 'UPDATE',
+          effect: 'GRANT',
+        },
       ]),
     );
 
@@ -98,9 +112,7 @@ describe('PermissionMatrixComponent', () => {
     expect(component.isGranted('organization', 'DELETE')).toBe(false);
   });
 
-  // ─── Entity row selection ─────────────────────────────────────────────────
-
-  it('onEntitySelect sets selectedEntity', () => {
+  it('onEntitySelect sets the selected entity and attribute rows', () => {
     const fixture = createFixture();
     const component = fixture.componentInstance;
 
@@ -108,81 +120,98 @@ describe('PermissionMatrixComponent', () => {
     component.onEntitySelect(CATALOG_ENTRIES[0]);
 
     expect(component.selectedEntity).toBe(CATALOG_ENTRIES[0]);
+    expect(component.selectedEntityAttributeRows).toEqual([
+      { label: 'All attributes (*)', target: 'organization.*', isWildcard: true },
+      { label: 'budget', target: 'organization.budget', isWildcard: false },
+      { label: 'name', target: 'organization.name', isWildcard: false },
+    ]);
   });
 
-  it('onEntitySelect triggers detectChanges so the attribute panel is visible in the DOM', () => {
+  it('renders the attribute panel after selecting an entity', () => {
     const fixture = createFixture();
     const component = fixture.componentInstance;
 
-    // Before selection: "Select an entity" placeholder text is shown
-    const placeholder = fixture.debugElement.nativeElement.textContent;
-    expect(placeholder).toContain('Select an entity above');
+    expect(fixture.debugElement.nativeElement.textContent).toContain('Select an entity above');
 
-    // Select an entity with attributes
     component.onEntitySelect(CATALOG_ENTRIES[0]);
-    // onEntitySelect calls cdr.detectChanges() internally — no manual detectChanges() needed here
 
     const headings = fixture.debugElement.queryAll(By.css('h2'));
-    const attrHeading = headings.find(h => h.nativeElement.textContent.includes('Attribute Permissions'));
-    // The attribute-panel heading must be rendered
-    expect(attrHeading).toBeDefined();
-    expect(attrHeading!.nativeElement.textContent).toContain('Organization');
+    const attributeHeading = headings.find((heading) =>
+      heading.nativeElement.textContent.includes('Attribute Permissions'),
+    );
+
+    expect(attributeHeading).toBeDefined();
+    expect(attributeHeading!.nativeElement.textContent).toContain('Organization');
   });
 
-  it('onEntitySelect for entity with no attributes shows "no enumerated attributes" message', () => {
+  it('shows the no attributes message for entities without attributes', () => {
     const fixture = createFixture();
     const component = fixture.componentInstance;
 
-    component.onEntitySelect(CATALOG_ENTRIES[1]); // department — attributes: []
-    const text = fixture.debugElement.nativeElement.textContent;
-    expect(text).toContain('no enumerated attributes');
+    component.onEntitySelect(CATALOG_ENTRIES[1]);
+
+    expect(fixture.debugElement.nativeElement.textContent).toContain('no enumerated attributes');
   });
 
-  // ─── togglePermission — GRANT path ───────────────────────────────────────
-
-  it('calls create with the locked GRANT UI contract for entity READ toggles', () => {
+  it('stages a new permission change without calling the API immediately', () => {
     const fixture = createFixture();
     const component = fixture.componentInstance;
 
     component.togglePermission('ENTITY', 'organization', 'READ', true);
 
-    expect(permissionService.create).toHaveBeenCalledWith({
-      authorityName: 'ROLE_PROOF_NONE',
+    expect(permissionService.create).not.toHaveBeenCalled();
+    expect(component.pendingChanges.get('organization:READ')).toEqual({
+      checked: true,
       targetType: 'ENTITY',
       target: 'organization',
       action: 'READ',
-      effect: 'GRANT',
     });
+    expect(component.hasPendingChanges).toBe(true);
   });
 
-  it('stores the returned permission id in the granted map after create', () => {
+  it('flushes a staged create and stores the returned permission id', () => {
     const fixture = createFixture();
     const component = fixture.componentInstance;
 
     component.togglePermission('ENTITY', 'organization', 'CREATE', true);
+    component.flushChanges();
 
-    expect(component.isGranted('organization', 'CREATE')).toBe(true);
-    // Optimistic id (-1) is replaced with the real id from the response (123)
-    expect(component['granted'].get('organization:CREATE')).toBe(123);
+    expect(permissionService.create).toHaveBeenCalledWith({
+      authorityName: 'ROLE_PROOF_NONE',
+      targetType: 'ENTITY',
+      target: 'organization',
+      action: 'CREATE',
+      effect: 'GRANT',
+    });
+    expect(component.granted.get('organization:CREATE')).toBe(123);
+    expect(component.pendingChanges.has('organization:CREATE')).toBe(false);
+    expect(component.saving).toBe(false);
   });
 
-  it('clears the granted key on create error (rollback)', () => {
+  it('keeps the pending create staged when save fails', () => {
     permissionService.create.mockReturnValue(throwError(() => new Error('network error')));
     const fixture = createFixture();
     const component = fixture.componentInstance;
 
     component.togglePermission('ENTITY', 'organization', 'CREATE', true);
+    component.flushChanges();
 
     expect(component.isGranted('organization', 'CREATE')).toBe(false);
-    expect(component.isPending('organization', 'CREATE')).toBe(false);
+    expect(component.pendingChanges.has('organization:CREATE')).toBe(true);
+    expect(component.saving).toBe(false);
   });
 
-  // ─── togglePermission — REVOKE path ──────────────────────────────────────
-
-  it('calls delete with the correct permission id when unchecking a granted permission', () => {
+  it('flushes a staged delete and removes the granted permission', () => {
     permissionService.query.mockReturnValue(
       of<ISecPermission[]>([
-        { id: 42, authorityName: 'ROLE_PROOF_NONE', targetType: 'ENTITY', target: 'organization', action: 'DELETE', effect: 'GRANT' },
+        {
+          id: 42,
+          authorityName: 'ROLE_PROOF_NONE',
+          targetType: 'ENTITY',
+          target: 'organization',
+          action: 'DELETE',
+          effect: 'GRANT',
+        },
       ]),
     );
 
@@ -190,15 +219,24 @@ describe('PermissionMatrixComponent', () => {
     const component = fixture.componentInstance;
 
     component.togglePermission('ENTITY', 'organization', 'DELETE', false);
+    component.flushChanges();
 
     expect(permissionService.delete).toHaveBeenCalledWith(42);
     expect(component.isGranted('organization', 'DELETE')).toBe(false);
+    expect(component.pendingChanges.has('organization:DELETE')).toBe(false);
   });
 
-  it('restores the granted key on delete error (rollback)', () => {
+  it('keeps the original grant and pending delete when delete fails', () => {
     permissionService.query.mockReturnValue(
       of<ISecPermission[]>([
-        { id: 77, authorityName: 'ROLE_PROOF_NONE', targetType: 'ENTITY', target: 'organization', action: 'UPDATE', effect: 'GRANT' },
+        {
+          id: 77,
+          authorityName: 'ROLE_PROOF_NONE',
+          targetType: 'ENTITY',
+          target: 'organization',
+          action: 'UPDATE',
+          effect: 'GRANT',
+        },
       ]),
     );
     permissionService.delete.mockReturnValue(throwError(() => new Error('network error')));
@@ -207,51 +245,39 @@ describe('PermissionMatrixComponent', () => {
     const component = fixture.componentInstance;
 
     component.togglePermission('ENTITY', 'organization', 'UPDATE', false);
+    component.flushChanges();
 
     expect(component.isGranted('organization', 'UPDATE')).toBe(true);
-    expect(component['granted'].get('organization:UPDATE')).toBe(77);
+    expect(component.pendingChanges.has('organization:UPDATE')).toBe(true);
+    expect(component.granted.get('organization:UPDATE')).toBe(77);
   });
 
-  it('ignores uncheck for a key that is not in the granted map', () => {
+  it('discards staged changes without calling the API', () => {
     const fixture = createFixture();
     const component = fixture.componentInstance;
 
-    component.togglePermission('ENTITY', 'organization', 'CREATE', false);
+    component.togglePermission('ENTITY', 'organization', 'READ', true);
+    component.discardChanges();
 
+    expect(component.hasPendingChanges).toBe(false);
+    expect(permissionService.create).not.toHaveBeenCalled();
     expect(permissionService.delete).not.toHaveBeenCalled();
   });
 
-  // ─── Pending guard ────────────────────────────────────────────────────────
-
-  it('ignores a second toggle while the first is still pending', () => {
-    // Use NEVER so the first create never completes — pending stays set
+  it('ignores a second save while a previous save is still pending', () => {
     permissionService.create.mockReturnValue(NEVER);
     const fixture = createFixture();
     const component = fixture.componentInstance;
 
     component.togglePermission('ENTITY', 'organization', 'READ', true);
-    component.togglePermission('ENTITY', 'organization', 'READ', true); // blocked by pending
+    component.flushChanges();
+    component.flushChanges();
 
     expect(permissionService.create).toHaveBeenCalledTimes(1);
+    expect(component.saving).toBe(true);
   });
 
-  // ─── Attribute rows ───────────────────────────────────────────────────────
-
-  it('getAttributeRows returns wildcard row plus one row per attribute', () => {
-    const fixture = createFixture();
-    const component = fixture.componentInstance;
-
-    const rows = component.getAttributeRows(CATALOG_ENTRIES[0]);
-
-    expect(rows.length).toBe(3); // wildcard + budget + name
-    expect(rows[0]).toEqual({ label: 'All attributes (*)', target: 'organization.*', isWildcard: true });
-    expect(rows[1]).toEqual({ label: 'budget', target: 'organization.budget', isWildcard: false });
-    expect(rows[2]).toEqual({ label: 'name', target: 'organization.name', isWildcard: false });
-  });
-
-  // ─── Wildcard-granted check ───────────────────────────────────────────────
-
-  it('treats budget VIEW as disabled when organization.* VIEW is already granted', () => {
+  it('treats attribute permissions as wildcard-granted when the wildcard is already granted', () => {
     permissionService.query.mockReturnValue(
       of<ISecPermission[]>([
         {
@@ -270,20 +296,22 @@ describe('PermissionMatrixComponent', () => {
 
     component.onEntitySelect(CATALOG_ENTRIES[0]);
 
-    const budgetRow = component.getAttributeRows(CATALOG_ENTRIES[0]).find(row => row.target === 'organization.budget');
-
-    expect(budgetRow).toBeDefined();
-    expect(component.isWildcardGranted('organization', 'VIEW')).toBe(true);
-    expect(!budgetRow!.isWildcard && component.isWildcardGranted(CATALOG_ENTRIES[0].code, 'VIEW')).toBe(true);
+    expect(
+      component.selectedEntityAttributeRows.find((row) => row.target === 'organization.budget'),
+    ).toEqual({
+      label: 'budget',
+      target: 'organization.budget',
+      isWildcard: false,
+    });
+    expect(component.isWildcardEffectivelyGranted('organization', 'VIEW')).toBe(true);
   });
-
-  // ─── Empty role name guard ────────────────────────────────────────────────
 
   it('does not call the API when roleName is missing from the route', () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       imports: [PermissionMatrixComponent],
       providers: [
+        provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: convertToParamMap({}) } },

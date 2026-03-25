@@ -2,6 +2,7 @@ import { Component, NgZone, OnInit, OnDestroy, inject, signal, computed } from '
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription, combineLatest, finalize, tap } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
@@ -15,6 +16,7 @@ import { SortState, sortStateSignal } from 'app/shared/sort/sort-state';
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
 import { IOrganization } from '../organization.model';
 import { EntityArrayResponseType, OrganizationService } from '../service/organization.service';
+import { addTranslatedMessage, handleHttpError } from 'app/shared/error/http-error.utils';
 
 const ITEMS_PER_PAGE = 20;
 const TOTAL_COUNT_RESPONSE_HEADER = 'X-Total-Count';
@@ -25,7 +27,15 @@ const DEFAULT_SORT_DATA = 'defaultSort';
 @Component({
   selector: 'app-organization-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, CardModule, TableModule, ButtonModule, ConfirmDialogModule, ToastModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    CardModule,
+    TableModule,
+    ButtonModule,
+    ConfirmDialogModule,
+    ToastModule,
+  ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './organization-list.component.html',
 })
@@ -40,7 +50,7 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
   totalItems = 0;
   page = 1;
 
-  showBudgetColumn = computed(() => this.organizations().some(o => o.budget !== undefined));
+  showBudgetColumn = computed(() => this.organizations().some((o) => o.budget !== undefined));
   capabilityLoaded = computed(() => this.capability() !== null);
   canCreate = computed(() => this.capability()?.canCreate ?? false);
   canRead = computed(() => this.capability()?.canRead ?? false);
@@ -55,11 +65,14 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
   protected readonly ngZone = inject(NgZone);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
 
-  trackId = (item: IOrganization): number => this.organizationService.getOrganizationIdentifier(item);
+  trackId = (item: IOrganization): number =>
+    this.organizationService.getOrganizationIdentifier(item);
 
   ngOnInit(): void {
-    const capability = (this.activatedRoute.snapshot.data['capability'] ?? null) as ISecuredEntityCapability | null;
+    const capability = (this.activatedRoute.snapshot.data['capability'] ??
+      null) as ISecuredEntityCapability | null;
     this.capability.set(capability);
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
@@ -103,7 +116,10 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
       sortField && sortOrder ? { predicate: sortField, order: sortOrder } : this.sortState();
     if (page !== this.page) {
       this.navigateToPage(page);
-    } else if (newSortState.predicate !== this.sortState().predicate || newSortState.order !== this.sortState().order) {
+    } else if (
+      newSortState.predicate !== this.sortState().predicate ||
+      newSortState.order !== this.sortState().order
+    ) {
       this.navigateToWithComponentValues(newSortState);
     }
   }
@@ -111,7 +127,9 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     const page = params.get(PAGE_HEADER);
     this.page = +(page ?? 1);
-    this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
+    this.sortState.set(
+      this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]),
+    );
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
@@ -133,7 +151,9 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
       size: this.itemsPerPage,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
-    return this.organizationService.query(queryObject).pipe(finalize(() => this.loading.set(false)));
+    return this.organizationService
+      .query(queryObject)
+      .pipe(finalize(() => this.loading.set(false)));
   }
 
   protected handleNavigation(page: number, sortState: SortState): void {
@@ -177,16 +197,14 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
   private deleteOrg(org: IOrganization): void {
     this.organizationService.delete(org.id ?? 0).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Organization deleted successfully.' });
+        addTranslatedMessage(this.messageService, this.translateService, {
+          severity: 'success',
+          summary: 'feedback.toast.deleted',
+          detail: 'feedback.entities.organizations.deleted',
+        });
         this.load();
       },
-      error: (err: any) => {
-        if (err.status === 403) {
-          this.messageService.add({ severity: 'warn', summary: 'Access denied', detail: 'You do not have permission to perform this action.' });
-        } else {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'An unexpected error occurred. Please try again.' });
-        }
-      },
+      error: (err: unknown) => handleHttpError(this.messageService, this.translateService, err),
     });
   }
 }

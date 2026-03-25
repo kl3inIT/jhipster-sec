@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -42,6 +43,7 @@ export default class DepartmentUpdateComponent implements OnInit {
   private readonly departmentService = inject(DepartmentService);
   private readonly organizationService = inject(OrganizationService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
 
   form: FormGroup = this.fb.group({
     id: [null as number | null],
@@ -57,7 +59,7 @@ export default class DepartmentUpdateComponent implements OnInit {
   organizations = signal<IOrganization[]>([]);
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       const idParam = params.get('id');
       this.isCapabilityReady.set(false);
       if (idParam) {
@@ -66,7 +68,8 @@ export default class DepartmentUpdateComponent implements OnInit {
         this.isEdit.set(false);
       }
 
-      const capability = (this.route.snapshot.data['capability'] ?? null) as ISecuredEntityCapability | null;
+      const capability = (this.route.snapshot.data['capability'] ??
+        null) as ISecuredEntityCapability | null;
 
       if (!capability) {
         this.navigateToAccessDenied();
@@ -89,13 +92,13 @@ export default class DepartmentUpdateComponent implements OnInit {
 
   private loadOrganizations(): void {
     this.organizationService.query({ page: 0, size: 1000, sort: ['name,asc'] }).subscribe({
-      next: res => this.organizations.set(res.body ?? []),
+      next: (res) => this.organizations.set(res.body ?? []),
     });
   }
 
   private load(id: number): void {
     this.departmentService.find(id).subscribe({
-      next: res => {
+      next: (res) => {
         const dept = res.body;
         if (dept) {
           this.form.patchValue({
@@ -121,7 +124,7 @@ export default class DepartmentUpdateComponent implements OnInit {
     this.isSaving.set(true);
     const formValue = this.form.value;
     const selectedOrg = formValue.organizationId
-      ? this.organizations().find(o => o.id === formValue.organizationId)
+      ? this.organizations().find((o) => o.id === formValue.organizationId)
       : undefined;
 
     const payload: IDepartment | NewDepartment = {
@@ -140,7 +143,7 @@ export default class DepartmentUpdateComponent implements OnInit {
       next: () => {
         this.router.navigate(['/entities/department']);
       },
-      error: (err: any) => handleHttpError(this.messageService, err),
+      error: (err: unknown) => handleHttpError(this.messageService, this.translateService, err),
     });
   }
 
@@ -154,7 +157,7 @@ export default class DepartmentUpdateComponent implements OnInit {
 
   get organizationOptions(): { label: string; value: number }[] {
     return this.organizations()
-      .filter(o => o.id !== undefined && o.name !== undefined)
-      .map(o => ({ label: o.name!, value: o.id! }));
+      .filter((o) => o.id !== undefined && o.name !== undefined)
+      .map((o) => ({ label: o.name!, value: o.id! }));
   }
 }

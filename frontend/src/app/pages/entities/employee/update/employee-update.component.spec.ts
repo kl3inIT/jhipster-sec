@@ -1,18 +1,18 @@
 import { HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
-import { BehaviorSubject, of, Subject } from 'rxjs';
+import { provideTranslateService } from '@ngx-translate/core';
+import { BehaviorSubject, of } from 'rxjs';
 import { vi } from 'vitest';
 
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
-import { SecuredEntityCapabilityService } from '../../shared/service/secured-entity-capability.service';
 import { DepartmentService } from '../../department/service/department.service';
 import { EmployeeService } from '../service/employee.service';
 import EmployeeUpdateComponent from './employee-update.component';
 
 describe('EmployeeUpdateComponent', () => {
   let routeParamMap$: BehaviorSubject<ReturnType<typeof convertToParamMap>>;
-  let capability$: Subject<ISecuredEntityCapability | null>;
+  let routeSnapshot: { data: { capability: ISecuredEntityCapability | null } };
   let departmentService: {
     query: ReturnType<typeof vi.fn>;
   };
@@ -21,14 +21,15 @@ describe('EmployeeUpdateComponent', () => {
     create: ReturnType<typeof vi.fn>;
     update: ReturnType<typeof vi.fn>;
   };
-  let capabilityService: {
-    getEntityCapability: ReturnType<typeof vi.fn>;
-  };
   let router: Router;
 
   beforeEach(async () => {
     routeParamMap$ = new BehaviorSubject(convertToParamMap({}));
-    capability$ = new Subject<ISecuredEntityCapability | null>();
+    routeSnapshot = {
+      data: {
+        capability: buildCapability({ canCreate: true, canUpdate: true, canEditSalary: false }),
+      },
+    };
     departmentService = {
       query: vi.fn().mockReturnValue(of(new HttpResponse({ body: [] }))),
     };
@@ -49,18 +50,18 @@ describe('EmployeeUpdateComponent', () => {
       create: vi.fn(),
       update: vi.fn(),
     };
-    capabilityService = {
-      getEntityCapability: vi.fn().mockReturnValue(capability$.asObservable()),
-    };
 
     await TestBed.configureTestingModule({
       imports: [EmployeeUpdateComponent],
       providers: [
+        provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         provideRouter([]),
-        { provide: ActivatedRoute, useValue: { paramMap: routeParamMap$.asObservable() } },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: routeSnapshot, paramMap: routeParamMap$.asObservable() },
+        },
         { provide: DepartmentService, useValue: departmentService },
         { provide: EmployeeService, useValue: employeeService },
-        { provide: SecuredEntityCapabilityService, useValue: capabilityService },
       ],
     }).compileComponents();
 
@@ -73,18 +74,20 @@ describe('EmployeeUpdateComponent', () => {
 
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('#salary')).toBeNull();
-
-    capability$.next(buildCapability({ canCreate: true, canUpdate: true, canEditSalary: false }));
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('#salary')).toBeNull();
   });
 
   it('should render the salary input when the capability allows editing the salary attribute', () => {
+    routeSnapshot.data.capability = buildCapability({
+      canCreate: true,
+      canUpdate: true,
+      canEditSalary: true,
+    });
     const fixture = TestBed.createComponent(EmployeeUpdateComponent);
 
     fixture.detectChanges();
-    capability$.next(buildCapability({ canCreate: true, canUpdate: true, canEditSalary: true }));
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('#salary')).not.toBeNull();
@@ -92,10 +95,14 @@ describe('EmployeeUpdateComponent', () => {
 
   it('should navigate to /accessdenied when edit capability is denied for an existing employee route', () => {
     routeParamMap$.next(convertToParamMap({ id: '42' }));
+    routeSnapshot.data.capability = buildCapability({
+      canCreate: true,
+      canUpdate: false,
+      canEditSalary: false,
+    });
     const fixture = TestBed.createComponent(EmployeeUpdateComponent);
 
     fixture.detectChanges();
-    capability$.next(buildCapability({ canCreate: true, canUpdate: false, canEditSalary: false }));
     fixture.detectChanges();
 
     expect(router.navigate).toHaveBeenCalledWith(['/accessdenied']);
@@ -103,7 +110,11 @@ describe('EmployeeUpdateComponent', () => {
   });
 });
 
-function buildCapability(options: { canCreate: boolean; canUpdate: boolean; canEditSalary: boolean }): ISecuredEntityCapability {
+function buildCapability(options: {
+  canCreate: boolean;
+  canUpdate: boolean;
+  canEditSalary: boolean;
+}): ISecuredEntityCapability {
   return {
     code: 'employee',
     canCreate: options.canCreate,

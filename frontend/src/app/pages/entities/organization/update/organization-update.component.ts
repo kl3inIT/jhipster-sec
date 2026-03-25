@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -18,7 +19,16 @@ import { handleHttpError } from 'app/shared/error/http-error.utils';
 @Component({
   selector: 'app-organization-update',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonModule, InputTextModule, MessageModule, ToastModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    CardModule,
+    ButtonModule,
+    InputTextModule,
+    MessageModule,
+    ToastModule,
+  ],
   providers: [MessageService],
   templateUrl: './organization-update.component.html',
 })
@@ -28,6 +38,7 @@ export default class OrganizationUpdateComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly organizationService = inject(OrganizationService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
 
   form: FormGroup = this.fb.group({
     id: [null as number | null],
@@ -43,7 +54,7 @@ export default class OrganizationUpdateComponent implements OnInit {
   showBudgetField = signal(false);
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       const idParam = params.get('id');
       this.isCapabilityReady.set(false);
       this.showBudgetField.set(false);
@@ -53,7 +64,8 @@ export default class OrganizationUpdateComponent implements OnInit {
         this.isEdit.set(false);
       }
 
-      const capability = (this.route.snapshot.data['capability'] ?? null) as ISecuredEntityCapability | null;
+      const capability = (this.route.snapshot.data['capability'] ??
+        null) as ISecuredEntityCapability | null;
 
       if (!capability) {
         this.navigateToAccessDenied();
@@ -76,7 +88,7 @@ export default class OrganizationUpdateComponent implements OnInit {
 
   private load(id: number): void {
     this.organizationService.find(id).subscribe({
-      next: res => {
+      next: (res) => {
         const org = res.body;
         if (org) {
           this.form.patchValue(org);
@@ -109,7 +121,7 @@ export default class OrganizationUpdateComponent implements OnInit {
       next: () => {
         this.router.navigate(['/entities/organization']);
       },
-      error: (err: any) => handleHttpError(this.messageService, err),
+      error: (err: unknown) => handleHttpError(this.messageService, this.translateService, err),
     });
   }
 
@@ -118,7 +130,9 @@ export default class OrganizationUpdateComponent implements OnInit {
   }
 
   private canEditAttribute(capability: ISecuredEntityCapability, attributeName: string): boolean {
-    return capability.attributes.some(attribute => attribute.name === attributeName && attribute.canEdit);
+    return capability.attributes.some(
+      (attribute) => attribute.name === attributeName && attribute.canEdit,
+    );
   }
 
   private navigateToAccessDenied(): void {

@@ -1,0 +1,446 @@
+{
+  "global": {
+    "title": "Angapp",
+    "browsehappy": "B\u1ea1n \u0111ang s\u1eed d\u1ee5ng m\u1ed9t tr\u00ecnh duy\u1ec7t <strong>qu\u00e1 c\u0169</strong>. Vui l\u00f2ng <a href=\"http://browsehappy.com/?locale=en\">n\u00e2ng c\u1ea5p tr\u00ecnh duy\u1ec7t</a> c\u1ee7a b\u1ea1n \u0111\u1ec3 c\u00f3 tr\u1ea3i nghi\u1ec7m t\u1ed1t nh\u1ea5t.",
+    "menu": {
+      "home": "Trang ch\u1ee7",
+      "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
+      "entities": {
+        "main": "Th\u1ef1c th\u1ec3",
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "department": "Department",
+        "organization": "Organization"
+      },
+      "account": {
+        "main": "T\u00e0i kho\u1ea3n",
+        "settings": "C\u00e0i \u0111\u1eb7t",
+        "password": "M\u1eadt kh\u1ea9u",
+        "sessions": "Phi\u00ean \u0111\u0103ng nh\u1eadp",
+        "login": "\u0110\u0103ng nh\u1eadp",
+        "logout": "\u0110\u0103ng xu\u1ea5t",
+        "register": "\u0110\u0103ng k\u00fd"
+      },
+      "admin": {
+        "main": "Qu\u1ea3n tr\u1ecb",
+        "userManagement": "Qu\u1ea3n l\u00fd t\u00e0i kho\u1ea3n",
+        "tracker": "Theo d\u00f5i ng\u01b0\u1eddi d\u00f9ng",
+        "metrics": "S\u1ed1 li\u1ec7u",
+        "health": "T\u00ecnh tr\u1ea1ng",
+        "configuration": "C\u1ea5u h\u00ecnh",
+        "logs": "Ghi logs",
+        "apidocs": "API",
+        "database": "C\u01a1 s\u1edf d\u1eef li\u1ec7u",
+        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+      },
+      "language": "Ng\u00f4n ng\u1eef"
+    },
+    "form": {
+      "username.label": "T\u00ean t\u00e0i kho\u1ea3n",
+      "username.placeholder": "Nh\u1eadp t\u00ean t\u00e0i kho\u1ea3n c\u1ee7a b\u1ea1n",
+      "newpassword.label": "M\u1eadt kh\u1ea9u m\u1edbi",
+      "newpassword.placeholder": "Nh\u1eadp m\u1eadt kh\u1ea9u m\u1edbi",
+      "confirmpassword.label": "X\u00e1c nh\u1eadn m\u1eadt kh\u1ea9u m\u1edbi",
+      "confirmpassword.placeholder": "Nh\u1eadp l\u1ea1i m\u1eadt kh\u1ea9u m\u1edbi",
+      "email.label": "Email",
+      "email.placeholder": "Nh\u1eadp email c\u1ee7a b\u1ea1n"
+    },
+    "messages": {
+      "info": {
+        "authenticated": {
+          "prefix": "N\u1ebfu b\u1ea1n mu\u1ed1n ",
+          "link": "\u0111\u0103ng nh\u1eadp",
+          "suffix": ", b\u1ea1n c\u00f3 th\u1ec3 th\u1eed v\u1edbi t\u00e0i kho\u1ea3n m\u1eb7c \u0111\u1ecbnh:<br/>- Qu\u1ea3n tr\u1ecb vi\u00ean (t\u00e0i kho\u1ea3n=\"admin\" v\u00e0 m\u1eadt kh\u1ea9u=\"admin\") <br/>- Ng\u01b0\u1eddi d\u00f9ng (t\u00e0i kho\u1ea3n=\"user\" v\u00e0 m\u1eadt kh\u1ea9u=\"user\")."
+        },
+        "register": {
+          "noaccount": "B\u1ea1n v\u1eabn ch\u01b0a c\u00f3 t\u00e0i kho\u1ea3n?",
+          "link": "\u0110\u0103ng k\u00fd t\u00e0i kho\u1ea3n m\u1edbi"
+        }
+      },
+      "error": { "dontmatch": "X\u00e1c nh\u1eadn m\u1eadt kh\u1ea9u kh\u00f4ng kh\u1edbp!" },
+      "validate": {
+        "newpassword": {
+          "required": "B\u1ea1n ph\u1ea3i nh\u1eadp m\u1eadt kh\u1ea9u.",
+          "minlength": "M\u1eadt kh\u1ea9u ph\u1ea3i c\u00f3 \u00edt nh\u1ea5t 4 k\u00fd t\u1ef1.",
+          "maxlength": "M\u1eadt kh\u1ea9u kh\u00f4ng \u0111\u01b0\u1ee3c v\u01b0\u1ee3t qu\u00e1 50 k\u00fd t\u1ef1.",
+          "strength": "\u0110\u1ed9 m\u1ea1nh c\u1ee7a m\u1eadt kh\u1ea9u:"
+        },
+        "confirmpassword": {
+          "required": "B\u1ea1n ph\u1ea3i nh\u1eadp l\u1ea1i m\u1eadt kh\u1ea9u \u0111\u1ec3 x\u00e1c nh\u1eadn.",
+          "minlength": "M\u1eadt kh\u1ea9u ph\u1ea3i c\u00f3 \u00edt nh\u1ea5t 4 k\u00fd t\u1ef1.",
+          "maxlength": "M\u1eadt kh\u1ea9u kh\u00f4ng \u0111\u01b0\u1ee3c v\u01b0\u1ee3t qu\u00e1 50 k\u00fd t\u1ef1."
+        },
+        "email": {
+          "required": "B\u1ea1n ph\u1ea3i nh\u1eadp email.",
+          "invalid": "Email b\u1ea1n nh\u1eadp kh\u00f4ng h\u1ee3p l\u1ec7.",
+          "minlength": "Email ph\u1ea3i c\u00f3 \u00edt nh\u1ea5t 5 k\u00fd t\u1ef1.",
+          "maxlength": "Email kh\u00f4ng \u0111\u01b0\u1ee3c v\u01b0\u1ee3t qu\u00e1 50 k\u00fd t\u1ef1."
+        }
+      }
+    },
+    "field": { "id": "ID" },
+    "ribbon": { "dev": "Ph\u00e1t tri\u1ec3n" },
+    "item-count": "Showing {{first}} - {{second}} of {{total}} items."
+  },
+  "entity": {
+    "action": {
+      "addblob": "Th\u00eam n\u1ed9i dung",
+      "addimage": "Th\u00eam \u1ea3nh",
+      "back": "Quay l\u1ea1i",
+      "cancel": "H\u1ee7y",
+      "delete": "X\u00f3a",
+      "edit": "S\u1eeda",
+      "open": "M\u1edf",
+      "save": "L\u01b0u",
+      "view": "Xem",
+      "show": "Show {{otherEntity}}"
+    },
+    "detail": { "field": "Tr\u01b0\u1eddng", "value": "Gi\u00e1 tr\u1ecb" },
+    "delete": { "title": "X\u00e1c nh\u1eadn h\u00e0nh \u0111\u1ed9ng x\u00f3a" },
+    "validation": {
+      "required": "Tr\u01b0\u1eddng n\u00e0y b\u1eaft bu\u1ed9c ph\u1ea3i nh\u1eadp.",
+      "minlength": "Tr\u01b0\u1eddng n\u00e0y ph\u1ea3i c\u00f3 \u00edt nh\u1ea5t {{ min }} k\u00fd t\u1ef1.",
+      "maxlength": "Tr\u01b0\u1eddng n\u00e0y kh\u00f4ng \u0111\u01b0\u1ee3c v\u01b0\u1ee3t qu\u00e1 {{ max }} k\u00fd t\u1ef1.",
+      "min": "Tr\u01b0\u1eddng n\u00e0y ph\u1ea3i l\u1edbn h\u01a1n {{ min }}.",
+      "max": "Tr\u01b0\u1eddng n\u00e0y ph\u1ea3i nh\u1ecf h\u01a1n {{ max }}.",
+      "minbytes": "Dung l\u01b0\u1ee3ng tr\u01b0\u1eddng n\u00e0y ph\u1ea3i l\u1edbn h\u01a1n {{ min }} bytes.",
+      "maxbytes": "Dung l\u01b0\u1ee3ng tr\u01b0\u1eddng n\u00e0y ph\u1ea3i nh\u1ecf h\u01a1n {{ max }} bytes.",
+      "pattern": "Tr\u01b0\u1eddng n\u00e0y ph\u1ea3i theo \u0111\u1ecbnh d\u1ea1ng {{ pattern }}.",
+      "number": "Tr\u01b0\u1eddng n\u00e0y ph\u1ea3i l\u00e0 m\u1ed9t s\u1ed1.",
+      "datetimelocal": "Tr\u01b0\u1eddng n\u00e0y ph\u1ea3i l\u00e0 \u0111\u1ecbnh d\u1ea1ng th\u1eddi gian."
+    },
+    "filters": {
+      "set": "Following filters are set",
+      "clear": "Clear filter",
+      "clearAll": "Clear all filters"
+    }
+  },
+  "error": {
+    "internalServerError": "L\u1ed7i m\u00e1y ch\u1ee7 n\u1ed9i b\u1ed9",
+    "server.not.reachable": "Kh\u00f4ng t\u00ecm th\u1ea5y m\u00e1y ch\u1ee7",
+    "url.not.found": "Kh\u00f4ng t\u00ecm th\u1ea5y",
+    "NotNull": "Tr\u01b0\u1eddng {{ fieldName }} kh\u00f4ng \u0111\u01b0\u1ee3c \u0111\u1ec3 tr\u1ed1ng!",
+    "Size": "Tr\u01b0\u1eddng {{ fieldName }} kh\u00f4ng n\u1eb1m trong gi\u1edbi h\u1ea1n t\u1ed1i thi\u1ec3u/t\u1ed1i \u0111a!",
+    "userexists": "T\u00ean \u0111\u0103ng nh\u1eadp \u0111\u00e3 \u0111\u01b0\u1ee3c s\u1eed d\u1ee5ng!",
+    "emailexists": "Email \u0111\u00e3 \u0111\u01b0\u1ee3c s\u1eed d\u1ee5ng!",
+    "idexists": "Th\u00eam m\u1edbi {{ entityName }} kh\u00f4ng \u0111\u01b0\u1ee3c tr\u00f9ng v\u1edbi \u0111\u1ecbnh danh \u0111\u00e3 t\u1ed3n t\u1ea1i",
+    "idnull": "Invalid ID",
+    "idinvalid": "Invalid Id",
+    "idnotfound": "ID cannot be found",
+    "file": {
+      "could.not.extract": "Could not extract file",
+      "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""
+    },
+    "title": "Trang th\u00f4ng tin l\u1ed7i!",
+    "http": {
+      "400": "Bad request.",
+      "403": "B\u1ea1n kh\u00f4ng c\u00f3 quy\u1ec1n xem trang n\u00e0y.",
+      "404": "Trang kh\u00f4ng t\u1ed3n t\u1ea1i.",
+      "405": "The HTTP verb you used is not supported for this URL.",
+      "500": "Internal server error."
+    },
+    "concurrencyFailure": "Another user modified this data at the same time as you. Your changes were rejected.",
+    "validation": "Validation error on the server.",
+    "backToHome": "V\u1ec1 trang ch\u1ee7"
+  },
+  "footer": "\u0110\u00e2y l\u00e0 ch\u00e2n trang c\u1ee7a b\u1ea1n",
+  "login": {
+    "title": "\u0110\u0103ng nh\u1eadp",
+    "form": {
+      "password": "M\u1eadt kh\u1ea9u",
+      "password.placeholder": "Nh\u1eadp m\u1eadt kh\u1ea9u c\u1ee7a b\u1ea1n",
+      "rememberme": "Nh\u1edb t\u00e0i kho\u1ea3n",
+      "button": "\u0110\u0103ng nh\u1eadp"
+    },
+    "messages": {
+      "error": {
+        "authentication": "<strong>\u0110\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i!</strong> B\u1ea1n vui l\u00f2ng ki\u1ec3m tra th\u00f4ng tin \u0111\u0103ng nh\u1eadp v\u00e0 th\u1eed l\u1ea1i."
+      }
+    },
+    "password": { "forgot": "B\u1ea1n qu\u00ean m\u1eadt kh\u1ea9u?" }
+  },
+  "home": {
+    "title": "Ch\u00e0o m\u1eebng b\u1ea1n \u0111\u1ebfn v\u1edbi Java Hipster!",
+    "subtitle": "\u0110\u00e2y l\u00e0 trang ch\u1ee7 c\u1ee7a b\u1ea1n",
+    "logged": {
+      "message": "B\u1ea1n \u0111ang \u0111\u0103ng nh\u1eadp b\u1eb1ng t\u00e0i kho\u1ea3n \"{{username}}\"."
+    },
+    "question": "N\u1ebfu b\u1ea1n c\u00f3 b\u1ea5t k\u1ef3 c\u00e2u h\u1ecfi n\u00e0o v\u1ec1 JHipster vui l\u00f2ng truy c\u1eadp:",
+    "link": {
+      "homepage": "Trang ch\u1ee7 JHipster",
+      "stackoverflow": "JHipster tr\u00ean Stack Overflow",
+      "bugtracker": "Theo d\u00f5i c\u00e1c l\u1ed7i JHipster",
+      "chat": "Ph\u00f2ng chat c\u00f4ng c\u1ed9ng JHipster",
+      "follow": "Theo d\u00f5i @jhipster tr\u00ean Twitter"
+    },
+    "like": "N\u1ebfu b\u1ea1n th\u00edch JHipster, \u0111\u1eebng qu\u00ean cho ch\u00fang t\u00f4i th\u00eam m\u1ed9t ng\u00f4i sao tr\u00ean",
+    "github": "GitHub"
+  },
+  "userManagement": {
+    "home": {
+      "title": "T\u00e0i kho\u1ea3n",
+      "refreshListLabel": "Refresh list",
+      "createLabel": "T\u1ea1o t\u00e0i kho\u1ea3n m\u1edbi",
+      "createOrEditLabel": "T\u1ea1o ho\u1eb7c s\u1eeda t\u00e0i kho\u1ea3n"
+    },
+    "created": "M\u1ed9t t\u00e0i kho\u1ea3n m\u1edbi \u0111\u00e3 \u0111\u01b0\u1ee3c t\u1ea1o v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+    "updated": "M\u1ed9t t\u00e0i kho\u1ea3n \u0111\u00e3 \u0111\u01b0\u1ee3c c\u1eadp nh\u1eadt v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+    "deleted": "M\u1ed9t t\u00e0i kho\u1ea3n \u0111\u00e3 b\u1ecb x\u00f3a v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+    "delete": {
+      "question": "B\u1ea1n c\u00f3 ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a t\u00e0i kho\u1ea3n {{ login }}?"
+    },
+    "detail": { "title": "T\u00e0i kho\u1ea3n" },
+    "login": "T\u00ean \u0111\u0103ng nh\u1eadp",
+    "firstName": "T\u00ean",
+    "lastName": "H\u1ecd",
+    "email": "Email",
+    "activated": "K\u00edch ho\u1ea1t",
+    "deactivated": "Kh\u00f3a",
+    "profiles": "C\u00e1c quy\u1ec1n",
+    "langKey": "Ng\u00f4n ng\u1eef",
+    "createdBy": "Ng\u01b0\u1eddi t\u1ea1o",
+    "createdDate": "Ng\u00e0y t\u1ea1o",
+    "lastModifiedBy": "Ng\u01b0\u1eddi s\u1eeda",
+    "lastModifiedDate": "Ng\u00e0y s\u1eeda",
+    "placeholder": {
+      "phase6": "M\u00e0n h\u00ecnh qu\u1ea3n l\u00fd ng\u01b0\u1eddi d\u00f9ng \u0111\u1ea7y \u0111\u1ee7 s\u1ebd ho\u00e0n th\u00e0nh \u1edf Phase 8. Placeholder n\u00e0y gi\u1eef nguy\u00ean h\u1ee3p \u0111\u1ed3ng route v\u00e0 service."
+    }
+  },
+  "angappApp": {
+    "adminAuthority": {
+      "home": {
+        "title": "Authorities",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Th\u00eam m\u1edbi m\u1ed9t Authority",
+        "createOrEditLabel": "Th\u00eam m\u1edbi ho\u1eb7c c\u1eadp nh\u1eadt Authority",
+        "notFound": "No Authorities found"
+      },
+      "created": "M\u1ed9t Authority m\u1edbi \u0111\u01b0\u1ee3c t\u1ea1o v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+      "updated": "M\u1ed9t Authority c\u1eadp nh\u1eadt v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+      "deleted": "M\u1ed9t Authority \u0111\u00e3 x\u00f3a v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+      "delete": {
+        "question": "B\u1ea1n c\u00f3 ch\u1eafc l\u00e0 mu\u1ed1n x\u00f3a Authority {{ id }}?"
+      },
+      "detail": { "title": "Authority" },
+      "name": "Name"
+    },
+    "organization": {
+      "home": {
+        "title": "Organizations",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Th\u00eam m\u1edbi m\u1ed9t Organization",
+        "createOrEditLabel": "Th\u00eam m\u1edbi ho\u1eb7c c\u1eadp nh\u1eadt Organization",
+        "notFound": "No Organizations found"
+      },
+      "created": "M\u1ed9t Organization m\u1edbi \u0111\u01b0\u1ee3c t\u1ea1o v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+      "updated": "M\u1ed9t Organization c\u1eadp nh\u1eadt v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+      "deleted": "M\u1ed9t Organization \u0111\u00e3 x\u00f3a v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+      "delete": {
+        "question": "B\u1ea1n c\u00f3 ch\u1eafc l\u00e0 mu\u1ed1n x\u00f3a Organization {{ id }}?"
+      },
+      "detail": { "title": "Organization" },
+      "id": "ID",
+      "code": "Code",
+      "name": "Name",
+      "description": "Description"
+    },
+    "department": {
+      "home": {
+        "title": "Departments",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Th\u00eam m\u1edbi m\u1ed9t Department",
+        "createOrEditLabel": "Th\u00eam m\u1edbi ho\u1eb7c c\u1eadp nh\u1eadt Department",
+        "notFound": "No Departments found"
+      },
+      "created": "M\u1ed9t Department m\u1edbi \u0111\u01b0\u1ee3c t\u1ea1o v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+      "updated": "M\u1ed9t Department c\u1eadp nh\u1eadt v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+      "deleted": "M\u1ed9t Department \u0111\u00e3 x\u00f3a v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+      "delete": {
+        "question": "B\u1ea1n c\u00f3 ch\u1eafc l\u00e0 mu\u1ed1n x\u00f3a Department {{ id }}?"
+      },
+      "detail": { "title": "Department" },
+      "id": "ID",
+      "name": "Name",
+      "code": "Code"
+    }
+  },
+  "activate": {
+    "title": "K\u00edch ho\u1ea1t",
+    "messages": {
+      "success": "<strong>T\u00e0i kho\u1ea3n c\u1ee7a b\u1ea1n \u0111\u00e3 \u0111\u01b0\u1ee3c k\u00edch ho\u1ea1t.</strong> B\u1ea1n vui l\u00f2ng ",
+      "error": "<strong>Kh\u00f4ng th\u1ec3 k\u00edch ho\u1ea1t t\u00e0i kho\u1ea3n c\u1ee7a b\u1ea1n.</strong> Vui l\u00f2ng quay l\u1ea1i trang \u0111\u0103ng k\u00fd \u0111\u1ec3 t\u1ea1o t\u00e0i kho\u1ea3n."
+    }
+  },
+  "password": {
+    "title": "M\u1eadt kh\u1ea9u cho t\u00e0i kho\u1ea3n [<strong>{{username}}</strong>]",
+    "form": { "button": "L\u01b0u" },
+    "messages": {
+      "error": "<strong>C\u00f3 l\u1ed7i x\u1ea3y ra!</strong> Kh\u00f4ng th\u1ec3 thay \u0111\u1ed5i m\u1eadt kh\u1ea9u.",
+      "success": "<strong>M\u1eadt kh\u1ea9u \u0111\u00e3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i!</strong>"
+    }
+  },
+  "register": {
+    "title": "\u0110\u0103ng k\u00fd",
+    "form": { "button": "\u0110\u0103ng k\u00fd" },
+    "messages": {
+      "validate": {
+        "login": {
+          "required": "B\u1ea1n ph\u1ea3i nh\u1eadp t\u00ean t\u00e0i kho\u1ea3n.",
+          "minlength": "T\u00ean t\u00e0i kho\u1ea3n ph\u1ea3i c\u00f3 \u00edt nh\u1ea5t 1 k\u00fd t\u1ef1.",
+          "maxlength": "T\u00ean t\u00e0i kho\u1ea3n kh\u00f4ng \u0111\u01b0\u1ee3c v\u01b0\u1ee3t qu\u00e1 50 k\u00fd t\u1ef1.",
+          "pattern": "Your username is invalid."
+        }
+      },
+      "success": "<strong>\u0110\u0103ng k\u00fd th\u00e0nh c\u00f4ng!</strong> B\u1ea1n vui l\u00f2ng ki\u1ec3m tra h\u1ed9p th\u01b0 \u0111\u1ec3 x\u00e1c nh\u1eadn t\u00e0i kho\u1ea3n.",
+      "error": {
+        "fail": "<strong>\u0110\u0103ng k\u00fd th\u1ea5t b\u1ea1i!</strong> Vui l\u00f2ng th\u1eed l\u1ea1i sau.",
+        "userexists": "<strong>T\u00ean t\u00e0i kho\u1ea3n n\u00e0y \u0111\u00e3 \u0111\u01b0\u1ee3c s\u1eed d\u1ee5ng!</strong> B\u1ea1n vui l\u00f2ng ch\u1ecdn t\u00ean t\u00e0i kho\u1ea3n kh\u00e1c.",
+        "emailexists": "<strong>Email n\u00e0y \u0111\u00e3 \u0111\u01b0\u1ee3c s\u1eed d\u1ee5ng!</strong> B\u1ea1n vui l\u00f2ng nh\u1eadp email kh\u00e1c."
+      }
+    }
+  },
+  "reset": {
+    "request": {
+      "title": "\u0110\u1eb7t l\u1ea1i m\u1eadt kh\u1ea9u c\u1ee7a b\u1ea1n",
+      "form": { "button": "\u0110\u1eb7t l\u1ea1i m\u1eadt kh\u1ea9u" },
+      "messages": {
+        "info": "Nh\u1eadp \u0111\u1ecba ch\u1ec9 email m\u00e0 b\u1ea1n \u0111\u00e3 s\u1eed d\u1ee5ng \u0111\u1ec3 \u0111\u0103ng k\u00fd",
+        "success": "Vui l\u00f2ng ki\u1ec3m tra h\u00f2m th\u01b0 c\u1ee7a b\u1ea1n \u0111\u1ec3 xem chi ti\u1ebft c\u00e1ch l\u1ea5y l\u1ea1i m\u1eadt kh\u1ea9u."
+      }
+    },
+    "finish": {
+      "title": "\u0110\u1eb7t l\u1ea1i m\u1eadt kh\u1ea9u",
+      "form": { "button": "Ki\u1ec3m tra m\u1eadt kh\u1ea9u m\u1edbi" },
+      "messages": {
+        "info": "Ch\u1ecdn m\u1eadt kh\u1ea9u m\u1edbi",
+        "success": "<strong>M\u1eadt kh\u1ea9u c\u1ee7a b\u1ea1n \u0111\u00e3 \u0111\u01b0\u1ee3c \u0111\u1eb7t l\u1ea1i.</strong> B\u1ea1n vui l\u00f2ng ",
+        "keymissing": "Kh\u00f4ng t\u00ecm th\u1ea5y kh\u00f3a \u0111\u1ec3 \u0111\u1eb7t l\u1ea1i m\u1eadt kh\u1ea9u.",
+        "error": "Kh\u00f4ng th\u1ec3 \u0111\u1eb7t l\u1ea1i m\u1eadt kh\u1ea9u c\u1ee7a b\u1ea1n. L\u01b0u \u00fd, y\u00eau c\u1ea7u \u0111\u1eb7t l\u1ea1i m\u1eadt kh\u1ea9u ch\u1ec9 c\u00f3 hi\u1ec7u l\u1ef1c trong 24 gi\u1edd."
+      }
+    }
+  },
+  "settings": {
+    "title": "C\u00e0i \u0111\u1eb7t ng\u01b0\u1eddi d\u00f9ng c\u1ee7a [<strong>{{username}}</strong>]",
+    "form": {
+      "firstname": "T\u00ean",
+      "firstname.placeholder": "Nh\u1eadp t\u00ean c\u1ee7a b\u1ea1n",
+      "lastname": "H\u1ecd",
+      "lastname.placeholder": "Nh\u1eadp h\u1ecd c\u1ee7a b\u1ea1n",
+      "language": "Ng\u00f4n ng\u1eef",
+      "button": "L\u01b0u"
+    },
+    "messages": {
+      "error": {
+        "fail": "<strong>C\u00f3 l\u1ed7i x\u1ea3y ra!</strong> Kh\u00f4ng th\u1ec3 l\u01b0u c\u00e0i \u0111\u1eb7t.",
+        "emailexists": "<strong>Email \u0111\u00e3 \u0111\u01b0\u1ee3c s\u1eed d\u1ee5ng!</strong> Vui l\u00f2ng nh\u1eadp email kh\u00e1c."
+      },
+      "success": "<strong>\u0110\u00e3 l\u01b0u c\u00e0i \u0111\u1eb7t!</strong>",
+      "validate": {
+        "firstname": {
+          "required": "B\u1ea1n ph\u1ea3i nh\u1eadp t\u00ean.",
+          "minlength": "T\u00ean ph\u1ea3i c\u00f3 \u00edt nh\u1ea5t 1 k\u00fd t\u1ef1",
+          "maxlength": "T\u00ean kh\u00f4ng \u0111\u01b0\u1ee3c v\u01b0\u1ee3t qu\u00e1 50 k\u00fd t\u1ef1"
+        },
+        "lastname": {
+          "required": "B\u1ea1n ph\u1ea3i nh\u1eadp h\u1ecd t\u00ean.",
+          "minlength": "H\u1ecd t\u00ean ph\u1ea3i c\u00f3 \u00edt nh\u1ea5t 1 k\u00fd t\u1ef1",
+          "maxlength": "H\u1ecd t\u00ean kh\u00f4ng \u0111\u01b0\u1ee3c v\u01b0\u1ee3t qu\u00e1 50 k\u00fd t\u1ef1"
+        }
+      }
+    }
+  },
+  "sessions": {
+    "title": "C\u00e1c phi\u00ean \u0111\u0103ng nh\u1eadp hi\u1ec7n t\u1ea1i c\u1ee7a [<strong>{{username}}</strong>]",
+    "table": {
+      "ipaddress": "\u0110\u1ecba ch\u1ec9 IP",
+      "useragent": "Tr\u00ecnh duy\u1ec7t",
+      "date": "Ng\u00e0y",
+      "button": "\u0110\u00f3ng phi\u00ean n\u00e0y"
+    },
+    "messages": {
+      "success": "<strong>Phi\u00ean \u0111\u0103ng nh\u1eadp \u0111\u00e3 \u0111\u01b0\u1ee3c \u0111\u00f3ng!</strong>",
+      "error": "<strong>C\u00f3 l\u1ed7i x\u1ea3y ra!</strong> Kh\u00f4ng th\u1ec3 \u0111\u00f3ng phi\u00ean \u0111\u0103ng nh\u1eadp."
+    }
+  },
+  "pageTitle": {
+    "home": "Trang ch\u1ee7",
+    "login": "\u0110\u0103ng nh\u1eadp",
+    "accessDenied": "T\u1eeb ch\u1ed1i truy c\u1eadp",
+    "notFound": "Kh\u00f4ng t\u00ecm th\u1ea5y trang",
+    "error": "L\u1ed7i kh\u00f4ng mong mu\u1ed1n",
+    "securityRoles": "Vai tr\u00f2 b\u1ea3o m\u1eadt",
+    "permissionMatrix": "Ma tr\u1eadn quy\u1ec1n",
+    "rowPolicies": "Ch\u00ednh s\u00e1ch h\u00e0ng"
+  },
+  "layout": {
+    "topbar": {
+      "toggleMenu": "M\u1edf ho\u1eb7c \u0111\u00f3ng menu",
+      "toggleTheme": "\u0110\u1ed5i giao di\u1ec7n",
+      "login": "\u0110\u0103ng nh\u1eadp",
+      "logout": "\u0110\u0103ng xu\u1ea5t"
+    },
+    "language": { "en": "English", "vi": "Ti\u1ebfng Vi\u1ec7t" },
+    "menu": {
+      "security": {
+        "main": "Qu\u1ea3n tr\u1ecb b\u1ea3o m\u1eadt",
+        "roles": "Vai tr\u00f2 b\u1ea3o m\u1eadt",
+        "permissions": "Ma tr\u1eadn quy\u1ec1n",
+        "rowPolicies": "Ch\u00ednh s\u00e1ch h\u00e0ng"
+      },
+      "entities": { "employee": "Nh\u00e2n vi\u00ean" }
+    }
+  },
+  "security": {
+    "alert": {
+      "secRole": {
+        "created": "M\u1ed9t vai tr\u00f2 b\u1ea3o m\u1eadt m\u1edbi \u0111\u01b0\u1ee3c t\u1ea1o v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+        "updated": "M\u1ed9t vai tr\u00f2 b\u1ea3o m\u1eadt \u0111\u01b0\u1ee3c c\u1eadp nh\u1eadt v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+        "deleted": "M\u1ed9t vai tr\u00f2 b\u1ea3o m\u1eadt \u0111\u00e3 b\u1ecb x\u00f3a v\u1edbi \u0111\u1ecbnh danh {{ param }}"
+      },
+      "secPermission": {
+        "created": "M\u1ed9t quy\u1ec1n b\u1ea3o m\u1eadt m\u1edbi \u0111\u01b0\u1ee3c t\u1ea1o v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+        "updated": "M\u1ed9t quy\u1ec1n b\u1ea3o m\u1eadt \u0111\u01b0\u1ee3c c\u1eadp nh\u1eadt v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+        "deleted": "M\u1ed9t quy\u1ec1n b\u1ea3o m\u1eadt \u0111\u00e3 b\u1ecb x\u00f3a v\u1edbi \u0111\u1ecbnh danh {{ param }}"
+      },
+      "secRowPolicy": {
+        "created": "M\u1ed9t ch\u00ednh s\u00e1ch h\u00e0ng m\u1edbi \u0111\u01b0\u1ee3c t\u1ea1o v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+        "updated": "M\u1ed9t ch\u00ednh s\u00e1ch h\u00e0ng \u0111\u01b0\u1ee3c c\u1eadp nh\u1eadt v\u1edbi \u0111\u1ecbnh danh {{ param }}",
+        "deleted": "M\u1ed9t ch\u00ednh s\u00e1ch h\u00e0ng \u0111\u00e3 b\u1ecb x\u00f3a v\u1edbi \u0111\u1ecbnh danh {{ param }}"
+      }
+    }
+  },
+  "feedback": {
+    "toast": { "deleted": "?? x?a" },
+    "httpError": {
+      "accessDenied": {
+        "summary": "T? ch?i truy c?p",
+        "detail": "B?n kh?ng c? quy?n th?c hi?n h?nh ??ng n?y."
+      },
+      "unexpected": {
+        "summary": "L?i",
+        "detail": "?? x?y ra l?i kh?ng mong mu?n. Vui l?ng th? l?i."
+      }
+    },
+    "security": {
+      "roles": {
+        "deleted": "Vai tr? \"{{ param }}\" ?? b? x?a.",
+        "loadFailed": "Kh?ng th? t?i danh s?ch vai tr? b?o m?t.",
+        "deleteFailed": "Kh?ng th? x?a vai tr? b?o m?t."
+      },
+      "rowPolicies": {
+        "deleted": "Ch?nh s?ch h?ng \"{{ param }}\" ?? b? x?a.",
+        "loadFailed": "Kh?ng th? t?i danh s?ch ch?nh s?ch h?ng.",
+        "deleteFailed": "Kh?ng th? x?a ch?nh s?ch h?ng.",
+        "saveFailed": "Kh?ng th? l?u ch?nh s?ch h?ng. H?y ki?m tra bi?u th?c v? th? l?i."
+      },
+      "permissionMatrix": {
+        "loadFailed": "Kh?ng th? t?i ma tr?n quy?n. Vui l?ng th? l?i.",
+        "saveFailed": "Kh?ng th? l?u c?c thay ??i quy?n. Vui l?ng th? l?i."
+      }
+    },
+    "entities": {
+      "organizations": { "deleted": "?? x?a t? ch?c th?nh c?ng." },
+      "departments": { "deleted": "?? x?a ph?ng ban th?nh c?ng." },
+      "employees": { "deleted": "?? x?a nh?n vi?n th?nh c?ng." }
+    }
+  }
+}

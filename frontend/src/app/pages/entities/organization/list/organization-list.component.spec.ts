@@ -1,14 +1,14 @@
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { of, NEVER, Observable } from 'rxjs';
+import { provideTranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 
 import { SortService } from 'app/shared/sort/sort.service';
 import { IOrganization } from '../organization.model';
 import { OrganizationService } from '../service/organization.service';
 import OrganizationListComponent from './organization-list.component';
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
-import { SecuredEntityCapabilityService } from '../../shared/service/secured-entity-capability.service';
 
 describe('OrganizationListComponent', () => {
   const organization: IOrganization = {
@@ -48,28 +48,24 @@ describe('OrganizationListComponent', () => {
     navigate: async () => true,
   };
 
-  let capability$: Observable<ISecuredEntityCapability | null>;
+  let routeSnapshot: { data: { capability: ISecuredEntityCapability | null } };
 
   beforeEach(() => {
-    capability$ = of(restrictiveCapability);
+    routeSnapshot = { data: { capability: restrictiveCapability } };
 
     TestBed.configureTestingModule({
       imports: [OrganizationListComponent],
       providers: [
+        provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: OrganizationService, useValue: organizationService },
         { provide: SortService, useValue: sortService },
         { provide: Router, useValue: router },
         {
           provide: ActivatedRoute,
           useValue: {
+            snapshot: routeSnapshot,
             queryParamMap: of(convertToParamMap({})),
             data: of({ defaultSort: 'id,asc' }),
-          },
-        },
-        {
-          provide: SecuredEntityCapabilityService,
-          useValue: {
-            getEntityCapability: () => capability$,
           },
         },
       ],
@@ -84,7 +80,9 @@ describe('OrganizationListComponent', () => {
     fixture.detectChanges();
 
     const nativeElement = fixture.nativeElement as HTMLElement;
-    const actionLabels = Array.from(nativeElement.querySelectorAll('button[aria-label]')).map(button => button.getAttribute('aria-label'));
+    const actionLabels = Array.from(nativeElement.querySelectorAll('button[aria-label]')).map(
+      (button) => button.getAttribute('aria-label'),
+    );
 
     expect(nativeElement.textContent).not.toContain('New Organization');
     expect(actionLabels).toContain('View');
@@ -93,7 +91,7 @@ describe('OrganizationListComponent', () => {
   });
 
   it('renders no action buttons while capability is still null', async () => {
-    capability$ = NEVER;
+    routeSnapshot.data.capability = null;
     const fixture = TestBed.createComponent(OrganizationListComponent);
 
     fixture.detectChanges();

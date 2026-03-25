@@ -1,5 +1,15 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject, signal } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
 
 import { ButtonModule } from 'primeng/button';
@@ -20,7 +30,16 @@ import { handleHttpError } from 'app/shared/error/http-error.utils';
 @Component({
   selector: 'app-row-policy-dialog',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonModule, ConfirmDialogModule, DialogModule, InputTextModule, SelectModule, TextareaModule, ToastModule],
+  imports: [
+    ReactiveFormsModule,
+    ButtonModule,
+    ConfirmDialogModule,
+    DialogModule,
+    InputTextModule,
+    SelectModule,
+    TextareaModule,
+    ToastModule,
+  ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './row-policy-dialog.component.html',
 })
@@ -45,17 +64,24 @@ export default class RowPolicyDialogComponent implements OnChanges, OnInit {
   ];
 
   editForm = new FormGroup({
-    code: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
+    code: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(100)],
+    }),
     entityName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     operation: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     policyType: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    expression: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(1000)] }),
+    expression: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(1000)],
+    }),
   });
 
   private readonly secRowPolicyService = inject(SecRowPolicyService);
   private readonly catalogService = inject(SecCatalogService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
 
   ngOnInit(): void {
     this.loadCatalog();
@@ -80,7 +106,7 @@ export default class RowPolicyDialogComponent implements OnChanges, OnInit {
   private loadCatalog(): void {
     this.catalogService.query().subscribe({
       next: (entries: ISecCatalogEntry[]) => {
-        this.catalogEntries.set(entries.map(e => ({ label: e.displayName, value: e.code })));
+        this.catalogEntries.set(entries.map((e) => ({ label: e.displayName, value: e.code })));
       },
       error: () => {
         this.catalogEntries.set([]);
@@ -112,16 +138,22 @@ export default class RowPolicyDialogComponent implements OnChanges, OnInit {
       policyType: formValue.policyType,
       expression: formValue.expression,
     };
-    const request$ = this.rowPolicy?.id ? this.secRowPolicyService.update(policyData) : this.secRowPolicyService.create(policyData);
-    request$
-      .pipe(finalize(() => (this.isSaving = false)))
-      .subscribe({
-        next: () => {
-          this.saved.emit();
-          this.close();
-        },
-        error: (err: any) => handleHttpError(this.messageService, err, 'Could not save the row policy. Check the expression and try again.'),
-      });
+    const request$ = this.rowPolicy?.id
+      ? this.secRowPolicyService.update(policyData)
+      : this.secRowPolicyService.create(policyData);
+    request$.pipe(finalize(() => (this.isSaving = false))).subscribe({
+      next: () => {
+        this.saved.emit();
+        this.close();
+      },
+      error: (err: unknown) =>
+        handleHttpError(
+          this.messageService,
+          this.translateService,
+          err,
+          'feedback.security.rowPolicies.saveFailed',
+        ),
+    });
   }
 
   close(): void {
