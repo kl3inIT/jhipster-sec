@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 08-03-PLAN.md
-last_updated: "2026-03-25T16:43:09.104Z"
+status: Ready to verify
+stopped_at: Completed 08-04-PLAN.md
+last_updated: "2026-03-25T16:49:20.890Z"
 last_activity: 2026-03-25
 progress:
   total_phases: 6
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 18
-  completed_plans: 17
+  completed_plans: 18
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 
 ## Current Position
 
-Phase: 08 (user-management-delivery) — EXECUTING
+Phase: 08 (user-management-delivery) — VERIFYING
 Plan: 4 of 4
 
 ## Performance Metrics
@@ -49,7 +49,7 @@ Plan: 4 of 4
 
 - Phase 6 completed with green `frontend` production build and focused Angular regression coverage
 - Standalone i18n, alerting, admin route foundations, and translated shell surfaces are now live in `frontend/`
-- Next actionable work: execute Phase 08 plan 04
+- Next actionable work: verify Phase 08
 
 | Phase 07 P05 | 4 | 2 tasks | 19 files |
 | Phase 07.1-menu-management P01 | 25 | 2 tasks | 10 files |
@@ -58,6 +58,7 @@ Plan: 4 of 4
 | Phase 08 P01 | 2 | 2 tasks | 4 files |
 | Phase 08 P02 | 10 | 2 tasks | 14 files |
 | Phase 08 P03 | 10 min | 2 tasks | 12 files |
+| Phase 08 P04 | 5 min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -138,6 +139,8 @@ Recent decisions affecting current work:
 - [Phase 08]: Create and edit reuse one split-page component so the detail and edit surfaces stay structurally aligned — Keeps detail and edit on the same mental model while leaving role assignment visible in both flows.
 - [Phase 08]: The first authority-save proof uses deterministic Playwright API mocks to verify a persisted grant changes downstream admin route access — This proves the workflow through the real frontend routes without requiring a dedicated backend seed environment for every smoke run.
 - [Phase 08]: UserManagementFormService owns trim and default mapping so create and edit flows serialize one consistent IUser payload — Prevents route-specific form drift and keeps POST or PUT payloads aligned with the preserved admin-user contract.
+- [Phase 08]: User-route-access coverage should assert /admin/users directly against the effective authority set, not just a generic hidden-leaf case — This keeps the regression pinned to the exact admin surface Phase 8 introduced.
+- [Phase 08]: The user-management smoke proves both grant-then-allow and revoke-then-deny against the same mocked admin flow — It closes UMGT-03 with positive and negative route outcomes instead of a single saved-payload assertion.
 
 ### Pending Todos
 
@@ -161,6 +164,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last activity: 2026-03-25
-Last session: 2026-03-25T16:43:09.099Z
-Stopped at: Completed 08-03-PLAN.md
+Last session: 2026-03-25T16:49:20.884Z
+Stopped at: Completed 08-04-PLAN.md
 Resume file: None
