@@ -218,31 +218,22 @@
 
         <p-tabpanel value="1">
           <div class="p-4">
-            <p-treetable
-              [value]="menuTreeNodes"
-              selectionMode="checkbox"
-              [selection]="menuTreeSelection"
-              dataKey="key"
-              [loading]="menuLoading"
-              (selectionChange)="onMenuSelectionChange($any($event))"
-              [tableStyle]="{ 'min-width': '24rem' }"
-            >
-              <ng-template #header>
-                <tr>
-                  <th>Navigation Node</th>
-                </tr>
-              </ng-template>
-              <ng-template #body let-rowNode>
-                <tr [ttRow]="rowNode">
-                  <td>
-                    <div class="flex items-center gap-2">
-                      <p-treetable-toggler [rowNode]="rowNode" />
-                      <span>{{ rowNode.node.label }}</span>
-                    </div>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-treetable>
+            @if (menuLoading) {
+              <div class="flex justify-center p-8">
+                <p-progressSpinner />
+              </div>
+            } @else {
+              <p-tree
+                [value]="menuTreeNodes"
+                selectionMode="checkbox"
+                [(selection)]="menuTreeSelection"
+                [propagateSelectionUp]="false"
+                [propagateSelectionDown]="false"
+                (onNodeSelect)="onMenuNodeSelect($event)"
+                (onNodeUnselect)="onMenuNodeUnselect($event)"
+                [style]="{ 'max-width': '40rem' }"
+              />
+            }
           </div>
         </p-tabpanel>
       </p-tabpanels>
