@@ -14,7 +14,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TableModule } from 'primeng/table';
 import { TabsModule } from 'primeng/tabs';
 import { ToastModule } from 'primeng/toast';
-import { TreeModule } from 'primeng/tree';
+import { TreeTableModule } from 'primeng/treetable';
 
 import { APP_NAVIGATION_TREE } from 'app/layout/navigation/navigation-registry';
 import { handleHttpError } from 'app/shared/error/http-error.utils';
@@ -86,7 +86,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
     TabsModule,
     ToastModule,
     TranslateModule,
-    TreeModule,
+    TreeTableModule,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './permission-matrix.component.html',
@@ -114,7 +114,7 @@ export default class PermissionMatrixComponent implements OnInit {
 
   // Menu access tab state
   menuTreeNodes: TreeNode[] = [];
-  menuTreeSelection: TreeNode[] = [];
+  menuSelectionKeys: Record<string, { checked?: boolean; partialChecked?: boolean }> = {};
   menuGranted = new Map<string, number>(); // menuId -> permission id
   menuPendingChanges = new Map<string, boolean>(); // menuId -> checked state
   menuLoading = true;
@@ -200,22 +200,29 @@ export default class PermissionMatrixComponent implements OnInit {
     this.menuTreeNodes = APP_NAVIGATION_TREE.map(section => ({
       key: section.id,
       label: this.translateService.instant(section.labelKey),
-      selectable: false,
       expanded: true,
       children: section.children.map(leaf => ({
         key: leaf.id,
         label: this.translateService.instant(leaf.labelKey),
-        selectable: true,
       })),
     }));
-    this.menuTreeSelection = [];
+    const keys: Record<string, { checked?: boolean; partialChecked?: boolean }> = {};
     for (const section of this.menuTreeNodes) {
-      for (const child of section.children ?? []) {
-        if (this.isMenuEffectivelyGranted(child.key!)) {
-          this.menuTreeSelection.push(child);
+      const leaves = section.children ?? [];
+      let checkedCount = 0;
+      for (const leaf of leaves) {
+        if (this.isMenuEffectivelyGranted(leaf.key!)) {
+          keys[leaf.key!] = { checked: true, partialChecked: false };
+          checkedCount++;
         }
       }
+      if (checkedCount > 0 && checkedCount < leaves.length) {
+        keys[section.key!] = { partialChecked: true };
+      } else if (checkedCount === leaves.length && leaves.length > 0) {
+        keys[section.key!] = { checked: true, partialChecked: false };
+      }
     }
+    this.menuSelectionKeys = keys;
   }
 
   private isMenuEffectivelyGranted(menuId: string): boolean {
@@ -223,23 +230,20 @@ export default class PermissionMatrixComponent implements OnInit {
     return pending ?? this.menuGranted.has(menuId);
   }
 
-  onMenuNodeSelect(event: { node: TreeNode }): void {
-    const menuId = event.node.key!;
-    if (this.menuGranted.has(menuId)) {
-      this.menuPendingChanges.delete(menuId);
-    } else {
-      this.menuPendingChanges.set(menuId, true);
+  onMenuSelectionKeysChange(newKeys: Record<string, { checked?: boolean; partialChecked?: boolean }>): void {
+    for (const section of this.menuTreeNodes) {
+      for (const leaf of section.children ?? []) {
+        const menuId = leaf.key!;
+        const isNowChecked = !!newKeys[menuId]?.checked;
+        const wasGranted = this.menuGranted.has(menuId);
+        if (isNowChecked === wasGranted) {
+          this.menuPendingChanges.delete(menuId);
+        } else {
+          this.menuPendingChanges.set(menuId, isNowChecked);
+        }
+      }
     }
-    this.cdr.detectChanges();
-  }
-
-  onMenuNodeUnselect(event: { node: TreeNode }): void {
-    const menuId = event.node.key!;
-    if (!this.menuGranted.has(menuId)) {
-      this.menuPendingChanges.delete(menuId);
-    } else {
-      this.menuPendingChanges.set(menuId, false);
-    }
+    this.menuSelectionKeys = newKeys;
     this.cdr.detectChanges();
   }
 

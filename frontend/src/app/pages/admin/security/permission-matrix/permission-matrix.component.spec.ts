@@ -2,10 +2,11 @@ import { HttpResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { NEVER, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { AdminMenuPermissionService } from '../shared/service/admin-menu-permission.service';
 import { ISecCatalogEntry } from '../shared/sec-catalog.model';
 import { ISecPermission } from '../shared/sec-permission.model';
 import { SecCatalogService } from '../shared/service/sec-catalog.service';
@@ -33,6 +34,11 @@ describe('PermissionMatrixComponent', () => {
     create: ReturnType<typeof vi.fn>;
     delete: ReturnType<typeof vi.fn>;
   };
+  let menuPermissionService: {
+    query: ReturnType<typeof vi.fn>;
+    create: ReturnType<typeof vi.fn>;
+    delete: ReturnType<typeof vi.fn>;
+  };
 
   function createFixture(): ComponentFixture<PermissionMatrixComponent> {
     const fixture = TestBed.createComponent(PermissionMatrixComponent);
@@ -41,9 +47,22 @@ describe('PermissionMatrixComponent', () => {
   }
 
   beforeEach(() => {
+    globalThis.ResizeObserver =
+      globalThis.ResizeObserver ??
+      class ResizeObserver {
+        observe(): void {}
+        unobserve(): void {}
+        disconnect(): void {}
+      };
+
     permissionService = {
       query: vi.fn().mockReturnValue(of([])),
       create: vi.fn().mockReturnValue(of(new HttpResponse({ body: { id: 123 } }))),
+      delete: vi.fn().mockReturnValue(of(new HttpResponse({ status: 204 }))),
+    };
+    menuPermissionService = {
+      query: vi.fn().mockReturnValue(of([])),
+      create: vi.fn().mockReturnValue(of(new HttpResponse({ body: { id: 456 } }))),
       delete: vi.fn().mockReturnValue(of(new HttpResponse({ status: 204 }))),
     };
 
@@ -69,7 +88,26 @@ describe('PermissionMatrixComponent', () => {
           provide: SecPermissionService,
           useValue: permissionService,
         },
+        {
+          provide: AdminMenuPermissionService,
+          useValue: menuPermissionService,
+        },
       ],
+    });
+
+    TestBed.inject(TranslateService).setTranslation('en', {
+      security: {
+        permissionMatrix: {
+          entity: {
+            emptySelection: 'Select an entity above',
+          },
+          attribute: {
+            heading: 'Attribute Permissions: {{ entity }}',
+            none: 'This entity has no enumerated attributes.',
+            wildcard: 'All attributes (*)',
+          },
+        },
+      },
     });
   });
 
@@ -121,7 +159,7 @@ describe('PermissionMatrixComponent', () => {
 
     expect(component.selectedEntity).toBe(CATALOG_ENTRIES[0]);
     expect(component.selectedEntityAttributeRows).toEqual([
-      { label: 'All attributes (*)', target: 'organization.*', isWildcard: true },
+      { label: '', target: 'organization.*', isWildcard: true },
       { label: 'budget', target: 'organization.budget', isWildcard: false },
       { label: 'name', target: 'organization.name', isWildcard: false },
     ]);
@@ -134,6 +172,7 @@ describe('PermissionMatrixComponent', () => {
     expect(fixture.debugElement.nativeElement.textContent).toContain('Select an entity above');
 
     component.onEntitySelect(CATALOG_ENTRIES[0]);
+    fixture.detectChanges();
 
     const headings = fixture.debugElement.queryAll(By.css('h2'));
     const attributeHeading = headings.find((heading) =>
@@ -318,6 +357,7 @@ describe('PermissionMatrixComponent', () => {
         },
         { provide: SecCatalogService, useValue: { query: () => of([]) } },
         { provide: SecPermissionService, useValue: permissionService },
+        { provide: AdminMenuPermissionService, useValue: menuPermissionService },
       ],
     });
 
