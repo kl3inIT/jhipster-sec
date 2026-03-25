@@ -141,7 +141,8 @@
       "maxbytes": "Dung lượng trường này phải nhỏ hơn {{ max }} bytes.",
       "pattern": "Trường này phải theo định dạng {{ pattern }}.",
       "number": "Trường này phải là một số.",
-      "datetimelocal": "Trường này phải là định dạng thời gian."
+      "datetimelocal": "Trường này phải là định dạng thời gian.",
+      "patternLogin": "Trường này chỉ được chứa chữ cái, chữ số và địa chỉ email."
     },
     "filters": {
       "set": "Các bộ lọc đang được áp dụng",
@@ -188,7 +189,8 @@
   "feedback": {
     "toast": {
       "deleted": "Đã xóa",
-      "success": "Thành công"
+      "success": "Thành công",
+      "saved": "Đã lưu"
     },
     "httpError": {
       "accessDenied": {
@@ -706,87 +708,90 @@
   },
   "userManagement": {
     "home": {
-      "title": "Tai khoan",
-      "refreshListLabel": "Refresh list",
-      "createLabel": "Tao tai khoan moi",
-      "createOrEditLabel": "Tao hoac sua tai khoan",
-      "searchPlaceholder": "Tim kiem theo ten dang nhap, email, hoac ten",
-      "emptyTitle": "Khong tim thay tai khoan nao",
-      "emptyBody": "Thu tim kiem khac hoac tao tai khoan moi.",
-      "loadError": "Khong the tai danh sach tai khoan. Hay lam moi trang. Neu van tiep tuc, lien he quan tri vien."
+      "title": "Tài khoản",
+      "refreshListLabel": "Làm mới danh sách",
+      "createLabel": "Tạo tài khoản mới",
+      "createOrEditLabel": "Tạo hoặc sửa tài khoản",
+      "searchPlaceholder": "Tìm kiếm theo tên đăng nhập, email hoặc tên",
+      "emptyTitle": "Không tìm thấy tài khoản nào",
+      "emptyBody": "Thử tìm kiếm khác hoặc tạo tài khoản mới.",
+      "loadError": "Không thể tải danh sách tài khoản. Hãy làm mới trang. Nếu vẫn tiếp tục, hãy liên hệ quản trị viên."
     },
-    "created": "Mot tai khoan moi da duoc tao voi dinh danh {{ param }}",
-    "updated": "Mot tai khoan da duoc cap nhat voi dinh danh {{ param }}",
-    "deleted": "Mot tai khoan da bi xoa voi dinh danh {{ param }}",
+    "created": "Một tài khoản mới đã được tạo với định danh {{ param }}",
+    "updated": "Một tài khoản đã được cập nhật với định danh {{ param }}",
+    "deleted": "Một tài khoản đã bị xóa với định danh {{ param }}",
     "delete": {
-      "question": "Ban co chac chan muon xoa tai khoan {{ login }}?",
-      "title": "Xoa tai khoan",
-      "keep": "Giu lai",
-      "confirm": "Xoa"
+      "question": "Bạn có chắc chắn muốn xóa tài khoản {{ login }}?",
+      "title": "Xóa tài khoản",
+      "keep": "Giữ lại",
+      "confirm": "Xóa"
     },
     "detail": {
-      "title": "Tai khoan",
-      "summaryTitle": "Chi tiet tai khoan",
-      "rolesTitle": "Vai tro",
-      "backToList": "Quay lai danh sach",
-      "auditTitle": "Thong tin kiem tra"
+      "title": "Tài khoản",
+      "summaryTitle": "Chi tiết tài khoản",
+      "rolesTitle": "Vai trò",
+      "backToList": "Quay lại danh sách",
+      "auditTitle": "Thông tin kiểm tra"
     },
     "form": {
-      "sectionTitle": "Thong tin tai khoan",
-      "rolesTitle": "Vai tro duoc gan",
-      "save": "Luu tai khoan",
-      "create": "Tao tai khoan",
-      "discard": "Bo thay doi",
+      "sectionTitle": "Thông tin tài khoản",
+      "rolesTitle": "Vai trò được gán",
+      "save": "Lưu tài khoản",
+      "create": "Tạo tài khoản",
+      "discard": "Bỏ thay đổi",
       "validation": {
-        "loginRequired": "Bat buoc nhap ten dang nhap.",
-        "emailRequired": "Bat buoc nhap email.",
-        "emailInvalid": "Email khong hop le.",
-        "maxLength": "Truong nay khong duoc vuot qua {{ max }} ky tu.",
-        "langKeyRequired": "Bat buoc chon ngon ngu."
+        "loginRequired": "Bắt buộc nhập tên đăng nhập.",
+        "emailRequired": "Bắt buộc nhập email.",
+        "emailInvalid": "Email không hợp lệ.",
+        "maxLength": "Trường này không được vượt quá {{ max }} ký tự.",
+        "langKeyRequired": "Bắt buộc chọn ngôn ngữ."
       }
     },
     "actions": {
       "view": "Xem",
-      "edit": "Sua",
-      "activate": "Kich hoat",
-      "deactivate": "Khoa",
-      "delete": "Xoa",
-      "new": "Tao moi"
+      "edit": "Sửa",
+      "activate": "Kích hoạt",
+      "deactivate": "Khóa",
+      "delete": "Xóa",
+      "new": "Tạo mới"
     },
     "columns": {
-      "fullName": "Ho va ten",
-      "status": "Trang thai",
-      "roles": "Vai tro",
-      "lastModified": "Lan sua cuoi",
-      "actions": "Thao tac"
+      "fullName": "Họ và tên",
+      "status": "Trạng thái",
+      "roles": "Vai trò",
+      "lastModified": "Lần sửa cuối",
+      "actions": "Thao tác"
     },
     "authorityLabels": {
-      "ROLE_ADMIN": "Quan tri vien",
-      "ROLE_USER": "Nguoi dung"
+      "ROLE_ADMIN": "Quản trị viên",
+      "ROLE_USER": "Người dùng",
+      "ROLE_ACCOUNTANT": "Kế toán",
+      "ROLE_STOCKKEEPER": "Thủ kho",
+      "ROLE_DIRECTOR": "Giám đốc"
     },
     "status": {
-      "active": "Dang hoat dong",
-      "inactive": "Bi khoa"
+      "active": "Đang hoạt động",
+      "inactive": "Bị khóa"
     },
-    "login": "Ten dang nhap",
-    "firstName": "Ten",
-    "lastName": "Ho",
+    "login": "Tên đăng nhập",
+    "firstName": "Tên",
+    "lastName": "Họ",
     "email": "Email",
-    "activated": "Kich hoat",
-    "deactivated": "Khoa",
-    "profiles": "Cac quyen",
+    "activated": "Kích hoạt",
+    "deactivated": "Khóa",
+    "profiles": "Các quyền",
     "feedback": {
-      "createFailed": "Khong the tao tai khoan. Hay kiem tra lai form va thu lai.",
-      "updateFailed": "Khong the luu tai khoan. Hay kiem tra lai form va thu lai.",
-      "saved": "Tai khoan {{ login }} da duoc luu."
+      "createFailed": "Không thể tạo tài khoản. Hãy kiểm tra lại biểu mẫu và thử lại.",
+      "updateFailed": "Không thể lưu tài khoản. Hãy kiểm tra lại biểu mẫu và thử lại.",
+      "saved": "Tài khoản {{ login }} đã được lưu."
     },
-    "langKey": "Ngon ngu",
-    "createdBy": "Nguoi tao",
-    "createdDate": "Ngay tao",
-    "lastModifiedBy": "Nguoi sua",
-    "lastModifiedDate": "Ngay sua",
+    "langKey": "Ngôn ngữ",
+    "createdBy": "Người tạo",
+    "createdDate": "Ngày tạo",
+    "lastModifiedBy": "Người sửa",
+    "lastModifiedDate": "Ngày sửa",
     "placeholder": {
-      "phase6": "Man hinh quan ly nguoi dung day du se hoan thanh o Phase 8. Placeholder nay giu nguyen hop dong route va service."
+      "phase6": "Màn hình quản lý người dùng đầy đủ sẽ hoàn thành ở Phase 8. Placeholder này giữ nguyên hợp đồng route và service."
     }
   }
 }

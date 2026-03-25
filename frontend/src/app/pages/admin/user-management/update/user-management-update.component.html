@@ -31,11 +31,11 @@
     </div>
   </div>
 
-  <form [formGroup]="editForm" class="grid">
-    <div class="col-12 lg:col-8">
+  <form [formGroup]="editForm" class="grid gap-4 lg:grid-cols-12 lg:items-start">
+    <div class="lg:col-span-8">
       <p-card [header]="'userManagement.form.sectionTitle' | translate">
-        <div class="grid">
-          <div class="col-12 md:col-6">
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
             <label for="login" class="block text-sm font-semibold mb-2">{{ 'userManagement.login' | translate }}</label>
             <input id="login" type="text" pInputText formControlName="login" class="w-full" />
             @if (hasError('login', 'required')) {
@@ -49,7 +49,7 @@
             }
           </div>
 
-          <div class="col-12 md:col-6">
+          <div>
             <label for="email" class="block text-sm font-semibold mb-2">{{ 'userManagement.email' | translate }}</label>
             <input id="email" type="email" pInputText formControlName="email" class="w-full" />
             @if (hasError('email', 'required')) {
@@ -63,7 +63,7 @@
             }
           </div>
 
-          <div class="col-12 md:col-6">
+          <div>
             <label for="firstName" class="block text-sm font-semibold mb-2">{{ 'userManagement.firstName' | translate }}</label>
             <input id="firstName" type="text" pInputText formControlName="firstName" class="w-full" />
             @if (hasError('firstName', 'maxlength')) {
@@ -71,7 +71,7 @@
             }
           </div>
 
-          <div class="col-12 md:col-6">
+          <div>
             <label for="lastName" class="block text-sm font-semibold mb-2">{{ 'userManagement.lastName' | translate }}</label>
             <input id="lastName" type="text" pInputText formControlName="lastName" class="w-full" />
             @if (hasError('lastName', 'maxlength')) {
@@ -79,7 +79,7 @@
             }
           </div>
 
-          <div class="col-12 md:col-6">
+          <div>
             <label for="langKey" class="block text-sm font-semibold mb-2">{{ 'userManagement.langKey' | translate }}</label>
             <p-select
               id="langKey"
@@ -97,8 +97,8 @@
             }
           </div>
 
-          <div class="col-12 md:col-6">
-            <div class="flex items-center gap-3 rounded border-1 surface-border px-3 py-3 mt-5 md:mt-0">
+          <div class="md:self-end">
+            <div class="flex items-center gap-3 rounded border-1 surface-border px-3 py-3">
               <p-checkbox inputId="activated" formControlName="activated" [binary]="true"></p-checkbox>
               <label for="activated" class="font-semibold">{{ 'userManagement.activated' | translate }}</label>
             </div>
@@ -107,7 +107,7 @@
       </p-card>
     </div>
 
-    <div class="col-12 lg:col-4">
+    <div class="lg:col-span-4">
       <p-card [header]="'userManagement.form.rolesTitle' | translate">
         <p-table [value]="roleRows()" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '100%' }">
           <ng-template pTemplate="header">

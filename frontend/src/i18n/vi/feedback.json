@@ -2,7 +2,8 @@
   "feedback": {
     "toast": {
       "deleted": "Đã xóa",
-      "success": "Thành công"
+      "success": "Thành công",
+      "saved": "Đã lưu"
     },
     "httpError": {
       "accessDenied": {
