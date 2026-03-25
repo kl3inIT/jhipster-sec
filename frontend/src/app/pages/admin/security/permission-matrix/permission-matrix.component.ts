@@ -2,23 +2,27 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, map, of } from 'rxjs';
 
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService, TreeNode } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { SplitterModule } from 'primeng/splitter';
 import { TableModule } from 'primeng/table';
+import { TabsModule } from 'primeng/tabs';
 import { ToastModule } from 'primeng/toast';
+import { TreeModule } from 'primeng/tree';
 
+import { APP_NAVIGATION_TREE } from 'app/layout/navigation/navigation-registry';
+import { handleHttpError } from 'app/shared/error/http-error.utils';
+import { ISecMenuPermissionAdmin } from '../shared/sec-menu-permission-admin.model';
 import { ISecCatalogEntry } from '../shared/sec-catalog.model';
 import { ISecPermission } from '../shared/sec-permission.model';
+import { AdminMenuPermissionService } from '../shared/service/admin-menu-permission.service';
 import { SecCatalogService } from '../shared/service/sec-catalog.service';
 import { SecPermissionService } from '../shared/service/sec-permission.service';
-import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 interface AttributeRow {
   label: string;
@@ -49,9 +53,26 @@ interface FlushErrorResult {
 
 type FlushResult = FlushSuccessResult | FlushErrorResult;
 
+interface MenuFlushSuccessResult {
+  key: string;
+  menuId: string;
+  checked: boolean;
+  success: true;
+  permissionId?: number;
+}
+
+interface MenuFlushErrorResult {
+  key: string;
+  menuId: string;
+  checked: boolean;
+  success: false;
+  error: unknown;
+}
+
+type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
+
 @Component({
   selector: 'app-permission-matrix',
-  standalone: true,
   imports: [
     CommonModule,
     RouterModule,
@@ -60,9 +81,11 @@ type FlushResult = FlushSuccessResult | FlushErrorResult;
     CheckboxModule,
     ConfirmDialogModule,
     ProgressSpinnerModule,
-    SplitterModule,
     TableModule,
+    TabsModule,
     ToastModule,
+    TranslateModule,
+    TreeModule,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './permission-matrix.component.html',
@@ -71,6 +94,7 @@ export default class PermissionMatrixComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly catalogService = inject(SecCatalogService);
   private readonly permissionService = inject(SecPermissionService);
+  private readonly menuPermissionService = inject(AdminMenuPermissionService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
   private readonly translateService = inject(TranslateService);
@@ -86,8 +110,16 @@ export default class PermissionMatrixComponent implements OnInit {
   pendingChanges = new Map<string, PendingChange>();
   saving = false;
 
+  // Menu access tab state
+  menuTreeNodes: TreeNode[] = [];
+  menuTreeSelection: TreeNode[] = [];
+  menuGranted = new Map<string, number>(); // menuId -> permission id
+  menuPendingChanges = new Map<string, boolean>(); // menuId -> checked state
+  menuLoading = true;
+  activeTabValue: string = '0'; // track active tab
+
   get hasPendingChanges(): boolean {
-    return this.pendingChanges.size > 0;
+    return this.pendingChanges.size > 0 || this.menuPendingChanges.size > 0;
   }
 
   ngOnInit(): void {
@@ -128,6 +160,79 @@ export default class PermissionMatrixComponent implements OnInit {
             'feedback.security.permissionMatrix.loadFailed',
           ),
       });
+
+    this.loadMenuPermissions();
+  }
+
+  private loadMenuPermissions(): void {
+    this.menuLoading = true;
+    this.menuPermissionService.query(this.roleName).subscribe({
+      next: (permissions) => {
+        this.menuGranted.clear();
+        permissions.forEach(p => {
+          if (p.id !== undefined) {
+            this.menuGranted.set(p.menuId, p.id);
+          }
+        });
+        this.buildMenuTree();
+        this.menuLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        handleHttpError(this.messageService, this.translateService, err, 'feedback.security.menuAccess.loadFailed');
+        this.menuLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  private buildMenuTree(): void {
+    this.menuTreeNodes = APP_NAVIGATION_TREE.map(section => ({
+      key: section.id,
+      label: section.id,
+      selectable: false,
+      expanded: true,
+      children: section.children.map(leaf => ({
+        key: leaf.id,
+        label: leaf.id,
+        selectable: true,
+      })),
+    }));
+    // Set initial selection from granted
+    this.menuTreeSelection = [];
+    for (const section of this.menuTreeNodes) {
+      for (const child of section.children ?? []) {
+        if (this.menuGranted.has(child.key!)) {
+          this.menuTreeSelection.push(child);
+        }
+      }
+    }
+  }
+
+  onMenuNodeSelect(event: { node: TreeNode }): void {
+    const menuId = event.node.key!;
+    if (this.menuGranted.has(menuId)) {
+      // Was already granted, selecting reverts the pending uncheck
+      this.menuPendingChanges.delete(menuId);
+    } else {
+      this.menuPendingChanges.set(menuId, true);
+    }
+    this.cdr.detectChanges();
+  }
+
+  onMenuNodeUnselect(event: { node: TreeNode }): void {
+    const menuId = event.node.key!;
+    if (!this.menuGranted.has(menuId)) {
+      // Was not granted, unchecking reverts the pending check
+      this.menuPendingChanges.delete(menuId);
+    } else {
+      this.menuPendingChanges.set(menuId, false);
+    }
+    this.cdr.detectChanges();
+  }
+
+  isMenuPendingChange(menuId: string): boolean {
+    return this.menuPendingChanges.has(menuId);
   }
 
   onEntitySelect(entry: ISecCatalogEntry): void {
@@ -195,6 +300,8 @@ export default class PermissionMatrixComponent implements OnInit {
     }
 
     this.pendingChanges.clear();
+    this.menuPendingChanges.clear();
+    this.buildMenuTree(); // rebuild selection from granted state
     this.cdr.detectChanges();
   }
 
@@ -266,10 +373,45 @@ export default class PermissionMatrixComponent implements OnInit {
       );
     });
 
+    const menuResults$ = Array.from(this.menuPendingChanges.entries()).map(([menuId, checked]) => {
+      if (checked) {
+        const permission: ISecMenuPermissionAdmin = {
+          role: this.roleName,
+          appName: 'jhipster-security-platform',
+          menuId,
+          effect: 'ALLOW',
+        };
+        return this.menuPermissionService.create(permission).pipe(
+          map(response => ({
+            key: `menu:${menuId}`,
+            menuId,
+            checked: true,
+            success: true as const,
+            permissionId: response.body?.id,
+          })),
+          catchError(error => of({
+            key: `menu:${menuId}`,
+            menuId,
+            checked: true,
+            success: false as const,
+            error,
+          })),
+        );
+      }
+      const permissionId = this.menuGranted.get(menuId);
+      if (permissionId === undefined) {
+        return of({ key: `menu:${menuId}`, menuId, checked: false, success: true as const, permissionId: undefined });
+      }
+      return this.menuPermissionService.delete(permissionId).pipe(
+        map(() => ({ key: `menu:${menuId}`, menuId, checked: false, success: true as const, permissionId: undefined })),
+        catchError(error => of({ key: `menu:${menuId}`, menuId, checked: false, success: false as const, error })),
+      );
+    });
+
     this.saving = true;
     this.cdr.detectChanges();
 
-    forkJoin(operations)
+    forkJoin([...operations, ...menuResults$])
       .pipe(
         finalize(() => {
           this.saving = false;
@@ -279,20 +421,36 @@ export default class PermissionMatrixComponent implements OnInit {
       .subscribe({
         next: (results) => {
           results.forEach((result) => {
-            if (!result.success) {
-              this.showSaveError(result.error);
-              return;
-            }
-
-            if (result.change.checked) {
-              this.granted.set(result.key, result.permissionId!);
+            if ('menuId' in result) {
+              // Menu result
+              const menuResult = result as MenuFlushResult;
+              if (!menuResult.success) {
+                this.showSaveError(menuResult.error);
+                return;
+              }
+              if (menuResult.checked && menuResult.permissionId !== undefined) {
+                this.menuGranted.set(menuResult.menuId, menuResult.permissionId);
+              } else if (!menuResult.checked) {
+                this.menuGranted.delete(menuResult.menuId);
+              }
+              this.menuPendingChanges.delete(menuResult.menuId);
             } else {
-              this.granted.delete(result.key);
+              // Entity permission result
+              const entityResult = result as FlushResult;
+              if (!entityResult.success) {
+                this.showSaveError(entityResult.error);
+                return;
+              }
+              if (entityResult.change.checked) {
+                this.granted.set(entityResult.key, entityResult.permissionId!);
+              } else {
+                this.granted.delete(entityResult.key);
+              }
+              this.pendingChanges.delete(entityResult.key);
             }
-
-            this.pendingChanges.delete(result.key);
           });
 
+          this.buildMenuTree();
           this.cdr.detectChanges();
         },
         error: (err) => {
