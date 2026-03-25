@@ -58,6 +58,16 @@ Plans:
 4. The shell uses enterprise master-detail navigation patterns consistently across admin and secured-entity sections.
 **Plans:** 5/5 plans complete
 
+### Phase 07.1: Menu Management (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Requirements**: TBD
+**Depends on:** Phase 7
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 07.1 to break down)
+
 ### Phase 8: User Management Delivery
 **Goal**: The new frontend exposes the full JHipster-style admin user-management experience on top of the preserved backend contracts.
 **Depends on**: Phase 7

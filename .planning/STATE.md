@@ -55,6 +55,10 @@ Plan: Not started
 
 ## Accumulated Context
 
+### Roadmap Evolution
+
+- Phase 07.1 inserted after Phase 7: Menu Management (INSERTED) — admin CRUD for SecMenuDefinition and role-based SecMenuPermission assignment
+
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
