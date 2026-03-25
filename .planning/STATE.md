@@ -5,7 +5,7 @@ milestone_name: milestone
 status: Ready to plan
 stopped_at: Completed 07-05-PLAN.md
 last_updated: "2026-03-25T08:17:23.275Z"
-last_activity: 2026-03-25
+last_activity: 2026-03-25 - Completed quick task 260325-lae: Rename SecNavigationGrant to SecMenuPermission + add SecMenuDefinition table
 progress:
   total_phases: 5
   completed_phases: 2
@@ -127,6 +127,7 @@ Recent decisions affecting current work:
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
+| 260325-lae | Rename SecNavigationGrant to SecMenuPermission, rename fields authorityName to role and nodeId to menuId, and add SecMenuDefinition table for menu metadata | 2026-03-25 | 6a99ffc | [260325-lae-rename-secnavigationgrant-to-secmenuperm](./quick/260325-lae-rename-secnavigationgrant-to-secmenuperm/) |
 | 260324-xae | Fix @SecuredEntity catalog and N+1 capability loading | 2026-03-24 | a223896 | [260324-xae-fix-securedentity-catalog-and-n-1-capabi](.planning/quick/260324-xae-fix-securedentity-catalog-and-n-1-capabi/) |
 | 260325-0ze | append Angular/TypeScript agent instructions to CLAUDE.md and AGENTS.md | 2026-03-24 | c012a5d | [260325-0ze-append-angular-typescript-agent-instruct](.planning/quick/260325-0ze-append-angular-typescript-agent-instruct/) |
 | 260325-lae | Rename SecNavigationGrant to SecMenuPermission, add SecMenuDefinition, update frontend | 2026-03-25 | d877771 | [260325-lae-rename-secnavigationgrant-to-secmenuperm](.planning/quick/260325-lae-rename-secnavigationgrant-to-secmenuperm/) |
