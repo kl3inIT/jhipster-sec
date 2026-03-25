@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260325000100-1" author="dev">
+        <createTable tableName="sec_navigation_grant">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="authority_name" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="app_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="node_id" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="effect" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20260325000100-2" author="dev">
+        <addUniqueConstraint
+            tableName="sec_navigation_grant"
+            columnNames="authority_name, app_name, node_id"
+            constraintName="ux_sec_navigation_grant_authority_app_node"/>
+    </changeSet>
+
+    <changeSet id="20260325000100-3" author="dev">
+        <createIndex indexName="idx_sec_navigation_grant_app_authority" tableName="sec_navigation_grant">
+            <column name="app_name"/>
+            <column name="authority_name"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20260325000100-4" author="dev">
+        <createIndex indexName="idx_sec_navigation_grant_app_node" tableName="sec_navigation_grant">
+            <column name="app_name"/>
+            <column name="node_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20260325000100-5" author="dev">
+        <addForeignKeyConstraint
+            baseTableName="sec_navigation_grant"
+            baseColumnNames="authority_name"
+            referencedTableName="jhi_authority"
+            referencedColumnNames="name"
+            constraintName="fk_sec_navigation_grant_authority"
+            onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>
