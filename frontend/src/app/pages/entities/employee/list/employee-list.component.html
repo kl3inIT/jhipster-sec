@@ -4,7 +4,7 @@
 <div class="space-y-4">
   <div class="flex items-center justify-between gap-3">
     <div>
-      <h1 class="m-0 text-2xl font-semibold">Employees</h1>
+      <h1 class="m-0 text-2xl font-semibold">{{ 'angappApp.employee.home.title' | translate }}</h1>
     </div>
     <div class="flex gap-2">
       @if (canRead() && canCreate()) {
@@ -12,7 +12,7 @@
           pButton
           type="button"
           icon="pi pi-plus"
-          label="New Employee"
+          [label]="'angappApp.employee.home.createLabel' | translate"
           (click)="create()"
         ></button>
       }
@@ -46,22 +46,20 @@
         (onLazyLoad)="onLazyLoad($event)"
         [rowsPerPageOptions]="[10, 20, 30]"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [currentPageReportTemplate]="'entity.pagination.report' | translate"
       >
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="id" style="width: 6rem">ID <p-sortIcon field="id" /></th>
-            <th pSortableColumn="employeeNumber">
-              Employee No. <p-sortIcon field="employeeNumber" />
-            </th>
-            <th pSortableColumn="firstName">First Name <p-sortIcon field="firstName" /></th>
-            <th pSortableColumn="lastName">Last Name <p-sortIcon field="lastName" /></th>
-            <th>Department</th>
-            <th pSortableColumn="email">Email <p-sortIcon field="email" /></th>
+            <th pSortableColumn="id" style="width: 6rem">{{ 'angappApp.employee.id' | translate }} <p-sortIcon field="id" /></th>
+            <th pSortableColumn="employeeNumber">{{ 'angappApp.employee.employeeNumber' | translate }} <p-sortIcon field="employeeNumber" /></th>
+            <th pSortableColumn="firstName">{{ 'angappApp.employee.firstName' | translate }} <p-sortIcon field="firstName" /></th>
+            <th pSortableColumn="lastName">{{ 'angappApp.employee.lastName' | translate }} <p-sortIcon field="lastName" /></th>
+            <th>{{ 'angappApp.employee.department' | translate }}</th>
+            <th pSortableColumn="email">{{ 'angappApp.employee.email' | translate }} <p-sortIcon field="email" /></th>
             @if (showSalaryColumn()) {
-              <th pSortableColumn="salary">Salary <p-sortIcon field="salary" /></th>
+              <th pSortableColumn="salary">{{ 'angappApp.employee.salary' | translate }} <p-sortIcon field="salary" /></th>
             }
-            <th style="width: 10rem; text-align: center">Actions</th>
+            <th style="width: 10rem; text-align: center">{{ 'entity.list.actions' | translate }}</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>
@@ -88,7 +86,7 @@
                       type="button"
                       class="p-button-text p-button-sm"
                       icon="pi pi-eye"
-                      aria-label="View"
+                      [attr.aria-label]="'entity.action.view' | translate"
                       (click)="view(row)"
                     ></button>
                   }
@@ -98,7 +96,7 @@
                       type="button"
                       class="p-button-text p-button-sm"
                       icon="pi pi-pencil"
-                      aria-label="Edit"
+                      [attr.aria-label]="'entity.action.edit' | translate"
                       (click)="edit(row)"
                     ></button>
                   }
@@ -108,7 +106,7 @@
                       type="button"
                       class="p-button-text p-button-danger p-button-sm"
                       icon="pi pi-trash"
-                      aria-label="Delete"
+                      [attr.aria-label]="'entity.action.delete' | translate"
                       (click)="confirmDelete(row)"
                     ></button>
                   }
@@ -122,7 +120,7 @@
         <ng-template pTemplate="emptymessage">
           <tr>
             <td [attr.colspan]="showSalaryColumn() ? 8 : 7" class="text-center py-4">
-              No employees found. Create the first employee using the New Employee button.
+              {{ 'angappApp.employee.home.notFound' | translate }}
             </td>
           </tr>
         </ng-template>

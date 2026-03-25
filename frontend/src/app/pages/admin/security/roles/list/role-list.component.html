@@ -1,43 +1,49 @@
 <p-toast />
-<!-- confirmDelete dialog: header="Delete Role", rejectLabel="Keep Role" -->
 <p-confirmDialog />
 
 <p-card>
   <ng-template #header>
     <div class="flex items-center justify-between px-4 pt-4">
-      <h2 class="text-xl font-semibold m-0">Security Roles</h2>
-      <p-button label="New Role" icon="pi pi-plus" (onClick)="openCreate()" />
+      <h2 class="text-xl font-semibold m-0">{{ 'security.roles.title' | translate }}</h2>
+      <p-button [label]="'security.roles.new' | translate" icon="pi pi-plus" (onClick)="openCreate()" />
     </div>
   </ng-template>
 
   <p-table [value]="roles" [loading]="isLoading" [tableStyle]="{ 'min-width': '50rem' }" responsiveLayout="scroll">
     <ng-template #header>
       <tr>
-        <th>Name</th>
-        <th>Display Name</th>
-        <th>Type</th>
-        <th>Actions</th>
+        <th>{{ 'security.roles.columns.name' | translate }}</th>
+        <th>{{ 'security.roles.columns.displayName' | translate }}</th>
+        <th>{{ 'security.roles.columns.type' | translate }}</th>
+        <th>{{ 'security.roles.columns.actions' | translate }}</th>
       </tr>
     </ng-template>
 
     <ng-template #body let-role>
       <tr>
         <td>{{ role.name }}</td>
-        <td>{{ role.displayName ?? '—' }}</td>
+        <td>{{ role.displayName ?? '-' }}</td>
         <td>
-          <p-tag [value]="role.type" [severity]="role.type === 'RESOURCE' ? 'info' : 'warn'" />
+          <p-tag
+            [value]="
+              role.type === 'RESOURCE'
+                ? ('security.roles.type.resource' | translate)
+                : ('security.roles.type.rowLevel' | translate)
+            "
+            [severity]="role.type === 'RESOURCE' ? 'info' : 'warn'"
+          />
         </td>
         <td>
           <div class="flex gap-2">
             <p-button
-              label="Manage Permissions"
+              [label]="'security.roles.managePermissions' | translate"
               icon="pi pi-shield"
               size="small"
               severity="secondary"
               [routerLink]="['/admin/security/roles', role.name, 'permissions']"
             />
-            <p-button label="Edit" icon="pi pi-pencil" size="small" severity="secondary" (onClick)="openEdit(role)" />
-            <p-button label="Delete" icon="pi pi-trash" size="small" severity="danger" [outlined]="true" (onClick)="confirmDelete(role)" />
+            <p-button [label]="'entity.action.edit' | translate" icon="pi pi-pencil" size="small" severity="secondary" (onClick)="openEdit(role)" />
+            <p-button [label]="'entity.action.delete' | translate" icon="pi pi-trash" size="small" severity="danger" [outlined]="true" (onClick)="confirmDelete(role)" />
           </div>
         </td>
       </tr>
@@ -48,8 +54,8 @@
         <td colspan="4" class="text-center py-8">
           <div class="flex flex-col items-center gap-2 text-gray-500">
             <i class="pi pi-shield text-4xl"></i>
-            <p class="text-lg font-semibold">No roles defined</p>
-            <p>Create the first security role using the New Role button.</p>
+            <p class="text-lg font-semibold">{{ 'security.roles.empty.title' | translate }}</p>
+            <p>{{ 'security.roles.empty.message' | translate }}</p>
           </div>
         </td>
       </tr>

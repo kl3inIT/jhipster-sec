@@ -18,11 +18,11 @@ const routes: Routes = [
     data: {
       defaultSort: 'id,asc',
       ...employeeNavigationData,
-      pageTitleKey: 'layout.menu.entities.employee',
+      pageTitleKey: 'angappApp.employee.home.title',
       deniedMode: 'in-shell',
     },
     resolve: { capability: () => inject(SecuredEntityCapabilityService).getEntityCapability('employee') },
-    title: 'layout.menu.entities.employee',
+    title: 'angappApp.employee.home.title',
   },
   {
     path: ':id/view',
@@ -30,11 +30,11 @@ const routes: Routes = [
     canActivate: [UserRouteAccessService],
     data: {
       ...employeeNavigationData,
-      pageTitleKey: 'layout.menu.entities.employee',
+      pageTitleKey: 'angappApp.employee.detail.title',
       deniedMode: 'route',
     },
     resolve: { capability: () => inject(SecuredEntityCapabilityService).getEntityCapability('employee') },
-    title: 'layout.menu.entities.employee',
+    title: 'angappApp.employee.detail.title',
   },
   {
     path: 'new',
@@ -42,11 +42,11 @@ const routes: Routes = [
     canActivate: [UserRouteAccessService],
     data: {
       ...employeeNavigationData,
-      pageTitleKey: 'layout.menu.entities.employee',
+      pageTitleKey: 'angappApp.employee.home.createLabel',
       deniedMode: 'route',
     },
     resolve: { capability: () => inject(SecuredEntityCapabilityService).getEntityCapability('employee') },
-    title: 'layout.menu.entities.employee',
+    title: 'angappApp.employee.home.createLabel',
   },
   {
     path: ':id/edit',
@@ -54,11 +54,11 @@ const routes: Routes = [
     canActivate: [UserRouteAccessService],
     data: {
       ...employeeNavigationData,
-      pageTitleKey: 'layout.menu.entities.employee',
+      pageTitleKey: 'angappApp.employee.home.createOrEditLabel',
       deniedMode: 'route',
     },
     resolve: { capability: () => inject(SecuredEntityCapabilityService).getEntityCapability('employee') },
-    title: 'layout.menu.entities.employee',
+    title: 'angappApp.employee.home.createOrEditLabel',
   },
 ];
 

@@ -9,7 +9,7 @@ import {
   output,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
 
 import { ButtonModule } from 'primeng/button';
@@ -35,6 +35,7 @@ import { handleHttpError } from 'app/shared/error/http-error.utils';
     InputTextModule,
     InputNumberModule,
     TextareaModule,
+    TranslatePipe,
     ConfirmDialogModule,
     ToastModule,
   ],
@@ -107,10 +108,10 @@ export default class MenuDefinitionDialogComponent implements OnInit, OnChanges 
       return;
     }
     this.confirmationService.confirm({
-      header: 'Save Menu Definition',
-      message: 'Do you want to save this menu definition?',
-      acceptLabel: 'Save',
-      rejectLabel: 'Cancel',
+      header: this.translateService.instant('security.menuDefinitions.confirmSave.title'),
+      message: this.translateService.instant('security.menuDefinitions.confirmSave.message'),
+      acceptLabel: this.translateService.instant('entity.action.save'),
+      rejectLabel: this.translateService.instant('entity.action.cancel'),
       accept: () => this.save(),
     });
   }

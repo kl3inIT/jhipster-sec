@@ -2,11 +2,29 @@
   "angappApp": {
     "employee": {
       "home": {
+        "title": "Employees",
+        "createLabel": "New Employee",
+        "createOrEditLabel": "Edit Employee",
+        "notFound": "No employees found.",
         "denied": {
           "title": "Employee access is limited",
           "message": "You can open this workspace from the shell, but you do not have permission to view employee records."
         }
-      }
+      },
+      "delete": {
+        "title": "Delete Employee",
+        "question": "Are you sure you want to delete this employee? This action cannot be undone."
+      },
+      "detail": {
+        "title": "Employee"
+      },
+      "id": "ID",
+      "employeeNumber": "Employee Number",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "department": "Department",
+      "email": "Email",
+      "salary": "Salary"
     }
   }
 }

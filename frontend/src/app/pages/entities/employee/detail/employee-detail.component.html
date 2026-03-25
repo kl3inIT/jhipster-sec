@@ -1,55 +1,55 @@
 <div class="max-w-2xl mx-auto space-y-4">
-  <h1 class="m-0 text-2xl font-semibold">Employee</h1>
+  <h1 class="m-0 text-2xl font-semibold">{{ 'angappApp.employee.detail.title' | translate }}</h1>
 
   @if (employee(); as emp) {
     <p-card class="shadow-sm">
       <div class="grid grid-cols-1 gap-4">
         <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium">ID</span>
+          <span class="text-sm font-medium">{{ 'angappApp.employee.id' | translate }}</span>
           <span>{{ emp.id }}</span>
         </div>
         @if (canViewField('employeeNumber')) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">Employee Number</span>
+            <span class="text-sm font-medium">{{ 'angappApp.employee.employeeNumber' | translate }}</span>
             <span>{{ emp.employeeNumber }}</span>
           </div>
         }
         @if (canViewField('firstName')) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">First Name</span>
+            <span class="text-sm font-medium">{{ 'angappApp.employee.firstName' | translate }}</span>
             <span>{{ emp.firstName }}</span>
           </div>
         }
         @if (canViewField('lastName')) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">Last Name</span>
+            <span class="text-sm font-medium">{{ 'angappApp.employee.lastName' | translate }}</span>
             <span>{{ emp.lastName }}</span>
           </div>
         }
         @if (canViewField('department') && emp.department) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">Department</span>
+            <span class="text-sm font-medium">{{ 'angappApp.employee.department' | translate }}</span>
             <span>{{ emp.department.name }}</span>
           </div>
         }
         @if (canViewField('email') && emp.email !== undefined) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">Email</span>
+            <span class="text-sm font-medium">{{ 'angappApp.employee.email' | translate }}</span>
             <span>{{ emp.email }}</span>
           </div>
         }
         @if (canViewField('salary') && emp.salary !== undefined) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">Salary</span>
+            <span class="text-sm font-medium">{{ 'angappApp.employee.salary' | translate }}</span>
             <span>{{ emp.salary | number: '1.2-2' }}</span>
           </div>
         }
       </div>
 
       <div class="flex gap-2 mt-4 pt-4" style="border-top: 1px solid var(--surface-border)">
-        <button type="button" pButton class="p-button-outlined" icon="pi pi-arrow-left" label="Back" (click)="back()"></button>
+        <button type="button" pButton class="p-button-outlined" icon="pi pi-arrow-left" [label]="'entity.action.back' | translate" (click)="back()"></button>
         @if (capabilityLoaded() && canUpdate()) {
-          <button type="button" pButton icon="pi pi-pencil" label="Edit" (click)="edit(emp)"></button>
+          <button type="button" pButton icon="pi pi-pencil" [label]="'entity.action.edit' | translate" (click)="edit(emp)"></button>
         }
       </div>
     </p-card>

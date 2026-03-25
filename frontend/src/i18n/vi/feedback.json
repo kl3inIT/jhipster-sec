@@ -1,7 +1,8 @@
 {
   "feedback": {
     "toast": {
-      "deleted": "Đã xóa"
+      "deleted": "Đã xóa",
+      "success": "Thành công"
     },
     "httpError": {
       "accessDenied": {
@@ -28,6 +29,17 @@
       "permissionMatrix": {
         "loadFailed": "Không thể tải ma trận quyền. Vui lòng thử lại.",
         "saveFailed": "Không thể lưu các thay đổi quyền. Vui lòng thử lại."
+      },
+      "menuAccess": {
+        "loadFailed": "Không thể tải quyền menu. Vui lòng thử lại."
+      },
+      "menuDefinitions": {
+        "deleted": "Định nghĩa menu \"{{ param }}\" đã bị xóa.",
+        "loadFailed": "Không thể tải danh sách định nghĩa menu.",
+        "deleteFailed": "Không thể xóa định nghĩa menu.",
+        "saveFailed": "Không thể lưu định nghĩa menu. Hãy kiểm tra lại biểu mẫu và thử lại.",
+        "syncFailed": "Không thể đồng bộ định nghĩa menu từ registry.",
+        "syncSuccess": "Đã đồng bộ {{ seeded }} định nghĩa menu từ registry."
       }
     },
     "entities": {

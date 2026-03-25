@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
 
 import { ButtonModule } from 'primeng/button';
@@ -38,6 +38,7 @@ import { handleHttpError } from 'app/shared/error/http-error.utils';
     InputTextModule,
     SelectModule,
     TextareaModule,
+    TranslatePipe,
     ToastModule,
   ],
   providers: [ConfirmationService, MessageService],
@@ -51,17 +52,6 @@ export default class RowPolicyDialogComponent implements OnChanges, OnInit {
 
   isSaving = false;
   catalogEntries = signal<{ label: string; value: string }[]>([]);
-
-  readonly operationOptions = [
-    { label: 'Read', value: 'READ' },
-    { label: 'Update', value: 'UPDATE' },
-    { label: 'Delete', value: 'DELETE' },
-  ];
-
-  readonly policyTypeOptions = [
-    { label: 'Specification', value: 'SPECIFICATION' },
-    { label: 'JPQL', value: 'JPQL' },
-  ];
 
   editForm = new FormGroup({
     code: new FormControl('', {
@@ -82,6 +72,24 @@ export default class RowPolicyDialogComponent implements OnChanges, OnInit {
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
   private readonly translateService = inject(TranslateService);
+
+  get operationOptions(): Array<{ label: string; value: string }> {
+    return [
+      { label: this.translateService.instant('security.rowPolicies.operation.read'), value: 'READ' },
+      { label: this.translateService.instant('security.rowPolicies.operation.update'), value: 'UPDATE' },
+      { label: this.translateService.instant('security.rowPolicies.operation.delete'), value: 'DELETE' },
+    ];
+  }
+
+  get policyTypeOptions(): Array<{ label: string; value: string }> {
+    return [
+      {
+        label: this.translateService.instant('security.rowPolicies.policyType.specification'),
+        value: 'SPECIFICATION',
+      },
+      { label: this.translateService.instant('security.rowPolicies.policyType.jpql'), value: 'JPQL' },
+    ];
+  }
 
   ngOnInit(): void {
     this.loadCatalog();
@@ -119,10 +127,10 @@ export default class RowPolicyDialogComponent implements OnChanges, OnInit {
       return;
     }
     this.confirmationService.confirm({
-      header: 'Save Row Policy',
-      message: 'Do you want to save this row policy?',
-      acceptLabel: 'Save',
-      rejectLabel: 'Cancel',
+      header: this.translateService.instant('security.rowPolicies.confirmSave.title'),
+      message: this.translateService.instant('security.rowPolicies.confirmSave.message'),
+      acceptLabel: this.translateService.instant('entity.action.save'),
+      rejectLabel: this.translateService.instant('entity.action.cancel'),
       accept: () => this.performSave(),
     });
   }

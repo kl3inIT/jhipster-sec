@@ -6,6 +6,7 @@
       "back": "Back",
       "cancel": "Cancel",
       "delete": "Delete",
+      "discard": "Discard",
       "edit": "Edit",
       "open": "Open",
       "save": "Save",
@@ -36,6 +37,9 @@
       "set": "Following filters are set",
       "clear": "Clear filter",
       "clearAll": "Clear all filters"
+    },
+    "pagination": {
+      "report": "Showing {first} to {last} of {totalRecords} entries"
     }
   }
 }

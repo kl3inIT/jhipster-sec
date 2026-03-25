@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 
@@ -12,7 +13,7 @@ import { OrganizationService } from '../service/organization.service';
 @Component({
   selector: 'app-organization-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, CardModule, ButtonModule],
+  imports: [CommonModule, RouterModule, TranslatePipe, CardModule, ButtonModule],
   templateUrl: './organization-detail.component.html',
 })
 export default class OrganizationDetailComponent implements OnInit {

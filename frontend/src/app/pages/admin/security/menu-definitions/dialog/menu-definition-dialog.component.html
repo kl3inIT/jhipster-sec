@@ -2,7 +2,7 @@
 <p-confirmDialog />
 
 <p-dialog
-  [header]="isEditMode ? 'Edit Menu Definition' : 'New Menu Definition'"
+  [header]="isEditMode ? ('security.menuDefinitions.dialog.editTitle' | translate) : ('security.menuDefinitions.dialog.createTitle' | translate)"
   [visible]="visible()"
   (onHide)="onHide()"
   [modal]="true"
@@ -11,61 +11,60 @@
 >
   <form [formGroup]="form">
     <div class="flex flex-col gap-4 pt-2">
-
       <div class="mb-4">
         <label for="menuId" class="mb-2 block font-semibold">
-          Menu ID <span class="text-red-500">*</span>
+          {{ 'security.menuDefinitions.dialog.menuId' | translate }} <span class="text-red-500">*</span>
         </label>
         <input
           pInputText
           id="menuId"
           formControlName="menuId"
           class="w-full"
-          placeholder="e.g. security.menu-definitions"
+          [placeholder]="'security.menuDefinitions.dialog.menuIdPlaceholder' | translate"
         />
         @if (form.get('menuId')!.invalid && form.get('menuId')!.touched) {
-          <small class="text-red-500">Menu ID is required (max 150 characters).</small>
+          <small class="text-red-500">{{ 'security.menuDefinitions.dialog.menuIdRequired' | translate }}</small>
         }
       </div>
 
       <div class="mb-4">
         <label for="menuName" class="mb-2 block font-semibold">
-          Menu Name <span class="text-red-500">*</span>
+          {{ 'security.menuDefinitions.dialog.menuName' | translate }} <span class="text-red-500">*</span>
         </label>
-        <input pInputText id="menuName" formControlName="menuName" class="w-full" placeholder="e.g. Menu Definitions" />
+        <input pInputText id="menuName" formControlName="menuName" class="w-full" [placeholder]="'security.menuDefinitions.dialog.menuNamePlaceholder' | translate" />
         @if (form.get('menuName')!.invalid && form.get('menuName')!.touched) {
-          <small class="text-red-500">Menu Name is required (max 200 characters).</small>
+          <small class="text-red-500">{{ 'security.menuDefinitions.dialog.menuNameRequired' | translate }}</small>
         }
       </div>
 
       <div class="mb-4">
         <label for="label" class="mb-2 block font-semibold">
-          Label <span class="text-red-500">*</span>
+          {{ 'security.menuDefinitions.dialog.label' | translate }} <span class="text-red-500">*</span>
         </label>
-        <input pInputText id="label" formControlName="label" class="w-full" placeholder="Display label" />
+        <input pInputText id="label" formControlName="label" class="w-full" [placeholder]="'security.menuDefinitions.dialog.labelPlaceholder' | translate" />
         @if (form.get('label')!.invalid && form.get('label')!.touched) {
-          <small class="text-red-500">Label is required (max 200 characters).</small>
+          <small class="text-red-500">{{ 'security.menuDefinitions.dialog.labelRequired' | translate }}</small>
         }
       </div>
 
       <div class="mb-4">
-        <label for="parentMenuId" class="mb-2 block font-semibold">Parent Menu ID</label>
-        <input pInputText id="parentMenuId" formControlName="parentMenuId" class="w-full" placeholder="Leave empty for top-level" />
+        <label for="parentMenuId" class="mb-2 block font-semibold">{{ 'security.menuDefinitions.dialog.parentMenuId' | translate }}</label>
+        <input pInputText id="parentMenuId" formControlName="parentMenuId" class="w-full" [placeholder]="'security.menuDefinitions.dialog.parentMenuIdPlaceholder' | translate" />
       </div>
 
       <div class="mb-4">
-        <label for="route" class="mb-2 block font-semibold">Route</label>
-        <input pInputText id="route" formControlName="route" class="w-full" placeholder="e.g. /admin/security/menu-definitions" />
+        <label for="route" class="mb-2 block font-semibold">{{ 'security.menuDefinitions.dialog.route' | translate }}</label>
+        <input pInputText id="route" formControlName="route" class="w-full" [placeholder]="'security.menuDefinitions.dialog.routePlaceholder' | translate" />
       </div>
 
       <div class="mb-4">
-        <label for="icon" class="mb-2 block font-semibold">Icon</label>
-        <input pInputText id="icon" formControlName="icon" class="w-full" placeholder="e.g. pi pi-list" />
+        <label for="icon" class="mb-2 block font-semibold">{{ 'security.menuDefinitions.dialog.icon' | translate }}</label>
+        <input pInputText id="icon" formControlName="icon" class="w-full" [placeholder]="'security.menuDefinitions.dialog.iconPlaceholder' | translate" />
       </div>
 
       <div class="mb-4">
         <label for="ordering" class="mb-2 block font-semibold">
-          Ordering <span class="text-red-500">*</span>
+          {{ 'security.menuDefinitions.dialog.ordering' | translate }} <span class="text-red-500">*</span>
         </label>
         <p-inputNumber
           id="ordering"
@@ -75,22 +74,21 @@
           class="w-full"
         />
         @if (form.get('ordering')!.invalid && form.get('ordering')!.touched) {
-          <small class="text-red-500">Ordering is required.</small>
+          <small class="text-red-500">{{ 'security.menuDefinitions.dialog.orderingRequired' | translate }}</small>
         }
       </div>
 
       <div class="mb-4">
-        <label for="description" class="mb-2 block font-semibold">Description</label>
+        <label for="description" class="mb-2 block font-semibold">{{ 'security.menuDefinitions.dialog.description' | translate }}</label>
         <textarea pTextarea id="description" formControlName="description" rows="3" class="w-full"></textarea>
       </div>
-
     </div>
   </form>
 
   <ng-template #footer>
-    <p-button label="Discard Changes" severity="secondary" [outlined]="true" (onClick)="onHide()" />
+    <p-button [label]="'entity.action.cancel' | translate" severity="secondary" [outlined]="true" (onClick)="onHide()" />
     <p-button
-      label="Save Menu Definition"
+      [label]="'entity.action.save' | translate"
       [loading]="isSaving"
       [disabled]="isSaving"
       (onClick)="confirmSave()"

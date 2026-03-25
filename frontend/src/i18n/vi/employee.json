@@ -2,11 +2,29 @@
   "angappApp": {
     "employee": {
       "home": {
+        "title": "Nhân viên",
+        "createLabel": "Tạo nhân viên mới",
+        "createOrEditLabel": "Chỉnh sửa nhân viên",
+        "notFound": "Không tìm thấy nhân viên nào.",
         "denied": {
           "title": "Quyền truy cập nhân viên bị giới hạn",
           "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi nhân viên."
         }
-      }
+      },
+      "delete": {
+        "title": "Xóa nhân viên",
+        "question": "Bạn có chắc muốn xóa nhân viên này không? Hành động này không thể hoàn tác."
+      },
+      "detail": {
+        "title": "Nhân viên"
+      },
+      "id": "ID",
+      "employeeNumber": "Mã nhân viên",
+      "firstName": "Tên",
+      "lastName": "Họ",
+      "department": "Phòng ban",
+      "email": "Email",
+      "salary": "Lương"
     }
   }
 }

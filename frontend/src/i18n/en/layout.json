@@ -1,5 +1,12 @@
 {
   "layout": {
+    "breadcrumb": "Breadcrumb",
+    "brand": {
+      "name": "JHipster Security"
+    },
+    "footer": {
+      "productName": "JHipster Security Platform"
+    },
     "topbar": {
       "toggleMenu": "Toggle menu",
       "toggleTheme": "Toggle theme",
@@ -15,7 +22,8 @@
         "main": "Security Admin",
         "roles": "Security roles",
         "permissions": "Permission matrix",
-        "rowPolicies": "Row policies"
+        "rowPolicies": "Row policies",
+        "menuDefinitions": "Menu definitions"
       },
       "entities": {
         "employee": "Employees"

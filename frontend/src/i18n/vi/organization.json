@@ -2,29 +2,32 @@
   "angappApp": {
     "organization": {
       "home": {
-        "title": "Organizations",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Thêm mới một Organization",
-        "createOrEditLabel": "Thêm mới hoặc cập nhật Organization",
-        "notFound": "No Organizations found",
+        "title": "Tổ chức",
+        "refreshListLabel": "Làm mới danh sách",
+        "createLabel": "Tạo tổ chức mới",
+        "createOrEditLabel": "Chỉnh sửa tổ chức",
+        "notFound": "Không tìm thấy tổ chức nào.",
         "denied": {
           "title": "Quyền truy cập tổ chức bị giới hạn",
           "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi tổ chức."
         }
       },
-      "created": "Một Organization mới được tạo với định danh {{ param }}",
-      "updated": "Một Organization cập nhật với định danh {{ param }}",
-      "deleted": "Một Organization đã xóa với định danh {{ param }}",
+      "created": "Đã tạo tổ chức mới với định danh {{ param }}",
+      "updated": "Đã cập nhật tổ chức với định danh {{ param }}",
+      "deleted": "Đã xóa tổ chức với định danh {{ param }}",
       "delete": {
-        "question": "Bạn có chắc là muốn xóa Organization {{ id }}?"
+        "title": "Xóa tổ chức",
+        "question": "Bạn có chắc muốn xóa tổ chức này không? Hành động này không thể hoàn tác."
       },
       "detail": {
-        "title": "Organization"
+        "title": "Tổ chức"
       },
       "id": "ID",
-      "code": "Code",
-      "name": "Name",
-      "description": "Description"
+      "code": "Mã",
+      "name": "Tên",
+      "ownerLogin": "Người phụ trách",
+      "budget": "Ngân sách",
+      "description": "Mô tả"
     }
   }
 }

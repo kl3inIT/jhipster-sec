@@ -1,20 +1,201 @@
 {
   "security": {
+    "roles": {
+      "title": "Vai trò bảo mật",
+      "new": "Tạo vai trò",
+      "managePermissions": "Quản lý quyền",
+      "columns": {
+        "name": "Tên",
+        "displayName": "Tên hiển thị",
+        "type": "Loại",
+        "actions": "Thao tác"
+      },
+      "empty": {
+        "title": "Chưa có vai trò nào",
+        "message": "Hãy tạo vai trò bảo mật đầu tiên bằng nút Tạo vai trò."
+      },
+      "type": {
+        "resource": "Tài nguyên",
+        "rowLevel": "Cấp dòng"
+      },
+      "dialog": {
+        "createTitle": "Tạo vai trò",
+        "editTitle": "Chỉnh sửa vai trò",
+        "name": "Tên",
+        "namePlaceholder": "UPPER_SNAKE_CASE, ví dụ SALES_MANAGER",
+        "nameRequired": "Tên là bắt buộc (tối đa 50 ký tự).",
+        "displayName": "Tên hiển thị",
+        "displayNamePlaceholder": "Nhãn dễ đọc",
+        "type": "Loại",
+        "typePlaceholder": "Chọn loại",
+        "typeRequired": "Loại là bắt buộc. Hãy chọn RESOURCE hoặc ROW_LEVEL."
+      },
+      "confirmDelete": {
+        "title": "Xóa vai trò",
+        "message": "Bạn có chắc muốn xóa vai trò này không? Mọi quyền gán cho vai trò này cũng sẽ bị xóa."
+      },
+      "confirmSave": {
+        "title": "Lưu vai trò",
+        "message": "Bạn có muốn lưu vai trò này không?"
+      }
+    },
+    "rowPolicies": {
+      "title": "Chính sách hàng",
+      "subtitle": "Các ràng buộc mức dòng lọc những dòng mà principal có thể truy cập, tách biệt với quyền tài nguyên và quyền thuộc tính.",
+      "new": "Tạo chính sách hàng",
+      "columns": {
+        "code": "Mã",
+        "entity": "Thực thể",
+        "operation": "Thao tác",
+        "policyType": "Loại chính sách",
+        "expression": "Biểu thức",
+        "actions": "Thao tác"
+      },
+      "empty": {
+        "title": "Chưa có chính sách hàng nào",
+        "message": "Hãy tạo chính sách hàng đầu tiên bằng nút Tạo chính sách hàng."
+      },
+      "operation": {
+        "read": "Đọc",
+        "update": "Cập nhật",
+        "delete": "Xóa"
+      },
+      "policyType": {
+        "specification": "Specification",
+        "jpql": "JPQL"
+      },
+      "dialog": {
+        "createTitle": "Tạo chính sách hàng",
+        "editTitle": "Chỉnh sửa chính sách hàng",
+        "code": "Mã",
+        "codePlaceholder": "Mã chính sách duy nhất",
+        "codeRequired": "Mã là bắt buộc (tối đa 100 ký tự).",
+        "entity": "Thực thể",
+        "entityPlaceholder": "Chọn thực thể",
+        "entityRequired": "Thực thể là bắt buộc.",
+        "entityEmpty": "Không có thực thể khả dụng",
+        "operation": "Thao tác",
+        "operationPlaceholder": "Chọn thao tác",
+        "operationRequired": "Thao tác là bắt buộc.",
+        "policyType": "Loại chính sách",
+        "policyTypePlaceholder": "Chọn loại chính sách",
+        "policyTypeRequired": "Loại chính sách là bắt buộc.",
+        "expression": "Biểu thức",
+        "expressionPlaceholder": "Nhập biểu thức SPECIFICATION hoặc JPQL",
+        "expressionRequired": "Biểu thức là bắt buộc (tối đa 1000 ký tự)."
+      },
+      "confirmDelete": {
+        "title": "Xóa chính sách hàng",
+        "message": "Bạn có chắc muốn xóa chính sách hàng này không? Hành động này không thể hoàn tác."
+      },
+      "confirmSave": {
+        "title": "Lưu chính sách hàng",
+        "message": "Bạn có muốn lưu chính sách hàng này không?"
+      }
+    },
+    "menuDefinitions": {
+      "title": "Định nghĩa menu",
+      "new": "Tạo định nghĩa menu",
+      "sync": "Đồng bộ từ registry",
+      "columns": {
+        "menuId": "Mã menu",
+        "labelMenuId": "Nhãn / Mã menu",
+        "label": "Nhãn",
+        "parent": "Menu cha",
+        "route": "Đường dẫn",
+        "icon": "Biểu tượng",
+        "ordering": "Thứ tự",
+        "actions": "Thao tác"
+      },
+      "empty": {
+        "title": "Chưa có định nghĩa menu nào",
+        "message": "Hãy tạo định nghĩa menu đầu tiên hoặc đồng bộ các node điều hướng hiện có từ registry."
+      },
+      "dialog": {
+        "createTitle": "Tạo định nghĩa menu",
+        "editTitle": "Chỉnh sửa định nghĩa menu",
+        "menuId": "Mã menu",
+        "menuIdPlaceholder": "ví dụ security.menu-definitions",
+        "menuIdRequired": "Mã menu là bắt buộc (tối đa 150 ký tự).",
+        "menuName": "Tên menu",
+        "menuNamePlaceholder": "ví dụ Menu Definitions",
+        "menuNameRequired": "Tên menu là bắt buộc (tối đa 200 ký tự).",
+        "label": "Nhãn",
+        "labelPlaceholder": "Nhãn hiển thị",
+        "labelRequired": "Nhãn là bắt buộc (tối đa 200 ký tự).",
+        "parentMenuId": "Mã menu cha",
+        "parentMenuIdPlaceholder": "Để trống nếu là menu cấp cao nhất",
+        "route": "Đường dẫn",
+        "routePlaceholder": "ví dụ /admin/security/menu-definitions",
+        "icon": "Biểu tượng",
+        "iconPlaceholder": "ví dụ pi pi-list",
+        "ordering": "Thứ tự",
+        "orderingRequired": "Thứ tự là bắt buộc.",
+        "description": "Mô tả"
+      },
+      "confirmDelete": {
+        "title": "Xóa định nghĩa menu",
+        "message": "Bạn có chắc muốn xóa định nghĩa menu này không? Các quyền vai trò gắn với node menu này cũng sẽ bị xóa."
+      },
+      "confirmSave": {
+        "title": "Lưu định nghĩa menu",
+        "message": "Bạn có muốn lưu định nghĩa menu này không?"
+      },
+      "confirmSync": {
+        "title": "Đồng bộ từ registry",
+        "message": "Thao tác này sẽ thêm các node điều hướng từ registry frontend chưa có trong catalog. Các định nghĩa hiện có sẽ không bị chỉnh sửa."
+      }
+    },
+    "permissionMatrix": {
+      "title": "Quyền của {{ roleName }}",
+      "backToRoles": "Quay lại vai trò",
+      "saveChanges": "Lưu thay đổi",
+      "discard": "Bỏ thay đổi",
+      "unsavedChanges": "{{ count }} thay đổi chưa lưu",
+      "tabs": {
+        "entity": "Quyền thực thể",
+        "menu": "Quyền menu"
+      },
+      "menu": {
+        "node": "Nút điều hướng"
+      },
+      "entity": {
+        "heading": "Quyền thực thể",
+        "name": "Thực thể",
+        "create": "Tạo",
+        "read": "Đọc",
+        "update": "Cập nhật",
+        "delete": "Xóa",
+        "emptySelection": "Hãy chọn một thực thể ở trên để xem quyền thuộc tính của nó."
+      },
+      "attribute": {
+        "heading": "Quyền thuộc tính: {{ entity }}",
+        "name": "Thuộc tính",
+        "view": "Xem",
+        "modify": "Sửa",
+        "wildcard": "Tất cả thuộc tính (*)",
+        "none": "Thực thể này không có thuộc tính nào được liệt kê."
+      },
+      "confirmSave": {
+        "title": "Lưu quyền",
+        "message": "Bạn có muốn lưu các thay đổi quyền này không?"
+      }
+    },
     "alert": {
       "secRole": {
-        "created": "Một vai trò bảo mật mới được tạo với định danh {{ param }}",
-        "updated": "Một vai trò bảo mật được cập nhật với định danh {{ param }}",
-        "deleted": "Một vai trò bảo mật đã bị xóa với định danh {{ param }}"
+        "created": "Đã tạo vai trò bảo mật mới với định danh {{ param }}",
+        "updated": "Đã cập nhật vai trò bảo mật với định danh {{ param }}",
+        "deleted": "Đã xóa vai trò bảo mật với định danh {{ param }}"
       },
       "secPermission": {
-        "created": "Một quyền bảo mật mới được tạo với định danh {{ param }}",
-        "updated": "Một quyền bảo mật được cập nhật với định danh {{ param }}",
-        "deleted": "Một quyền bảo mật đã bị xóa với định danh {{ param }}"
+        "created": "Đã tạo quyền bảo mật mới với định danh {{ param }}",
+        "updated": "Đã cập nhật quyền bảo mật với định danh {{ param }}",
+        "deleted": "Đã xóa quyền bảo mật với định danh {{ param }}"
       },
       "secRowPolicy": {
-        "created": "Một chính sách hàng mới được tạo với định danh {{ param }}",
-        "updated": "Một chính sách hàng được cập nhật với định danh {{ param }}",
-        "deleted": "Một chính sách hàng đã bị xóa với định danh {{ param }}"
+        "created": "Đã tạo chính sách hàng mới với định danh {{ param }}",
+        "updated": "Đã cập nhật chính sách hàng với định danh {{ param }}",
+        "deleted": "Đã xóa chính sách hàng với định danh {{ param }}"
       }
     }
   }

@@ -3,9 +3,9 @@
 <div class="max-w-xl mx-auto space-y-4">
   <h1 class="m-0 text-2xl font-semibold">
     @if (isEdit()) {
-      Edit Employee
+      {{ 'angappApp.employee.home.createOrEditLabel' | translate }}
     } @else {
-      New Employee
+      {{ 'angappApp.employee.home.createLabel' | translate }}
     }
   </h1>
 
@@ -14,7 +14,7 @@
       <form [formGroup]="form" (ngSubmit)="save()" class="space-y-4">
         <div class="grid grid-cols-1 gap-4">
           <div>
-            <label for="employeeNumber" class="block text-sm font-medium mb-1">Employee Number</label>
+            <label for="employeeNumber" class="block text-sm font-medium mb-1">{{ 'angappApp.employee.employeeNumber' | translate }}</label>
             <input
               id="employeeNumber"
               type="text"
@@ -24,11 +24,11 @@
               [ngClass]="{ 'ng-invalid ng-dirty': form.controls['employeeNumber'].invalid && form.controls['employeeNumber'].touched }"
             />
             @if (form.controls['employeeNumber'].invalid && form.controls['employeeNumber'].touched) {
-              <p-message severity="error" class="mt-1" text="Employee Number is required"></p-message>
+              <p-message severity="error" class="mt-1" [text]="'entity.validation.required' | translate"></p-message>
             }
           </div>
           <div>
-            <label for="firstName" class="block text-sm font-medium mb-1">First Name</label>
+            <label for="firstName" class="block text-sm font-medium mb-1">{{ 'angappApp.employee.firstName' | translate }}</label>
             <input
               id="firstName"
               type="text"
@@ -38,11 +38,11 @@
               [ngClass]="{ 'ng-invalid ng-dirty': form.controls['firstName'].invalid && form.controls['firstName'].touched }"
             />
             @if (form.controls['firstName'].invalid && form.controls['firstName'].touched) {
-              <p-message severity="error" class="mt-1" text="First Name is required"></p-message>
+              <p-message severity="error" class="mt-1" [text]="'entity.validation.required' | translate"></p-message>
             }
           </div>
           <div>
-            <label for="lastName" class="block text-sm font-medium mb-1">Last Name</label>
+            <label for="lastName" class="block text-sm font-medium mb-1">{{ 'angappApp.employee.lastName' | translate }}</label>
             <input
               id="lastName"
               type="text"
@@ -52,28 +52,28 @@
               [ngClass]="{ 'ng-invalid ng-dirty': form.controls['lastName'].invalid && form.controls['lastName'].touched }"
             />
             @if (form.controls['lastName'].invalid && form.controls['lastName'].touched) {
-              <p-message severity="error" class="mt-1" text="Last Name is required"></p-message>
+              <p-message severity="error" class="mt-1" [text]="'entity.validation.required' | translate"></p-message>
             }
           </div>
           <div>
-            <label for="departmentId" class="block text-sm font-medium mb-1">Department</label>
+            <label for="departmentId" class="block text-sm font-medium mb-1">{{ 'angappApp.employee.department' | translate }}</label>
             <p-select
               id="departmentId"
               formControlName="departmentId"
               [options]="departmentOptions"
               optionLabel="label"
               optionValue="value"
-              placeholder="Select department"
+              [placeholder]="'angappApp.employee.department' | translate"
               class="w-full"
             ></p-select>
           </div>
           <div>
-            <label for="email" class="block text-sm font-medium mb-1">Email</label>
+            <label for="email" class="block text-sm font-medium mb-1">{{ 'angappApp.employee.email' | translate }}</label>
             <input id="email" type="email" pInputText formControlName="email" class="w-full" />
           </div>
           @if (showSalaryField()) {
             <div>
-              <label for="salary" class="block text-sm font-medium mb-1">Salary</label>
+              <label for="salary" class="block text-sm font-medium mb-1">{{ 'angappApp.employee.salary' | translate }}</label>
               <input id="salary" type="number" pInputText formControlName="salary" class="w-full" />
             </div>
           }
@@ -85,11 +85,11 @@
             pButton
             class="p-button-outlined"
             icon="pi pi-times"
-            label="Discard Changes"
+            [label]="'entity.action.cancel' | translate"
             (click)="cancel()"
             [disabled]="isSaving()"
           ></button>
-          <button type="submit" pButton icon="pi pi-check" label="Save Employee" [disabled]="isSaving()"></button>
+          <button type="submit" pButton icon="pi pi-check" [label]="'entity.action.save' | translate" [disabled]="isSaving()"></button>
         </div>
       </form>
     </p-card>

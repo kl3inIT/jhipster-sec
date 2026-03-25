@@ -6,11 +6,12 @@
       "back": "Quay lại",
       "cancel": "Hủy",
       "delete": "Xóa",
+      "discard": "Bỏ thay đổi",
       "edit": "Sửa",
       "open": "Mở",
       "save": "Lưu",
       "view": "Xem",
-      "show": "Show {{otherEntity}}"
+      "show": "Hiển thị {{otherEntity}}"
     },
     "detail": {
       "field": "Trường",
@@ -32,9 +33,12 @@
       "datetimelocal": "Trường này phải là định dạng thời gian."
     },
     "filters": {
-      "set": "Following filters are set",
-      "clear": "Clear filter",
-      "clearAll": "Clear all filters"
+      "set": "Các bộ lọc đang được áp dụng",
+      "clear": "Xóa bộ lọc",
+      "clearAll": "Xóa tất cả bộ lọc"
+    },
+    "pagination": {
+      "report": "Hiển thị {first} đến {last} trên tổng số {totalRecords} bản ghi"
     }
   }
 }

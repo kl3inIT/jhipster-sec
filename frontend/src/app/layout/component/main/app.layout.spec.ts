@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 
 import { AlertComponent } from 'app/shared/alert/alert.component';
 import { BreadcrumbItem, BreadcrumbService } from 'app/layout/navigation/breadcrumb.service';
@@ -68,6 +68,26 @@ describe('AppLayout', () => {
         },
       })
       .compileComponents();
+
+    TestBed.inject(TranslateService).setTranslation('en', {
+      layout: {
+        breadcrumb: 'Breadcrumb',
+      },
+      global: {
+        menu: {
+          entities: {
+            main: 'Entities',
+          },
+        },
+      },
+      angappApp: {
+        organization: {
+          detail: {
+            title: 'Organization Details',
+          },
+        },
+      },
+    });
   });
 
   it('does not render the breadcrumb strip when there are no breadcrumb items', () => {
@@ -98,10 +118,8 @@ describe('AppLayout', () => {
       'nav[aria-label="Breadcrumb"]',
     ) as HTMLElement | null;
     expect(breadcrumbNav).not.toBeNull();
-    expect(breadcrumbNav?.textContent).toContain('global.menu.entities.main');
-    expect(breadcrumbNav?.textContent).toContain('angappApp.organization.detail.title');
-    expect(breadcrumbNav?.querySelector('[aria-current="page"]')?.textContent).toContain(
-      'angappApp.organization.detail.title',
-    );
+    expect(breadcrumbNav?.textContent).toContain('Entities');
+    expect(breadcrumbNav?.textContent).toContain('Organization Details');
+    expect(breadcrumbNav?.querySelector('[aria-current="page"]')?.textContent).toContain('Organization Details');
   });
 });

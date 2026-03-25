@@ -1,5 +1,186 @@
 {
   "security": {
+    "roles": {
+      "title": "Security Roles",
+      "new": "New Role",
+      "managePermissions": "Manage Permissions",
+      "columns": {
+        "name": "Name",
+        "displayName": "Display Name",
+        "type": "Type",
+        "actions": "Actions"
+      },
+      "empty": {
+        "title": "No roles defined",
+        "message": "Create the first security role using the New Role button."
+      },
+      "type": {
+        "resource": "Resource",
+        "rowLevel": "Row Level"
+      },
+      "dialog": {
+        "createTitle": "New Role",
+        "editTitle": "Edit Role",
+        "name": "Name",
+        "namePlaceholder": "UPPER_SNAKE_CASE, e.g. SALES_MANAGER",
+        "nameRequired": "Name is required (max 50 characters).",
+        "displayName": "Display Name",
+        "displayNamePlaceholder": "Human-readable label",
+        "type": "Type",
+        "typePlaceholder": "Select type",
+        "typeRequired": "Type is required. Choose RESOURCE or ROW_LEVEL."
+      },
+      "confirmDelete": {
+        "title": "Delete Role",
+        "message": "Are you sure you want to delete this role? All permissions assigned to this role will also be removed."
+      },
+      "confirmSave": {
+        "title": "Save Role",
+        "message": "Do you want to save this role?"
+      }
+    },
+    "rowPolicies": {
+      "title": "Row Policies",
+      "subtitle": "Row-level restrictions filter which rows a principal can access, distinct from resource and attribute permissions.",
+      "new": "New Row Policy",
+      "columns": {
+        "code": "Code",
+        "entity": "Entity",
+        "operation": "Operation",
+        "policyType": "Policy Type",
+        "expression": "Expression",
+        "actions": "Actions"
+      },
+      "empty": {
+        "title": "No row policies defined",
+        "message": "Create the first row policy using the New Row Policy button."
+      },
+      "operation": {
+        "read": "Read",
+        "update": "Update",
+        "delete": "Delete"
+      },
+      "policyType": {
+        "specification": "Specification",
+        "jpql": "JPQL"
+      },
+      "dialog": {
+        "createTitle": "New Row Policy",
+        "editTitle": "Edit Row Policy",
+        "code": "Code",
+        "codePlaceholder": "Unique policy code",
+        "codeRequired": "Code is required (max 100 characters).",
+        "entity": "Entity",
+        "entityPlaceholder": "Select entity",
+        "entityRequired": "Entity is required.",
+        "entityEmpty": "No entities available",
+        "operation": "Operation",
+        "operationPlaceholder": "Select operation",
+        "operationRequired": "Operation is required.",
+        "policyType": "Policy Type",
+        "policyTypePlaceholder": "Select policy type",
+        "policyTypeRequired": "Policy type is required.",
+        "expression": "Expression",
+        "expressionPlaceholder": "Enter SPECIFICATION or JPQL expression",
+        "expressionRequired": "Expression is required (max 1000 characters)."
+      },
+      "confirmDelete": {
+        "title": "Delete Row Policy",
+        "message": "Are you sure you want to delete this row policy? This action cannot be undone."
+      },
+      "confirmSave": {
+        "title": "Save Row Policy",
+        "message": "Do you want to save this row policy?"
+      }
+    },
+    "menuDefinitions": {
+      "title": "Menu Definitions",
+      "new": "New Menu Definition",
+      "sync": "Sync from Registry",
+      "columns": {
+        "menuId": "Menu ID",
+        "labelMenuId": "Label / Menu ID",
+        "label": "Label",
+        "parent": "Parent",
+        "route": "Route",
+        "icon": "Icon",
+        "ordering": "Order",
+        "actions": "Actions"
+      },
+      "empty": {
+        "title": "No menu definitions",
+        "message": "Create the first menu definition or sync existing navigation nodes from the registry."
+      },
+      "dialog": {
+        "createTitle": "New Menu Definition",
+        "editTitle": "Edit Menu Definition",
+        "menuId": "Menu ID",
+        "menuIdPlaceholder": "e.g. security.menu-definitions",
+        "menuIdRequired": "Menu ID is required (max 150 characters).",
+        "menuName": "Menu Name",
+        "menuNamePlaceholder": "e.g. Menu Definitions",
+        "menuNameRequired": "Menu Name is required (max 200 characters).",
+        "label": "Label",
+        "labelPlaceholder": "Display label",
+        "labelRequired": "Label is required (max 200 characters).",
+        "parentMenuId": "Parent Menu ID",
+        "parentMenuIdPlaceholder": "Leave empty for top-level",
+        "route": "Route",
+        "routePlaceholder": "e.g. /admin/security/menu-definitions",
+        "icon": "Icon",
+        "iconPlaceholder": "e.g. pi pi-list",
+        "ordering": "Ordering",
+        "orderingRequired": "Ordering is required.",
+        "description": "Description"
+      },
+      "confirmDelete": {
+        "title": "Delete Menu Definition",
+        "message": "Are you sure you want to delete this menu definition? Role permissions for this menu node will also be removed."
+      },
+      "confirmSave": {
+        "title": "Save Menu Definition",
+        "message": "Do you want to save this menu definition?"
+      },
+      "confirmSync": {
+        "title": "Sync from Registry",
+        "message": "This will add any navigation nodes from the frontend registry that are not yet in the catalog. Existing definitions will not be modified."
+      }
+    },
+    "permissionMatrix": {
+      "title": "Permissions for {{ roleName }}",
+      "backToRoles": "Back to Roles",
+      "saveChanges": "Save Changes",
+      "discard": "Discard",
+      "unsavedChanges": "{{ count }} unsaved change(s)",
+      "tabs": {
+        "entity": "Entity Permissions",
+        "menu": "Menu Access"
+      },
+      "menu": {
+        "node": "Navigation Node"
+      },
+      "entity": {
+        "heading": "Entity Permissions",
+        "name": "Entity",
+        "create": "Create",
+        "read": "Read",
+        "update": "Update",
+        "delete": "Delete",
+        "emptySelection": "Select an entity above to view its attribute permissions."
+      },
+      "attribute": {
+        "heading": "Attribute Permissions: {{ entity }}",
+        "name": "Attribute",
+        "view": "View",
+        "modify": "Modify",
+        "wildcard": "All attributes (*)",
+        "none": "This entity has no enumerated attributes."
+      },
+      "confirmSave": {
+        "title": "Save Permissions",
+        "message": "Do you want to save the permission changes?"
+      }
+    },
     "alert": {
       "secRole": {
         "created": "A security role is created with identifier {{ param }}",

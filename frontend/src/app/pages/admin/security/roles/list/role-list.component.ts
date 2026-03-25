@@ -5,7 +5,7 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
@@ -34,6 +34,7 @@ import { addTranslatedMessage, handleHttpError } from 'app/shared/error/http-err
     ConfirmDialogModule,
     TagModule,
     RoleDialogComponent,
+    TranslatePipe,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './role-list.component.html',
@@ -93,11 +94,10 @@ export default class RoleListComponent implements OnInit {
 
   confirmDelete(role: ISecRole): void {
     this.confirmationService.confirm({
-      header: 'Delete Role',
-      message:
-        'Are you sure you want to delete this role? All permissions assigned to this role will also be removed.',
-      acceptLabel: 'Delete',
-      rejectLabel: 'Keep Role',
+      header: this.translateService.instant('security.roles.confirmDelete.title'),
+      message: this.translateService.instant('security.roles.confirmDelete.message'),
+      acceptLabel: this.translateService.instant('entity.action.delete'),
+      rejectLabel: this.translateService.instant('entity.action.cancel'),
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => this.deleteRole(role),
     });

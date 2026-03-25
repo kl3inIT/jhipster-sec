@@ -28,62 +28,86 @@
     },
     "department": {
       "home": {
-        "title": "Departments",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Thêm mới một Department",
-        "createOrEditLabel": "Thêm mới hoặc cập nhật Department",
-        "notFound": "No Departments found",
+        "title": "Phòng ban",
+        "refreshListLabel": "Làm mới danh sách",
+        "createLabel": "Tạo phòng ban mới",
+        "createOrEditLabel": "Chỉnh sửa phòng ban",
+        "notFound": "Không tìm thấy phòng ban nào.",
         "denied": {
           "title": "Quyền truy cập phòng ban bị giới hạn",
           "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi phòng ban."
         }
       },
-      "created": "Một Department mới được tạo với định danh {{ param }}",
-      "updated": "Một Department cập nhật với định danh {{ param }}",
-      "deleted": "Một Department đã xóa với định danh {{ param }}",
+      "created": "Đã tạo phòng ban mới với định danh {{ param }}",
+      "updated": "Đã cập nhật phòng ban với định danh {{ param }}",
+      "deleted": "Đã xóa phòng ban với định danh {{ param }}",
       "delete": {
-        "question": "Bạn có chắc là muốn xóa Department {{ id }}?"
+        "title": "Xóa phòng ban",
+        "question": "Bạn có chắc muốn xóa phòng ban này không? Hành động này không thể hoàn tác."
       },
       "detail": {
-        "title": "Department"
+        "title": "Phòng ban"
       },
       "id": "ID",
-      "name": "Name",
-      "code": "Code"
+      "name": "Tên",
+      "code": "Mã",
+      "organization": "Tổ chức",
+      "costCenter": "Mã chi phí"
     },
     "employee": {
       "home": {
+        "title": "Nhân viên",
+        "createLabel": "Tạo nhân viên mới",
+        "createOrEditLabel": "Chỉnh sửa nhân viên",
+        "notFound": "Không tìm thấy nhân viên nào.",
         "denied": {
           "title": "Quyền truy cập nhân viên bị giới hạn",
           "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi nhân viên."
         }
-      }
+      },
+      "delete": {
+        "title": "Xóa nhân viên",
+        "question": "Bạn có chắc muốn xóa nhân viên này không? Hành động này không thể hoàn tác."
+      },
+      "detail": {
+        "title": "Nhân viên"
+      },
+      "id": "ID",
+      "employeeNumber": "Mã nhân viên",
+      "firstName": "Tên",
+      "lastName": "Họ",
+      "department": "Phòng ban",
+      "email": "Email",
+      "salary": "Lương"
     },
     "organization": {
       "home": {
-        "title": "Organizations",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Thêm mới một Organization",
-        "createOrEditLabel": "Thêm mới hoặc cập nhật Organization",
-        "notFound": "No Organizations found",
+        "title": "Tổ chức",
+        "refreshListLabel": "Làm mới danh sách",
+        "createLabel": "Tạo tổ chức mới",
+        "createOrEditLabel": "Chỉnh sửa tổ chức",
+        "notFound": "Không tìm thấy tổ chức nào.",
         "denied": {
           "title": "Quyền truy cập tổ chức bị giới hạn",
           "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi tổ chức."
         }
       },
-      "created": "Một Organization mới được tạo với định danh {{ param }}",
-      "updated": "Một Organization cập nhật với định danh {{ param }}",
-      "deleted": "Một Organization đã xóa với định danh {{ param }}",
+      "created": "Đã tạo tổ chức mới với định danh {{ param }}",
+      "updated": "Đã cập nhật tổ chức với định danh {{ param }}",
+      "deleted": "Đã xóa tổ chức với định danh {{ param }}",
       "delete": {
-        "question": "Bạn có chắc là muốn xóa Organization {{ id }}?"
+        "title": "Xóa tổ chức",
+        "question": "Bạn có chắc muốn xóa tổ chức này không? Hành động này không thể hoàn tác."
       },
       "detail": {
-        "title": "Organization"
+        "title": "Tổ chức"
       },
       "id": "ID",
-      "code": "Code",
-      "name": "Name",
-      "description": "Description"
+      "code": "Mã",
+      "name": "Tên",
+      "ownerLogin": "Người phụ trách",
+      "budget": "Ngân sách",
+      "description": "Mô tả"
     }
   },
   "entity": {
@@ -93,11 +117,12 @@
       "back": "Quay lại",
       "cancel": "Hủy",
       "delete": "Xóa",
+      "discard": "Bỏ thay đổi",
       "edit": "Sửa",
       "open": "Mở",
       "save": "Lưu",
       "view": "Xem",
-      "show": "Show {{otherEntity}}"
+      "show": "Hiển thị {{otherEntity}}"
     },
     "detail": {
       "field": "Trường",
@@ -119,9 +144,12 @@
       "datetimelocal": "Trường này phải là định dạng thời gian."
     },
     "filters": {
-      "set": "Following filters are set",
-      "clear": "Clear filter",
-      "clearAll": "Clear all filters"
+      "set": "Các bộ lọc đang được áp dụng",
+      "clear": "Xóa bộ lọc",
+      "clearAll": "Xóa tất cả bộ lọc"
+    },
+    "pagination": {
+      "report": "Hiển thị {first} đến {last} trên tổng số {totalRecords} bản ghi"
     }
   },
   "error": {
@@ -159,7 +187,8 @@
   },
   "feedback": {
     "toast": {
-      "deleted": "Đã xóa"
+      "deleted": "Đã xóa",
+      "success": "Thành công"
     },
     "httpError": {
       "accessDenied": {
@@ -187,17 +216,16 @@
         "loadFailed": "Không thể tải ma trận quyền. Vui lòng thử lại.",
         "saveFailed": "Không thể lưu các thay đổi quyền. Vui lòng thử lại."
       },
-      "menuDefinitions": {
-        "loadFailed": "Không thể tải danh sách định nghĩa menu. Vui lòng làm mới.",
-        "deleted": "Định nghĩa menu \"{{ param }}\" đã bị xóa.",
-        "deleteFailed": "Xóa định nghĩa menu thất bại.",
-        "saveFailed": "Không thể lưu định nghĩa menu. Vui lòng kiểm tra lại.",
-        "syncFailed": "Không thể đồng bộ từ registry. Vui lòng thử lại.",
-        "syncSuccess": "Đồng bộ hoàn tất. {{ seeded }} mục đã được thêm."
-      },
       "menuAccess": {
-        "loadFailed": "Không thể tải quyền truy cập menu. Vui lòng thử lại.",
-        "saveFailed": "Không thể lưu thay đổi quyền truy cập menu. Vui lòng thử lại."
+        "loadFailed": "Không thể tải quyền menu. Vui lòng thử lại."
+      },
+      "menuDefinitions": {
+        "deleted": "Định nghĩa menu \"{{ param }}\" đã bị xóa.",
+        "loadFailed": "Không thể tải danh sách định nghĩa menu.",
+        "deleteFailed": "Không thể xóa định nghĩa menu.",
+        "saveFailed": "Không thể lưu định nghĩa menu. Hãy kiểm tra lại biểu mẫu và thử lại.",
+        "syncFailed": "Không thể đồng bộ định nghĩa menu từ registry.",
+        "syncSuccess": "Đã đồng bộ {{ seeded }} định nghĩa menu từ registry."
       }
     },
     "entities": {
@@ -319,6 +347,13 @@
     "github": "GitHub"
   },
   "layout": {
+    "breadcrumb": "Điều hướng",
+    "brand": {
+      "name": "JHipster Security"
+    },
+    "footer": {
+      "productName": "JHipster Security Platform"
+    },
     "topbar": {
       "toggleMenu": "Mở hoặc đóng menu",
       "toggleTheme": "Đổi giao diện",
@@ -427,21 +462,202 @@
     }
   },
   "security": {
+    "roles": {
+      "title": "Vai trò bảo mật",
+      "new": "Tạo vai trò",
+      "managePermissions": "Quản lý quyền",
+      "columns": {
+        "name": "Tên",
+        "displayName": "Tên hiển thị",
+        "type": "Loại",
+        "actions": "Thao tác"
+      },
+      "empty": {
+        "title": "Chưa có vai trò nào",
+        "message": "Hãy tạo vai trò bảo mật đầu tiên bằng nút Tạo vai trò."
+      },
+      "type": {
+        "resource": "Tài nguyên",
+        "rowLevel": "Cấp dòng"
+      },
+      "dialog": {
+        "createTitle": "Tạo vai trò",
+        "editTitle": "Chỉnh sửa vai trò",
+        "name": "Tên",
+        "namePlaceholder": "UPPER_SNAKE_CASE, ví dụ SALES_MANAGER",
+        "nameRequired": "Tên là bắt buộc (tối đa 50 ký tự).",
+        "displayName": "Tên hiển thị",
+        "displayNamePlaceholder": "Nhãn dễ đọc",
+        "type": "Loại",
+        "typePlaceholder": "Chọn loại",
+        "typeRequired": "Loại là bắt buộc. Hãy chọn RESOURCE hoặc ROW_LEVEL."
+      },
+      "confirmDelete": {
+        "title": "Xóa vai trò",
+        "message": "Bạn có chắc muốn xóa vai trò này không? Mọi quyền gán cho vai trò này cũng sẽ bị xóa."
+      },
+      "confirmSave": {
+        "title": "Lưu vai trò",
+        "message": "Bạn có muốn lưu vai trò này không?"
+      }
+    },
+    "rowPolicies": {
+      "title": "Chính sách hàng",
+      "subtitle": "Các ràng buộc mức dòng lọc những dòng mà principal có thể truy cập, tách biệt với quyền tài nguyên và quyền thuộc tính.",
+      "new": "Tạo chính sách hàng",
+      "columns": {
+        "code": "Mã",
+        "entity": "Thực thể",
+        "operation": "Thao tác",
+        "policyType": "Loại chính sách",
+        "expression": "Biểu thức",
+        "actions": "Thao tác"
+      },
+      "empty": {
+        "title": "Chưa có chính sách hàng nào",
+        "message": "Hãy tạo chính sách hàng đầu tiên bằng nút Tạo chính sách hàng."
+      },
+      "operation": {
+        "read": "Đọc",
+        "update": "Cập nhật",
+        "delete": "Xóa"
+      },
+      "policyType": {
+        "specification": "Specification",
+        "jpql": "JPQL"
+      },
+      "dialog": {
+        "createTitle": "Tạo chính sách hàng",
+        "editTitle": "Chỉnh sửa chính sách hàng",
+        "code": "Mã",
+        "codePlaceholder": "Mã chính sách duy nhất",
+        "codeRequired": "Mã là bắt buộc (tối đa 100 ký tự).",
+        "entity": "Thực thể",
+        "entityPlaceholder": "Chọn thực thể",
+        "entityRequired": "Thực thể là bắt buộc.",
+        "entityEmpty": "Không có thực thể khả dụng",
+        "operation": "Thao tác",
+        "operationPlaceholder": "Chọn thao tác",
+        "operationRequired": "Thao tác là bắt buộc.",
+        "policyType": "Loại chính sách",
+        "policyTypePlaceholder": "Chọn loại chính sách",
+        "policyTypeRequired": "Loại chính sách là bắt buộc.",
+        "expression": "Biểu thức",
+        "expressionPlaceholder": "Nhập biểu thức SPECIFICATION hoặc JPQL",
+        "expressionRequired": "Biểu thức là bắt buộc (tối đa 1000 ký tự)."
+      },
+      "confirmDelete": {
+        "title": "Xóa chính sách hàng",
+        "message": "Bạn có chắc muốn xóa chính sách hàng này không? Hành động này không thể hoàn tác."
+      },
+      "confirmSave": {
+        "title": "Lưu chính sách hàng",
+        "message": "Bạn có muốn lưu chính sách hàng này không?"
+      }
+    },
+    "menuDefinitions": {
+      "title": "Định nghĩa menu",
+      "new": "Tạo định nghĩa menu",
+      "sync": "Đồng bộ từ registry",
+      "columns": {
+        "menuId": "Mã menu",
+        "labelMenuId": "Nhãn / Mã menu",
+        "label": "Nhãn",
+        "parent": "Menu cha",
+        "route": "Đường dẫn",
+        "icon": "Biểu tượng",
+        "ordering": "Thứ tự",
+        "actions": "Thao tác"
+      },
+      "empty": {
+        "title": "Chưa có định nghĩa menu nào",
+        "message": "Hãy tạo định nghĩa menu đầu tiên hoặc đồng bộ các node điều hướng hiện có từ registry."
+      },
+      "dialog": {
+        "createTitle": "Tạo định nghĩa menu",
+        "editTitle": "Chỉnh sửa định nghĩa menu",
+        "menuId": "Mã menu",
+        "menuIdPlaceholder": "ví dụ security.menu-definitions",
+        "menuIdRequired": "Mã menu là bắt buộc (tối đa 150 ký tự).",
+        "menuName": "Tên menu",
+        "menuNamePlaceholder": "ví dụ Menu Definitions",
+        "menuNameRequired": "Tên menu là bắt buộc (tối đa 200 ký tự).",
+        "label": "Nhãn",
+        "labelPlaceholder": "Nhãn hiển thị",
+        "labelRequired": "Nhãn là bắt buộc (tối đa 200 ký tự).",
+        "parentMenuId": "Mã menu cha",
+        "parentMenuIdPlaceholder": "Để trống nếu là menu cấp cao nhất",
+        "route": "Đường dẫn",
+        "routePlaceholder": "ví dụ /admin/security/menu-definitions",
+        "icon": "Biểu tượng",
+        "iconPlaceholder": "ví dụ pi pi-list",
+        "ordering": "Thứ tự",
+        "orderingRequired": "Thứ tự là bắt buộc.",
+        "description": "Mô tả"
+      },
+      "confirmDelete": {
+        "title": "Xóa định nghĩa menu",
+        "message": "Bạn có chắc muốn xóa định nghĩa menu này không? Các quyền vai trò gắn với node menu này cũng sẽ bị xóa."
+      },
+      "confirmSave": {
+        "title": "Lưu định nghĩa menu",
+        "message": "Bạn có muốn lưu định nghĩa menu này không?"
+      },
+      "confirmSync": {
+        "title": "Đồng bộ từ registry",
+        "message": "Thao tác này sẽ thêm các node điều hướng từ registry frontend chưa có trong catalog. Các định nghĩa hiện có sẽ không bị chỉnh sửa."
+      }
+    },
+    "permissionMatrix": {
+      "title": "Quyền của {{ roleName }}",
+      "backToRoles": "Quay lại vai trò",
+      "saveChanges": "Lưu thay đổi",
+      "discard": "Bỏ thay đổi",
+      "unsavedChanges": "{{ count }} thay đổi chưa lưu",
+      "tabs": {
+        "entity": "Quyền thực thể",
+        "menu": "Quyền menu"
+      },
+      "menu": {
+        "node": "Nút điều hướng"
+      },
+      "entity": {
+        "heading": "Quyền thực thể",
+        "name": "Thực thể",
+        "create": "Tạo",
+        "read": "Đọc",
+        "update": "Cập nhật",
+        "delete": "Xóa",
+        "emptySelection": "Hãy chọn một thực thể ở trên để xem quyền thuộc tính của nó."
+      },
+      "attribute": {
+        "heading": "Quyền thuộc tính: {{ entity }}",
+        "name": "Thuộc tính",
+        "view": "Xem",
+        "modify": "Sửa",
+        "wildcard": "Tất cả thuộc tính (*)",
+        "none": "Thực thể này không có thuộc tính nào được liệt kê."
+      },
+      "confirmSave": {
+        "title": "Lưu quyền",
+        "message": "Bạn có muốn lưu các thay đổi quyền này không?"
+      }
+    },
     "alert": {
       "secRole": {
-        "created": "Một vai trò bảo mật mới được tạo với định danh {{ param }}",
-        "updated": "Một vai trò bảo mật được cập nhật với định danh {{ param }}",
-        "deleted": "Một vai trò bảo mật đã bị xóa với định danh {{ param }}"
+        "created": "Đã tạo vai trò bảo mật mới với định danh {{ param }}",
+        "updated": "Đã cập nhật vai trò bảo mật với định danh {{ param }}",
+        "deleted": "Đã xóa vai trò bảo mật với định danh {{ param }}"
       },
       "secPermission": {
-        "created": "Một quyền bảo mật mới được tạo với định danh {{ param }}",
-        "updated": "Một quyền bảo mật được cập nhật với định danh {{ param }}",
-        "deleted": "Một quyền bảo mật đã bị xóa với định danh {{ param }}"
+        "created": "Đã tạo quyền bảo mật mới với định danh {{ param }}",
+        "updated": "Đã cập nhật quyền bảo mật với định danh {{ param }}",
+        "deleted": "Đã xóa quyền bảo mật với định danh {{ param }}"
       },
       "secRowPolicy": {
-        "created": "Một chính sách hàng mới được tạo với định danh {{ param }}",
-        "updated": "Một chính sách hàng được cập nhật với định danh {{ param }}",
-        "deleted": "Một chính sách hàng đã bị xóa với định danh {{ param }}"
+        "created": "Đã tạo chính sách hàng mới với định danh {{ param }}",
+        "updated": "Đã cập nhật chính sách hàng với định danh {{ param }}",
+        "deleted": "Đã xóa chính sách hàng với định danh {{ param }}"
       }
     }
   },

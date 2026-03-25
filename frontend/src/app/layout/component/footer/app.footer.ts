@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   standalone: true,
   selector: 'app-footer',
-  template: `<div class="layout-footer">JHipster Security Platform</div>`,
+  imports: [TranslatePipe],
+  template: `<div class="layout-footer">{{ 'layout.footer.productName' | translate }}</div>`,
 })
 export class AppFooter {}

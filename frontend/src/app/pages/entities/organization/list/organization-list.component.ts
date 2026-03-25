@@ -202,12 +202,12 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
 
   confirmDelete(org: IOrganization): void {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete this organization? This action cannot be undone.',
-      header: 'Delete Organization',
+      message: this.translateService.instant('angappApp.organization.delete.question'),
+      header: this.translateService.instant('angappApp.organization.delete.title'),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Delete',
+      acceptLabel: this.translateService.instant('entity.action.delete'),
       acceptButtonStyleClass: 'p-button-danger',
-      rejectLabel: 'Keep Organization',
+      rejectLabel: this.translateService.instant('entity.action.cancel'),
       accept: () => this.deleteOrg(org),
     });
   }

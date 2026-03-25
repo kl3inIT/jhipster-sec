@@ -1,43 +1,43 @@
 <div class="max-w-2xl mx-auto space-y-4">
-  <h1 class="m-0 text-2xl font-semibold">Department</h1>
+  <h1 class="m-0 text-2xl font-semibold">{{ 'angappApp.department.detail.title' | translate }}</h1>
 
   @if (department(); as dept) {
     <p-card class="shadow-sm">
       <div class="grid grid-cols-1 gap-4">
         <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium">ID</span>
+          <span class="text-sm font-medium">{{ 'angappApp.department.id' | translate }}</span>
           <span>{{ dept.id }}</span>
         </div>
         @if (canViewField('code')) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">Code</span>
+            <span class="text-sm font-medium">{{ 'angappApp.department.code' | translate }}</span>
             <span>{{ dept.code }}</span>
           </div>
         }
         @if (canViewField('name')) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">Name</span>
+            <span class="text-sm font-medium">{{ 'angappApp.department.name' | translate }}</span>
             <span>{{ dept.name }}</span>
           </div>
         }
         @if (canViewField('organization') && dept.organization) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">Organization</span>
+            <span class="text-sm font-medium">{{ 'angappApp.department.organization' | translate }}</span>
             <span>{{ dept.organization.name }}</span>
           </div>
         }
         @if (canViewField('costCenter') && dept.costCenter !== undefined) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">Cost Center</span>
+            <span class="text-sm font-medium">{{ 'angappApp.department.costCenter' | translate }}</span>
             <span>{{ dept.costCenter }}</span>
           </div>
         }
       </div>
 
       <div class="flex gap-2 mt-4 pt-4" style="border-top: 1px solid var(--surface-border)">
-        <button type="button" pButton class="p-button-outlined" icon="pi pi-arrow-left" label="Back" (click)="back()"></button>
+        <button type="button" pButton class="p-button-outlined" icon="pi pi-arrow-left" [label]="'entity.action.back' | translate" (click)="back()"></button>
         @if (capabilityLoaded() && canUpdate()) {
-          <button type="button" pButton icon="pi pi-pencil" label="Edit" (click)="edit(dept)"></button>
+          <button type="button" pButton icon="pi pi-pencil" [label]="'entity.action.edit' | translate" (click)="edit(dept)"></button>
         }
       </div>
     </p-card>

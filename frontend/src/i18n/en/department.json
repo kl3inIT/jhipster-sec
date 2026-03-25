@@ -4,9 +4,9 @@
       "home": {
         "title": "Departments",
         "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Department",
-        "createOrEditLabel": "Create or edit a Department",
-        "notFound": "No Departments found",
+        "createLabel": "New Department",
+        "createOrEditLabel": "Edit Department",
+        "notFound": "No departments found.",
         "denied": {
           "title": "Department access is limited",
           "message": "You can open this workspace from the shell, but you do not have permission to view department records."
@@ -16,14 +16,17 @@
       "updated": "A Department is updated with identifier {{ param }}",
       "deleted": "A Department is deleted with identifier {{ param }}",
       "delete": {
-        "question": "Are you sure you want to delete Department {{ id }}?"
+        "title": "Delete Department",
+        "question": "Are you sure you want to delete this department? This action cannot be undone."
       },
       "detail": {
         "title": "Department"
       },
       "id": "ID",
       "name": "Name",
-      "code": "Code"
+      "code": "Code",
+      "organization": "Organization",
+      "costCenter": "Cost Center"
     }
   }
 }

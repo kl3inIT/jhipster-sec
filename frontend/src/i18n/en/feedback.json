@@ -1,7 +1,8 @@
 {
   "feedback": {
     "toast": {
-      "deleted": "Deleted"
+      "deleted": "Deleted",
+      "success": "Success"
     },
     "httpError": {
       "accessDenied": {
@@ -28,6 +29,17 @@
       "permissionMatrix": {
         "loadFailed": "Could not load the permission matrix. Please try again.",
         "saveFailed": "Could not save the permission changes. Please try again."
+      },
+      "menuAccess": {
+        "loadFailed": "Could not load menu access permissions. Please try again."
+      },
+      "menuDefinitions": {
+        "deleted": "Menu definition \"{{ param }}\" has been deleted.",
+        "loadFailed": "Failed to load menu definitions.",
+        "deleteFailed": "Failed to delete menu definition.",
+        "saveFailed": "Could not save the menu definition. Please review the form and try again.",
+        "syncFailed": "Could not sync menu definitions from the registry.",
+        "syncSuccess": "Synced {{ seeded }} menu definition(s) from the registry."
       }
     },
     "entities": {
