@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: "Phase 07 shipped — PR #3 merged"
-stopped_at: Completed quick task 260325-lae
-last_updated: "2026-03-25T08:39:39.961Z"
+status: Ready to execute
+stopped_at: Completed 07.1-01-PLAN.md
+last_updated: "2026-03-25T09:38:28.672Z"
 last_activity: 2026-03-25
 progress:
-  total_phases: 5
+  total_phases: 6
   completed_phases: 2
-  total_plans: 11
-  completed_plans: 11
+  total_plans: 14
+  completed_plans: 12
 ---
 
 # Project State
@@ -20,12 +20,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
-**Current focus:** Phase 07 — enterprise-navigation-shell
+**Current focus:** Phase 07.1 — menu-management
 
 ## Current Position
 
-Phase: 8
-Plan: Not started
+Phase: 07.1 (menu-management) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Plan: Not started
 - Next actionable work: plan and execute Phase 7
 
 | Phase 07 P05 | 4 | 2 tasks | 19 files |
+| Phase 07.1-menu-management P01 | 25 | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -116,6 +117,9 @@ Recent decisions affecting current work:
 - [Phase 06-frontend-parity-foundation]: `frontend/src/app.routes.ts` is the authoritative root route tree and `frontend/src/app/app.routes.ts` now re-exports it for compatibility
 - [Phase 06-frontend-parity-foundation]: Menu root items must track stable ids, not translated labels, to keep language switching change-detection safe
 - [Phase 07]: All Phase 7 Wave 0 spec files now exist; Playwright shell tests use page.route() mocking for deterministic navigation and capability assertions
+- [Phase 07.1-menu-management]: Hand-mapping in controllers (no MapStruct) follows the SecRoleAdminResource pattern
+- [Phase 07.1-menu-management]: Cascade delete is explicit in the controller: deleteByAppNameAndMenuId then deleteById inside @Transactional
+- [Phase 07.1-menu-management]: Sync endpoint is insert-only (no update); identity is appName+menuId matching the unique constraint
 
 ### Pending Todos
 
@@ -139,6 +143,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last activity: 2026-03-25
-Last session: 2026-03-25T15:32:00.000Z
-Stopped at: Completed quick task 260325-lae
+Last session: 2026-03-25T09:38:28.668Z
+Stopped at: Completed 07.1-01-PLAN.md
 Resume file: None
