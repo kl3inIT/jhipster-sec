@@ -63,12 +63,12 @@ Plans:
 **Goal:** Admin CRUD for SecMenuDefinition catalog entries and role-based SecMenuPermission assignment via a dedicated menu definitions page and a Menu Access tab on the role permissions screen.
 **Requirements**: MENU-01, MENU-02, MENU-03, MENU-04, MENU-05
 **Depends on:** Phase 7
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 07.1-01-PLAN.md — Backend admin REST controllers (SecMenuDefinition CRUD + sync, AdminMenuPermission assign/revoke) with integration tests
 - [x] 07.1-02-PLAN.md — Frontend Menu Definitions list+dialog page with route, nav node, and i18n
-- [ ] 07.1-03-PLAN.md — Menu Access tab on permission matrix with tree checkbox grants
+- [x] 07.1-03-PLAN.md — Menu Access tab on permission matrix with tree checkbox grants
 
 ### Phase 8: User Management Delivery
 **Goal**: The new frontend exposes the full JHipster-style admin user-management experience on top of the preserved backend contracts.
@@ -109,7 +109,7 @@ Plans:
 |---|-------|------|--------------|------------------|
 | 6 | Frontend Parity Foundation | Bring required `angapp` support files and i18n foundations into `frontend/` | I18N-01, I18N-02 | 3 |
 | 7 | Enterprise Navigation Shell | 5/5 | Complete   | 2026-03-25 |
-| 07.1 | Menu Management | 2/3 | In Progress|  |
+| 07.1 | Menu Management | 3/3 | Complete   | 2026-03-25 |
 | 8 | User Management Delivery | Deliver full admin user management with role assignment | UMGT-01, UMGT-02, UMGT-03 | 3 |
 | 9 | Enterprise UX And Performance Hardening | Improve consistency, responsiveness, and data-loading efficiency | UI-05, PERF-01, PERF-02, PERF-03 | 4 |
 | 10 | Frontend Reliability And Regression Coverage | Add high-value automated coverage for the new frontend foundation | TEST-01, TEST-02, TEST-03 | 3 |

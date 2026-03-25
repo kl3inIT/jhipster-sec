@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 07.1-02-PLAN.md
-last_updated: "2026-03-25T09:49:11.728Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 07.1-03-PLAN.md
+last_updated: "2026-03-25T09:57:08.947Z"
 last_activity: 2026-03-25
 progress:
   total_phases: 6
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 14
-  completed_plans: 13
+  completed_plans: 14
 ---
 
 # Project State
@@ -54,6 +54,7 @@ Plan: 3 of 3
 | Phase 07 P05 | 4 | 2 tasks | 19 files |
 | Phase 07.1-menu-management P01 | 25 | 2 tasks | 10 files |
 | Phase 07.1-menu-management P02 | 5 | 2 tasks | 10 files |
+| Phase 07.1-menu-management P03 | 5 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -123,6 +124,9 @@ Recent decisions affecting current work:
 - [Phase 07.1-menu-management]: Sync endpoint is insert-only (no update); identity is appName+menuId matching the unique constraint
 - [Phase 07.1-02]: MenuDefinitionDialogComponent uses signal input()/output() instead of @Input/@Output decorators per CLAUDE.md mandate for new components
 - [Phase 07.1-02]: TranslatePipe imported (not TranslateModule) for menu-definition components - consistent with existing standalone component pattern in layout and entity screens
+- [Phase 07.1-03]: AdminMenuPermissionService.query() returns plain body following SecPermissionService pattern for internal consumption
+- [Phase 07.1-03]: p-tabpanel is the correct PrimeNG v20+ selector (not p-tab-panel); corrected from plan spec
+- [Phase 07.1-03]: standalone: true removed from PermissionMatrixComponent per CLAUDE.md Angular v20+ default
 
 ### Pending Todos
 
@@ -146,6 +150,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last activity: 2026-03-25
-Last session: 2026-03-25T09:49:11.723Z
-Stopped at: Completed 07.1-02-PLAN.md
+Last session: 2026-03-25T09:57:08.942Z
+Stopped at: Completed 07.1-03-PLAN.md
 Resume file: None
