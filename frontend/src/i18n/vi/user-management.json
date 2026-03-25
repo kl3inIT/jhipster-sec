@@ -1,34 +1,68 @@
 {
   "userManagement": {
     "home": {
-      "title": "Tài khoản",
+      "title": "Tai khoan",
       "refreshListLabel": "Refresh list",
-      "createLabel": "Tạo tài khoản mới",
-      "createOrEditLabel": "Tạo hoặc sửa tài khoản"
+      "createLabel": "Tao tai khoan moi",
+      "createOrEditLabel": "Tao hoac sua tai khoan",
+      "searchPlaceholder": "Tim kiem theo ten dang nhap, email, hoac ten",
+      "emptyTitle": "Khong tim thay tai khoan nao",
+      "emptyBody": "Thu tim kiem khac hoac tao tai khoan moi.",
+      "loadError": "Khong the tai danh sach tai khoan. Hay lam moi trang. Neu van tiep tuc, lien he quan tri vien."
     },
-    "created": "Một tài khoản mới đã được tạo với định danh {{ param }}",
-    "updated": "Một tài khoản đã được cập nhật với định danh {{ param }}",
-    "deleted": "Một tài khoản đã bị xóa với định danh {{ param }}",
+    "created": "Mot tai khoan moi da duoc tao voi dinh danh {{ param }}",
+    "updated": "Mot tai khoan da duoc cap nhat voi dinh danh {{ param }}",
+    "deleted": "Mot tai khoan da bi xoa voi dinh danh {{ param }}",
     "delete": {
-      "question": "Bạn có chắc chắn muốn xóa tài khoản {{ login }}?"
+      "question": "Ban co chac chan muon xoa tai khoan {{ login }}?",
+      "title": "Xoa tai khoan",
+      "keep": "Giu lai",
+      "confirm": "Xoa"
     },
     "detail": {
-      "title": "Tài khoản"
+      "title": "Tai khoan",
+      "summaryTitle": "Chi tiet tai khoan",
+      "rolesTitle": "Vai tro",
+      "backToList": "Quay lai danh sach",
+      "auditTitle": "Thong tin kiem tra"
     },
-    "login": "Tên đăng nhập",
-    "firstName": "Tên",
-    "lastName": "Họ",
+    "actions": {
+      "view": "Xem",
+      "edit": "Sua",
+      "activate": "Kich hoat",
+      "deactivate": "Khoa",
+      "delete": "Xoa",
+      "new": "Tao moi"
+    },
+    "columns": {
+      "fullName": "Ho va ten",
+      "status": "Trang thai",
+      "roles": "Vai tro",
+      "lastModified": "Lan sua cuoi",
+      "actions": "Thao tac"
+    },
+    "authorityLabels": {
+      "ROLE_ADMIN": "Quan tri vien",
+      "ROLE_USER": "Nguoi dung"
+    },
+    "status": {
+      "active": "Dang hoat dong",
+      "inactive": "Bi khoa"
+    },
+    "login": "Ten dang nhap",
+    "firstName": "Ten",
+    "lastName": "Ho",
     "email": "Email",
-    "activated": "Kích hoạt",
-    "deactivated": "Khóa",
-    "profiles": "Các quyền",
-    "langKey": "Ngôn ngữ",
-    "createdBy": "Người tạo",
-    "createdDate": "Ngày tạo",
-    "lastModifiedBy": "Người sửa",
-    "lastModifiedDate": "Ngày sửa",
+    "activated": "Kich hoat",
+    "deactivated": "Khoa",
+    "profiles": "Cac quyen",
+    "langKey": "Ngon ngu",
+    "createdBy": "Nguoi tao",
+    "createdDate": "Ngay tao",
+    "lastModifiedBy": "Nguoi sua",
+    "lastModifiedDate": "Ngay sua",
     "placeholder": {
-      "phase6": "Màn hình quản lý người dùng đầy đủ sẽ hoàn thành ở Phase 8. Placeholder này giữ nguyên hợp đồng route và service."
+      "phase6": "Man hinh quan ly nguoi dung day du se hoan thanh o Phase 8. Placeholder nay giu nguyen hop dong route va service."
     }
   }
 }

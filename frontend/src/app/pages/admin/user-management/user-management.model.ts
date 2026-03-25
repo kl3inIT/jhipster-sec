@@ -1,3 +1,10 @@
+export interface IUserRoleRow {
+  authority: string;
+  label: string;
+  selected: boolean;
+  disabled: boolean;
+}
+
 export interface IUser {
   id: number | null;
   login?: string;

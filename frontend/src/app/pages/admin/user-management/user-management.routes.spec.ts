@@ -38,9 +38,23 @@ describe('userManagementRoutes', () => {
     );
   }
 
-  it('exposes the donor route skeleton', () => {
+  it('exposes the route skeleton with correct paths', () => {
     expect(routes.map(route => route.path)).toEqual(['', ':login/view', 'new', ':login/edit']);
     expect(routes.every(route => route.data?.['defaultSort'] === 'id,asc')).toBe(true);
+  });
+
+  it('lazy-loads the list component for the root path', async () => {
+    const rootRoute = routes.find(r => r.path === '');
+    expect(rootRoute?.loadComponent).toBeDefined();
+    const mod = await rootRoute!.loadComponent!();
+    expect(mod).toBeDefined();
+  });
+
+  it('lazy-loads the detail component for the view path', async () => {
+    const viewRoute = routes.find(r => r.path === ':login/view');
+    expect(viewRoute?.loadComponent).toBeDefined();
+    const mod = await viewRoute!.loadComponent!();
+    expect(mod).toBeDefined();
   });
 
   it('resolves a user when the login param is present', async () => {

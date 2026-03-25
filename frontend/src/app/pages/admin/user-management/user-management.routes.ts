@@ -24,7 +24,7 @@ const userManagementRouteData = {
 const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./user-management-placeholder.component'),
+    loadComponent: () => import('./list/user-management-list.component'),
     canActivate: [UserRouteAccessService],
     data: {
       defaultSort: 'id,asc',
@@ -35,7 +35,7 @@ const routes: Routes = [
   },
   {
     path: ':login/view',
-    loadComponent: () => import('./user-management-placeholder.component'),
+    loadComponent: () => import('./detail/user-management-detail.component'),
     canActivate: [UserRouteAccessService],
     resolve: {
       user: userManagementResolve,
