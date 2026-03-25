@@ -38,9 +38,58 @@ describe('userManagementRoutes', () => {
     );
   }
 
-  it('exposes the donor route skeleton', () => {
+  function resolveComponentName(loadedComponent: unknown): string | undefined {
+    if (typeof loadedComponent === 'function' && 'name' in loadedComponent) {
+      return loadedComponent.name;
+    }
+
+    if (
+      typeof loadedComponent === 'object' &&
+      loadedComponent !== null &&
+      'default' in loadedComponent &&
+      typeof loadedComponent.default === 'function'
+    ) {
+      return loadedComponent.default.name;
+    }
+
+    return undefined;
+  }
+
+  function expectComponentName(loadedComponent: unknown, expectedSuffix: string): void {
+    expect(resolveComponentName(loadedComponent)?.endsWith(expectedSuffix)).toBe(true);
+  }
+
+  it('exposes the route skeleton with correct paths', () => {
     expect(routes.map(route => route.path)).toEqual(['', ':login/view', 'new', ':login/edit']);
     expect(routes.every(route => route.data?.['defaultSort'] === 'id,asc')).toBe(true);
+  });
+
+  it('lazy-loads the list component for the root path', async () => {
+    const rootRoute = routes.find(r => r.path === '');
+    expect(rootRoute?.loadComponent).toBeDefined();
+    const mod = await rootRoute!.loadComponent!();
+    expectComponentName(mod, 'UserManagementListComponent');
+  });
+
+  it('lazy-loads the detail component for the view path', async () => {
+    const viewRoute = routes.find(r => r.path === ':login/view');
+    expect(viewRoute?.loadComponent).toBeDefined();
+    const mod = await viewRoute!.loadComponent!();
+    expectComponentName(mod, 'UserManagementDetailComponent');
+  });
+
+  it('lazy-loads the update component for the new path', async () => {
+    const newRoute = routes.find(r => r.path === 'new');
+    expect(newRoute?.loadComponent).toBeDefined();
+    const mod = await newRoute!.loadComponent!();
+    expectComponentName(mod, 'UserManagementUpdateComponent');
+  });
+
+  it('lazy-loads the update component for the edit path', async () => {
+    const editRoute = routes.find(r => r.path === ':login/edit');
+    expect(editRoute?.loadComponent).toBeDefined();
+    const mod = await editRoute!.loadComponent!();
+    expectComponentName(mod, 'UserManagementUpdateComponent');
   });
 
   it('resolves a user when the login param is present', async () => {

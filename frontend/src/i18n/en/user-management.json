@@ -4,16 +4,64 @@
       "title": "Users",
       "refreshListLabel": "Refresh list",
       "createLabel": "Create a new user",
-      "createOrEditLabel": "Create or edit a user"
+      "createOrEditLabel": "Create or edit a user",
+      "searchPlaceholder": "Search by login, email, or name",
+      "emptyTitle": "No users found",
+      "emptyBody": "Try another search or create a new user.",
+      "loadError": "We couldn't load users. Refresh the page. If the problem continues, contact an administrator."
     },
     "created": "A new user is created with identifier {{ param }}",
     "updated": "A user is updated with identifier {{ param }}",
     "deleted": "A user is deleted with identifier {{ param }}",
     "delete": {
-      "question": "Are you sure you want to delete user {{ login }}?"
+      "question": "Are you sure you want to delete user {{ login }}?",
+      "title": "Delete User",
+      "keep": "Keep User",
+      "confirm": "Delete"
     },
     "detail": {
-      "title": "User"
+      "title": "User",
+      "summaryTitle": "User Details",
+      "rolesTitle": "Assigned Roles",
+      "backToList": "Back to List",
+      "auditTitle": "Audit Information"
+    },
+    "form": {
+      "sectionTitle": "User Details",
+      "rolesTitle": "Assigned Roles",
+      "save": "Save User",
+      "create": "Create User",
+      "discard": "Discard Changes",
+      "validation": {
+        "loginRequired": "Login is required.",
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Email must be valid.",
+        "maxLength": "This field cannot be longer than {{ max }} characters.",
+        "langKeyRequired": "Language is required."
+      }
+    },
+    "actions": {
+      "view": "View User",
+      "edit": "Edit User",
+      "activate": "Activate User",
+      "deactivate": "Deactivate User",
+      "delete": "Delete User",
+      "new": "New User"
+    },
+    "columns": {
+      "fullName": "Full Name",
+      "status": "Status",
+      "roles": "Roles",
+      "lastModified": "Last Modified",
+      "actions": "Actions"
+    },
+    "authorityLabels": {
+      "ROLE_ADMIN": "Administrator",
+      "ROLE_USER": "User"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
     },
     "login": "Login",
     "firstName": "First name",
@@ -22,6 +70,11 @@
     "activated": "Activated",
     "deactivated": "Deactivated",
     "profiles": "Profiles",
+    "feedback": {
+      "createFailed": "We couldn't create the user. Review the form and try again.",
+      "updateFailed": "We couldn't save the user. Review the form and try again.",
+      "saved": "User {{ login }} was saved."
+    },
     "langKey": "Language",
     "createdBy": "Created by",
     "createdDate": "Created date",

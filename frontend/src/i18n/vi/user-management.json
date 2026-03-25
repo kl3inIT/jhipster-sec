@@ -2,18 +2,69 @@
   "userManagement": {
     "home": {
       "title": "Tài khoản",
-      "refreshListLabel": "Refresh list",
+      "refreshListLabel": "Làm mới danh sách",
       "createLabel": "Tạo tài khoản mới",
-      "createOrEditLabel": "Tạo hoặc sửa tài khoản"
+      "createOrEditLabel": "Tạo hoặc sửa tài khoản",
+      "searchPlaceholder": "Tìm kiếm theo tên đăng nhập, email hoặc tên",
+      "emptyTitle": "Không tìm thấy tài khoản nào",
+      "emptyBody": "Thử tìm kiếm khác hoặc tạo tài khoản mới.",
+      "loadError": "Không thể tải danh sách tài khoản. Hãy làm mới trang. Nếu vẫn tiếp tục, hãy liên hệ quản trị viên."
     },
     "created": "Một tài khoản mới đã được tạo với định danh {{ param }}",
     "updated": "Một tài khoản đã được cập nhật với định danh {{ param }}",
     "deleted": "Một tài khoản đã bị xóa với định danh {{ param }}",
     "delete": {
-      "question": "Bạn có chắc chắn muốn xóa tài khoản {{ login }}?"
+      "question": "Bạn có chắc chắn muốn xóa tài khoản {{ login }}?",
+      "title": "Xóa tài khoản",
+      "keep": "Giữ lại",
+      "confirm": "Xóa"
     },
     "detail": {
-      "title": "Tài khoản"
+      "title": "Tài khoản",
+      "summaryTitle": "Chi tiết tài khoản",
+      "rolesTitle": "Vai trò",
+      "backToList": "Quay lại danh sách",
+      "auditTitle": "Thông tin kiểm tra"
+    },
+    "form": {
+      "sectionTitle": "Thông tin tài khoản",
+      "rolesTitle": "Vai trò được gán",
+      "save": "Lưu tài khoản",
+      "create": "Tạo tài khoản",
+      "discard": "Bỏ thay đổi",
+      "validation": {
+        "loginRequired": "Bắt buộc nhập tên đăng nhập.",
+        "emailRequired": "Bắt buộc nhập email.",
+        "emailInvalid": "Email không hợp lệ.",
+        "maxLength": "Trường này không được vượt quá {{ max }} ký tự.",
+        "langKeyRequired": "Bắt buộc chọn ngôn ngữ."
+      }
+    },
+    "actions": {
+      "view": "Xem",
+      "edit": "Sửa",
+      "activate": "Kích hoạt",
+      "deactivate": "Khóa",
+      "delete": "Xóa",
+      "new": "Tạo mới"
+    },
+    "columns": {
+      "fullName": "Họ và tên",
+      "status": "Trạng thái",
+      "roles": "Vai trò",
+      "lastModified": "Lần sửa cuối",
+      "actions": "Thao tác"
+    },
+    "authorityLabels": {
+      "ROLE_ADMIN": "Quản trị viên",
+      "ROLE_USER": "Người dùng",
+      "ROLE_ACCOUNTANT": "Kế toán",
+      "ROLE_STOCKKEEPER": "Thủ kho",
+      "ROLE_DIRECTOR": "Giám đốc"
+    },
+    "status": {
+      "active": "Đang hoạt động",
+      "inactive": "Bị khóa"
     },
     "login": "Tên đăng nhập",
     "firstName": "Tên",
@@ -22,6 +73,11 @@
     "activated": "Kích hoạt",
     "deactivated": "Khóa",
     "profiles": "Các quyền",
+    "feedback": {
+      "createFailed": "Không thể tạo tài khoản. Hãy kiểm tra lại biểu mẫu và thử lại.",
+      "updateFailed": "Không thể lưu tài khoản. Hãy kiểm tra lại biểu mẫu và thử lại.",
+      "saved": "Tài khoản {{ login }} đã được lưu."
+    },
     "langKey": "Ngôn ngữ",
     "createdBy": "Người tạo",
     "createdDate": "Ngày tạo",

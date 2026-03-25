@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
-import { Pagination } from 'app/core/request/request.model';
+import { SearchWithPagination } from 'app/core/request/request.model';
 import { createRequestOption } from 'app/core/request/request-util';
 import { IUser } from '../user-management.model';
 
@@ -27,7 +27,7 @@ export class UserManagementService {
     return this.http.get<IUser>(`${this.resourceUrl}/${login}`);
   }
 
-  query(req?: Pagination): Observable<HttpResponse<IUser[]>> {
+  query(req?: SearchWithPagination): Observable<HttpResponse<IUser[]>> {
     return this.http.get<IUser[]>(this.resourceUrl, { params: createRequestOption(req), observe: 'response' });
   }
 

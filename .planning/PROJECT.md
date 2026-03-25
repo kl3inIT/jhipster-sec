@@ -31,11 +31,13 @@ The repository now includes:
 
 **Phase 7 complete** — Backend-driven navigation shell with menu filtering, route guards, breadcrumbs, access-denied recovery, and workspace context preservation. 12/12 must-haves verified.
 
-`v1.1` planning starts from a clear frontend parity gap:
+**Phase 8 complete** — Full frontend admin user management now ships with browse, detail, create, edit, activation, deletion, inline authority assignment, and verified grant/revoke access outcomes. 10/10 must-haves verified; the remaining backend integration rerun is environment-blocked on local Docker availability, not product behavior.
 
-- `frontend/` currently has far fewer application files than `angapp/`, so important JHipster support files and translated assets are still missing.
-- The current `frontend/` menu is hardcoded in the client instead of loaded from backend-driven navigation metadata.
-- The shipped frontend includes security administration and protected-entity flows, but it does not yet expose the broader JHipster-style admin user-management experience requested for enterprise usage.
+The next phase of `v1.1` now starts from this context:
+
+- Phase 9 now starts from a stronger admin baseline: user-management parity is in place and route-level access outcomes are covered by focused regression tests.
+- The current `frontend/` menu is already backend-driven, so the remaining work shifts toward enterprise consistency, responsiveness, and performance hardening.
+- The next milestone pressure is no longer feature parity for user management; it is UX polish, bundle efficiency, and broader frontend reliability coverage.
 
 ## Requirements
 
@@ -46,10 +48,10 @@ The repository now includes:
 - DATA-01 through DATA-05 shipped in `v1.0`, covering secured reads, secured writes, row policies, attribute permissions, and YAML/code-only fetch plans.
 - ENT-01 through ENT-03 shipped in `v1.0`, covering proof entities, backend allow/deny coverage, and frontend capability-driven screens.
 - UI-01 through UI-03 shipped in `v1.0`, covering the standalone Angular app, security-management UI, and route/error/auth handling.
+- UMGT-01 through UMGT-03 validated in Phase 8: User Management Delivery, covering browse/search, full admin CRUD, inline authority assignment, and downstream access effects from saved authority changes.
 
 ### Active
 
-- [ ] UMGT-01 through UMGT-03: Migrate full JHipster-style admin user management into `frontend/`, including role assignment.
 - [x] ROUTE-01 through ROUTE-03: Load menu and permission context from backend data and enforce access before route render. Validated in Phase 7: Enterprise Navigation Shell
 - [ ] UI-04: Adopt a Jmix-style enterprise shell. Validated in Phase 7: Enterprise Navigation Shell (breadcrumbs, access-denied recovery, workspace context)
 - [ ] UI-05: Improve consistency, responsiveness, and master-detail workflows.
@@ -79,6 +81,7 @@ Current context shaping `v1.1`:
 
 - **Compatibility**: Preserve the functional security capabilities already working in `angapp` - entity CRUD checks, attribute permissions, row policies, secure merge behavior, and fetch-plan-driven secure reads must still work after the merge.
 - **Frontend structure**: The new UI must live in a standalone `frontend/` app modeled after `aef-main/aef-main` - PrimeNG Sakai plus JHipster-style Angular structure.
+- **PrimeNG-first UI**: Frontend work must use official PrimeNG components and current `https://primeng.org/` examples or best practices whenever a suitable component exists; custom UI is allowed only for layout composition or gaps where PrimeNG has no suitable component.
 - **Fetch plans**: Fetch plans must be defined in YAML or code builders only - database storage for fetch-plan definitions is not allowed.
 - **Brownfield safety**: Existing authentication, account, admin-user, and mail flows in the current backend must not regress during the migration.
 - **API boundary**: Existing JHipster account/user APIs may keep minimal boundary request/response models where dropping them would destabilize the public contract or validation model.
@@ -96,6 +99,7 @@ Current context shaping `v1.1`:
 | Use proof-domain entities to validate the merged security engine end to end | The platform needed real sample entities to prove CRUD, row, and attribute behavior | Validated in phase 4 |
 | Use fetch plans from YAML and code builders only | Database-backed fetch-plan storage was explicitly disallowed by project constraints | Confirmed in `v1.0` |
 | Remove DTOs incrementally rather than project-wide on day one | Existing JHipster user/account APIs still benefit from contract-protecting boundary models | Confirmed in `v1.0` |
+| Use PrimeNG official components as the default frontend vocabulary | The project needs consistent component behavior, accessibility, and implementation patterns across phases, with custom UI only for PrimeNG gaps | Pending in `v1.1` |
 | Use `angapp` as the canonical donor for user-management, i18n, and shared support files | The previous frontend milestone shipped the new app without full JHipster parity | Pending in `v1.1` |
 | Replace hardcoded frontend menus with backend-driven navigation contracts | Enterprise role-based navigation must scale with backend-managed permissions | Pending in `v1.1` |
 | Rework admin flows toward a Jmix-style master-detail shell rather than isolated page tweaks | The requested UX shift is structural, not cosmetic | Pending in `v1.1` |
@@ -118,4 +122,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-25 after v1.1 milestone initialization*
+*Last updated: 2026-03-25 after Phase 8 completion*

@@ -10,7 +10,7 @@
 | Milestone | Phases | Requirements | Status | Archive |
 |-----------|--------|--------------|--------|---------|
 | v1.0 MVP | 1-5 | 18/18 complete | Shipped 2026-03-25 | `.planning/milestones/v1.0-ROADMAP.md` |
-| v1.1 Enterprise Admin Experience | 6-10 | 2/16 complete | Active | - |
+| v1.1 Enterprise Admin Experience | 6-10 | 9/16 complete | Active | - |
 
 ## Overview
 
@@ -24,7 +24,7 @@ This roadmap builds on the shipped security platform by first closing the missin
 
 - [x] **Phase 6: Frontend Parity Foundation** - Copy and adapt the required `angapp` support files, translations, and shared admin/account infrastructure into `frontend/`. (completed 2026-03-25)
 - [x] **Phase 7: Enterprise Navigation Shell** - Replace hardcoded navigation with backend-driven menu and permission-aware route control inside a Jmix-style shell. (completed 2026-03-25)
-- [ ] **Phase 8: User Management Delivery** - Deliver the full frontend admin user-management surface, including role assignment.
+- [x] **Phase 8: User Management Delivery** - Deliver the full frontend admin user-management surface, including role assignment. (completed 2026-03-25)
 - [ ] **Phase 9: Enterprise UX And Performance Hardening** - Improve consistency, responsiveness, data-fetch efficiency, and route-level loading costs.
 - [ ] **Phase 10: Frontend Reliability And Regression Coverage** - Lock the milestone down with targeted frontend tests across user management, routing, and core UI infrastructure.
 
@@ -78,7 +78,13 @@ Plans:
 1. Admin can list, search, sort, and open users from the frontend using the existing backend admin APIs.
 2. Admin can create, edit, activate, deactivate, and delete users without regressing the current contract or validation behavior.
 3. Admin can assign and update user roles or authorities, and persisted changes affect access outcomes in the app.
-**Plans:** Pending phase planning
+**Plans:** 4/4 plans complete
+
+Plans:
+- [x] 08-01-PLAN.md - Add the optional `query` seam to the preserved admin browse endpoint without changing the existing contract shape
+- [x] 08-02-PLAN.md - Deliver the query-aware list workspace, inline admin actions, preserved list context, and read-only split-page detail route
+- [x] 08-03-PLAN.md - Deliver the shared split-page create/edit form with inline authority assignment and the first authority-save smoke
+- [x] 08-04-PLAN.md - Prove grant-and-revoke access outcomes and close the final user-management verification gate
 
 ### Phase 9: Enterprise UX And Performance Hardening
 **Goal**: The richer enterprise frontend stays consistent, responsive, and efficient under realistic admin usage.
@@ -105,11 +111,11 @@ Plans:
 
 **5 phases** | **16 requirements mapped** | All covered
 
-| # | Phase | Goal | Requirements | Success Criteria |
-|---|-------|------|--------------|------------------|
-| 6 | Frontend Parity Foundation | Bring required `angapp` support files and i18n foundations into `frontend/` | I18N-01, I18N-02 | 3 |
-| 7 | Enterprise Navigation Shell | 5/5 | Complete   | 2026-03-25 |
-| 07.1 | Menu Management | 3/3 | Complete   | 2026-03-25 |
-| 8 | User Management Delivery | Deliver full admin user management with role assignment | UMGT-01, UMGT-02, UMGT-03 | 3 |
-| 9 | Enterprise UX And Performance Hardening | Improve consistency, responsiveness, and data-loading efficiency | UI-05, PERF-01, PERF-02, PERF-03 | 4 |
-| 10 | Frontend Reliability And Regression Coverage | Add high-value automated coverage for the new frontend foundation | TEST-01, TEST-02, TEST-03 | 3 |
+| # | Phase | Status | Requirements | Completed |
+|---|-------|--------|--------------|-----------|
+| 6 | Frontend Parity Foundation | Complete | I18N-01, I18N-02 | 2026-03-25 |
+| 7 | Enterprise Navigation Shell | Complete | ROUTE-01, ROUTE-02, ROUTE-03, UI-04 | 2026-03-25 |
+| 07.1 | Menu Management | Complete | MENU-01, MENU-02, MENU-03, MENU-04, MENU-05 | 2026-03-25 |
+| 8 | User Management Delivery | Complete | UMGT-01, UMGT-02, UMGT-03 | 2026-03-25 |
+| 9 | Enterprise UX And Performance Hardening | Planned | UI-05, PERF-01, PERF-02, PERF-03 | - |
+| 10 | Frontend Reliability And Regression Coverage | Planned | TEST-01, TEST-02, TEST-03 | - |

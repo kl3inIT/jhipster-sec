@@ -37,10 +37,27 @@ describe('UserManagementService', () => {
     expect(expectedLogin).toBe('user');
   });
 
+  it('queries users with SearchWithPagination params including query', () => {
+    let response: HttpResponse<User[]> | undefined;
+
+    service.query({ query: 'john', page: 1, size: 20, sort: ['login,asc'] }).subscribe(result => {
+      response = result as HttpResponse<User[]>;
+    });
+
+    const request = httpMock.expectOne(req => req.method === 'GET' && req.url === 'api/admin/users');
+    expect(request.request.params.get('query')).toBe('john');
+    expect(request.request.params.get('page')).toBe('1');
+    expect(request.request.params.get('size')).toBe('20');
+    expect(request.request.params.getAll('sort')).toEqual(['login,asc']);
+    request.flush([new User(1, 'user')], { status: 200, statusText: 'OK' });
+
+    expect(response?.body?.[0]?.login).toBe('user');
+  });
+
   it('queries users with typed request params', () => {
     let response: HttpResponse<User[]> | undefined;
 
-    service.query({ page: 1, size: 20, sort: ['login,asc'] }).subscribe(result => {
+    service.query({ query: '', page: 1, size: 20, sort: ['login,asc'] }).subscribe(result => {
       response = result as HttpResponse<User[]>;
     });
 

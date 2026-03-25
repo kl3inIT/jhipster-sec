@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -272,7 +273,26 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Page<AdminUserDTO> getAllManagedUsers(Pageable pageable) {
-        return userRepository.findAll(pageable).map(AdminUserDTO::new);
+        return getAllManagedUsers(pageable, null);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AdminUserDTO> getAllManagedUsers(Pageable pageable, String query) {
+        return userRepository.findAll(buildManagedUserQuery(query), pageable).map(AdminUserDTO::new);
+    }
+
+    private Specification<User> buildManagedUserQuery(String query) {
+        if (query == null || query.isBlank()) {
+            return (root, cq, cb) -> null;
+        }
+        String pattern = "%" + query.trim().toLowerCase(Locale.ROOT) + "%";
+        return (root, cq, cb) ->
+            cb.or(
+                cb.like(cb.lower(root.get("login")), pattern),
+                cb.like(cb.lower(root.get("email")), pattern),
+                cb.like(cb.lower(cb.coalesce(root.get("firstName"), "")), pattern),
+                cb.like(cb.lower(cb.coalesce(root.get("lastName"), "")), pattern)
+            );
     }
 
     @Transactional(readOnly = true)
