@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to verify
+status: Ready to plan
 stopped_at: Completed 08-04-PLAN.md
-last_updated: "2026-03-25T16:49:20.890Z"
+last_updated: "2026-03-25T16:55:15.057Z"
 last_activity: 2026-03-25
 progress:
   total_phases: 6
@@ -20,12 +20,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
-**Current focus:** Phase 08 — user-management-delivery
+**Current focus:** Phase 09 — enterprise-ux-and-performance-hardening
 
 ## Current Position
 
-Phase: 08 (user-management-delivery) — VERIFYING
-Plan: 4 of 4
+Phase: 09 (enterprise-ux-and-performance-hardening) — NOT STARTED
+Plan: Not started
 
 ## Performance Metrics
 
@@ -49,7 +49,7 @@ Plan: 4 of 4
 
 - Phase 6 completed with green `frontend` production build and focused Angular regression coverage
 - Standalone i18n, alerting, admin route foundations, and translated shell surfaces are now live in `frontend/`
-- Next actionable work: verify Phase 08
+- Next actionable work: plan Phase 09
 
 | Phase 07 P05 | 4 | 2 tasks | 19 files |
 | Phase 07.1-menu-management P01 | 25 | 2 tasks | 10 files |
@@ -141,6 +141,7 @@ Recent decisions affecting current work:
 - [Phase 08]: UserManagementFormService owns trim and default mapping so create and edit flows serialize one consistent IUser payload — Prevents route-specific form drift and keeps POST or PUT payloads aligned with the preserved admin-user contract.
 - [Phase 08]: User-route-access coverage should assert /admin/users directly against the effective authority set, not just a generic hidden-leaf case — This keeps the regression pinned to the exact admin surface Phase 8 introduced.
 - [Phase 08]: The user-management smoke proves both grant-then-allow and revoke-then-deny against the same mocked admin flow — It closes UMGT-03 with positive and negative route outcomes instead of a single saved-payload assertion.
+- [Phase 08]: Blank user browse queries use a lambda no-op Specification instead of Specification.where(null) for Java 25 compatibility — Spring Data's Java 25 overload set makes Specification.where(null) ambiguous in this project, so the no-op lambda is the stable empty-query pattern.
 
 ### Pending Todos
 

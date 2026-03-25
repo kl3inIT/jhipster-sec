@@ -13,6 +13,7 @@ tech_stack:
 key_files:
   created: []
   modified:
+    - src/main/java/com/vn/core/service/UserService.java
     - frontend/src/app/core/auth/user-route-access.service.spec.ts
     - frontend/e2e/user-management.spec.ts
 decisions:
@@ -58,7 +59,20 @@ All checks passed on 2026-03-25.
 
 ## Deviations from Plan
 
-None - plan executed exactly as written.
+### Auto-fixed Issues
+
+**1. [Rule 3 - Blocking] Fixed the blank-query no-op specification for Java 25**
+- **Found during:** Final phase verification
+- **Issue:** `UserService.buildManagedUserQuery()` still used `Specification.where(null)`, which is ambiguous under the Java 25 Spring Data `Specification` overloads
+- **Fix:** Replaced the blank-query branch with a lambda no-op specification, matching the Java 25-safe pattern already used in row-level specification composition
+- **Files modified:** `src/main/java/com/vn/core/service/UserService.java`
+- **Verification:** `./gradlew integrationTest --tests "com.vn.core.web.rest.UserResourceIT"` advanced past compilation under JDK 25
+- **Committed in:** `6450f20`
+
+---
+
+**Total deviations:** 1 auto-fixed (1 blocking)
+**Impact on plan:** Required for the preserved backend browse seam to remain buildable under the repository's current Java 25 toolchain. No scope creep.
 
 ## Requirement Closure
 

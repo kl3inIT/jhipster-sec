@@ -8,9 +8,9 @@
 
 ### User Management
 
-- [ ] **UMGT-01**: Admin can browse, search, sort, and open existing users from `frontend/` using the preserved backend admin API.
-- [ ] **UMGT-02**: Admin can create, edit, activate, deactivate, and delete users from `frontend/` without breaking current validation or contract behavior.
-- [ ] **UMGT-03**: Admin can assign and update a user's roles or authorities from the frontend, and the persisted assignment affects downstream access decisions.
+- [x] **UMGT-01**: Admin can browse, search, sort, and open existing users from `frontend/` using the preserved backend admin API.
+- [x] **UMGT-02**: Admin can create, edit, activate, deactivate, and delete users from `frontend/` without breaking current validation or contract behavior.
+- [x] **UMGT-03**: Admin can assign and update a user's roles or authorities from the frontend, and the persisted assignment affects downstream access decisions.
 
 ### Navigation And Permissions
 
@@ -73,9 +73,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ROUTE-02 | Phase 7 | Complete |
 | ROUTE-03 | Phase 7 | Complete |
 | UI-04 | Phase 7 | Complete |
-| UMGT-01 | Phase 8 | Pending |
-| UMGT-02 | Phase 8 | Pending |
-| UMGT-03 | Phase 8 | Pending |
+| UMGT-01 | Phase 8 | Complete |
+| UMGT-02 | Phase 8 | Complete |
+| UMGT-03 | Phase 8 | Complete |
 | UI-05 | Phase 9 | Pending |
 | PERF-01 | Phase 9 | Pending |
 | PERF-02 | Phase 9 | Pending |
@@ -91,4 +91,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-25*
-*Last updated: 2026-03-25 after Phase 6 completion*
+*Last updated: 2026-03-25 after Phase 8 completion*
