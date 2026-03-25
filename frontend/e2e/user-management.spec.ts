@@ -38,6 +38,16 @@ const TARGET_USER: MockUser = {
 const ALL_AUTHORITIES = ['ROLE_ADMIN', 'ROLE_USER'];
 const APP_URL = 'http://127.0.0.1:4200';
 
+function buildUsers(targetAuthorities: string[]): MockUser[] {
+  return [
+    structuredClone(ADMIN_USER),
+    {
+      ...structuredClone(TARGET_USER),
+      authorities: [...targetAuthorities],
+    },
+  ];
+}
+
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     window.sessionStorage.setItem('locale', 'en');
@@ -46,7 +56,7 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('user management', () => {
   test('user management grant flow changes downstream access after save', async ({ page }) => {
-    let users: MockUser[] = [structuredClone(ADMIN_USER), structuredClone(TARGET_USER)];
+    let users: MockUser[] = buildUsers(['ROLE_USER']);
     let currentSessionLogin: string | null = null;
 
     await registerMockApi(page, {
@@ -61,21 +71,9 @@ test.describe('user management', () => {
     });
 
     await loginAs(page, 'admin');
-    await page.goto(`${APP_URL}/admin/users`);
+    await openEditFlow(page, TARGET_USER.login);
 
-    const searchInput = page.getByRole('textbox', { name: 'Search by login, email, or name' });
-    await expect(searchInput).toBeVisible({ timeout: 20_000 });
-
-    await searchInput.fill(TARGET_USER.login);
-    const targetRow = page.locator('tbody tr').filter({ hasText: TARGET_USER.login }).first();
-    await expect(targetRow).toBeVisible({ timeout: 20_000 });
-
-    await page.goto(`${APP_URL}/admin/users/${TARGET_USER.login}/view`);
-    await expect(page).toHaveURL(new RegExp(`/admin/users/${TARGET_USER.login}/view$`), { timeout: 20_000 });
-
-    await page.getByRole('button', { name: 'Edit User' }).click();
-    await expect(page).toHaveURL(new RegExp(`/admin/users/${TARGET_USER.login}/edit$`), { timeout: 20_000 });
-
+    // Toggle the ROLE_ADMIN checkbox on the split-page authority table.
     await page.getByLabel(/ROLE_ADMIN/).check();
     await page.getByRole('button', { name: 'Save User' }).click();
 
@@ -93,6 +91,41 @@ test.describe('user management', () => {
     await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible({ timeout: 20_000 });
     await expect(page.getByRole('textbox', { name: 'Search by login, email, or name' })).toBeVisible();
   });
+
+  test('user management revoke flow denies access after save', async ({ page }) => {
+    let users: MockUser[] = buildUsers(['ROLE_ADMIN', 'ROLE_USER']);
+    let currentSessionLogin: string | null = null;
+
+    await registerMockApi(page, {
+      getCurrentSession: () => currentSessionLogin,
+      setCurrentSession: login => {
+        currentSessionLogin = login;
+      },
+      getUsers: () => users,
+      setUsers: nextUsers => {
+        users = nextUsers;
+      },
+    });
+
+    await loginAs(page, 'admin');
+    await openEditFlow(page, TARGET_USER.login);
+
+    await page.getByLabel(/ROLE_ADMIN/).uncheck();
+    await page.getByRole('button', { name: 'Save User' }).click();
+
+    await expect(page).toHaveURL(new RegExp(`/admin/users/${TARGET_USER.login}/view$`), { timeout: 20_000 });
+    expect(users.find(user => user.login === TARGET_USER.login)?.authorities).not.toContain('ROLE_ADMIN');
+
+    currentSessionLogin = null;
+    await page.locator('button[aria-label="Logout"], button:has(.pi-sign-out)').first().click();
+    await expect(page).toHaveURL(/\/login$/, { timeout: 20_000 });
+
+    await loginAs(page, TARGET_USER.login);
+    await page.goto(`${APP_URL}/admin/users`);
+
+    await expect(page).toHaveURL(/\/accessdenied$/, { timeout: 20_000 });
+    await expect(page.getByText('Access denied')).toBeVisible({ timeout: 20_000 });
+  });
 });
 
 async function loginAs(page: Page, login: string): Promise<void> {
@@ -101,6 +134,23 @@ async function loginAs(page: Page, login: string): Promise<void> {
   await page.locator('input[type="password"]').fill(login === 'admin' ? 'admin' : 'Password1!');
   await page.getByRole('button', { name: /sign in/i }).click();
   await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: 20_000 });
+}
+
+async function openEditFlow(page: Page, login: string): Promise<void> {
+  await page.goto(`${APP_URL}/admin/users`);
+
+  const searchInput = page.getByRole('textbox', { name: 'Search by login, email, or name' });
+  await expect(searchInput).toBeVisible({ timeout: 20_000 });
+
+  await searchInput.fill(login);
+  const targetRow = page.locator('tbody tr').filter({ hasText: login }).first();
+  await expect(targetRow).toBeVisible({ timeout: 20_000 });
+
+  await page.goto(`${APP_URL}/admin/users/${login}/view`);
+  await expect(page).toHaveURL(new RegExp(`/admin/users/${login}/view$`), { timeout: 20_000 });
+
+  await page.getByRole('button', { name: 'Edit User' }).click();
+  await expect(page).toHaveURL(new RegExp(`/admin/users/${login}/edit$`), { timeout: 20_000 });
 }
 
 async function registerMockApi(
