@@ -5,8 +5,10 @@ import { RouterModule } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { MenuItem } from 'primeng/api';
 import { merge } from 'rxjs';
+import { startWith, switchMap } from 'rxjs/operators';
 import { AccountService } from 'app/core/auth/account.service';
-import { Authority } from 'app/config/authority.constants';
+import { AppNavigationLeaf, AppNavigationSection } from 'app/layout/navigation/navigation.model';
+import { NavigationService } from 'app/layout/navigation/navigation.service';
 import { AppMenuitem } from './app.menuitem';
 
 @Component({
@@ -26,76 +28,40 @@ import { AppMenuitem } from './app.menuitem';
 export class AppMenu implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly accountService = inject(AccountService);
+  private readonly navigationService = inject(NavigationService);
   private readonly translateService = inject(TranslateService);
   model: MenuItem[] = [];
 
   ngOnInit(): void {
     merge(this.accountService.getAuthenticationState(), this.translateService.onLangChange)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.buildMenu());
-    this.buildMenu();
+      .pipe(
+        startWith(null),
+        switchMap(() => this.navigationService.visibleTree()),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(tree => {
+        this.model = tree.map(section => this.toMenuSection(section));
+      });
   }
 
-  buildMenu(): void {
-    const isAdmin = this.accountService.hasAnyAuthority(Authority.ADMIN);
-    this.model = [
-      {
-        id: 'home',
-        label: this.translateService.instant('global.menu.home'),
-        items: [
-          {
-            label: this.translateService.instant('global.menu.home'),
-            icon: 'pi pi-home',
-            routerLink: ['/'],
-          },
-        ],
-      },
-      {
-        id: 'entities',
-        label: this.translateService.instant('global.menu.entities.main'),
-        items: [
-          {
-            label: this.translateService.instant('global.menu.entities.organization'),
-            icon: 'pi pi-building',
-            routerLink: ['/entities/organization'],
-          },
-          {
-            label: this.translateService.instant('global.menu.entities.department'),
-            icon: 'pi pi-sitemap',
-            routerLink: ['/entities/department'],
-          },
-          {
-            label: this.translateService.instant('layout.menu.entities.employee'),
-            icon: 'pi pi-users',
-            routerLink: ['/entities/employee'],
-          },
-        ],
-      },
-      ...(isAdmin
-        ? [
-            {
-              id: 'security',
-              label: this.translateService.instant('layout.menu.security.main'),
-              items: [
-                {
-                  label: this.translateService.instant('global.menu.admin.userManagement'),
-                  icon: 'pi pi-users',
-                  routerLink: ['/admin/users'],
-                },
-                {
-                  label: this.translateService.instant('layout.menu.security.roles'),
-                  icon: 'pi pi-shield',
-                  routerLink: ['/admin/security/roles'],
-                },
-                {
-                  label: this.translateService.instant('layout.menu.security.rowPolicies'),
-                  icon: 'pi pi-filter',
-                  routerLink: ['/admin/security/row-policies'],
-                },
-              ],
-            },
-          ]
-        : []),
-    ];
+  private toMenuSection(section: AppNavigationSection): MenuItem {
+    return {
+      id: section.id,
+      label: this.translateService.instant(section.labelKey),
+      icon: section.icon,
+      path: section.id,
+      routerLink: [...section.routerLink],
+      items: section.children.map(child => this.toMenuLeaf(child)),
+    };
+  }
+
+  private toMenuLeaf(node: AppNavigationLeaf): MenuItem {
+    return {
+      id: node.id,
+      label: this.translateService.instant(node.labelKey),
+      icon: node.icon,
+      path: node.id,
+      routerLink: [...node.routerLink],
+    };
   }
 }
