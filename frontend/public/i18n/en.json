@@ -187,6 +187,18 @@
       "permissionMatrix": {
         "loadFailed": "Could not load the permission matrix. Please try again.",
         "saveFailed": "Could not save the permission changes. Please try again."
+      },
+      "menuDefinitions": {
+        "loadFailed": "Could not load menu definitions. Please refresh.",
+        "deleted": "Menu definition \"{{ param }}\" has been deleted.",
+        "deleteFailed": "Failed to delete menu definition.",
+        "saveFailed": "Could not save the menu definition. Please check the values and try again.",
+        "syncFailed": "Could not sync from registry. Please try again.",
+        "syncSuccess": "Registry sync complete. {{ seeded }} node(s) added."
+      },
+      "menuAccess": {
+        "loadFailed": "Could not load menu access permissions. Please try again.",
+        "saveFailed": "Could not save the menu access changes. Please try again."
       }
     },
     "entities": {
@@ -325,7 +337,8 @@
         "main": "Security Admin",
         "roles": "Security roles",
         "permissions": "Permission matrix",
-        "rowPolicies": "Row policies"
+        "rowPolicies": "Row policies",
+        "menuDefinitions": "Menu Definitions"
       },
       "entities": {
         "employee": "Employees"
@@ -357,7 +370,8 @@
     "error": "Unexpected error",
     "securityRoles": "Security roles",
     "permissionMatrix": "Permission matrix",
-    "rowPolicies": "Row policies"
+    "rowPolicies": "Row policies",
+    "menuDefinitions": "Menu Definitions"
   },
   "password": {
     "title": "Password for [<strong>{{username}}</strong>]",

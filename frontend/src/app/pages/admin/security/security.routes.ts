@@ -43,6 +43,18 @@ const routes: Routes = [
     },
     title: 'pageTitle.rowPolicies',
   },
+  {
+    path: 'menu-definitions',
+    loadComponent: () => import('./menu-definitions/list/menu-definition-list.component'),
+    canActivate: [UserRouteAccessService],
+    data: {
+      ...securityRouteData,
+      navigationNodeId: 'security.menu-definitions',
+      breadcrumbKey: 'layout.menu.security.menuDefinitions',
+      pageTitleKey: 'pageTitle.menuDefinitions',
+    },
+    title: 'pageTitle.menuDefinitions',
+  },
 ];
 
 export default routes;
