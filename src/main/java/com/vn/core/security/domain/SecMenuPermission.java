@@ -15,18 +15,18 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * An app-scoped navigation grant linking an authority to a frontend-owned shell node id.
+ * An app-scoped menu permission linking a role to a frontend-owned menu node id.
  */
 @Entity
 @Table(
-    name = "sec_navigation_grant",
-    uniqueConstraints = @UniqueConstraint(name = "ux_sec_navigation_grant_authority_app_node", columnNames = { "authority_name", "app_name", "node_id" }),
+    name = "sec_menu_permission",
+    uniqueConstraints = @UniqueConstraint(name = "ux_sec_menu_permission_role_app_menu", columnNames = { "role", "app_name", "menu_id" }),
     indexes = {
-        @Index(name = "idx_sec_navigation_grant_app_authority", columnList = "app_name, authority_name"),
-        @Index(name = "idx_sec_navigation_grant_app_node", columnList = "app_name, node_id"),
+        @Index(name = "idx_sec_menu_permission_app_role", columnList = "app_name, role"),
+        @Index(name = "idx_sec_menu_permission_app_menu", columnList = "app_name, menu_id"),
     }
 )
-public class SecNavigationGrant implements Serializable {
+public class SecMenuPermission implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -36,14 +36,14 @@ public class SecNavigationGrant implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
-    @Column(name = "authority_name", nullable = false, length = 50)
-    private String authorityName;
+    @Column(name = "role", nullable = false, length = 50)
+    private String role;
 
     @Column(name = "app_name", nullable = false, length = 100)
     private String appName;
 
-    @Column(name = "node_id", nullable = false, length = 150)
-    private String nodeId;
+    @Column(name = "menu_id", nullable = false, length = 150)
+    private String menuId;
 
     @Pattern(regexp = "ALLOW|DENY")
     @Column(name = "effect", nullable = false, length = 10)
@@ -57,21 +57,21 @@ public class SecNavigationGrant implements Serializable {
         this.id = id;
     }
 
-    public SecNavigationGrant id(Long id) {
+    public SecMenuPermission id(Long id) {
         this.setId(id);
         return this;
     }
 
-    public String getAuthorityName() {
-        return authorityName;
+    public String getRole() {
+        return role;
     }
 
-    public void setAuthorityName(String authorityName) {
-        this.authorityName = authorityName;
+    public void setRole(String role) {
+        this.role = role;
     }
 
-    public SecNavigationGrant authorityName(String authorityName) {
-        this.setAuthorityName(authorityName);
+    public SecMenuPermission role(String role) {
+        this.setRole(role);
         return this;
     }
 
@@ -83,21 +83,21 @@ public class SecNavigationGrant implements Serializable {
         this.appName = appName;
     }
 
-    public SecNavigationGrant appName(String appName) {
+    public SecMenuPermission appName(String appName) {
         this.setAppName(appName);
         return this;
     }
 
-    public String getNodeId() {
-        return nodeId;
+    public String getMenuId() {
+        return menuId;
     }
 
-    public void setNodeId(String nodeId) {
-        this.nodeId = nodeId;
+    public void setMenuId(String menuId) {
+        this.menuId = menuId;
     }
 
-    public SecNavigationGrant nodeId(String nodeId) {
-        this.setNodeId(nodeId);
+    public SecMenuPermission menuId(String menuId) {
+        this.setMenuId(menuId);
         return this;
     }
 
@@ -109,7 +109,7 @@ public class SecNavigationGrant implements Serializable {
         this.effect = effect;
     }
 
-    public SecNavigationGrant effect(String effect) {
+    public SecMenuPermission effect(String effect) {
         this.setEffect(effect);
         return this;
     }
@@ -119,10 +119,10 @@ public class SecNavigationGrant implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof SecNavigationGrant)) {
+        if (!(o instanceof SecMenuPermission)) {
             return false;
         }
-        SecNavigationGrant other = (SecNavigationGrant) o;
+        SecMenuPermission other = (SecMenuPermission) o;
         return getId() != null && getId().equals(other.getId());
     }
 
@@ -134,11 +134,11 @@ public class SecNavigationGrant implements Serializable {
     // prettier-ignore
     @Override
     public String toString() {
-        return "SecNavigationGrant{" +
+        return "SecMenuPermission{" +
             "id=" + getId() +
-            ", authorityName='" + getAuthorityName() + "'" +
+            ", role='" + getRole() + "'" +
             ", appName='" + getAppName() + "'" +
-            ", nodeId='" + getNodeId() + "'" +
+            ", menuId='" + getMenuId() + "'" +
             ", effect='" + getEffect() + "'" +
             "}";
     }
