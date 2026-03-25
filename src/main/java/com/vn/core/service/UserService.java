@@ -13,6 +13,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.data.jpa.domain.Specification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
@@ -272,7 +273,25 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Page<AdminUserDTO> getAllManagedUsers(Pageable pageable) {
-        return userRepository.findAll(pageable).map(AdminUserDTO::new);
+        return getAllManagedUsers(pageable, null);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AdminUserDTO> getAllManagedUsers(Pageable pageable, String query) {
+        return userRepository.findAll(buildManagedUserQuery(query), pageable).map(AdminUserDTO::new);
+    }
+
+    private Specification<User> buildManagedUserQuery(String query) {
+        if (query == null || query.isBlank()) {
+            return Specification.where(null);
+        }
+        String pattern = "%" + query.trim().toLowerCase(Locale.ROOT) + "%";
+        return (root, cq, cb) -> cb.or(
+            cb.like(cb.lower(root.get("login")), pattern),
+            cb.like(cb.lower(root.get("email")), pattern),
+            cb.like(cb.lower(cb.coalesce(root.get("firstName"), "")), pattern),
+            cb.like(cb.lower(cb.coalesce(root.get("lastName"), "")), pattern)
+        );
     }
 
     @Transactional(readOnly = true)
