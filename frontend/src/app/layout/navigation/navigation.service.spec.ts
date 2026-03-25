@@ -51,19 +51,19 @@ describe('NavigationService', () => {
     TestBed.resetTestingModule();
   });
 
-  it('requests navigation grants with the configured app name', async () => {
+  it('requests menu permissions with the configured app name', async () => {
     const service = TestBed.inject(NavigationService);
     const queryPromise = firstValueFrom(service.query());
 
     const request = httpMock.expectOne(
-      req => req.url === 'api/security/navigation-grants' && req.params.get('appName') === SHELL_APP_NAME,
+      req => req.url === 'api/security/menu-permissions' && req.params.get('appName') === SHELL_APP_NAME,
     );
     expect(request.request.method).toBe('GET');
-    request.flush({ appName: SHELL_APP_NAME, allowedNodeIds: ['home.dashboard', 'security.roles'] });
+    request.flush({ appName: SHELL_APP_NAME, allowedMenuIds: ['home.dashboard', 'security.roles'] });
 
     expect(await queryPromise).toEqual({
       appName: SHELL_APP_NAME,
-      allowedNodeIds: ['home.dashboard', 'security.roles'],
+      allowedMenuIds: ['home.dashboard', 'security.roles'],
     });
   });
 
@@ -71,36 +71,36 @@ describe('NavigationService', () => {
     const service = TestBed.inject(NavigationService);
 
     const firstQuery = firstValueFrom(service.query());
-    const request = httpMock.expectOne(req => req.url === 'api/security/navigation-grants');
-    request.flush({ appName: SHELL_APP_NAME, allowedNodeIds: ['home.dashboard', 'entities.organization'] });
+    const request = httpMock.expectOne(req => req.url === 'api/security/menu-permissions');
+    request.flush({ appName: SHELL_APP_NAME, allowedMenuIds: ['home.dashboard', 'entities.organization'] });
 
     const secondQuery = firstValueFrom(service.query());
 
-    httpMock.expectNone(req => req.url === 'api/security/navigation-grants');
+    httpMock.expectNone(req => req.url === 'api/security/menu-permissions');
     expect(await firstQuery).toEqual({
       appName: SHELL_APP_NAME,
-      allowedNodeIds: ['home.dashboard', 'entities.organization'],
+      allowedMenuIds: ['home.dashboard', 'entities.organization'],
     });
     expect(await secondQuery).toEqual({
       appName: SHELL_APP_NAME,
-      allowedNodeIds: ['home.dashboard', 'entities.organization'],
+      allowedMenuIds: ['home.dashboard', 'entities.organization'],
     });
   });
 
-  it('uses a sessionStorage warm start when cached grants are present', async () => {
+  it('uses a sessionStorage warm start when cached permissions are present', async () => {
     sessionStorage.setItem(
       NAVIGATION_STORAGE_KEY,
-      JSON.stringify({ appName: SHELL_APP_NAME, allowedNodeIds: ['home.dashboard', 'entities.employee'] }),
+      JSON.stringify({ appName: SHELL_APP_NAME, allowedMenuIds: ['home.dashboard', 'entities.employee'] }),
     );
     sessionStorage.setItem(`${NAVIGATION_STORAGE_KEY}:login`, 'admin');
 
     const service = TestBed.inject(NavigationService);
     const response = await firstValueFrom(service.query());
 
-    httpMock.expectNone(req => req.url === 'api/security/navigation-grants');
+    httpMock.expectNone(req => req.url === 'api/security/menu-permissions');
     expect(response).toEqual({
       appName: SHELL_APP_NAME,
-      allowedNodeIds: ['home.dashboard', 'entities.employee'],
+      allowedMenuIds: ['home.dashboard', 'entities.employee'],
     });
   });
 
@@ -108,8 +108,8 @@ describe('NavigationService', () => {
     const service = TestBed.inject(NavigationService);
 
     const firstQuery = firstValueFrom(service.query());
-    const firstRequest = httpMock.expectOne(req => req.url === 'api/security/navigation-grants');
-    firstRequest.flush({ appName: SHELL_APP_NAME, allowedNodeIds: ['home.dashboard'] });
+    const firstRequest = httpMock.expectOne(req => req.url === 'api/security/menu-permissions');
+    firstRequest.flush({ appName: SHELL_APP_NAME, allowedMenuIds: ['home.dashboard'] });
     await firstQuery;
 
     expect(sessionStorage.getItem(NAVIGATION_STORAGE_KEY)).toContain('home.dashboard');
@@ -121,12 +121,12 @@ describe('NavigationService', () => {
     expect(sessionStorage.getItem(NAVIGATION_STORAGE_KEY)).toBeNull();
 
     const secondQuery = firstValueFrom(service.query());
-    const secondRequest = httpMock.expectOne(req => req.url === 'api/security/navigation-grants');
-    secondRequest.flush({ appName: SHELL_APP_NAME, allowedNodeIds: ['entities.department'] });
+    const secondRequest = httpMock.expectOne(req => req.url === 'api/security/menu-permissions');
+    secondRequest.flush({ appName: SHELL_APP_NAME, allowedMenuIds: ['entities.department'] });
 
     expect(await secondQuery).toEqual({
       appName: SHELL_APP_NAME,
-      allowedNodeIds: ['entities.department'],
+      allowedMenuIds: ['entities.department'],
     });
   });
 
@@ -134,8 +134,8 @@ describe('NavigationService', () => {
     const service = TestBed.inject(NavigationService);
     const visibleTreePromise = firstValueFrom(service.visibleTree());
 
-    const request = httpMock.expectOne(req => req.url === 'api/security/navigation-grants');
-    request.flush({ appName: SHELL_APP_NAME, allowedNodeIds: ['entities.department'] });
+    const request = httpMock.expectOne(req => req.url === 'api/security/menu-permissions');
+    request.flush({ appName: SHELL_APP_NAME, allowedMenuIds: ['entities.department'] });
 
     const visibleTree = await visibleTreePromise;
     expect(visibleTree).toHaveLength(1);
@@ -149,8 +149,8 @@ describe('NavigationService', () => {
     const service = TestBed.inject(NavigationService);
     const fallbackPromise = firstValueFrom(service.resolveFallbackRoute('security'));
 
-    const request = httpMock.expectOne(req => req.url === 'api/security/navigation-grants');
-    request.flush({ appName: SHELL_APP_NAME, allowedNodeIds: ['entities.employee', 'security.row-policies'] });
+    const request = httpMock.expectOne(req => req.url === 'api/security/menu-permissions');
+    request.flush({ appName: SHELL_APP_NAME, allowedMenuIds: ['entities.employee', 'security.row-policies'] });
 
     expect(await fallbackPromise).toBe('/admin/security/row-policies');
 

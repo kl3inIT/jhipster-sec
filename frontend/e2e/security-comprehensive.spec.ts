@@ -234,13 +234,13 @@ interface MockEntityCapability {
   }>;
 }
 
-async function mockNavigationGrants(page: Page, allowedNodeIds: string[]): Promise<void> {
-  await page.route('**/api/security/navigation-grants?*', async (route) => {
+async function mockMenuPermissions(page: Page, allowedMenuIds: string[]): Promise<void> {
+  await page.route('**/api/security/menu-permissions?*', async (route) => {
     await route.fulfill({
       contentType: 'application/json',
       body: JSON.stringify({
         appName: 'jhipster-security-platform',
-        allowedNodeIds,
+        allowedMenuIds,
       }),
     });
   });
@@ -275,10 +275,10 @@ function buildCapability(
 
 async function loginAsAdminWithShellMocks(
   page: Page,
-  allowedNodeIds: string[],
+  allowedMenuIds: string[],
   capabilities?: MockEntityCapability[],
 ): Promise<void> {
-  await mockNavigationGrants(page, allowedNodeIds);
+  await mockMenuPermissions(page, allowedMenuIds);
   if (capabilities) {
     await mockEntityCapabilities(page, capabilities);
   }

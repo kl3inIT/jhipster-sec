@@ -9,9 +9,9 @@ import { NAVIGATION_STORAGE_KEY, SHELL_APP_NAME } from './navigation.constants';
 import { APP_NAVIGATION_LEAVES, APP_NAVIGATION_TREE } from './navigation-registry';
 import { AppNavigationLeaf, AppNavigationSection } from './navigation.model';
 
-interface NavigationGrantResponse {
+interface MenuPermissionResponse {
   appName: string;
-  allowedNodeIds: string[];
+  allowedMenuIds: string[];
 }
 
 const STORAGE_LOGIN_KEY = `${NAVIGATION_STORAGE_KEY}:login`;
@@ -21,11 +21,11 @@ const SECTIONS_BY_ID = new Map(APP_NAVIGATION_TREE.map(section => [section.id, s
 
 @Injectable({ providedIn: 'root' })
 export class NavigationService {
-  private readonly resourceUrl = inject(ApplicationConfigService).getEndpointFor('api/security/navigation-grants');
+  private readonly resourceUrl = inject(ApplicationConfigService).getEndpointFor('api/security/menu-permissions');
   private readonly http = inject(HttpClient);
   private readonly accountService = inject(AccountService);
 
-  private cachedGrantResponse$?: Observable<NavigationGrantResponse>;
+  private cachedGrantResponse$?: Observable<MenuPermissionResponse>;
   private currentLogin: string | null = null;
   private seenAuthState = false;
 
@@ -54,14 +54,14 @@ export class NavigationService {
       });
   }
 
-  query(): Observable<NavigationGrantResponse> {
+  query(): Observable<MenuPermissionResponse> {
     if (!this.cachedGrantResponse$) {
       const stored = this.readFromStorage();
       if (stored) {
         this.cachedGrantResponse$ = of(stored).pipe(shareReplay(1));
       } else {
         this.cachedGrantResponse$ = this.http
-          .get<NavigationGrantResponse>(this.resourceUrl, {
+          .get<MenuPermissionResponse>(this.resourceUrl, {
             params: new HttpParams().set('appName', SHELL_APP_NAME),
           })
           .pipe(
@@ -75,14 +75,14 @@ export class NavigationService {
     return this.cachedGrantResponse$;
   }
 
-  allowedNodeIds(): Observable<string[]> {
-    return this.query().pipe(map(response => response.allowedNodeIds));
+  allowedMenuIds(): Observable<string[]> {
+    return this.query().pipe(map(response => response.allowedMenuIds));
   }
 
   visibleTree(): Observable<AppNavigationSection[]> {
-    return this.allowedNodeIds().pipe(
-      map(allowedNodeIds => {
-        const allowed = new Set(allowedNodeIds);
+    return this.allowedMenuIds().pipe(
+      map(allowedMenuIds => {
+        const allowed = new Set(allowedMenuIds);
 
         return APP_NAVIGATION_TREE.map(section => ({
           ...section,
@@ -93,24 +93,24 @@ export class NavigationService {
   }
 
   isNodeVisible(nodeId: string): Observable<boolean> {
-    return this.allowedNodeIds().pipe(
-      map(allowedNodeIds => {
+    return this.allowedMenuIds().pipe(
+      map(allowedMenuIds => {
         if (LEAF_IDS.has(nodeId)) {
-          return allowedNodeIds.includes(nodeId);
+          return allowedMenuIds.includes(nodeId);
         }
 
         const section = SECTIONS_BY_ID.get(nodeId);
-        return section ? section.children.some(child => allowedNodeIds.includes(child.id)) : false;
+        return section ? section.children.some(child => allowedMenuIds.includes(child.id)) : false;
       }),
     );
   }
 
   resolveFallbackRoute(sectionId?: string): Observable<string> {
-    return this.allowedNodeIds().pipe(
-      map(allowedNodeIds => {
+    return this.allowedMenuIds().pipe(
+      map(allowedMenuIds => {
         const preferredLeaf =
-          (sectionId ? this.findFirstAllowedLeafInSection(sectionId, allowedNodeIds) : null) ??
-          this.findFirstAllowedLeaf(allowedNodeIds);
+          (sectionId ? this.findFirstAllowedLeafInSection(sectionId, allowedMenuIds) : null) ??
+          this.findFirstAllowedLeaf(allowedMenuIds);
 
         return preferredLeaf?.routePrefix ?? '/';
       }),
@@ -121,29 +121,29 @@ export class NavigationService {
     return LEAVES_BY_ID.get(nodeId) ?? null;
   }
 
-  private findFirstAllowedLeafInSection(sectionId: string, allowedNodeIds: string[]): AppNavigationLeaf | null {
+  private findFirstAllowedLeafInSection(sectionId: string, allowedMenuIds: string[]): AppNavigationLeaf | null {
     const section = SECTIONS_BY_ID.get(sectionId);
     if (!section) {
       return null;
     }
 
-    return section.children.find(child => allowedNodeIds.includes(child.id)) ?? null;
+    return section.children.find(child => allowedMenuIds.includes(child.id)) ?? null;
   }
 
-  private findFirstAllowedLeaf(allowedNodeIds: string[]): AppNavigationLeaf | null {
-    return APP_NAVIGATION_LEAVES.find(leaf => allowedNodeIds.includes(leaf.id)) ?? null;
+  private findFirstAllowedLeaf(allowedMenuIds: string[]): AppNavigationLeaf | null {
+    return APP_NAVIGATION_LEAVES.find(leaf => allowedMenuIds.includes(leaf.id)) ?? null;
   }
 
-  private normalizeResponse(response: NavigationGrantResponse): NavigationGrantResponse {
-    const allowedNodeIds = new Set((response.allowedNodeIds ?? []).filter(nodeId => LEAF_IDS.has(nodeId)));
+  private normalizeResponse(response: MenuPermissionResponse): MenuPermissionResponse {
+    const allowedMenuIds = new Set((response.allowedMenuIds ?? []).filter(menuId => LEAF_IDS.has(menuId)));
 
     return {
       appName: response.appName,
-      allowedNodeIds: APP_NAVIGATION_LEAVES.map(leaf => leaf.id).filter(nodeId => allowedNodeIds.has(nodeId)),
+      allowedMenuIds: APP_NAVIGATION_LEAVES.map(leaf => leaf.id).filter(menuId => allowedMenuIds.has(menuId)),
     };
   }
 
-  private readFromStorage(): NavigationGrantResponse | null {
+  private readFromStorage(): MenuPermissionResponse | null {
     try {
       const raw = sessionStorage.getItem(NAVIGATION_STORAGE_KEY);
       if (!raw) {
@@ -151,7 +151,7 @@ export class NavigationService {
       }
 
       const parsed: unknown = JSON.parse(raw);
-      if (!this.isGrantResponse(parsed)) {
+      if (!this.isMenuPermissionResponse(parsed)) {
         return null;
       }
 
@@ -170,7 +170,7 @@ export class NavigationService {
     }
   }
 
-  private writeToStorage(response: NavigationGrantResponse): void {
+  private writeToStorage(response: MenuPermissionResponse): void {
     try {
       sessionStorage.setItem(NAVIGATION_STORAGE_KEY, JSON.stringify(response));
       sessionStorage.setItem(STORAGE_LOGIN_KEY, this.serializeLogin(this.currentLogin));
@@ -201,15 +201,15 @@ export class NavigationService {
     return login ?? '';
   }
 
-  private isGrantResponse(value: unknown): value is NavigationGrantResponse {
-    const candidate = value as Partial<NavigationGrantResponse>;
+  private isMenuPermissionResponse(value: unknown): value is MenuPermissionResponse {
+    const candidate = value as Partial<MenuPermissionResponse>;
 
     return (
       typeof value === 'object' &&
       value !== null &&
       typeof candidate.appName === 'string' &&
-      Array.isArray(candidate.allowedNodeIds) &&
-      candidate.allowedNodeIds.every(nodeId => typeof nodeId === 'string')
+      Array.isArray(candidate.allowedMenuIds) &&
+      candidate.allowedMenuIds.every(menuId => typeof menuId === 'string')
     );
   }
 }
