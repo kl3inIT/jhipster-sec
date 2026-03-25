@@ -146,6 +146,27 @@ describe('AppMenu', () => {
     ]);
   });
 
+  it('keeps a section visible while filtering out an unauthorized leaf', () => {
+    const filteredTree = cloneTree(APP_NAVIGATION_TREE).map(section =>
+      section.id === 'entities'
+        ? {
+            ...section,
+            children: section.children.filter(child => child.id !== 'entities.organization'),
+          }
+        : section,
+    );
+    setupWithAccount(mockAdminAccount, filteredTree);
+    const fixture = TestBed.createComponent(AppMenu);
+    const component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.model.find(item => item.id === 'entities')?.items?.map(item => item.id)).toEqual([
+      'entities.department',
+      'entities.employee',
+    ]);
+    expect(component.model.find(item => item.id === 'entities')?.items?.some(item => item.id === 'entities.organization')).toBe(false);
+  });
+
   it('tracks stable path ids from navigation metadata', () => {
     setupWithAccount(mockUserAccount, cloneTree(APP_NAVIGATION_TREE));
     const fixture = TestBed.createComponent(AppMenu);

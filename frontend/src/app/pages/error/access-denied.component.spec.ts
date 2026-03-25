@@ -31,6 +31,14 @@ describe('AccessDeniedComponent', () => {
     router = TestBed.inject(Router);
     translateService = TestBed.inject(TranslateService);
     translateService.setTranslation('en', {
+      error: {
+        accessDenied: {
+          blockedMessage: 'You do not have access to {{ destination }}.',
+          recoveryMessage:
+            'Go to {{ fallback }} or contact an administrator if you think this is a mistake.',
+          goTo: 'Go to {{ destination }}',
+        },
+      },
       pageTitle: {
         accessDenied: 'Access denied',
       },
