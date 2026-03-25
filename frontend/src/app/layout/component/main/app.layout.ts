@@ -1,16 +1,26 @@
 import { Component, computed, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppTopbar } from '../topbar/app.topbar';
 import { AppSidebar } from '../sidebar/app.sidebar';
 import { AppFooter } from '../footer/app.footer';
+import { BreadcrumbService } from 'app/layout/navigation/breadcrumb.service';
 import { LayoutService } from 'app/layout/service/layout.service';
 import { AlertComponent } from 'app/shared/alert/alert.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, AppTopbar, AppSidebar, RouterModule, AppFooter, AlertComponent],
+  imports: [
+    CommonModule,
+    AppTopbar,
+    AppSidebar,
+    RouterModule,
+    TranslatePipe,
+    AppFooter,
+    AlertComponent,
+  ],
   template: `<div class="layout-wrapper" [ngClass]="containerClass()">
     <div class="layout-sidebar">
       <div class="sidebar-header">
@@ -25,6 +35,33 @@ import { AlertComponent } from 'app/shared/alert/alert.component';
     <div class="layout-main-container">
       <app-topbar></app-topbar>
       <div class="layout-main">
+        @if (breadcrumbs().length > 0) {
+          <nav class="mb-4" aria-label="Breadcrumb">
+            <ol
+              class="m-0 flex list-none flex-wrap items-center gap-2 p-0 text-sm text-color-secondary"
+            >
+              @for (breadcrumb of breadcrumbs(); track breadcrumb.labelKey) {
+                <li class="flex items-center gap-2">
+                  @if (breadcrumb.current || !breadcrumb.routerLink) {
+                    <span class="font-semibold text-primary" aria-current="page">
+                      {{ breadcrumb.labelKey | translate }}
+                    </span>
+                  } @else {
+                    <a
+                      class="text-color-secondary no-underline hover:text-primary"
+                      [routerLink]="breadcrumb.routerLink"
+                    >
+                      {{ breadcrumb.labelKey | translate }}
+                    </a>
+                  }
+                  @if (!$last) {
+                    <span aria-hidden="true">/</span>
+                  }
+                </li>
+              }
+            </ol>
+          </nav>
+        }
         <jhi-alert></jhi-alert>
         <router-outlet></router-outlet>
       </div>
@@ -35,6 +72,7 @@ import { AlertComponent } from 'app/shared/alert/alert.component';
 })
 export class AppLayout {
   layoutService = inject(LayoutService);
+  readonly breadcrumbs = inject(BreadcrumbService).items;
 
   constructor() {
     effect(() => {
