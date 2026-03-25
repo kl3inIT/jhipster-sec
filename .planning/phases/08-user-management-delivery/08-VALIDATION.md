@@ -1,9 +1,9 @@
 ---
 phase: 8
 slug: user-management-delivery
-status: draft
-nyquist_compliant: false
-wave_0_complete: false
+status: approved
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-03-25
 updated: 2026-03-25
 ---
@@ -39,25 +39,28 @@ updated: 2026-03-25
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 08-W0-01 | W0 | 0 | UMGT-01 | integration | `./gradlew test --tests "com.vn.core.web.rest.UserResourceIT"` | ✅ | pending |
-| 08-W0-02 | W0 | 0 | UMGT-01 | unit | `npm --prefix frontend exec ng test -- --watch=false --include src/app/pages/admin/user-management/user-management.routes.spec.ts --include src/app/pages/admin/user-management/service/user-management.service.spec.ts` | ✅ | pending |
-| 08-W0-03 | W0 | 0 | UMGT-01 | component | `npm --prefix frontend exec ng test -- --watch=false --include src/app/pages/admin/user-management/list/user-management-list.component.spec.ts --include src/app/pages/admin/user-management/detail/user-management-detail.component.spec.ts` | ❌ W0 | pending |
-| 08-W0-04 | W0 | 0 | UMGT-02, UMGT-03 | component | `npm --prefix frontend exec ng test -- --watch=false --include src/app/pages/admin/user-management/update/user-management-update.component.spec.ts` | ❌ W0 | pending |
-| 08-W0-05 | W0 | 0 | UMGT-01, UMGT-02, UMGT-03 | build + e2e | `npm --prefix frontend run build && npm --prefix frontend exec playwright test e2e/user-management.spec.ts` | ❌ W0 | pending |
+| 08-01-01 | 01 | 1 | UMGT-01 | integration | `./gradlew test --tests "com.vn.core.web.rest.UserResourceIT"` | ✅ | planned |
+| 08-02-01 | 02 | 2 | UMGT-01 | unit | `npm --prefix frontend exec ng test -- --watch=false --include src/app/pages/admin/user-management/user-management.routes.spec.ts --include src/app/pages/admin/user-management/service/user-management.service.spec.ts` | ✅ | planned |
+| 08-02-02 | 02 | 2 | UMGT-01, UMGT-02 | component + build | `npm --prefix frontend exec ng test -- --watch=false --include src/app/pages/admin/user-management/list/user-management-list.component.spec.ts --include src/app/pages/admin/user-management/detail/user-management-detail.component.spec.ts && npm --prefix frontend run build` | ❌ planned in 08-02 | planned |
+| 08-03-01 | 03 | 3 | UMGT-02, UMGT-03 | component + build | `npm --prefix frontend exec ng test -- --watch=false --include src/app/pages/admin/user-management/update/user-management-update.component.spec.ts && npm --prefix frontend run build` | ❌ planned in 08-03 | planned |
+| 08-03-02 | 03 | 3 | UMGT-01, UMGT-02, UMGT-03 | build + e2e | `npm --prefix frontend run build && npm --prefix frontend exec playwright test e2e/user-management.spec.ts` | ❌ planned in 08-03 | planned |
+| 08-04-01 | 04 | 4 | UMGT-03 | unit | `npm --prefix frontend exec ng test -- --watch=false --include src/app/core/auth/user-route-access.service.spec.ts` | ❌ planned in 08-04 | planned |
+| 08-04-02 | 04 | 4 | UMGT-03 | unit + build + e2e | `npm --prefix frontend exec ng test -- --watch=false --include src/app/core/auth/user-route-access.service.spec.ts --include src/app/pages/admin/user-management/list/user-management-list.component.spec.ts --include src/app/pages/admin/user-management/detail/user-management-detail.component.spec.ts --include src/app/pages/admin/user-management/update/user-management-update.component.spec.ts && npm --prefix frontend run build && npm --prefix frontend exec playwright test e2e/user-management.spec.ts` | ❌ planned in 08-04 | planned |
 
-*Status: pending | green | red | flaky*
+*Status: planned | green | red | flaky*
 
 ---
 
-## Wave 0 Requirements
+## Plan-Coupled Validation Requirements
 
-- [ ] `src/test/java/com/vn/core/web/rest/UserResourceIT.java` - extend coverage for optional `query` filtering, allowed sort keys, and preserved admin browse response headers
-- [ ] `frontend/src/app/pages/admin/user-management/list/user-management-list.component.spec.ts` - cover search debounce, backend paging and sort mapping, inline activation, and list-context storage
-- [ ] `frontend/src/app/pages/admin/user-management/detail/user-management-detail.component.spec.ts` - cover detail route rendering, disabled role table, and return navigation restoration
-- [ ] `frontend/src/app/pages/admin/user-management/update/user-management-update.component.spec.ts` - cover create/edit validation mapping, authority checkbox selection, save success, save failure, and delete follow-up paths
-- [ ] `frontend/e2e/user-management.spec.ts` - cover browse, detail, create, edit, activation toggle, delete confirmation, and role assignment smoke
+- [x] `src/test/java/com/vn/core/web/rest/UserResourceIT.java` - Plan 01 extends coverage for optional `query` filtering, allowed sort keys, and preserved admin browse response headers
+- [x] `frontend/src/app/pages/admin/user-management/list/user-management-list.component.spec.ts` - Plan 02 covers search debounce, backend paging and sort mapping, direct activation/deactivation, delete refresh, and list-context storage
+- [x] `frontend/src/app/pages/admin/user-management/detail/user-management-detail.component.spec.ts` - Plan 02 covers detail rendering, disabled role table, and return navigation restoration
+- [x] `frontend/src/app/pages/admin/user-management/update/user-management-update.component.spec.ts` - Plan 03 covers create/edit validation mapping, authority checkbox selection, save success, and save failure
+- [x] `frontend/e2e/user-management.spec.ts` - Plan 03 introduces the focused browse/detail/edit/role-assignment smoke
+- [x] `frontend/src/app/core/auth/user-route-access.service.spec.ts` plus `frontend/e2e/user-management.spec.ts` - Plan 04 proves that a persisted authority change alters downstream access for the affected user
 
-*Existing route and service specs are retained, but they are not sufficient as primary phase validation.*
+*Existing route and service specs are retained as the early seam checks. The list, detail, update, and access-effect tests are delivered inside Plans 02-04 rather than as a separate standalone Wave 0 bucket.*
 
 ---
 
@@ -72,10 +75,10 @@ updated: 2026-03-25
 
 ## Validation Sign-Off
 
-- [x] All phase requirements have automated verification targets or explicit Wave 0 coverage
+- [x] All phase requirements have automated verification targets or explicit plan-coupled coverage
 - [x] Sampling continuity: no more than 2 consecutive tasks should land without a quick verification command
 - [x] No watch-mode flags
-- [ ] Wave 0 coverage is complete for backend search, list/detail/update, and targeted end-to-end user-management tests
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] Plan-coupled validation coverage is complete for backend search, list/detail/update, and targeted end-to-end user-management tests
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved 2026-03-25
