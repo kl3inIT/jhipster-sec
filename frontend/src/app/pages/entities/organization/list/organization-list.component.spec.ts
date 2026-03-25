@@ -96,9 +96,17 @@ describe('OrganizationListComponent', () => {
     });
 
     TestBed.inject(TranslateService).setTranslation('en', {
+      entity: {
+        action: {
+          view: 'View',
+          edit: 'Edit',
+          delete: 'Delete',
+        },
+      },
       angappApp: {
         organization: {
           home: {
+            createLabel: 'New Organization',
             denied: {
               title: 'Organization access is limited',
               message:

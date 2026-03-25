@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Completed 07-05-PLAN.md
-last_updated: "2026-03-25T08:17:23.275Z"
-last_activity: 2026-03-25 - Completed quick task 260325-lae: Rename SecNavigationGrant to SecMenuPermission + add SecMenuDefinition table
+status: unknown
+stopped_at: Completed 07.1-03-PLAN.md
+last_updated: "2026-03-25T10:30:55.268Z"
+last_activity: 2026-03-25
 progress:
-  total_phases: 5
-  completed_phases: 2
-  total_plans: 11
-  completed_plans: 11
+  total_phases: 6
+  completed_phases: 3
+  total_plans: 14
+  completed_plans: 14
 ---
 
 # Project State
@@ -20,12 +20,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
-**Current focus:** Phase 07 — enterprise-navigation-shell
+**Current focus:** Phase 07.1 — menu-management
 
 ## Current Position
 
-Phase: 8
-Plan: Not started
+Phase: 07.1 (menu-management) — EXECUTING
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -52,8 +52,15 @@ Plan: Not started
 - Next actionable work: plan and execute Phase 7
 
 | Phase 07 P05 | 4 | 2 tasks | 19 files |
+| Phase 07.1-menu-management P01 | 25 | 2 tasks | 10 files |
+| Phase 07.1-menu-management P02 | 5 | 2 tasks | 10 files |
+| Phase 07.1-menu-management P03 | 5 | 2 tasks | 4 files |
 
 ## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 07.1 inserted after Phase 7: Menu Management (INSERTED) — admin CRUD for SecMenuDefinition and role-based SecMenuPermission assignment
 
 ### Decisions
 
@@ -112,6 +119,14 @@ Recent decisions affecting current work:
 - [Phase 06-frontend-parity-foundation]: `frontend/src/app.routes.ts` is the authoritative root route tree and `frontend/src/app/app.routes.ts` now re-exports it for compatibility
 - [Phase 06-frontend-parity-foundation]: Menu root items must track stable ids, not translated labels, to keep language switching change-detection safe
 - [Phase 07]: All Phase 7 Wave 0 spec files now exist; Playwright shell tests use page.route() mocking for deterministic navigation and capability assertions
+- [Phase 07.1-menu-management]: Hand-mapping in controllers (no MapStruct) follows the SecRoleAdminResource pattern
+- [Phase 07.1-menu-management]: Cascade delete is explicit in the controller: deleteByAppNameAndMenuId then deleteById inside @Transactional
+- [Phase 07.1-menu-management]: Sync endpoint is insert-only (no update); identity is appName+menuId matching the unique constraint
+- [Phase 07.1-02]: MenuDefinitionDialogComponent uses signal input()/output() instead of @Input/@Output decorators per CLAUDE.md mandate for new components
+- [Phase 07.1-02]: TranslatePipe imported (not TranslateModule) for menu-definition components - consistent with existing standalone component pattern in layout and entity screens
+- [Phase 07.1-03]: AdminMenuPermissionService.query() returns plain body following SecPermissionService pattern for internal consumption
+- [Phase 07.1-03]: p-tabpanel is the correct PrimeNG v20+ selector (not p-tab-panel); corrected from plan spec
+- [Phase 07.1-03]: standalone: true removed from PermissionMatrixComponent per CLAUDE.md Angular v20+ default
 
 ### Pending Todos
 
@@ -135,6 +150,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last activity: 2026-03-25
-Last session: 2026-03-25T15:32:00.000Z
-Stopped at: Completed quick task 260325-lae
+Last session: 2026-03-25T09:57:08.942Z
+Stopped at: Completed 07.1-03-PLAN.md
 Resume file: None

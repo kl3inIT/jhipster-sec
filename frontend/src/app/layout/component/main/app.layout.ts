@@ -25,7 +25,7 @@ import { AlertComponent } from 'app/shared/alert/alert.component';
     <div class="layout-sidebar">
       <div class="sidebar-header">
         <a class="sidebar-logo" routerLink="/">
-          <span class="sidebar-app-name">JHipster Security</span>
+          <span class="sidebar-app-name">{{ 'layout.brand.name' | translate }}</span>
         </a>
       </div>
       <div class="layout-menu-container">
@@ -36,7 +36,7 @@ import { AlertComponent } from 'app/shared/alert/alert.component';
       <app-topbar></app-topbar>
       <div class="layout-main">
         @if (breadcrumbs().length > 0) {
-          <nav class="mb-4" aria-label="Breadcrumb">
+          <nav class="mb-4" [attr.aria-label]="'layout.breadcrumb' | translate">
             <ol
               class="m-0 flex list-none flex-wrap items-center gap-2 p-0 text-sm text-color-secondary"
             >

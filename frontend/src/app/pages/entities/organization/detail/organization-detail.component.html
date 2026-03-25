@@ -1,34 +1,34 @@
 <div class="max-w-2xl mx-auto space-y-4">
-  <h1 class="m-0 text-2xl font-semibold">Organization</h1>
+  <h1 class="m-0 text-2xl font-semibold">{{ 'angappApp.organization.detail.title' | translate }}</h1>
 
   @if (organization(); as org) {
     <p-card class="shadow-sm">
       <div class="grid grid-cols-1 gap-4">
         <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium">ID</span>
+          <span class="text-sm font-medium">{{ 'angappApp.organization.id' | translate }}</span>
           <span>{{ org.id }}</span>
         </div>
         @if (canViewField('code')) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">Code</span>
+            <span class="text-sm font-medium">{{ 'angappApp.organization.code' | translate }}</span>
             <span>{{ org.code }}</span>
           </div>
         }
         @if (canViewField('name')) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">Name</span>
+            <span class="text-sm font-medium">{{ 'angappApp.organization.name' | translate }}</span>
             <span>{{ org.name }}</span>
           </div>
         }
         @if (canViewField('ownerLogin')) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">Owner Login</span>
+            <span class="text-sm font-medium">{{ 'angappApp.organization.ownerLogin' | translate }}</span>
             <span>{{ org.ownerLogin }}</span>
           </div>
         }
         @if (canViewField('budget') && org.budget !== undefined) {
           <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">Budget</span>
+            <span class="text-sm font-medium">{{ 'angappApp.organization.budget' | translate }}</span>
             <span>{{ org.budget | number: '1.2-2' }}</span>
           </div>
         }
@@ -40,7 +40,7 @@
           pButton
           class="p-button-outlined"
           icon="pi pi-arrow-left"
-          label="Back"
+          [label]="'entity.action.back' | translate"
           (click)="back()"
         ></button>
         @if (capabilityLoaded() && canUpdate()) {
@@ -48,7 +48,7 @@
             type="button"
             pButton
             icon="pi pi-pencil"
-            label="Edit"
+            [label]="'entity.action.edit' | translate"
             (click)="edit(org)"
           ></button>
         }

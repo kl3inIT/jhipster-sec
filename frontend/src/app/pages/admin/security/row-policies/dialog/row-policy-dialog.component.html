@@ -2,7 +2,7 @@
 <p-toast />
 
 <p-dialog
-  [header]="rowPolicy ? 'Edit Row Policy' : 'New Row Policy'"
+  [header]="rowPolicy ? ('security.rowPolicies.dialog.editTitle' | translate) : ('security.rowPolicies.dialog.createTitle' | translate)"
   [visible]="visible"
   (visibleChange)="visibleChange.emit($event)"
   [modal]="true"
@@ -12,81 +12,81 @@
   <form [formGroup]="editForm" (ngSubmit)="save()">
     <div class="flex flex-col gap-4 pt-2">
       <div class="flex flex-col gap-1">
-        <label for="policyCode" class="font-semibold">Code</label>
-        <input pInputText id="policyCode" formControlName="code" placeholder="Unique policy code" class="w-full" />
+        <label for="policyCode" class="font-semibold">{{ 'security.rowPolicies.dialog.code' | translate }}</label>
+        <input pInputText id="policyCode" formControlName="code" [placeholder]="'security.rowPolicies.dialog.codePlaceholder' | translate" class="w-full" />
         @if (editForm.get('code')?.invalid && editForm.get('code')?.touched) {
-          <small class="text-red-500">Code is required (max 100 characters).</small>
+          <small class="text-red-500">{{ 'security.rowPolicies.dialog.codeRequired' | translate }}</small>
         }
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="policyEntityName" class="font-semibold">Entity</label>
+        <label for="policyEntityName" class="font-semibold">{{ 'security.rowPolicies.dialog.entity' | translate }}</label>
         <p-select
           inputId="policyEntityName"
           formControlName="entityName"
           [options]="catalogEntries()"
           optionLabel="label"
           optionValue="value"
-          placeholder="Select entity"
-          [emptyMessage]="'No entities available'"
+          [placeholder]="'security.rowPolicies.dialog.entityPlaceholder' | translate"
+          [emptyMessage]="'security.rowPolicies.dialog.entityEmpty' | translate"
           class="w-full"
         />
         @if (editForm.get('entityName')?.invalid && editForm.get('entityName')?.touched) {
-          <small class="text-red-500">Entity is required.</small>
+          <small class="text-red-500">{{ 'security.rowPolicies.dialog.entityRequired' | translate }}</small>
         }
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="policyOperation" class="font-semibold">Operation</label>
+        <label for="policyOperation" class="font-semibold">{{ 'security.rowPolicies.dialog.operation' | translate }}</label>
         <p-select
           inputId="policyOperation"
           formControlName="operation"
           [options]="operationOptions"
           optionLabel="label"
           optionValue="value"
-          placeholder="Select operation"
+          [placeholder]="'security.rowPolicies.dialog.operationPlaceholder' | translate"
           class="w-full"
         />
         @if (editForm.get('operation')?.invalid && editForm.get('operation')?.touched) {
-          <small class="text-red-500">Operation is required.</small>
+          <small class="text-red-500">{{ 'security.rowPolicies.dialog.operationRequired' | translate }}</small>
         }
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="policyType" class="font-semibold">Policy Type</label>
+        <label for="policyType" class="font-semibold">{{ 'security.rowPolicies.dialog.policyType' | translate }}</label>
         <p-select
           inputId="policyType"
           formControlName="policyType"
           [options]="policyTypeOptions"
           optionLabel="label"
           optionValue="value"
-          placeholder="Select policy type"
+          [placeholder]="'security.rowPolicies.dialog.policyTypePlaceholder' | translate"
           class="w-full"
         />
         @if (editForm.get('policyType')?.invalid && editForm.get('policyType')?.touched) {
-          <small class="text-red-500">Policy type is required.</small>
+          <small class="text-red-500">{{ 'security.rowPolicies.dialog.policyTypeRequired' | translate }}</small>
         }
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="policyExpression" class="font-semibold">Expression</label>
+        <label for="policyExpression" class="font-semibold">{{ 'security.rowPolicies.dialog.expression' | translate }}</label>
         <textarea
           pTextarea
           id="policyExpression"
           formControlName="expression"
           rows="5"
-          placeholder="Enter SPECIFICATION or JPQL expression"
+          [placeholder]="'security.rowPolicies.dialog.expressionPlaceholder' | translate"
           class="w-full"
         ></textarea>
         @if (editForm.get('expression')?.invalid && editForm.get('expression')?.touched) {
-          <small class="text-red-500">Expression is required (max 1000 characters).</small>
+          <small class="text-red-500">{{ 'security.rowPolicies.dialog.expressionRequired' | translate }}</small>
         }
       </div>
     </div>
   </form>
 
   <ng-template #footer>
-    <p-button label="Discard Changes" severity="secondary" [outlined]="true" (onClick)="close()" />
-    <p-button label="Save Row Policy" [loading]="isSaving" (onClick)="save()" />
+    <p-button [label]="'entity.action.cancel' | translate" severity="secondary" [outlined]="true" (onClick)="close()" />
+    <p-button [label]="'entity.action.save' | translate" [loading]="isSaving" (onClick)="save()" />
   </ng-template>
 </p-dialog>

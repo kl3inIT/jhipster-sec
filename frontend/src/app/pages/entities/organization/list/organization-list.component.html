@@ -4,7 +4,7 @@
 <div class="space-y-4">
   <div class="flex items-center justify-between gap-3">
     <div>
-      <h1 class="m-0 text-2xl font-semibold">Organizations</h1>
+      <h1 class="m-0 text-2xl font-semibold">{{ 'angappApp.organization.home.title' | translate }}</h1>
     </div>
     <div class="flex gap-2">
       @if (canRead() && canCreate()) {
@@ -12,7 +12,7 @@
           pButton
           type="button"
           icon="pi pi-plus"
-          label="New Organization"
+          [label]="'angappApp.organization.home.createLabel' | translate"
           (click)="create()"
         ></button>
       }
@@ -46,18 +46,18 @@
         (onLazyLoad)="onLazyLoad($event)"
         [rowsPerPageOptions]="[10, 20, 30]"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [currentPageReportTemplate]="'entity.pagination.report' | translate"
       >
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="id" style="width: 6rem">ID <p-sortIcon field="id" /></th>
-            <th pSortableColumn="code">Code <p-sortIcon field="code" /></th>
-            <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
-            <th pSortableColumn="ownerLogin">Owner Login <p-sortIcon field="ownerLogin" /></th>
+            <th pSortableColumn="id" style="width: 6rem">{{ 'angappApp.organization.id' | translate }} <p-sortIcon field="id" /></th>
+            <th pSortableColumn="code">{{ 'angappApp.organization.code' | translate }} <p-sortIcon field="code" /></th>
+            <th pSortableColumn="name">{{ 'angappApp.organization.name' | translate }} <p-sortIcon field="name" /></th>
+            <th pSortableColumn="ownerLogin">{{ 'angappApp.organization.ownerLogin' | translate }} <p-sortIcon field="ownerLogin" /></th>
             @if (showBudgetColumn()) {
-              <th pSortableColumn="budget">Budget <p-sortIcon field="budget" /></th>
+              <th pSortableColumn="budget">{{ 'angappApp.organization.budget' | translate }} <p-sortIcon field="budget" /></th>
             }
-            <th style="width: 10rem; text-align: center">Actions</th>
+            <th style="width: 10rem; text-align: center">{{ 'entity.list.actions' | translate }}</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>
@@ -82,7 +82,7 @@
                       type="button"
                       class="p-button-text p-button-sm"
                       icon="pi pi-eye"
-                      aria-label="View"
+                      [attr.aria-label]="'entity.action.view' | translate"
                       (click)="view(row)"
                     ></button>
                   }
@@ -92,7 +92,7 @@
                       type="button"
                       class="p-button-text p-button-sm"
                       icon="pi pi-pencil"
-                      aria-label="Edit"
+                      [attr.aria-label]="'entity.action.edit' | translate"
                       (click)="edit(row)"
                     ></button>
                   }
@@ -102,7 +102,7 @@
                       type="button"
                       class="p-button-text p-button-danger p-button-sm"
                       icon="pi pi-trash"
-                      aria-label="Delete"
+                      [attr.aria-label]="'entity.action.delete' | translate"
                       (click)="confirmDelete(row)"
                     ></button>
                   }
@@ -116,8 +116,7 @@
         <ng-template pTemplate="emptymessage">
           <tr>
             <td [attr.colspan]="showBudgetColumn() ? 6 : 5" class="text-center py-4">
-              No organizations found. Create the first organization using the New Organization
-              button.
+              {{ 'angappApp.organization.home.notFound' | translate }}
             </td>
           </tr>
         </ng-template>

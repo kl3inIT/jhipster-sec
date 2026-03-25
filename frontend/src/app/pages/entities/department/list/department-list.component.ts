@@ -197,12 +197,12 @@ export default class DepartmentListComponent implements OnInit, OnDestroy {
 
   confirmDelete(dept: IDepartment): void {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete this department? This action cannot be undone.',
-      header: 'Delete Department',
+      message: this.translateService.instant('angappApp.department.delete.question'),
+      header: this.translateService.instant('angappApp.department.delete.title'),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Delete',
+      acceptLabel: this.translateService.instant('entity.action.delete'),
       acceptButtonStyleClass: 'p-button-danger',
-      rejectLabel: 'Keep Department',
+      rejectLabel: this.translateService.instant('entity.action.cancel'),
       accept: () => this.deleteDept(dept),
     });
   }

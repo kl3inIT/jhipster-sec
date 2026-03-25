@@ -2,28 +2,31 @@
   "angappApp": {
     "department": {
       "home": {
-        "title": "Departments",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Thêm mới một Department",
-        "createOrEditLabel": "Thêm mới hoặc cập nhật Department",
-        "notFound": "No Departments found",
+        "title": "Phòng ban",
+        "refreshListLabel": "Làm mới danh sách",
+        "createLabel": "Tạo phòng ban mới",
+        "createOrEditLabel": "Chỉnh sửa phòng ban",
+        "notFound": "Không tìm thấy phòng ban nào.",
         "denied": {
           "title": "Quyền truy cập phòng ban bị giới hạn",
           "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi phòng ban."
         }
       },
-      "created": "Một Department mới được tạo với định danh {{ param }}",
-      "updated": "Một Department cập nhật với định danh {{ param }}",
-      "deleted": "Một Department đã xóa với định danh {{ param }}",
+      "created": "Đã tạo phòng ban mới với định danh {{ param }}",
+      "updated": "Đã cập nhật phòng ban với định danh {{ param }}",
+      "deleted": "Đã xóa phòng ban với định danh {{ param }}",
       "delete": {
-        "question": "Bạn có chắc là muốn xóa Department {{ id }}?"
+        "title": "Xóa phòng ban",
+        "question": "Bạn có chắc muốn xóa phòng ban này không? Hành động này không thể hoàn tác."
       },
       "detail": {
-        "title": "Department"
+        "title": "Phòng ban"
       },
       "id": "ID",
-      "name": "Name",
-      "code": "Code"
+      "name": "Tên",
+      "code": "Mã",
+      "organization": "Tổ chức",
+      "costCenter": "Mã chi phí"
     }
   }
 }

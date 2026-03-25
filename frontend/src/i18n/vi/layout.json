@@ -1,5 +1,12 @@
 {
   "layout": {
+    "breadcrumb": "Điều hướng",
+    "brand": {
+      "name": "JHipster Security"
+    },
+    "footer": {
+      "productName": "JHipster Security Platform"
+    },
     "topbar": {
       "toggleMenu": "Mở hoặc đóng menu",
       "toggleTheme": "Đổi giao diện",
@@ -15,7 +22,8 @@
         "main": "Quản trị bảo mật",
         "roles": "Vai trò bảo mật",
         "permissions": "Ma trận quyền",
-        "rowPolicies": "Chính sách hàng"
+        "rowPolicies": "Chính sách hàng",
+        "menuDefinitions": "Định nghĩa menu"
       },
       "entities": {
         "employee": "Nhân viên"

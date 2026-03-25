@@ -14,4 +14,8 @@ public interface SecMenuPermissionRepository extends JpaRepository<SecMenuPermis
     List<SecMenuPermission> findAllByAppNameAndRoleIn(String appName, Collection<String> roles);
 
     List<SecMenuPermission> findAllByAppName(String appName);
+
+    List<SecMenuPermission> findAllByRole(String role);
+
+    void deleteByAppNameAndMenuId(String appName, String menuId);
 }

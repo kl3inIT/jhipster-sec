@@ -5,7 +5,7 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
 
 import { ButtonModule } from 'primeng/button';
@@ -29,6 +29,7 @@ import { addTranslatedMessage, handleHttpError } from 'app/shared/error/http-err
     CardModule,
     ToastModule,
     ConfirmDialogModule,
+    TranslatePipe,
     RowPolicyDialogComponent,
   ],
   providers: [ConfirmationService, MessageService],
@@ -89,10 +90,10 @@ export default class RowPolicyListComponent implements OnInit {
 
   confirmDelete(policy: ISecRowPolicy): void {
     this.confirmationService.confirm({
-      header: 'Delete Row Policy',
-      message: 'Are you sure you want to delete this row policy? This action cannot be undone.',
-      acceptLabel: 'Delete',
-      rejectLabel: 'Keep Row Policy',
+      header: this.translateService.instant('security.rowPolicies.confirmDelete.title'),
+      message: this.translateService.instant('security.rowPolicies.confirmDelete.message'),
+      acceptLabel: this.translateService.instant('entity.action.delete'),
+      rejectLabel: this.translateService.instant('entity.action.cancel'),
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => this.deletePolicy(policy),
     });

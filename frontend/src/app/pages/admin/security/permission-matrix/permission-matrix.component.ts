@@ -1,24 +1,29 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, map, of } from 'rxjs';
 
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService, TreeNode } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { SplitterModule } from 'primeng/splitter';
 import { TableModule } from 'primeng/table';
+import { TabsModule } from 'primeng/tabs';
 import { ToastModule } from 'primeng/toast';
+import { TreeTableModule } from 'primeng/treetable';
 
+import { APP_NAVIGATION_TREE } from 'app/layout/navigation/navigation-registry';
+import { handleHttpError } from 'app/shared/error/http-error.utils';
+import { ISecMenuPermissionAdmin } from '../shared/sec-menu-permission-admin.model';
 import { ISecCatalogEntry } from '../shared/sec-catalog.model';
 import { ISecPermission } from '../shared/sec-permission.model';
+import { AdminMenuPermissionService } from '../shared/service/admin-menu-permission.service';
 import { SecCatalogService } from '../shared/service/sec-catalog.service';
 import { SecPermissionService } from '../shared/service/sec-permission.service';
-import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 interface AttributeRow {
   label: string;
@@ -49,9 +54,26 @@ interface FlushErrorResult {
 
 type FlushResult = FlushSuccessResult | FlushErrorResult;
 
+interface MenuFlushSuccessResult {
+  key: string;
+  menuId: string;
+  checked: boolean;
+  success: true;
+  permissionId?: number;
+}
+
+interface MenuFlushErrorResult {
+  key: string;
+  menuId: string;
+  checked: boolean;
+  success: false;
+  error: unknown;
+}
+
+type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
+
 @Component({
   selector: 'app-permission-matrix',
-  standalone: true,
   imports: [
     CommonModule,
     RouterModule,
@@ -60,17 +82,21 @@ type FlushResult = FlushSuccessResult | FlushErrorResult;
     CheckboxModule,
     ConfirmDialogModule,
     ProgressSpinnerModule,
-    SplitterModule,
     TableModule,
+    TabsModule,
     ToastModule,
+    TranslateModule,
+    TreeTableModule,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './permission-matrix.component.html',
 })
 export default class PermissionMatrixComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly catalogService = inject(SecCatalogService);
   private readonly permissionService = inject(SecPermissionService);
+  private readonly menuPermissionService = inject(AdminMenuPermissionService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
   private readonly translateService = inject(TranslateService);
@@ -86,11 +112,27 @@ export default class PermissionMatrixComponent implements OnInit {
   pendingChanges = new Map<string, PendingChange>();
   saving = false;
 
+  // Menu access tab state
+  menuTreeNodes: TreeNode[] = [];
+  menuSelectionKeys: Record<string, { checked?: boolean; partialChecked?: boolean }> = {};
+  menuGranted = new Map<string, number>(); // menuId -> permission id
+  menuPendingChanges = new Map<string, boolean>(); // menuId -> checked state
+  menuLoading = true;
+  activeTabValue: string = '0'; // track active tab
+
   get hasPendingChanges(): boolean {
-    return this.pendingChanges.size > 0;
+    return this.pendingChanges.size > 0 || this.menuPendingChanges.size > 0;
   }
 
   ngOnInit(): void {
+    this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      if (this.selectedEntity) {
+        this.selectedEntityAttributeRows = this.buildAttributeRows(this.selectedEntity);
+      }
+      this.buildMenuTree();
+      this.cdr.detectChanges();
+    });
+
     this.roleName = this.route.snapshot.paramMap.get('name') ?? '';
     if (!this.roleName) {
       this.loading = false;
@@ -128,6 +170,81 @@ export default class PermissionMatrixComponent implements OnInit {
             'feedback.security.permissionMatrix.loadFailed',
           ),
       });
+
+    this.loadMenuPermissions();
+  }
+
+  private loadMenuPermissions(): void {
+    this.menuLoading = true;
+    this.menuPermissionService.query(this.roleName).subscribe({
+      next: (permissions) => {
+        this.menuGranted.clear();
+        permissions.forEach(p => {
+          if (p.id !== undefined) {
+            this.menuGranted.set(p.menuId, p.id);
+          }
+        });
+        this.buildMenuTree();
+        this.menuLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        handleHttpError(this.messageService, this.translateService, err, 'feedback.security.menuAccess.loadFailed');
+        this.menuLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  private buildMenuTree(): void {
+    this.menuTreeNodes = APP_NAVIGATION_TREE.map(section => ({
+      key: section.id,
+      label: this.translateService.instant(section.labelKey),
+      expanded: true,
+      children: section.children.map(leaf => ({
+        key: leaf.id,
+        label: this.translateService.instant(leaf.labelKey),
+      })),
+    }));
+    const keys: Record<string, { checked?: boolean; partialChecked?: boolean }> = {};
+    for (const section of this.menuTreeNodes) {
+      const leaves = section.children ?? [];
+      let checkedCount = 0;
+      for (const leaf of leaves) {
+        if (this.isMenuEffectivelyGranted(leaf.key!)) {
+          keys[leaf.key!] = { checked: true, partialChecked: false };
+          checkedCount++;
+        }
+      }
+      if (checkedCount > 0 && checkedCount < leaves.length) {
+        keys[section.key!] = { partialChecked: true };
+      } else if (checkedCount === leaves.length && leaves.length > 0) {
+        keys[section.key!] = { checked: true, partialChecked: false };
+      }
+    }
+    this.menuSelectionKeys = keys;
+  }
+
+  private isMenuEffectivelyGranted(menuId: string): boolean {
+    const pending = this.menuPendingChanges.get(menuId);
+    return pending ?? this.menuGranted.has(menuId);
+  }
+
+  onMenuSelectionKeysChange(newKeys: Record<string, { checked?: boolean; partialChecked?: boolean }>): void {
+    for (const section of this.menuTreeNodes) {
+      for (const leaf of section.children ?? []) {
+        const menuId = leaf.key!;
+        const isNowChecked = !!newKeys[menuId]?.checked;
+        const wasGranted = this.menuGranted.has(menuId);
+        if (isNowChecked === wasGranted) {
+          this.menuPendingChanges.delete(menuId);
+        } else {
+          this.menuPendingChanges.set(menuId, isNowChecked);
+        }
+      }
+    }
+    this.menuSelectionKeys = newKeys;
+    this.cdr.detectChanges();
   }
 
   onEntitySelect(entry: ISecCatalogEntry): void {
@@ -156,7 +273,7 @@ export default class PermissionMatrixComponent implements OnInit {
 
   private buildAttributeRows(entity: ISecCatalogEntry): AttributeRow[] {
     return [
-      { label: 'All attributes (*)', target: `${entity.code}.*`, isWildcard: true },
+      { label: '', target: `${entity.code}.*`, isWildcard: true },
       ...entity.attributes.map((attribute) => ({
         label: attribute,
         target: `${entity.code}.${attribute}`,
@@ -181,10 +298,10 @@ export default class PermissionMatrixComponent implements OnInit {
     }
 
     this.confirmationService.confirm({
-      header: 'Save Permissions',
-      message: 'Do you want to save the permission changes?',
-      acceptLabel: 'Save',
-      rejectLabel: 'Cancel',
+      header: this.translateService.instant('security.permissionMatrix.confirmSave.title'),
+      message: this.translateService.instant('security.permissionMatrix.confirmSave.message'),
+      acceptLabel: this.translateService.instant('entity.action.save'),
+      rejectLabel: this.translateService.instant('entity.action.cancel'),
       accept: () => this.flushChanges(),
     });
   }
@@ -195,6 +312,8 @@ export default class PermissionMatrixComponent implements OnInit {
     }
 
     this.pendingChanges.clear();
+    this.menuPendingChanges.clear();
+    this.buildMenuTree(); // rebuild selection from granted state
     this.cdr.detectChanges();
   }
 
@@ -266,10 +385,45 @@ export default class PermissionMatrixComponent implements OnInit {
       );
     });
 
+    const menuResults$ = Array.from(this.menuPendingChanges.entries()).map(([menuId, checked]) => {
+      if (checked) {
+        const permission: ISecMenuPermissionAdmin = {
+          role: this.roleName,
+          appName: 'jhipster-security-platform',
+          menuId,
+          effect: 'ALLOW',
+        };
+        return this.menuPermissionService.create(permission).pipe(
+          map(response => ({
+            key: `menu:${menuId}`,
+            menuId,
+            checked: true,
+            success: true as const,
+            permissionId: response.body?.id,
+          })),
+          catchError(error => of({
+            key: `menu:${menuId}`,
+            menuId,
+            checked: true,
+            success: false as const,
+            error,
+          })),
+        );
+      }
+      const permissionId = this.menuGranted.get(menuId);
+      if (permissionId === undefined) {
+        return of({ key: `menu:${menuId}`, menuId, checked: false, success: true as const, permissionId: undefined });
+      }
+      return this.menuPermissionService.delete(permissionId).pipe(
+        map(() => ({ key: `menu:${menuId}`, menuId, checked: false, success: true as const, permissionId: undefined })),
+        catchError(error => of({ key: `menu:${menuId}`, menuId, checked: false, success: false as const, error })),
+      );
+    });
+
     this.saving = true;
     this.cdr.detectChanges();
 
-    forkJoin(operations)
+    forkJoin([...operations, ...menuResults$])
       .pipe(
         finalize(() => {
           this.saving = false;
@@ -279,24 +433,40 @@ export default class PermissionMatrixComponent implements OnInit {
       .subscribe({
         next: (results) => {
           results.forEach((result) => {
-            if (!result.success) {
-              this.showSaveError(result.error);
-              return;
-            }
-
-            if (result.change.checked) {
-              this.granted.set(result.key, result.permissionId!);
+            if ('menuId' in result) {
+              // Menu result
+              const menuResult = result as MenuFlushResult;
+              if (!menuResult.success) {
+                this.showSaveError(menuResult.error);
+                return;
+              }
+              if (menuResult.checked && menuResult.permissionId !== undefined) {
+                this.menuGranted.set(menuResult.menuId, menuResult.permissionId);
+              } else if (!menuResult.checked) {
+                this.menuGranted.delete(menuResult.menuId);
+              }
+              this.menuPendingChanges.delete(menuResult.menuId);
             } else {
-              this.granted.delete(result.key);
+              // Entity permission result
+              const entityResult = result as FlushResult;
+              if (!entityResult.success) {
+                this.showSaveError(entityResult.error);
+                return;
+              }
+              if (entityResult.change.checked) {
+                this.granted.set(entityResult.key, entityResult.permissionId!);
+              } else {
+                this.granted.delete(entityResult.key);
+              }
+              this.pendingChanges.delete(entityResult.key);
             }
-
-            this.pendingChanges.delete(result.key);
           });
 
+          this.buildMenuTree();
           this.cdr.detectChanges();
         },
         error: (err) => {
-          this.showSaveError(err, 'Could not save the permission changes. Please try again.');
+          this.showSaveError(err);
           this.cdr.detectChanges();
         },
       });

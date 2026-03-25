@@ -199,12 +199,12 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
 
   confirmDelete(emp: IEmployee): void {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to delete this employee? This action cannot be undone.',
-      header: 'Delete Employee',
+      message: this.translateService.instant('angappApp.employee.delete.question'),
+      header: this.translateService.instant('angappApp.employee.delete.title'),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Delete',
+      acceptLabel: this.translateService.instant('entity.action.delete'),
       acceptButtonStyleClass: 'p-button-danger',
-      rejectLabel: 'Keep Employee',
+      rejectLabel: this.translateService.instant('entity.action.cancel'),
       accept: () => this.deleteEmp(emp),
     });
   }

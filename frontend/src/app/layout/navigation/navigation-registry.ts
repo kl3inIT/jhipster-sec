@@ -105,6 +105,16 @@ export const APP_NAVIGATION_TREE: readonly AppNavigationSection[] = [
         breadcrumbKey: 'layout.menu.security.rowPolicies',
         deniedMode: 'route',
       },
+      {
+        id: 'security.menu-definitions',
+        sectionId: 'security',
+        labelKey: 'layout.menu.security.menuDefinitions',
+        icon: 'pi pi-list',
+        routerLink: ['/admin/security/menu-definitions'],
+        routePrefix: '/admin/security/menu-definitions',
+        breadcrumbKey: 'layout.menu.security.menuDefinitions',
+        deniedMode: 'route',
+      },
     ],
   },
 ];

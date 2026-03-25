@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
 
 import { ButtonModule } from 'primeng/button';
@@ -25,6 +25,7 @@ import { handleHttpError } from 'app/shared/error/http-error.utils';
     DialogModule,
     InputTextModule,
     SelectModule,
+    TranslatePipe,
     ToastModule,
   ],
   providers: [ConfirmationService, MessageService],
@@ -37,11 +38,6 @@ export default class RoleDialogComponent implements OnChanges {
   @Output() saved = new EventEmitter<void>();
 
   isSaving = false;
-
-  readonly typeOptions = [
-    { label: 'Resource', value: 'RESOURCE' },
-    { label: 'Row Level', value: 'ROW_LEVEL' },
-  ];
 
   editForm = new FormGroup({
     name: new FormControl('', {
@@ -59,6 +55,13 @@ export default class RoleDialogComponent implements OnChanges {
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
   private readonly translateService = inject(TranslateService);
+
+  get typeOptions(): Array<{ label: string; value: string }> {
+    return [
+      { label: this.translateService.instant('security.roles.type.resource'), value: 'RESOURCE' },
+      { label: this.translateService.instant('security.roles.type.rowLevel'), value: 'ROW_LEVEL' },
+    ];
+  }
 
   ngOnChanges(): void {
     if (this.visible) {
@@ -81,10 +84,10 @@ export default class RoleDialogComponent implements OnChanges {
       return;
     }
     this.confirmationService.confirm({
-      header: 'Save Role',
-      message: 'Do you want to save this role?',
-      acceptLabel: 'Save',
-      rejectLabel: 'Cancel',
+      header: this.translateService.instant('security.roles.confirmSave.title'),
+      message: this.translateService.instant('security.roles.confirmSave.message'),
+      acceptLabel: this.translateService.instant('entity.action.save'),
+      rejectLabel: this.translateService.instant('entity.action.cancel'),
       accept: () => this.performSave(),
     });
   }

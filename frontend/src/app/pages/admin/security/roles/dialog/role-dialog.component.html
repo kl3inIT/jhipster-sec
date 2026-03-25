@@ -2,7 +2,7 @@
 <p-toast />
 
 <p-dialog
-  [header]="role ? 'Edit Role' : 'New Role'"
+  [header]="role ? ('security.roles.dialog.editTitle' | translate) : ('security.roles.dialog.createTitle' | translate)"
   [visible]="visible"
   (visibleChange)="visibleChange.emit($event)"
   [modal]="true"
@@ -12,45 +12,45 @@
   <form [formGroup]="editForm" (ngSubmit)="save()">
     <div class="flex flex-col gap-4 pt-2">
       <div class="flex flex-col gap-1">
-        <label for="roleName" class="font-semibold">Name</label>
+        <label for="roleName" class="font-semibold">{{ 'security.roles.dialog.name' | translate }}</label>
         <input
           pInputText
           id="roleName"
           formControlName="name"
-          placeholder="UPPER_SNAKE_CASE, e.g. SALES_MANAGER"
+          [placeholder]="'security.roles.dialog.namePlaceholder' | translate"
           [readonly]="role !== null"
           class="w-full"
         />
         @if (editForm.get('name')?.invalid && editForm.get('name')?.touched) {
-          <small class="text-red-500">Name is required (max 50 characters).</small>
+          <small class="text-red-500">{{ 'security.roles.dialog.nameRequired' | translate }}</small>
         }
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="roleDisplayName" class="font-semibold">Display Name</label>
-        <input pInputText id="roleDisplayName" formControlName="displayName" placeholder="Human-readable label" class="w-full" />
+        <label for="roleDisplayName" class="font-semibold">{{ 'security.roles.dialog.displayName' | translate }}</label>
+        <input pInputText id="roleDisplayName" formControlName="displayName" [placeholder]="'security.roles.dialog.displayNamePlaceholder' | translate" class="w-full" />
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="roleType" class="font-semibold">Type</label>
+        <label for="roleType" class="font-semibold">{{ 'security.roles.dialog.type' | translate }}</label>
         <p-select
           inputId="roleType"
           formControlName="type"
           [options]="typeOptions"
           optionLabel="label"
           optionValue="value"
-          placeholder="Select type"
+          [placeholder]="'security.roles.dialog.typePlaceholder' | translate"
           class="w-full"
         />
         @if (editForm.get('type')?.invalid && editForm.get('type')?.touched) {
-          <small class="text-red-500">Type is required. Choose RESOURCE or ROW_LEVEL.</small>
+          <small class="text-red-500">{{ 'security.roles.dialog.typeRequired' | translate }}</small>
         }
       </div>
     </div>
   </form>
 
   <ng-template #footer>
-    <p-button label="Discard Changes" severity="secondary" [outlined]="true" (onClick)="close()" />
-    <p-button label="Save Role" [loading]="isSaving" (onClick)="save()" />
+    <p-button [label]="'entity.action.cancel' | translate" severity="secondary" [outlined]="true" (onClick)="close()" />
+    <p-button [label]="'entity.action.save' | translate" [loading]="isSaving" (onClick)="save()" />
   </ng-template>
 </p-dialog>
