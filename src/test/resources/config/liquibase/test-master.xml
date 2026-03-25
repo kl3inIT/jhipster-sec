@@ -19,5 +19,8 @@
     <include file="config/liquibase/changelog/20260321000500_create_proof_organization.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260321000600_create_proof_department.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260321000700_create_proof_employee.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260325000100_create_sec_navigation_grant.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260325000200_rename_nav_grant_add_menu_def.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260325000300_repair_sec_menu_permission_schema.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260321000800_seed_proof_security_test_data.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
