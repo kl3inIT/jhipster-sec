@@ -26,6 +26,20 @@
       "backToList": "Quay lai danh sach",
       "auditTitle": "Thong tin kiem tra"
     },
+    "form": {
+      "sectionTitle": "Thong tin tai khoan",
+      "rolesTitle": "Vai tro duoc gan",
+      "save": "Luu tai khoan",
+      "create": "Tao tai khoan",
+      "discard": "Bo thay doi",
+      "validation": {
+        "loginRequired": "Bat buoc nhap ten dang nhap.",
+        "emailRequired": "Bat buoc nhap email.",
+        "emailInvalid": "Email khong hop le.",
+        "maxLength": "Truong nay khong duoc vuot qua {{ max }} ky tu.",
+        "langKeyRequired": "Bat buoc chon ngon ngu."
+      }
+    },
     "actions": {
       "view": "Xem",
       "edit": "Sua",
@@ -56,6 +70,11 @@
     "activated": "Kich hoat",
     "deactivated": "Khoa",
     "profiles": "Cac quyen",
+    "feedback": {
+      "createFailed": "Khong the tao tai khoan. Hay kiem tra lai form va thu lai.",
+      "updateFailed": "Khong the luu tai khoan. Hay kiem tra lai form va thu lai.",
+      "saved": "Tai khoan {{ login }} da duoc luu."
+    },
     "langKey": "Ngon ngu",
     "createdBy": "Nguoi tao",
     "createdDate": "Ngay tao",

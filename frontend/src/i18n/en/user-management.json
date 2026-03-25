@@ -26,6 +26,20 @@
       "backToList": "Back to List",
       "auditTitle": "Audit Information"
     },
+    "form": {
+      "sectionTitle": "User Details",
+      "rolesTitle": "Assigned Roles",
+      "save": "Save User",
+      "create": "Create User",
+      "discard": "Discard Changes",
+      "validation": {
+        "loginRequired": "Login is required.",
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Email must be valid.",
+        "maxLength": "This field cannot be longer than {{ max }} characters.",
+        "langKeyRequired": "Language is required."
+      }
+    },
     "actions": {
       "view": "View User",
       "edit": "Edit User",
@@ -56,6 +70,11 @@
     "activated": "Activated",
     "deactivated": "Deactivated",
     "profiles": "Profiles",
+    "feedback": {
+      "createFailed": "We couldn't create the user. Review the form and try again.",
+      "updateFailed": "We couldn't save the user. Review the form and try again.",
+      "saved": "User {{ login }} was saved."
+    },
     "langKey": "Language",
     "createdBy": "Created by",
     "createdDate": "Created date",

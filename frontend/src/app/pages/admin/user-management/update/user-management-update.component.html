@@ -1,0 +1,152 @@
+<p-toast></p-toast>
+
+<div class="space-y-4">
+  <div class="flex items-center justify-between gap-3">
+    <h1 class="m-0 text-2xl font-semibold">
+      @if (isEdit()) {
+        {{ 'userManagement.home.createOrEditLabel' | translate }}
+      } @else {
+        {{ 'userManagement.home.createLabel' | translate }}
+      }
+    </h1>
+
+    <div class="flex flex-wrap gap-2">
+      <button
+        pButton
+        type="button"
+        severity="secondary"
+        icon="pi pi-times"
+        [label]="'userManagement.form.discard' | translate"
+        (click)="cancel()"
+        [disabled]="isSaving()"
+      ></button>
+      <button
+        pButton
+        type="submit"
+        icon="pi pi-check"
+        [label]="isEdit() ? ('userManagement.form.save' | translate) : ('userManagement.form.create' | translate)"
+        [disabled]="isSaving()"
+        (click)="save()"
+      ></button>
+    </div>
+  </div>
+
+  <form [formGroup]="editForm" class="grid">
+    <div class="col-12 lg:col-8">
+      <p-card [header]="'userManagement.form.sectionTitle' | translate">
+        <div class="grid">
+          <div class="col-12 md:col-6">
+            <label for="login" class="block text-sm font-semibold mb-2">{{ 'userManagement.login' | translate }}</label>
+            <input id="login" type="text" pInputText formControlName="login" class="w-full" />
+            @if (hasError('login', 'required')) {
+              <p-message severity="error" class="mt-2" [text]="'userManagement.form.validation.loginRequired' | translate"></p-message>
+            }
+            @if (hasError('login', 'maxlength')) {
+              <p-message severity="error" class="mt-2" [text]="'userManagement.form.validation.maxLength' | translate : { max: 50 }"></p-message>
+            }
+            @if (hasError('login', 'pattern')) {
+              <p-message severity="error" class="mt-2" [text]="'entity.validation.patternLogin' | translate"></p-message>
+            }
+          </div>
+
+          <div class="col-12 md:col-6">
+            <label for="email" class="block text-sm font-semibold mb-2">{{ 'userManagement.email' | translate }}</label>
+            <input id="email" type="email" pInputText formControlName="email" class="w-full" />
+            @if (hasError('email', 'required')) {
+              <p-message severity="error" class="mt-2" [text]="'userManagement.form.validation.emailRequired' | translate"></p-message>
+            }
+            @if (hasError('email', 'email')) {
+              <p-message severity="error" class="mt-2" [text]="'userManagement.form.validation.emailInvalid' | translate"></p-message>
+            }
+            @if (hasError('email', 'maxlength')) {
+              <p-message severity="error" class="mt-2" [text]="'userManagement.form.validation.maxLength' | translate : { max: 254 }"></p-message>
+            }
+          </div>
+
+          <div class="col-12 md:col-6">
+            <label for="firstName" class="block text-sm font-semibold mb-2">{{ 'userManagement.firstName' | translate }}</label>
+            <input id="firstName" type="text" pInputText formControlName="firstName" class="w-full" />
+            @if (hasError('firstName', 'maxlength')) {
+              <p-message severity="error" class="mt-2" [text]="'userManagement.form.validation.maxLength' | translate : { max: 50 }"></p-message>
+            }
+          </div>
+
+          <div class="col-12 md:col-6">
+            <label for="lastName" class="block text-sm font-semibold mb-2">{{ 'userManagement.lastName' | translate }}</label>
+            <input id="lastName" type="text" pInputText formControlName="lastName" class="w-full" />
+            @if (hasError('lastName', 'maxlength')) {
+              <p-message severity="error" class="mt-2" [text]="'userManagement.form.validation.maxLength' | translate : { max: 50 }"></p-message>
+            }
+          </div>
+
+          <div class="col-12 md:col-6">
+            <label for="langKey" class="block text-sm font-semibold mb-2">{{ 'userManagement.langKey' | translate }}</label>
+            <p-select
+              id="langKey"
+              formControlName="langKey"
+              [options]="languages"
+              optionLabel="label"
+              optionValue="value"
+              class="w-full"
+            ></p-select>
+            @if (hasError('langKey', 'required')) {
+              <p-message severity="error" class="mt-2" [text]="'userManagement.form.validation.langKeyRequired' | translate"></p-message>
+            }
+            @if (hasError('langKey', 'maxlength')) {
+              <p-message severity="error" class="mt-2" [text]="'userManagement.form.validation.maxLength' | translate : { max: 10 }"></p-message>
+            }
+          </div>
+
+          <div class="col-12 md:col-6">
+            <div class="flex items-center gap-3 rounded border-1 surface-border px-3 py-3 mt-5 md:mt-0">
+              <p-checkbox inputId="activated" formControlName="activated" [binary]="true"></p-checkbox>
+              <label for="activated" class="font-semibold">{{ 'userManagement.activated' | translate }}</label>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <div class="col-12 lg:col-4">
+      <p-card [header]="'userManagement.form.rolesTitle' | translate">
+        <p-table [value]="roleRows()" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '100%' }">
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 3.5rem"></th>
+              <th>{{ 'userManagement.columns.roles' | translate }}</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-row>
+            <tr>
+              <td>
+                <p-checkbox
+                  [binary]="true"
+                  [ngModel]="row.selected"
+                  [ngModelOptions]="{ standalone: true }"
+                  [inputId]="'authority-' + row.authority"
+                  [disabled]="isSaving()"
+                  (ngModelChange)="toggleAuthority(row.authority, $event)"
+                ></p-checkbox>
+              </td>
+              <td>
+                <label [for]="'authority-' + row.authority" class="flex flex-column gap-1 cursor-pointer">
+                  <span class="font-semibold">{{ row.authority }}</span>
+                  @if (row.label !== row.authority) {
+                    <span class="text-sm text-color-secondary">{{ row.label }}</span>
+                  }
+                </label>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="2" class="py-4 text-center text-color-secondary">{{ 'userManagement.home.emptyBody' | translate }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+  </form>
+</div>
