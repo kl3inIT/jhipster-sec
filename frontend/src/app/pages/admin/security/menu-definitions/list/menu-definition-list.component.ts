@@ -13,7 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { TreeModule } from 'primeng/tree';
+import { TreeTableModule } from 'primeng/treetable';
 import { ConfirmationService, MessageService, TreeNode } from 'primeng/api';
 
 import { ISecMenuDefinition, ISyncNode } from '../sec-menu-definition.model';
@@ -31,7 +31,7 @@ import { APP_NAVIGATION_TREE } from 'app/layout/navigation/navigation-registry';
     CardModule,
     ToastModule,
     ConfirmDialogModule,
-    TreeModule,
+    TreeTableModule,
     MenuDefinitionDialogComponent,
     TranslatePipe,
   ],
@@ -122,10 +122,10 @@ export default class MenuDefinitionListComponent implements OnInit {
 
   confirmDelete(def: ISecMenuDefinition): void {
     this.confirmationService.confirm({
-      header: 'Delete Menu Definition',
-      message: 'Are you sure you want to delete this menu definition? Role permissions for this menu node will also be removed.',
-      acceptLabel: 'Delete Definition',
-      rejectLabel: 'Keep Definition',
+      header: this.translateService.instant('security.menuDefinitions.confirmDelete.title'),
+      message: this.translateService.instant('security.menuDefinitions.confirmDelete.message'),
+      acceptLabel: this.translateService.instant('entity.action.delete'),
+      rejectLabel: this.translateService.instant('entity.action.cancel'),
       defaultFocus: 'reject',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => this.deleteDefinition(def),
@@ -150,11 +150,10 @@ export default class MenuDefinitionListComponent implements OnInit {
 
   confirmSync(): void {
     this.confirmationService.confirm({
-      header: 'Sync from Registry',
-      message:
-        'This will add any navigation nodes from the frontend registry that are not yet in the catalog. Existing definitions will not be modified.',
-      acceptLabel: 'Sync Now',
-      rejectLabel: 'Keep Current Catalog',
+      header: this.translateService.instant('security.menuDefinitions.confirmSync.title'),
+      message: this.translateService.instant('security.menuDefinitions.confirmSync.message'),
+      acceptLabel: this.translateService.instant('security.menuDefinitions.sync'),
+      rejectLabel: this.translateService.instant('entity.action.cancel'),
       accept: () => this.syncFromRegistry(),
     });
   }
@@ -205,7 +204,7 @@ export default class MenuDefinitionListComponent implements OnInit {
         next: result => {
           addTranslatedMessage(this.messageService, this.translateService, {
             severity: 'success',
-            summary: 'feedback.toast.deleted',
+            summary: 'feedback.toast.success',
             detail: 'feedback.security.menuDefinitions.syncSuccess',
             detailParams: { seeded: result.body?.seeded ?? 0 },
           });

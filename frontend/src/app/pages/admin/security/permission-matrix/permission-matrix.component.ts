@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -13,7 +14,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TableModule } from 'primeng/table';
 import { TabsModule } from 'primeng/tabs';
 import { ToastModule } from 'primeng/toast';
-import { TreeModule } from 'primeng/tree';
+import { TreeTableModule } from 'primeng/treetable';
 
 import { APP_NAVIGATION_TREE } from 'app/layout/navigation/navigation-registry';
 import { handleHttpError } from 'app/shared/error/http-error.utils';
@@ -85,12 +86,13 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
     TabsModule,
     ToastModule,
     TranslateModule,
-    TreeModule,
+    TreeTableModule,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './permission-matrix.component.html',
 })
 export default class PermissionMatrixComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly catalogService = inject(SecCatalogService);
   private readonly permissionService = inject(SecPermissionService);
@@ -112,7 +114,7 @@ export default class PermissionMatrixComponent implements OnInit {
 
   // Menu access tab state
   menuTreeNodes: TreeNode[] = [];
-  menuTreeSelection: TreeNode[] = [];
+  menuTreeSelection: Record<string, { checked?: boolean; partialChecked?: boolean }> = {};
   menuGranted = new Map<string, number>(); // menuId -> permission id
   menuPendingChanges = new Map<string, boolean>(); // menuId -> checked state
   menuLoading = true;
@@ -123,6 +125,14 @@ export default class PermissionMatrixComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      if (this.selectedEntity) {
+        this.selectedEntityAttributeRows = this.buildAttributeRows(this.selectedEntity);
+      }
+      this.buildMenuTree();
+      this.cdr.detectChanges();
+    });
+
     this.roleName = this.route.snapshot.paramMap.get('name') ?? '';
     if (!this.roleName) {
       this.loading = false;
@@ -189,50 +199,53 @@ export default class PermissionMatrixComponent implements OnInit {
   private buildMenuTree(): void {
     this.menuTreeNodes = APP_NAVIGATION_TREE.map(section => ({
       key: section.id,
-      label: section.id,
-      selectable: false,
+      label: this.translateService.instant(section.labelKey),
       expanded: true,
       children: section.children.map(leaf => ({
         key: leaf.id,
-        label: leaf.id,
-        selectable: true,
+        label: this.translateService.instant(leaf.labelKey),
       })),
     }));
-    // Set initial selection from granted
-    this.menuTreeSelection = [];
+    // Build selection record for p-treetable checkbox
+    const sel: Record<string, { checked?: boolean; partialChecked?: boolean }> = {};
     for (const section of this.menuTreeNodes) {
-      for (const child of section.children ?? []) {
-        if (this.menuGranted.has(child.key!)) {
-          this.menuTreeSelection.push(child);
+      const leaves = section.children ?? [];
+      let checkedCount = 0;
+      for (const leaf of leaves) {
+        if (this.isMenuEffectivelyGranted(leaf.key!)) {
+          sel[leaf.key!] = { checked: true, partialChecked: false };
+          checkedCount++;
+        }
+      }
+      if (checkedCount > 0 && checkedCount < leaves.length) {
+        sel[section.key!] = { checked: false, partialChecked: true };
+      } else if (checkedCount === leaves.length && leaves.length > 0) {
+        sel[section.key!] = { checked: true, partialChecked: false };
+      }
+    }
+    this.menuTreeSelection = sel;
+  }
+
+  private isMenuEffectivelyGranted(menuId: string): boolean {
+    const pending = this.menuPendingChanges.get(menuId);
+    return pending ?? this.menuGranted.has(menuId);
+  }
+
+  onMenuSelectionChange(newSel: Record<string, { checked?: boolean; partialChecked?: boolean }>): void {
+    for (const section of this.menuTreeNodes) {
+      for (const leaf of section.children ?? []) {
+        const menuId = leaf.key!;
+        const isNowChecked = !!newSel[menuId]?.checked;
+        const wasGranted = this.menuGranted.has(menuId);
+        if (isNowChecked === wasGranted) {
+          this.menuPendingChanges.delete(menuId);
+        } else {
+          this.menuPendingChanges.set(menuId, isNowChecked);
         }
       }
     }
-  }
-
-  onMenuNodeSelect(event: { node: TreeNode }): void {
-    const menuId = event.node.key!;
-    if (this.menuGranted.has(menuId)) {
-      // Was already granted, selecting reverts the pending uncheck
-      this.menuPendingChanges.delete(menuId);
-    } else {
-      this.menuPendingChanges.set(menuId, true);
-    }
+    this.menuTreeSelection = newSel;
     this.cdr.detectChanges();
-  }
-
-  onMenuNodeUnselect(event: { node: TreeNode }): void {
-    const menuId = event.node.key!;
-    if (!this.menuGranted.has(menuId)) {
-      // Was not granted, unchecking reverts the pending check
-      this.menuPendingChanges.delete(menuId);
-    } else {
-      this.menuPendingChanges.set(menuId, false);
-    }
-    this.cdr.detectChanges();
-  }
-
-  isMenuPendingChange(menuId: string): boolean {
-    return this.menuPendingChanges.has(menuId);
   }
 
   onEntitySelect(entry: ISecCatalogEntry): void {
@@ -261,7 +274,7 @@ export default class PermissionMatrixComponent implements OnInit {
 
   private buildAttributeRows(entity: ISecCatalogEntry): AttributeRow[] {
     return [
-      { label: 'All attributes (*)', target: `${entity.code}.*`, isWildcard: true },
+      { label: '', target: `${entity.code}.*`, isWildcard: true },
       ...entity.attributes.map((attribute) => ({
         label: attribute,
         target: `${entity.code}.${attribute}`,
@@ -286,10 +299,10 @@ export default class PermissionMatrixComponent implements OnInit {
     }
 
     this.confirmationService.confirm({
-      header: 'Save Permissions',
-      message: 'Do you want to save the permission changes?',
-      acceptLabel: 'Save',
-      rejectLabel: 'Cancel',
+      header: this.translateService.instant('security.permissionMatrix.confirmSave.title'),
+      message: this.translateService.instant('security.permissionMatrix.confirmSave.message'),
+      acceptLabel: this.translateService.instant('entity.action.save'),
+      rejectLabel: this.translateService.instant('entity.action.cancel'),
       accept: () => this.flushChanges(),
     });
   }
@@ -454,7 +467,7 @@ export default class PermissionMatrixComponent implements OnInit {
           this.cdr.detectChanges();
         },
         error: (err) => {
-          this.showSaveError(err, 'Could not save the permission changes. Please try again.');
+          this.showSaveError(err);
           this.cdr.detectChanges();
         },
       });

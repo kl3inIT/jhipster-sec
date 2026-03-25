@@ -7,45 +7,64 @@
       <span class="text-xl font-semibold">{{ 'pageTitle.menuDefinitions' | translate }}</span>
       <div class="flex gap-2">
         <p-button
-          label="Sync from Registry"
+          [label]="'security.menuDefinitions.sync' | translate"
           icon="pi pi-refresh"
           severity="secondary"
           [loading]="isSyncing"
           (onClick)="confirmSync()"
         />
-        <p-button label="New Menu Definition" icon="pi pi-plus" (onClick)="openCreate()" />
+        <p-button [label]="'security.menuDefinitions.new' | translate" icon="pi pi-plus" (onClick)="openCreate()" />
       </div>
     </div>
   </ng-template>
 
-  <p-tree [value]="treeNodes" [loading]="isLoading" styleClass="w-full border-0">
-    <ng-template pTemplate="default" let-node>
-      <div class="flex items-center justify-between w-full gap-3 py-1">
-        <div class="flex items-center gap-2 min-w-0">
-          @if (node.data.icon) {
-            <i [class]="node.data.icon + ' text-color-secondary'"></i>
-          }
-          <span class="font-semibold">{{ node.data.label }}</span>
-          <span class="text-sm text-color-secondary truncate">{{ node.data.menuId }}</span>
-          @if (node.data.route) {
-            <span class="text-xs text-color-secondary opacity-60 truncate">{{ node.data.route }}</span>
-          }
-        </div>
-        <div class="flex gap-1 flex-shrink-0">
-          <p-button icon="pi pi-pencil" severity="secondary" size="small" [text]="true" (onClick)="openEdit(node.data)" />
-          <p-button icon="pi pi-trash" severity="danger" size="small" [text]="true" (onClick)="confirmDelete(node.data)" />
-        </div>
-      </div>
+  <p-treetable [value]="treeNodes" [loading]="isLoading" dataKey="key" [tableStyle]="{ 'min-width': '52rem' }">
+    <ng-template #header>
+      <tr>
+        <th>Label / Menu ID</th>
+        <th style="width: 14rem">Route</th>
+        <th style="width: 7rem">Icon</th>
+        <th style="width: 5rem">Order</th>
+        <th style="width: 9rem">Actions</th>
+      </tr>
     </ng-template>
 
-    <ng-template pTemplate="empty">
-      <div class="flex flex-col items-center gap-4 py-8">
-        <i class="pi pi-list text-4xl text-color-secondary"></i>
-        <div class="text-xl font-semibold">No menu definitions</div>
-        <div class="text-color-secondary">Create the first menu definition or sync existing navigation nodes from the registry.</div>
-      </div>
+    <ng-template #body let-rowNode let-rowData="rowData">
+      <tr [ttRow]="rowNode">
+        <td>
+          <div class="flex items-center gap-2">
+            <p-treetable-toggler [rowNode]="rowNode" />
+            @if (rowData.icon) {
+              <i [class]="rowData.icon + ' text-color-secondary'"></i>
+            }
+            <span class="font-semibold">{{ rowData.label }}</span>
+            <span class="text-xs text-color-secondary opacity-70">{{ rowData.menuId }}</span>
+          </div>
+        </td>
+        <td class="text-sm text-color-secondary">{{ rowData.route }}</td>
+        <td class="text-sm text-color-secondary">{{ rowData.icon }}</td>
+        <td class="text-center">{{ rowData.ordering }}</td>
+        <td>
+          <div class="flex gap-1">
+            <p-button icon="pi pi-pencil" severity="secondary" size="small" [text]="true" (onClick)="openEdit(rowData)" />
+            <p-button icon="pi pi-trash" severity="danger" size="small" [text]="true" (onClick)="confirmDelete(rowData)" />
+          </div>
+        </td>
+      </tr>
     </ng-template>
-  </p-tree>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">
+          <div class="flex flex-col items-center gap-4 py-8">
+            <i class="pi pi-list text-4xl text-color-secondary"></i>
+            <div class="text-xl font-semibold">{{ 'security.menuDefinitions.empty.title' | translate }}</div>
+            <div class="text-color-secondary">{{ 'security.menuDefinitions.empty.message' | translate }}</div>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-treetable>
 </p-card>
 
 @if (dialogVisible) {

@@ -6,19 +6,21 @@
     <button
       pButton
       type="button"
-      label="Back to Roles"
+      [label]="'security.permissionMatrix.backToRoles' | translate"
       icon="pi pi-arrow-left"
       class="p-button-text"
       routerLink="/admin/security/roles"
     ></button>
-    <h1 class="text-2xl font-semibold">Permissions for {{ roleName }}</h1>
+    <h1 class="text-2xl font-semibold">
+      {{ 'security.permissionMatrix.title' | translate: { roleName } }}
+    </h1>
   </div>
 
   <div class="mb-4 flex items-center gap-2">
     <button
       pButton
       type="button"
-      label="Save Changes"
+      [label]="'security.permissionMatrix.saveChanges' | translate"
       icon="pi pi-save"
       [disabled]="!hasPendingChanges || saving"
       (click)="confirmSave()"
@@ -27,7 +29,7 @@
     <button
       pButton
       type="button"
-      label="Discard"
+      [label]="'security.permissionMatrix.discard' | translate"
       icon="pi pi-times"
       [disabled]="!hasPendingChanges || saving"
       (click)="discardChanges()"
@@ -37,7 +39,9 @@
       <i class="pi pi-spin pi-spinner text-color-secondary"></i>
     }
     @if (hasPendingChanges) {
-      <span class="text-sm text-orange-500" aria-live="polite">{{ pendingChanges.size + menuPendingChanges.size }} unsaved change(s)</span>
+      <span class="text-sm text-orange-500" aria-live="polite">
+        {{ 'security.permissionMatrix.unsavedChanges' | translate: { count: pendingChanges.size + menuPendingChanges.size } }}
+      </span>
     }
   </div>
 
@@ -48,22 +52,22 @@
   } @else {
     <p-tabs [value]="activeTabValue" (valueChange)="activeTabValue = $event?.toString() ?? '0'">
       <p-tablist>
-        <p-tab value="0">Entity Permissions</p-tab>
-        <p-tab value="1">Menu Access</p-tab>
+        <p-tab value="0">{{ 'security.permissionMatrix.tabs.entity' | translate }}</p-tab>
+        <p-tab value="1">{{ 'security.permissionMatrix.tabs.menu' | translate }}</p-tab>
       </p-tablist>
       <p-tabpanels>
         <p-tabpanel value="0">
           <div class="p-4">
-            <h2 class="mb-4 text-base font-semibold">Entity Permissions</h2>
+            <h2 class="mb-4 text-base font-semibold">{{ 'security.permissionMatrix.entity.heading' | translate }}</h2>
 
             <p-table [value]="catalogEntries" dataKey="code" [scrollable]="true">
               <ng-template pTemplate="header">
                 <tr>
-                  <th>Entity</th>
-                  <th class="text-center" style="width: 80px">Create</th>
-                  <th class="text-center" style="width: 80px">Read</th>
-                  <th class="text-center" style="width: 80px">Update</th>
-                  <th class="text-center" style="width: 80px">Delete</th>
+                  <th>{{ 'security.permissionMatrix.entity.name' | translate }}</th>
+                  <th class="text-center" style="width: 80px">{{ 'security.permissionMatrix.entity.create' | translate }}</th>
+                  <th class="text-center" style="width: 80px">{{ 'security.permissionMatrix.entity.read' | translate }}</th>
+                  <th class="text-center" style="width: 80px">{{ 'security.permissionMatrix.entity.update' | translate }}</th>
+                  <th class="text-center" style="width: 80px">{{ 'security.permissionMatrix.entity.delete' | translate }}</th>
                 </tr>
               </ng-template>
 
@@ -144,27 +148,27 @@
           </div>
 
           @if (!selectedEntity) {
-            <p class="p-4 text-color-secondary">Select an entity above to view its attribute permissions.</p>
+            <p class="p-4 text-color-secondary">{{ 'security.permissionMatrix.entity.emptySelection' | translate }}</p>
           } @else if (selectedEntity.attributes.length === 0) {
-            <p class="p-4 text-color-secondary">This entity has no enumerated attributes.</p>
+            <p class="p-4 text-color-secondary">{{ 'security.permissionMatrix.attribute.none' | translate }}</p>
           } @else {
             <div class="p-4">
               <h2 class="mb-4 text-base font-semibold">
-                Attribute Permissions: {{ selectedEntity!.displayName }}
+                {{ 'security.permissionMatrix.attribute.heading' | translate: { entity: selectedEntity!.displayName } }}
               </h2>
 
               <p-table [value]="selectedEntityAttributeRows" [scrollable]="true">
                 <ng-template pTemplate="header">
                   <tr>
-                    <th>Attribute</th>
-                    <th class="text-center" style="width: 80px">View</th>
-                    <th class="text-center" style="width: 80px">Modify</th>
+                    <th>{{ 'security.permissionMatrix.attribute.name' | translate }}</th>
+                    <th class="text-center" style="width: 80px">{{ 'security.permissionMatrix.attribute.view' | translate }}</th>
+                    <th class="text-center" style="width: 80px">{{ 'security.permissionMatrix.attribute.modify' | translate }}</th>
                   </tr>
                 </ng-template>
 
                 <ng-template pTemplate="body" let-row>
                   <tr>
-                    <td>{{ row.isWildcard ? 'All attributes (*)' : row.label }}</td>
+                    <td>{{ row.isWildcard ? ('security.permissionMatrix.attribute.wildcard' | translate) : row.label }}</td>
                     <td class="text-center">
                       <span
                         class="inline-flex items-center rounded-sm"
@@ -213,25 +217,33 @@
         </p-tabpanel>
 
         <p-tabpanel value="1">
-          @if (menuLoading) {
-            <div class="flex justify-center p-8">
-              <p-progressSpinner />
-            </div>
-          } @else {
-            <div class="p-4">
-              <p-tree
-                [value]="menuTreeNodes"
-                selectionMode="checkbox"
-                [(selection)]="menuTreeSelection"
-                [propagateSelectionUp]="false"
-                [propagateSelectionDown]="false"
-                (onNodeSelect)="onMenuNodeSelect($event)"
-                (onNodeUnselect)="onMenuNodeUnselect($event)"
-                [style]="{ 'max-width': '40rem' }"
-              >
-              </p-tree>
-            </div>
-          }
+          <div class="p-4">
+            <p-treetable
+              [value]="menuTreeNodes"
+              selectionMode="checkbox"
+              [selection]="menuTreeSelection"
+              dataKey="key"
+              [loading]="menuLoading"
+              (selectionChange)="onMenuSelectionChange($any($event))"
+              [tableStyle]="{ 'min-width': '24rem' }"
+            >
+              <ng-template #header>
+                <tr>
+                  <th>Navigation Node</th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-rowNode>
+                <tr [ttRow]="rowNode">
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <p-treetable-toggler [rowNode]="rowNode" />
+                      <span>{{ rowNode.node.label }}</span>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-treetable>
+          </div>
         </p-tabpanel>
       </p-tabpanels>
     </p-tabs>
