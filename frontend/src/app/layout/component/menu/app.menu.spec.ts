@@ -7,6 +7,9 @@ import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { AppMenu } from './app.menu';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
+import { AppNavigationSection } from 'app/layout/navigation/navigation.model';
+import { APP_NAVIGATION_TREE } from 'app/layout/navigation/navigation-registry';
+import { NavigationService } from 'app/layout/navigation/navigation.service';
 
 const mockAdminAccount: Account = new Account(
   true,
@@ -32,14 +35,31 @@ const mockUserAccount: Account = new Account(
 describe('AppMenu', () => {
   let mockAccountService: Partial<AccountService>;
   let authenticationState$: ReplaySubject<Account | null>;
+  let mockNavigationService: Partial<NavigationService>;
+  let visibleTree$: ReplaySubject<AppNavigationSection[]>;
   let translateService: TranslateService;
 
-  function setupWithAccount(account: Account | null, isAdmin: boolean) {
+  function cloneTree(tree: readonly AppNavigationSection[]): AppNavigationSection[] {
+    return tree.map(section => ({
+      ...section,
+      routerLink: [...section.routerLink],
+      children: section.children.map(child => ({
+        ...child,
+        routerLink: [...child.routerLink],
+      })),
+    }));
+  }
+
+  function setupWithAccount(account: Account | null, visibleTree: AppNavigationSection[]) {
     authenticationState$ = new ReplaySubject<Account | null>(1);
     authenticationState$.next(account);
+    visibleTree$ = new ReplaySubject<AppNavigationSection[]>(1);
+    visibleTree$.next(visibleTree);
     mockAccountService = {
       getAuthenticationState: () => authenticationState$.asObservable(),
-      hasAnyAuthority: (_authorities: string[] | string) => isAdmin,
+    };
+    mockNavigationService = {
+      visibleTree: () => visibleTree$.asObservable(),
     };
 
     TestBed.configureTestingModule({
@@ -49,6 +69,7 @@ describe('AppMenu', () => {
         provideHttpClient(),
         provideTranslateService({ lang: 'en', fallbackLang: 'en' }),
         { provide: AccountService, useValue: mockAccountService },
+        { provide: NavigationService, useValue: mockNavigationService },
       ],
     });
 
@@ -109,71 +130,75 @@ describe('AppMenu', () => {
     });
   }
 
-  it('should show Security Admin section when user has ROLE_ADMIN', () => {
-    setupWithAccount(mockAdminAccount, true);
+  it('renders only the visible navigation leaves from the shared navigation service', () => {
+    const filteredTree = cloneTree(APP_NAVIGATION_TREE).filter(section => section.id !== 'security');
+    setupWithAccount(mockAdminAccount, filteredTree);
     const fixture = TestBed.createComponent(AppMenu);
     const component = fixture.componentInstance;
     fixture.detectChanges();
 
-    const securityAdminSection = component.model.find((item) => item.id === 'security');
-    expect(securityAdminSection).toBeTruthy();
-    expect(securityAdminSection?.items?.some((item) => item.label === 'User management')).toBe(
-      true,
+    expect(component.model.map(item => item.id)).toEqual(['home', 'entities']);
+    expect(component.model.find(item => item.id === 'security')).toBeUndefined();
+    expect(component.model.find(item => item.id === 'entities')?.items?.map(item => item.id)).toEqual([
+      'entities.organization',
+      'entities.department',
+      'entities.employee',
+    ]);
+  });
+
+  it('keeps a section visible while filtering out an unauthorized leaf', () => {
+    const filteredTree = cloneTree(APP_NAVIGATION_TREE).map(section =>
+      section.id === 'entities'
+        ? {
+            ...section,
+            children: section.children.filter(child => child.id !== 'entities.organization'),
+          }
+        : section,
     );
-    expect(securityAdminSection?.items?.some((item) => item.label === 'Security roles')).toBe(true);
-    expect(securityAdminSection?.items?.some((item) => item.label === 'Row policies')).toBe(true);
-  });
-
-  it('should hide Security Admin section when user is not admin', () => {
-    setupWithAccount(mockUserAccount, false);
+    setupWithAccount(mockAdminAccount, filteredTree);
     const fixture = TestBed.createComponent(AppMenu);
     const component = fixture.componentInstance;
     fixture.detectChanges();
 
-    const securityAdminSection = component.model.find((item) => item.id === 'security');
-    expect(securityAdminSection).toBeUndefined();
+    expect(component.model.find(item => item.id === 'entities')?.items?.map(item => item.id)).toEqual([
+      'entities.department',
+      'entities.employee',
+    ]);
+    expect(component.model.find(item => item.id === 'entities')?.items?.some(item => item.id === 'entities.organization')).toBe(false);
   });
 
-  it('should always show Entities section with Organizations, Departments, Employees', () => {
-    setupWithAccount(mockUserAccount, false);
+  it('tracks stable path ids from navigation metadata', () => {
+    setupWithAccount(mockUserAccount, cloneTree(APP_NAVIGATION_TREE));
     const fixture = TestBed.createComponent(AppMenu);
     const component = fixture.componentInstance;
     fixture.detectChanges();
 
-    const entitiesSection = component.model.find((item) => item.label === 'Entities');
-    expect(entitiesSection).toBeTruthy();
-    expect(entitiesSection?.items?.some((item) => item.label === 'Organizations')).toBe(true);
-    expect(entitiesSection?.items?.some((item) => item.label === 'Departments')).toBe(true);
-    expect(entitiesSection?.items?.some((item) => item.label === 'Employees')).toBe(true);
+    expect(component.model.find(item => item.id === 'home')?.['path']).toBe('home');
+    expect(component.model.find(item => item.id === 'entities')?.['path']).toBe('entities');
+    expect(component.model.find(item => item.id === 'security')?.items?.[0]?.['path']).toBe('security.users');
   });
 
   it('refreshes menu labels after a language change', async () => {
-    setupWithAccount(mockAdminAccount, true);
+    setupWithAccount(mockAdminAccount, cloneTree(APP_NAVIGATION_TREE));
     const fixture = TestBed.createComponent(AppMenu);
     const component = fixture.componentInstance;
     await firstValueFrom(translateService.use('en'));
     fixture.detectChanges();
 
     expect(component.model[0]?.label).toBe('Home');
-    const englishUserManagementItem = component.model
-      .find((item) => item.id === 'security')
-      ?.items?.find(
-        (item) => Array.isArray(item.routerLink) && item.routerLink.join('/') === '/admin/users',
-      );
+    const englishUserManagementItem = component.model.find(item => item.id === 'security')?.items?.find(item => item.id === 'security.users');
 
     expect(englishUserManagementItem?.label).toBe('User management');
+    expect(englishUserManagementItem?.id).toBe('security.users');
 
     await firstValueFrom(translateService.use('vi'));
     fixture.detectChanges();
 
     expect(component.model[0]?.label).toBe('Trang chu');
     expect(component.model[1]?.label).toBe('Thuc the');
-    const vietnameseUserManagementItem = component.model
-      .find((item) => item.id === 'security')
-      ?.items?.find(
-        (item) => Array.isArray(item.routerLink) && item.routerLink.join('/') === '/admin/users',
-      );
+    const vietnameseUserManagementItem = component.model.find(item => item.id === 'security')?.items?.find(item => item.id === 'security.users');
 
     expect(vietnameseUserManagementItem?.label).toBe('Quan ly tai khoan');
+    expect(vietnameseUserManagementItem?.id).toBe('security.users');
   });
 });

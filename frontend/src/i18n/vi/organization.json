@@ -6,7 +6,11 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Thêm mới một Organization",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Organization",
-        "notFound": "No Organizations found"
+        "notFound": "No Organizations found",
+        "denied": {
+          "title": "Quyền truy cập tổ chức bị giới hạn",
+          "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi tổ chức."
+        }
       },
       "created": "Một Organization mới được tạo với định danh {{ param }}",
       "updated": "Một Organization cập nhật với định danh {{ param }}",

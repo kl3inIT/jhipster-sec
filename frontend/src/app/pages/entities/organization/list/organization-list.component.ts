@@ -2,7 +2,7 @@ import { Component, NgZone, OnInit, OnDestroy, inject, signal, computed } from '
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription, combineLatest, finalize, tap } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
@@ -14,6 +14,7 @@ import { ToastModule } from 'primeng/toast';
 import { SortService } from 'app/shared/sort/sort.service';
 import { SortState, sortStateSignal } from 'app/shared/sort/sort-state';
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
+import { WorkspaceContextService } from '../../shared/service/workspace-context.service';
 import { IOrganization } from '../organization.model';
 import { EntityArrayResponseType, OrganizationService } from '../service/organization.service';
 import { addTranslatedMessage, handleHttpError } from 'app/shared/error/http-error.utils';
@@ -30,6 +31,7 @@ const DEFAULT_SORT_DATA = 'defaultSort';
   imports: [
     CommonModule,
     RouterModule,
+    TranslatePipe,
     CardModule,
     TableModule,
     ButtonModule,
@@ -56,6 +58,7 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
   canRead = computed(() => this.capability()?.canRead ?? false);
   canUpdate = computed(() => this.capability()?.canUpdate ?? false);
   canDelete = computed(() => this.capability()?.canDelete ?? false);
+  showListDeniedState = computed(() => this.capabilityLoaded() && !this.canRead());
   showRowActions = computed(() => this.canRead() || this.canUpdate() || this.canDelete());
 
   readonly router = inject(Router);
@@ -66,6 +69,11 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
   private readonly translateService = inject(TranslateService);
+  private readonly workspaceContextService = inject(WorkspaceContextService);
+
+  private readonly navigationNodeId = this.activatedRoute.snapshot.data['navigationNodeId'] as
+    | string
+    | undefined;
 
   trackId = (item: IOrganization): number =>
     this.organizationService.getOrganizationIdentifier(item);
@@ -87,6 +95,13 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
   }
 
   load(): void {
+    if (this.showListDeniedState()) {
+      this.organizations.set([]);
+      this.totalItems = 0;
+      this.loading.set(false);
+      return;
+    }
+
     this.queryBackend().subscribe({
       next: (res: EntityArrayResponseType) => {
         this.onResponseSuccess(res);
@@ -171,14 +186,17 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
   }
 
   create(): void {
+    this.storeWorkspaceContext();
     this.router.navigate(['/entities/organization/new']);
   }
 
   view(org: IOrganization): void {
+    this.storeWorkspaceContext();
     this.router.navigate(['/entities/organization', org.id, 'view']);
   }
 
   edit(org: IOrganization): void {
+    this.storeWorkspaceContext();
     this.router.navigate(['/entities/organization', org.id, 'edit']);
   }
 
@@ -206,5 +224,16 @@ export default class OrganizationListComponent implements OnInit, OnDestroy {
       },
       error: (err: unknown) => handleHttpError(this.messageService, this.translateService, err),
     });
+  }
+
+  private storeWorkspaceContext(): void {
+    if (!this.navigationNodeId) {
+      return;
+    }
+
+    this.workspaceContextService.store(
+      this.navigationNodeId,
+      this.activatedRoute.snapshot.queryParams,
+    );
   }
 }

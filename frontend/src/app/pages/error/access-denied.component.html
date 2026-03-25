@@ -1,7 +1,41 @@
-<div class="flex justify-content-center align-items-center min-h-screen surface-ground">
-  <p-card styleClass="w-full max-w-sm shadow-3 text-center">
-    <h2>{{ 'pageTitle.accessDenied' | translate }}</h2>
-    <p>{{ 'error.http.403' | translate }}</p>
-    <p-button [label]="'error.backToHome' | translate" icon="pi pi-home" [routerLink]="['/']" />
+<div class="mx-auto max-w-3xl space-y-4">
+  <h1 class="m-0 text-3xl font-semibold" tabindex="-1">
+    {{ 'pageTitle.accessDenied' | translate }}
+  </h1>
+
+  <p-card styleClass="shadow-sm">
+    <div class="flex flex-column gap-3">
+      <p class="m-0 text-lg">
+        {{
+          'error.accessDenied.blockedMessage'
+            | translate
+              : {
+                  destination: (blockedLabelKey() ?? 'pageTitle.accessDenied' | translate),
+                }
+        }}
+      </p>
+      <p class="m-0 text-color-secondary">
+        {{
+          'error.accessDenied.recoveryMessage'
+            | translate
+              : {
+                  fallback: (fallbackLabelKey() | translate),
+                }
+        }}
+      </p>
+      <div class="pt-2">
+        <p-button
+          [label]="
+            'error.accessDenied.goTo'
+              | translate
+                : {
+                    destination: (fallbackLabelKey() | translate),
+                  }
+          "
+          icon="pi pi-arrow-right"
+          [routerLink]="fallbackRoute()"
+        />
+      </div>
+    </div>
   </p-card>
 </div>

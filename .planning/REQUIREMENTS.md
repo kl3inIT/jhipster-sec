@@ -14,13 +14,13 @@
 
 ### Navigation And Permissions
 
-- [ ] **ROUTE-01**: The authenticated frontend menu and navigation structure are loaded from backend-driven data rather than a hardcoded client menu definition.
-- [ ] **ROUTE-02**: Routes and visible navigation entries are denied before page render when the current user lacks the required backend-provided role or permission.
-- [ ] **ROUTE-03**: Admin and entity areas are split behind lazy-loaded route boundaries so permission-aware navigation does not force-load the entire app shell.
+- [x] **ROUTE-01**: The authenticated frontend menu and navigation structure are loaded from backend-driven data rather than a hardcoded client menu definition.
+- [x] **ROUTE-02**: Routes and visible navigation entries are denied before page render when the current user lacks the required backend-provided role or permission.
+- [x] **ROUTE-03**: Admin and entity areas are split behind lazy-loaded route boundaries so permission-aware navigation does not force-load the entire app shell.
 
 ### Enterprise UI
 
-- [ ] **UI-04**: Admin and secured-entity screens use an enterprise-style shell with Jmix-like master-detail patterns so lists and detail or edit workflows feel consistent.
+- [x] **UI-04**: Admin and secured-entity screens use an enterprise-style shell with Jmix-like master-detail patterns so lists and detail or edit workflows feel consistent.
 - [ ] **UI-05**: The frontend is more usable and responsive across desktop and narrower widths, with consistent actions, spacing, feedback, and loading states.
 
 ### Internationalization And Migration Parity
@@ -69,10 +69,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | I18N-01 | Phase 6 | Complete |
 | I18N-02 | Phase 6 | Complete |
-| ROUTE-01 | Phase 7 | Pending |
-| ROUTE-02 | Phase 7 | Pending |
-| ROUTE-03 | Phase 7 | Pending |
-| UI-04 | Phase 7 | Pending |
+| ROUTE-01 | Phase 7 | Complete |
+| ROUTE-02 | Phase 7 | Complete |
+| ROUTE-03 | Phase 7 | Complete |
+| UI-04 | Phase 7 | Complete |
 | UMGT-01 | Phase 8 | Pending |
 | UMGT-02 | Phase 8 | Pending |
 | UMGT-03 | Phase 8 | Pending |

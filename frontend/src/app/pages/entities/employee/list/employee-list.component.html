@@ -7,91 +7,126 @@
       <h1 class="m-0 text-2xl font-semibold">Employees</h1>
     </div>
     <div class="flex gap-2">
-      @if (canCreate()) {
-        <button pButton type="button" icon="pi pi-plus" label="New Employee" (click)="create()"></button>
+      @if (canRead() && canCreate()) {
+        <button
+          pButton
+          type="button"
+          icon="pi pi-plus"
+          label="New Employee"
+          (click)="create()"
+        ></button>
       }
     </div>
   </div>
 
   <p-card class="shadow-sm">
-    <p-table
-      [value]="employees()"
-      [lazy]="true"
-      [paginator]="true"
-      [rows]="itemsPerPage"
-      [totalRecords]="totalItems"
-      [first]="firstRow"
-      [loading]="loading()"
-      [sortField]="sortState().predicate ?? 'id'"
-      [sortOrder]="(sortState().order === 'desc' ? -1 : 1)"
-      [tableStyle]="{ 'min-width': '100%' }"
-      styleClass="p-datatable-gridlines p-datatable-sm"
-      dataKey="id"
-      (onLazyLoad)="onLazyLoad($event)"
-      [rowsPerPageOptions]="[10, 20, 30]"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th pSortableColumn="id" style="width: 6rem">ID <p-sortIcon field="id" /></th>
-          <th pSortableColumn="employeeNumber">Employee No. <p-sortIcon field="employeeNumber" /></th>
-          <th pSortableColumn="firstName">First Name <p-sortIcon field="firstName" /></th>
-          <th pSortableColumn="lastName">Last Name <p-sortIcon field="lastName" /></th>
-          <th>Department</th>
-          <th pSortableColumn="email">Email <p-sortIcon field="email" /></th>
-          @if (showSalaryColumn()) {
-            <th pSortableColumn="salary">Salary <p-sortIcon field="salary" /></th>
-          }
-          <th style="width: 10rem; text-align: center">Actions</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-row>
-        <tr>
-          <td>
-            <a [routerLink]="['/entities/employee', row.id, 'view']" class="font-medium">{{ row.id }}</a>
-          </td>
-          <td>{{ row.employeeNumber }}</td>
-          <td>{{ row.firstName }}</td>
-          <td>{{ row.lastName }}</td>
-          <td>{{ row.department?.name }}</td>
-          <td>{{ row.email }}</td>
-          @if (showSalaryColumn()) {
-            <td>{{ row.salary !== undefined ? (row.salary | number: '1.2-2') : '' }}</td>
-          }
-          <td style="text-align: center">
-            @if (capabilityLoaded()) {
-              <div class="flex items-center justify-center gap-2">
-                @if (canRead()) {
-                  <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-eye" aria-label="View" (click)="view(row)"></button>
-                }
-                @if (canUpdate()) {
-                  <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-pencil" aria-label="Edit" (click)="edit(row)"></button>
-                }
-                @if (canDelete()) {
-                  <button
-                    pButton
-                    type="button"
-                    class="p-button-text p-button-danger p-button-sm"
-                    icon="pi pi-trash"
-                    aria-label="Delete"
-                    (click)="confirmDelete(row)"
-                  ></button>
-                }
-              </div>
-            } @else {
-              <i class="pi pi-spin pi-spinner text-gray-400"></i>
+    @if (showListDeniedState()) {
+      <div class="flex flex-column gap-3 py-6 text-center">
+        <h2 class="m-0 text-2xl font-semibold">
+          {{ 'angappApp.employee.home.denied.title' | translate }}
+        </h2>
+        <p class="m-0 text-color-secondary">
+          {{ 'angappApp.employee.home.denied.message' | translate }}
+        </p>
+      </div>
+    } @else {
+      <p-table
+        [value]="employees()"
+        [lazy]="true"
+        [paginator]="true"
+        [rows]="itemsPerPage"
+        [totalRecords]="totalItems"
+        [first]="firstRow"
+        [loading]="loading()"
+        [sortField]="sortState().predicate ?? 'id'"
+        [sortOrder]="sortState().order === 'desc' ? -1 : 1"
+        [tableStyle]="{ 'min-width': '100%' }"
+        styleClass="p-datatable-gridlines p-datatable-sm"
+        dataKey="id"
+        (onLazyLoad)="onLazyLoad($event)"
+        [rowsPerPageOptions]="[10, 20, 30]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="id" style="width: 6rem">ID <p-sortIcon field="id" /></th>
+            <th pSortableColumn="employeeNumber">
+              Employee No. <p-sortIcon field="employeeNumber" />
+            </th>
+            <th pSortableColumn="firstName">First Name <p-sortIcon field="firstName" /></th>
+            <th pSortableColumn="lastName">Last Name <p-sortIcon field="lastName" /></th>
+            <th>Department</th>
+            <th pSortableColumn="email">Email <p-sortIcon field="email" /></th>
+            @if (showSalaryColumn()) {
+              <th pSortableColumn="salary">Salary <p-sortIcon field="salary" /></th>
             }
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td [attr.colspan]="showSalaryColumn() ? 8 : 7" class="text-center py-4">
-            No employees found. Create the first employee using the New Employee button.
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+            <th style="width: 10rem; text-align: center">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td>
+              <a [routerLink]="['/entities/employee', row.id, 'view']" class="font-medium">{{
+                row.id
+              }}</a>
+            </td>
+            <td>{{ row.employeeNumber }}</td>
+            <td>{{ row.firstName }}</td>
+            <td>{{ row.lastName }}</td>
+            <td>{{ row.department?.name }}</td>
+            <td>{{ row.email }}</td>
+            @if (showSalaryColumn()) {
+              <td>{{ row.salary !== undefined ? (row.salary | number: '1.2-2') : '' }}</td>
+            }
+            <td style="text-align: center">
+              @if (capabilityLoaded()) {
+                <div class="flex items-center justify-center gap-2">
+                  @if (canRead()) {
+                    <button
+                      pButton
+                      type="button"
+                      class="p-button-text p-button-sm"
+                      icon="pi pi-eye"
+                      aria-label="View"
+                      (click)="view(row)"
+                    ></button>
+                  }
+                  @if (canUpdate()) {
+                    <button
+                      pButton
+                      type="button"
+                      class="p-button-text p-button-sm"
+                      icon="pi pi-pencil"
+                      aria-label="Edit"
+                      (click)="edit(row)"
+                    ></button>
+                  }
+                  @if (canDelete()) {
+                    <button
+                      pButton
+                      type="button"
+                      class="p-button-text p-button-danger p-button-sm"
+                      icon="pi pi-trash"
+                      aria-label="Delete"
+                      (click)="confirmDelete(row)"
+                    ></button>
+                  }
+                </div>
+              } @else {
+                <i class="pi pi-spin pi-spinner text-gray-400"></i>
+              }
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="showSalaryColumn() ? 8 : 7" class="text-center py-4">
+              No employees found. Create the first employee using the New Employee button.
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
   </p-card>
 </div>

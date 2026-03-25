@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- ChangeSet 1: Rename sec_navigation_grant to sec_menu_permission and rename columns -->
+    <changeSet id="20260325000200-1" author="dev">
+        <renameTable oldTableName="sec_navigation_grant" newTableName="sec_menu_permission"/>
+    </changeSet>
+
+    <changeSet id="20260325000200-2" author="dev">
+        <renameColumn tableName="sec_menu_permission"
+                      oldColumnName="authority_name"
+                      newColumnName="role"
+                      columnDataType="varchar(50)"/>
+    </changeSet>
+
+    <changeSet id="20260325000200-3" author="dev">
+        <renameColumn tableName="sec_menu_permission"
+                      oldColumnName="node_id"
+                      newColumnName="menu_id"
+                      columnDataType="varchar(150)"/>
+    </changeSet>
+
+    <changeSet id="20260325000200-4" author="dev">
+        <dropUniqueConstraint tableName="sec_menu_permission"
+                              constraintName="ux_sec_navigation_grant_authority_app_node"/>
+        <addUniqueConstraint tableName="sec_menu_permission"
+                             columnNames="role, app_name, menu_id"
+                             constraintName="ux_sec_menu_permission_role_app_menu"/>
+    </changeSet>
+
+    <changeSet id="20260325000200-5" author="dev">
+        <dropIndex tableName="sec_menu_permission" indexName="idx_sec_navigation_grant_app_authority"/>
+        <createIndex indexName="idx_sec_menu_permission_app_role" tableName="sec_menu_permission">
+            <column name="app_name"/>
+            <column name="role"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20260325000200-6" author="dev">
+        <dropIndex tableName="sec_menu_permission" indexName="idx_sec_navigation_grant_app_node"/>
+        <createIndex indexName="idx_sec_menu_permission_app_menu" tableName="sec_menu_permission">
+            <column name="app_name"/>
+            <column name="menu_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20260325000200-7" author="dev">
+        <dropForeignKeyConstraint baseTableName="sec_menu_permission"
+                                  constraintName="fk_sec_navigation_grant_authority"/>
+        <addForeignKeyConstraint
+            baseTableName="sec_menu_permission"
+            baseColumnNames="role"
+            referencedTableName="jhi_authority"
+            referencedColumnNames="name"
+            constraintName="fk_sec_menu_permission_role"
+            onDelete="CASCADE"/>
+    </changeSet>
+
+    <!-- ChangeSet 2: Create sec_menu_definition table -->
+    <changeSet id="20260325000200-8" author="dev">
+        <createTable tableName="sec_menu_definition">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="menu_id" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="app_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(500)"/>
+            <column name="parent_menu_id" type="varchar(150)"/>
+            <column name="route" type="varchar(300)"/>
+            <column name="icon" type="varchar(100)"/>
+            <column name="ordering" type="integer" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20260325000200-11" author="dev">
+        <addColumn tableName="sec_menu_definition">
+            <column name="menu_name" type="varchar(200)">
+                <constraints nullable="false" defaultValue=""/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20260325000200-9" author="dev">
+        <addUniqueConstraint tableName="sec_menu_definition"
+                             columnNames="app_name, menu_id"
+                             constraintName="ux_sec_menu_definition_app_menu"/>
+    </changeSet>
+
+    <changeSet id="20260325000200-10" author="dev">
+        <createIndex indexName="idx_sec_menu_definition_app_parent" tableName="sec_menu_definition">
+            <column name="app_name"/>
+            <column name="parent_menu_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

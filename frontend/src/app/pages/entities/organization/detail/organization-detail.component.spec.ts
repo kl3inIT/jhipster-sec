@@ -2,13 +2,17 @@ import { HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
+import { vi } from 'vitest';
 
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
+import { WorkspaceContextService } from '../../shared/service/workspace-context.service';
 import { OrganizationService } from '../service/organization.service';
 import OrganizationDetailComponent from './organization-detail.component';
 
 describe('OrganizationDetailComponent', () => {
-  let routeSnapshot: { data: { capability: ISecuredEntityCapability | null } };
+  let routeSnapshot: {
+    data: { capability: ISecuredEntityCapability | null; navigationNodeId?: string };
+  };
 
   const organizationService = {
     find: () =>
@@ -24,11 +28,21 @@ describe('OrganizationDetailComponent', () => {
       ),
   };
   const router = {
-    navigate: async () => true,
+    navigate: vi.fn(async () => true),
+  };
+  const workspaceContextService = {
+    get: vi.fn<() => { queryParams: Record<string, string> } | null>(() => null),
   };
 
   beforeEach(() => {
-    routeSnapshot = { data: { capability: buildCapability(false) } };
+    router.navigate.mockClear();
+    workspaceContextService.get.mockClear();
+    routeSnapshot = {
+      data: {
+        capability: buildCapability(false),
+        navigationNodeId: 'entities.organization',
+      },
+    };
 
     TestBed.configureTestingModule({
       imports: [OrganizationDetailComponent],
@@ -42,6 +56,7 @@ describe('OrganizationDetailComponent', () => {
         },
         { provide: Router, useValue: router },
         { provide: OrganizationService, useValue: organizationService },
+        { provide: WorkspaceContextService, useValue: workspaceContextService },
       ],
     });
   });
@@ -66,6 +81,29 @@ describe('OrganizationDetailComponent', () => {
 
     expect(getEditButton(fixture.nativeElement as HTMLElement)).not.toBeNull();
   });
+
+  it('restores the saved workspace query params when navigating back', async () => {
+    workspaceContextService.get.mockReturnValue({
+      queryParams: {
+        page: '3',
+        sort: 'name,desc',
+      },
+    });
+    const fixture = TestBed.createComponent(OrganizationDetailComponent);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    fixture.componentInstance.back();
+
+    expect(workspaceContextService.get).toHaveBeenCalledWith('entities.organization');
+    expect(router.navigate).toHaveBeenCalledWith(['/entities/organization'], {
+      queryParams: {
+        page: '3',
+        sort: 'name,desc',
+      },
+    });
+  });
 });
 
 function buildCapability(canUpdate: boolean): ISecuredEntityCapability {
@@ -80,5 +118,9 @@ function buildCapability(canUpdate: boolean): ISecuredEntityCapability {
 }
 
 function getEditButton(nativeElement: HTMLElement): HTMLButtonElement | null {
-  return Array.from(nativeElement.querySelectorAll('button')).find(button => button.textContent?.includes('Edit')) ?? null;
+  return (
+    Array.from(nativeElement.querySelectorAll('button')).find((button) =>
+      button.textContent?.includes('Edit'),
+    ) ?? null
+  );
 }

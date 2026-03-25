@@ -1,14 +1,16 @@
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { vi } from 'vitest';
 
 import { SortService } from 'app/shared/sort/sort.service';
 import { IOrganization } from '../organization.model';
 import { OrganizationService } from '../service/organization.service';
 import OrganizationListComponent from './organization-list.component';
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
+import { WorkspaceContextService } from '../../shared/service/workspace-context.service';
 
 describe('OrganizationListComponent', () => {
   const organization: IOrganization = {
@@ -27,16 +29,10 @@ describe('OrganizationListComponent', () => {
     attributes: [],
   };
 
-  const organizationService = {
-    query: () =>
-      of(
-        new HttpResponse<IOrganization[]>({
-          body: [organization],
-          headers: new HttpHeaders({ 'X-Total-Count': '1' }),
-        }),
-      ),
-    getOrganizationIdentifier: (item: Pick<IOrganization, 'id'>) => item.id ?? 0,
-    delete: () => of(new HttpResponse({ status: 204 })),
+  let organizationService: {
+    query: ReturnType<typeof vi.fn>;
+    getOrganizationIdentifier: (item: Pick<IOrganization, 'id'>) => number;
+    delete: ReturnType<typeof vi.fn>;
   };
 
   const sortService = {
@@ -45,13 +41,40 @@ describe('OrganizationListComponent', () => {
   };
 
   const router = {
-    navigate: async () => true,
+    navigate: vi.fn(async () => true),
   };
 
-  let routeSnapshot: { data: { capability: ISecuredEntityCapability | null } };
+  const workspaceContextService = {
+    store: vi.fn(),
+  };
+
+  let routeSnapshot: {
+    data: { capability: ISecuredEntityCapability | null; navigationNodeId?: string };
+    queryParams: Record<string, string>;
+  };
 
   beforeEach(() => {
-    routeSnapshot = { data: { capability: restrictiveCapability } };
+    organizationService = {
+      query: vi.fn(() =>
+        of(
+          new HttpResponse<IOrganization[]>({
+            body: [organization],
+            headers: new HttpHeaders({ 'X-Total-Count': '1' }),
+          }),
+        ),
+      ),
+      getOrganizationIdentifier: (item: Pick<IOrganization, 'id'>) => item.id ?? 0,
+      delete: vi.fn(() => of(new HttpResponse({ status: 204 }))),
+    };
+    router.navigate.mockClear();
+    workspaceContextService.store.mockClear();
+    routeSnapshot = {
+      data: {
+        capability: restrictiveCapability,
+        navigationNodeId: 'entities.organization',
+      },
+      queryParams: {},
+    };
 
     TestBed.configureTestingModule({
       imports: [OrganizationListComponent],
@@ -60,6 +83,7 @@ describe('OrganizationListComponent', () => {
         { provide: OrganizationService, useValue: organizationService },
         { provide: SortService, useValue: sortService },
         { provide: Router, useValue: router },
+        { provide: WorkspaceContextService, useValue: workspaceContextService },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -69,6 +93,20 @@ describe('OrganizationListComponent', () => {
           },
         },
       ],
+    });
+
+    TestBed.inject(TranslateService).setTranslation('en', {
+      angappApp: {
+        organization: {
+          home: {
+            denied: {
+              title: 'Organization access is limited',
+              message:
+                'You can open this workspace from the shell, but you do not have permission to view organization records.',
+            },
+          },
+        },
+      },
     });
   });
 
@@ -103,5 +141,42 @@ describe('OrganizationListComponent', () => {
     expect(nativeElement.querySelector('button[aria-label="View"]')).toBeNull();
     expect(nativeElement.querySelector('button[aria-label="Edit"]')).toBeNull();
     expect(nativeElement.querySelector('button[aria-label="Delete"]')).toBeNull();
+  });
+
+  it('shows an in-shell denied state and skips the list query when read access is denied', async () => {
+    routeSnapshot.data.capability = {
+      ...restrictiveCapability,
+      canRead: false,
+    };
+    const fixture = TestBed.createComponent(OrganizationListComponent);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(organizationService.query).not.toHaveBeenCalled();
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
+      'Organization access is limited',
+    );
+  });
+
+  it('stores the current list context before navigating to a detail route', async () => {
+    routeSnapshot.queryParams = {
+      page: '2',
+      sort: 'name,desc',
+      owner: 'admin',
+    };
+    const fixture = TestBed.createComponent(OrganizationListComponent);
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    fixture.componentInstance.view(organization);
+
+    expect(workspaceContextService.store).toHaveBeenCalledWith(
+      'entities.organization',
+      routeSnapshot.queryParams,
+    );
+    expect(router.navigate).toHaveBeenCalledWith(['/entities/organization', 1, 'view']);
   });
 });

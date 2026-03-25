@@ -1,0 +1,12 @@
+{
+  "angappApp": {
+    "employee": {
+      "home": {
+        "denied": {
+          "title": "Employee access is limited",
+          "message": "You can open this workspace from the shell, but you do not have permission to view employee records."
+        }
+      }
+    }
+  }
+}

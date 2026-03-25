@@ -32,7 +32,11 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Department",
         "createOrEditLabel": "Create or edit a Department",
-        "notFound": "No Departments found"
+        "notFound": "No Departments found",
+        "denied": {
+          "title": "Department access is limited",
+          "message": "You can open this workspace from the shell, but you do not have permission to view department records."
+        }
       },
       "created": "A new Department is created with identifier {{ param }}",
       "updated": "A Department is updated with identifier {{ param }}",
@@ -47,13 +51,25 @@
       "name": "Name",
       "code": "Code"
     },
+    "employee": {
+      "home": {
+        "denied": {
+          "title": "Employee access is limited",
+          "message": "You can open this workspace from the shell, but you do not have permission to view employee records."
+        }
+      }
+    },
     "organization": {
       "home": {
         "title": "Organizations",
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Organization",
         "createOrEditLabel": "Create or edit a Organization",
-        "notFound": "No Organizations found"
+        "notFound": "No Organizations found",
+        "denied": {
+          "title": "Organization access is limited",
+          "message": "You can open this workspace from the shell, but you do not have permission to view organization records."
+        }
       },
       "created": "A new Organization is created with identifier {{ param }}",
       "updated": "A Organization is updated with identifier {{ param }}",
@@ -135,7 +151,12 @@
     },
     "concurrencyFailure": "Another user modified this data at the same time as you. Your changes were rejected.",
     "validation": "Validation error on the server.",
-    "backToHome": "Go to home"
+    "backToHome": "Go to home",
+    "accessDenied": {
+      "blockedMessage": "You do not have access to {{ destination }}.",
+      "recoveryMessage": "Go to {{ fallback }} or contact an administrator if you think this is a mistake.",
+      "goTo": "Go to {{ destination }}"
+    }
   },
   "feedback": {
     "toast": {

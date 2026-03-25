@@ -6,7 +6,11 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Organization",
         "createOrEditLabel": "Create or edit a Organization",
-        "notFound": "No Organizations found"
+        "notFound": "No Organizations found",
+        "denied": {
+          "title": "Organization access is limited",
+          "message": "You can open this workspace from the shell, but you do not have permission to view organization records."
+        }
       },
       "created": "A new Organization is created with identifier {{ param }}",
       "updated": "A Organization is updated with identifier {{ param }}",

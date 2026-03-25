@@ -25,6 +25,11 @@
     },
     "concurrencyFailure": "Another user modified this data at the same time as you. Your changes were rejected.",
     "validation": "Validation error on the server.",
-    "backToHome": "Về trang chủ"
+    "backToHome": "Về trang chủ",
+    "accessDenied": {
+      "blockedMessage": "Bạn không có quyền truy cập {{ destination }}.",
+      "recoveryMessage": "Đi tới {{ fallback }} hoặc liên hệ quản trị viên nếu bạn cho rằng điều này là nhầm lẫn.",
+      "goTo": "Đi tới {{ destination }}"
+    }
   }
 }

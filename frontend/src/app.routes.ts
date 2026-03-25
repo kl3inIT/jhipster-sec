@@ -15,6 +15,13 @@ export const appRoutes: Routes = [
         path: '',
         loadComponent: () => import('./app/pages/home/home.component'),
         canActivate: [UserRouteAccessService],
+        data: {
+          navigationNodeId: 'home.dashboard',
+          sectionId: 'home',
+          breadcrumbKey: 'global.menu.home',
+          pageTitleKey: 'pageTitle.home',
+          deniedMode: 'route',
+        },
         title: 'pageTitle.home',
       },
       {
@@ -41,7 +48,6 @@ export const appRoutes: Routes = [
         path: 'admin',
         loadChildren: () => import('./app/pages/admin/admin.routes'),
         canActivate: [UserRouteAccessService],
-        data: { authorities: ['ROLE_ADMIN'] },
       },
     ],
   },

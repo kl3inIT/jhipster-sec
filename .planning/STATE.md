@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: "Phase 06 shipped — PR #2"
-stopped_at: Ready to plan Phase 7
-last_updated: "2026-03-25T04:50:33.008Z"
-last_activity: 2026-03-25
+status: Ready to plan
+stopped_at: Completed 07-05-PLAN.md
+last_updated: "2026-03-25T08:17:23.275Z"
+last_activity: 2026-03-25 - Completed quick task 260325-lae: Rename SecNavigationGrant to SecMenuPermission + add SecMenuDefinition table
 progress:
   total_phases: 5
-  completed_phases: 1
-  total_plans: 6
-  completed_plans: 6
+  completed_phases: 2
+  total_plans: 11
+  completed_plans: 11
 ---
 
 # Project State
@@ -20,12 +20,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
-**Current focus:** Phase 07 - enterprise-navigation-shell
+**Current focus:** Phase 07 — enterprise-navigation-shell
 
 ## Current Position
 
-Phase: 07 (enterprise-navigation-shell) - READY TO PLAN
-Plan: -
+Phase: 8
+Plan: Not started
 
 ## Performance Metrics
 
@@ -50,6 +50,8 @@ Plan: -
 - Phase 6 completed with green `frontend` production build and focused Angular regression coverage
 - Standalone i18n, alerting, admin route foundations, and translated shell surfaces are now live in `frontend/`
 - Next actionable work: plan and execute Phase 7
+
+| Phase 07 P05 | 4 | 2 tasks | 19 files |
 
 ## Accumulated Context
 
@@ -109,6 +111,7 @@ Recent decisions affecting current work:
 - [Phase 06-frontend-parity-foundation]: Stored locale in `StateStorageService` overrides the default `vi`; `account.langKey` is only a fallback when no locale has been stored
 - [Phase 06-frontend-parity-foundation]: `frontend/src/app.routes.ts` is the authoritative root route tree and `frontend/src/app/app.routes.ts` now re-exports it for compatibility
 - [Phase 06-frontend-parity-foundation]: Menu root items must track stable ids, not translated labels, to keep language switching change-detection safe
+- [Phase 07]: All Phase 7 Wave 0 spec files now exist; Playwright shell tests use page.route() mocking for deterministic navigation and capability assertions
 
 ### Pending Todos
 
@@ -124,12 +127,14 @@ Recent decisions affecting current work:
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
+| 260325-lae | Rename SecNavigationGrant to SecMenuPermission, rename fields authorityName to role and nodeId to menuId, and add SecMenuDefinition table for menu metadata | 2026-03-25 | 6a99ffc | [260325-lae-rename-secnavigationgrant-to-secmenuperm](./quick/260325-lae-rename-secnavigationgrant-to-secmenuperm/) |
 | 260324-xae | Fix @SecuredEntity catalog and N+1 capability loading | 2026-03-24 | a223896 | [260324-xae-fix-securedentity-catalog-and-n-1-capabi](.planning/quick/260324-xae-fix-securedentity-catalog-and-n-1-capabi/) |
 | 260325-0ze | append Angular/TypeScript agent instructions to CLAUDE.md and AGENTS.md | 2026-03-24 | c012a5d | [260325-0ze-append-angular-typescript-agent-instruct](.planning/quick/260325-0ze-append-angular-typescript-agent-instruct/) |
+| 260325-lae | Rename SecNavigationGrant to SecMenuPermission, add SecMenuDefinition, update frontend | 2026-03-25 | d877771 | [260325-lae-rename-secnavigationgrant-to-secmenuperm](.planning/quick/260325-lae-rename-secnavigationgrant-to-secmenuperm/) |
 
 ## Session Continuity
 
 Last activity: 2026-03-25
-Last session: 2026-03-25T11:34:39.7370232+07:00
-Stopped at: Ready to plan Phase 7
-Resume file: .planning/ROADMAP.md
+Last session: 2026-03-25T15:32:00.000Z
+Stopped at: Completed quick task 260325-lae
+Resume file: None

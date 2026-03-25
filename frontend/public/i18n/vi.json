@@ -32,7 +32,11 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Thêm mới một Department",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Department",
-        "notFound": "No Departments found"
+        "notFound": "No Departments found",
+        "denied": {
+          "title": "Quyền truy cập phòng ban bị giới hạn",
+          "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi phòng ban."
+        }
       },
       "created": "Một Department mới được tạo với định danh {{ param }}",
       "updated": "Một Department cập nhật với định danh {{ param }}",
@@ -47,13 +51,25 @@
       "name": "Name",
       "code": "Code"
     },
+    "employee": {
+      "home": {
+        "denied": {
+          "title": "Quyền truy cập nhân viên bị giới hạn",
+          "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi nhân viên."
+        }
+      }
+    },
     "organization": {
       "home": {
         "title": "Organizations",
         "refreshListLabel": "Refresh list",
         "createLabel": "Thêm mới một Organization",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Organization",
-        "notFound": "No Organizations found"
+        "notFound": "No Organizations found",
+        "denied": {
+          "title": "Quyền truy cập tổ chức bị giới hạn",
+          "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi tổ chức."
+        }
       },
       "created": "Một Organization mới được tạo với định danh {{ param }}",
       "updated": "Một Organization cập nhật với định danh {{ param }}",
@@ -134,7 +150,12 @@
     },
     "concurrencyFailure": "Another user modified this data at the same time as you. Your changes were rejected.",
     "validation": "Validation error on the server.",
-    "backToHome": "Về trang chủ"
+    "backToHome": "Về trang chủ",
+    "accessDenied": {
+      "blockedMessage": "Bạn không có quyền truy cập {{ destination }}.",
+      "recoveryMessage": "Đi tới {{ fallback }} hoặc liên hệ quản trị viên nếu bạn cho rằng điều này là nhầm lẫn.",
+      "goTo": "Đi tới {{ destination }}"
+    }
   },
   "feedback": {
     "toast": {

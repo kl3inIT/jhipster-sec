@@ -14,6 +14,7 @@ import { finalize } from 'rxjs';
 import { IOrganization, NewOrganization } from '../organization.model';
 import { OrganizationService } from '../service/organization.service';
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
+import { WorkspaceContextService } from '../../shared/service/workspace-context.service';
 import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 @Component({
@@ -39,6 +40,7 @@ export default class OrganizationUpdateComponent implements OnInit {
   private readonly organizationService = inject(OrganizationService);
   private readonly messageService = inject(MessageService);
   private readonly translateService = inject(TranslateService);
+  private readonly workspaceContextService = inject(WorkspaceContextService);
 
   form: FormGroup = this.fb.group({
     id: [null as number | null],
@@ -52,6 +54,10 @@ export default class OrganizationUpdateComponent implements OnInit {
   isEdit = signal(false);
   isCapabilityReady = signal(false);
   showBudgetField = signal(false);
+
+  private readonly navigationNodeId = this.route.snapshot.data['navigationNodeId'] as
+    | string
+    | undefined;
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -119,14 +125,14 @@ export default class OrganizationUpdateComponent implements OnInit {
       : this.organizationService.create(payload as NewOrganization);
     request$.pipe(finalize(() => this.isSaving.set(false))).subscribe({
       next: () => {
-        this.router.navigate(['/entities/organization']);
+        this.navigateToWorkspaceList();
       },
       error: (err: unknown) => handleHttpError(this.messageService, this.translateService, err),
     });
   }
 
   cancel(): void {
-    this.router.navigate(['/entities/organization']);
+    this.navigateToWorkspaceList();
   }
 
   private canEditAttribute(capability: ISecuredEntityCapability, attributeName: string): boolean {
@@ -137,5 +143,15 @@ export default class OrganizationUpdateComponent implements OnInit {
 
   private navigateToAccessDenied(): void {
     this.router.navigate(['/accessdenied']);
+  }
+
+  private navigateToWorkspaceList(): void {
+    const context = this.navigationNodeId
+      ? this.workspaceContextService.get(this.navigationNodeId)
+      : null;
+    this.router.navigate(
+      ['/entities/organization'],
+      context ? { queryParams: context.queryParams } : undefined,
+    );
   }
 }

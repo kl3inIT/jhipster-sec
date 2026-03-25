@@ -29,6 +29,8 @@ The repository now includes:
 - Proof-domain entities and APIs for Organization, Department, and Employee that verify allow/deny behavior end to end.
 - A standalone Angular frontend under `frontend/` for login, route protection, security administration, and protected-entity screens.
 
+**Phase 7 complete** — Backend-driven navigation shell with menu filtering, route guards, breadcrumbs, access-denied recovery, and workspace context preservation. 12/12 must-haves verified.
+
 `v1.1` planning starts from a clear frontend parity gap:
 
 - `frontend/` currently has far fewer application files than `angapp/`, so important JHipster support files and translated assets are still missing.
@@ -48,8 +50,9 @@ The repository now includes:
 ### Active
 
 - [ ] UMGT-01 through UMGT-03: Migrate full JHipster-style admin user management into `frontend/`, including role assignment.
-- [ ] ROUTE-01 through ROUTE-03: Load menu and permission context from backend data and enforce access before route render.
-- [ ] UI-04 through UI-05: Adopt a Jmix-style enterprise shell and improve consistency, responsiveness, and master-detail workflows.
+- [x] ROUTE-01 through ROUTE-03: Load menu and permission context from backend data and enforce access before route render. Validated in Phase 7: Enterprise Navigation Shell
+- [ ] UI-04: Adopt a Jmix-style enterprise shell. Validated in Phase 7: Enterprise Navigation Shell (breadcrumbs, access-denied recovery, workspace context)
+- [ ] UI-05: Improve consistency, responsiveness, and master-detail workflows.
 - [ ] I18N-01 through I18N-02: Copy the required `angapp/` support files and translation assets for in-scope frontend features.
 - [ ] PERF-01 through PERF-03 and TEST-01 through TEST-03: Optimize frontend loading/data access and add reliable automated coverage for the new admin experience.
 
