@@ -10,12 +10,11 @@ import { RouterModule } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 
 import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { TagModule } from 'primeng/tag';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { TreeModule } from 'primeng/tree';
+import { ConfirmationService, MessageService, TreeNode } from 'primeng/api';
 
 import { ISecMenuDefinition, ISyncNode } from '../sec-menu-definition.model';
 import { SecMenuDefinitionService } from '../service/sec-menu-definition.service';
@@ -29,11 +28,10 @@ import { APP_NAVIGATION_TREE } from 'app/layout/navigation/navigation-registry';
   imports: [
     RouterModule,
     ButtonModule,
-    TableModule,
     CardModule,
     ToastModule,
     ConfirmDialogModule,
-    TagModule,
+    TreeModule,
     MenuDefinitionDialogComponent,
     TranslatePipe,
   ],
@@ -42,6 +40,7 @@ import { APP_NAVIGATION_TREE } from 'app/layout/navigation/navigation-registry';
 })
 export default class MenuDefinitionListComponent implements OnInit {
   definitions: ISecMenuDefinition[] = [];
+  treeNodes: TreeNode[] = [];
   isLoading = false;
   isSyncing = false;
   dialogVisible = false;
@@ -68,10 +67,35 @@ export default class MenuDefinitionListComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: response => (this.definitions = response.body ?? []),
+        next: response => {
+          this.definitions = response.body ?? [];
+          this.buildTree();
+        },
         error: (err: unknown) =>
           handleHttpError(this.messageService, this.translateService, err, 'feedback.security.menuDefinitions.loadFailed'),
       });
+  }
+
+  private buildTree(): void {
+    const nodeMap = new Map<string, TreeNode>();
+    for (const def of this.definitions) {
+      nodeMap.set(def.menuId, { key: String(def.id), label: def.label, data: def, expanded: true, children: [] });
+    }
+    const roots: TreeNode[] = [];
+    for (const def of this.definitions) {
+      const node = nodeMap.get(def.menuId)!;
+      if (def.parentMenuId && nodeMap.has(def.parentMenuId)) {
+        nodeMap.get(def.parentMenuId)!.children!.push(node);
+      } else {
+        roots.push(node);
+      }
+    }
+    const sortNodes = (nodes: TreeNode[]) => {
+      nodes.sort((a, b) => ((a.data as ISecMenuDefinition).ordering ?? 0) - ((b.data as ISecMenuDefinition).ordering ?? 0));
+      nodes.forEach(n => { if (n.children?.length) sortNodes(n.children); });
+    };
+    sortNodes(roots);
+    this.treeNodes = roots;
   }
 
   openCreate(): void {

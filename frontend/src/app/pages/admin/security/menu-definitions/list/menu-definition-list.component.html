@@ -18,53 +18,34 @@
     </div>
   </ng-template>
 
-  <p-table
-    [value]="definitions"
-    [loading]="isLoading"
-    responsiveLayout="scroll"
-    [tableStyle]="{ 'min-width': '60rem' }"
-  >
-    <ng-template #header>
-      <tr>
-        <th>Menu ID</th>
-        <th>Label</th>
-        <th>Parent</th>
-        <th>Route</th>
-        <th>Icon</th>
-        <th>Order</th>
-        <th>Actions</th>
-      </tr>
+  <p-tree [value]="treeNodes" [loading]="isLoading" styleClass="w-full border-0">
+    <ng-template pTemplate="default" let-node>
+      <div class="flex items-center justify-between w-full gap-3 py-1">
+        <div class="flex items-center gap-2 min-w-0">
+          @if (node.data.icon) {
+            <i [class]="node.data.icon + ' text-color-secondary'"></i>
+          }
+          <span class="font-semibold">{{ node.data.label }}</span>
+          <span class="text-sm text-color-secondary truncate">{{ node.data.menuId }}</span>
+          @if (node.data.route) {
+            <span class="text-xs text-color-secondary opacity-60 truncate">{{ node.data.route }}</span>
+          }
+        </div>
+        <div class="flex gap-1 flex-shrink-0">
+          <p-button icon="pi pi-pencil" severity="secondary" size="small" [text]="true" (onClick)="openEdit(node.data)" />
+          <p-button icon="pi pi-trash" severity="danger" size="small" [text]="true" (onClick)="confirmDelete(node.data)" />
+        </div>
+      </div>
     </ng-template>
 
-    <ng-template #body let-def>
-      <tr>
-        <td>{{ def.menuId }}</td>
-        <td>{{ def.label }}</td>
-        <td>{{ def.parentMenuId ?? '---' }}</td>
-        <td>{{ def.route }}</td>
-        <td>{{ def.icon }}</td>
-        <td>{{ def.ordering }}</td>
-        <td>
-          <div class="flex gap-2">
-            <p-button label="Edit" icon="pi pi-pencil" severity="secondary" size="small" (onClick)="openEdit(def)" />
-            <p-button label="Delete" icon="pi pi-trash" severity="danger" [outlined]="true" size="small" (onClick)="confirmDelete(def)" />
-          </div>
-        </td>
-      </tr>
+    <ng-template pTemplate="empty">
+      <div class="flex flex-col items-center gap-4 py-8">
+        <i class="pi pi-list text-4xl text-color-secondary"></i>
+        <div class="text-xl font-semibold">No menu definitions</div>
+        <div class="text-color-secondary">Create the first menu definition or sync existing navigation nodes from the registry.</div>
+      </div>
     </ng-template>
-
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="7">
-          <div class="flex flex-col items-center gap-4 py-8">
-            <i class="pi pi-list text-4xl text-color-secondary"></i>
-            <div class="text-xl font-semibold">No menu definitions</div>
-            <div class="text-color-secondary">Create the first menu definition or sync existing navigation nodes from the registry.</div>
-          </div>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+  </p-tree>
 </p-card>
 
 @if (dialogVisible) {
