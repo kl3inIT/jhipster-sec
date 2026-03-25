@@ -1,0 +1,21 @@
+{
+  "security": {
+    "alert": {
+      "secRole": {
+        "created": "A security role is created with identifier {{ param }}",
+        "updated": "A security role is updated with identifier {{ param }}",
+        "deleted": "A security role is deleted with identifier {{ param }}"
+      },
+      "secPermission": {
+        "created": "A security permission is created with identifier {{ param }}",
+        "updated": "A security permission is updated with identifier {{ param }}",
+        "deleted": "A security permission is deleted with identifier {{ param }}"
+      },
+      "secRowPolicy": {
+        "created": "A row policy is created with identifier {{ param }}",
+        "updated": "A row policy is updated with identifier {{ param }}",
+        "deleted": "A row policy is deleted with identifier {{ param }}"
+      }
+    }
+  }
+}

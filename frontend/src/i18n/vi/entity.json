@@ -1,0 +1,40 @@
+{
+  "entity": {
+    "action": {
+      "addblob": "Thêm nội dung",
+      "addimage": "Thêm ảnh",
+      "back": "Quay lại",
+      "cancel": "Hủy",
+      "delete": "Xóa",
+      "edit": "Sửa",
+      "open": "Mở",
+      "save": "Lưu",
+      "view": "Xem",
+      "show": "Show {{otherEntity}}"
+    },
+    "detail": {
+      "field": "Trường",
+      "value": "Giá trị"
+    },
+    "delete": {
+      "title": "Xác nhận hành động xóa"
+    },
+    "validation": {
+      "required": "Trường này bắt buộc phải nhập.",
+      "minlength": "Trường này phải có ít nhất {{ min }} ký tự.",
+      "maxlength": "Trường này không được vượt quá {{ max }} ký tự.",
+      "min": "Trường này phải lớn hơn {{ min }}.",
+      "max": "Trường này phải nhỏ hơn {{ max }}.",
+      "minbytes": "Dung lượng trường này phải lớn hơn {{ min }} bytes.",
+      "maxbytes": "Dung lượng trường này phải nhỏ hơn {{ max }} bytes.",
+      "pattern": "Trường này phải theo định dạng {{ pattern }}.",
+      "number": "Trường này phải là một số.",
+      "datetimelocal": "Trường này phải là định dạng thời gian."
+    },
+    "filters": {
+      "set": "Following filters are set",
+      "clear": "Clear filter",
+      "clearAll": "Clear all filters"
+    }
+  }
+}

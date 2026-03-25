@@ -1,0 +1,26 @@
+{
+  "angappApp": {
+    "organization": {
+      "home": {
+        "title": "Organizations",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một Organization",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Organization",
+        "notFound": "No Organizations found"
+      },
+      "created": "Một Organization mới được tạo với định danh {{ param }}",
+      "updated": "Một Organization cập nhật với định danh {{ param }}",
+      "deleted": "Một Organization đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Organization {{ id }}?"
+      },
+      "detail": {
+        "title": "Organization"
+      },
+      "id": "ID",
+      "code": "Code",
+      "name": "Name",
+      "description": "Description"
+    }
+  }
+}

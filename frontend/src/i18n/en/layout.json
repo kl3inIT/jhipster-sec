@@ -1,0 +1,25 @@
+{
+  "layout": {
+    "topbar": {
+      "toggleMenu": "Toggle menu",
+      "toggleTheme": "Toggle theme",
+      "login": "Sign in",
+      "logout": "Sign out"
+    },
+    "language": {
+      "en": "English",
+      "vi": "Vietnamese"
+    },
+    "menu": {
+      "security": {
+        "main": "Security Admin",
+        "roles": "Security roles",
+        "permissions": "Permission matrix",
+        "rowPolicies": "Row policies"
+      },
+      "entities": {
+        "employee": "Employees"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "pageTitle": {
+    "home": "Home",
+    "login": "Sign in",
+    "accessDenied": "Access denied",
+    "notFound": "Page not found",
+    "error": "Unexpected error",
+    "securityRoles": "Security roles",
+    "permissionMatrix": "Permission matrix",
+    "rowPolicies": "Row policies"
+  }
+}

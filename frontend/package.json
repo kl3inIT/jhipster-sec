@@ -3,9 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "i18n:merge": "node scripts/merge-i18n.cjs",
+    "prestart": "npm run i18n:merge",
     "start": "ng serve",
+    "prebuild": "npm run i18n:merge",
     "build": "ng build",
+    "prewatch": "npm run i18n:merge",
     "watch": "ng build --watch --configuration development",
+    "pretest": "npm run i18n:merge",
     "test": "ng test",
     "e2e": "playwright test",
     "e2e:headed": "playwright test --headed"

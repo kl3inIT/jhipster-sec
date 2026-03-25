@@ -1,4 +1,186 @@
 {
+  "activate": {
+    "title": "Activation",
+    "messages": {
+      "success": "<strong>Your user account has been activated.</strong> Please ",
+      "error": "<strong>Your user could not be activated.</strong> Please use the registration form to sign up."
+    }
+  },
+  "angappApp": {
+    "adminAuthority": {
+      "home": {
+        "title": "Authorities",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Authority",
+        "createOrEditLabel": "Create or edit a Authority",
+        "notFound": "No Authorities found"
+      },
+      "created": "A new Authority is created with identifier {{ param }}",
+      "updated": "A Authority is updated with identifier {{ param }}",
+      "deleted": "A Authority is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Authority {{ id }}?"
+      },
+      "detail": {
+        "title": "Authority"
+      },
+      "name": "Name"
+    },
+    "department": {
+      "home": {
+        "title": "Departments",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Department",
+        "createOrEditLabel": "Create or edit a Department",
+        "notFound": "No Departments found"
+      },
+      "created": "A new Department is created with identifier {{ param }}",
+      "updated": "A Department is updated with identifier {{ param }}",
+      "deleted": "A Department is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Department {{ id }}?"
+      },
+      "detail": {
+        "title": "Department"
+      },
+      "id": "ID",
+      "name": "Name",
+      "code": "Code"
+    },
+    "organization": {
+      "home": {
+        "title": "Organizations",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Organization",
+        "createOrEditLabel": "Create or edit a Organization",
+        "notFound": "No Organizations found"
+      },
+      "created": "A new Organization is created with identifier {{ param }}",
+      "updated": "A Organization is updated with identifier {{ param }}",
+      "deleted": "A Organization is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Organization {{ id }}?"
+      },
+      "detail": {
+        "title": "Organization"
+      },
+      "id": "ID",
+      "code": "Code",
+      "name": "Name",
+      "description": "Description"
+    }
+  },
+  "entity": {
+    "action": {
+      "addblob": "Add blob",
+      "addimage": "Add image",
+      "back": "Back",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "open": "Open",
+      "save": "Save",
+      "view": "View",
+      "show": "Show {{otherEntity}}"
+    },
+    "detail": {
+      "field": "Field",
+      "value": "Value"
+    },
+    "delete": {
+      "title": "Confirm delete operation"
+    },
+    "validation": {
+      "required": "This field is required.",
+      "minlength": "This field is required to be at least {{ min }} characters.",
+      "maxlength": "This field cannot be longer than {{ max }} characters.",
+      "min": "This field should be at least {{ min }}.",
+      "max": "This field cannot be more than {{ max }}.",
+      "minbytes": "This field should be at least {{ min }} bytes.",
+      "maxbytes": "This field cannot be more than {{ max }} bytes.",
+      "pattern": "This field should follow pattern for {{ pattern }}.",
+      "number": "This field should be a number.",
+      "datetimelocal": "This field should be a date and time.",
+      "patternLogin": "This field can only contain letters, digits and e-mail addresses."
+    },
+    "filters": {
+      "set": "Following filters are set",
+      "clear": "Clear filter",
+      "clearAll": "Clear all filters"
+    }
+  },
+  "error": {
+    "internalServerError": "Internal server error",
+    "server.not.reachable": "Server not reachable",
+    "url.not.found": "Not found",
+    "NotNull": "Field {{ fieldName }} cannot be empty!",
+    "Size": "Field {{ fieldName }} does not meet min/max size requirements!",
+    "userexists": "Login name already used!",
+    "emailexists": "Email is already in use!",
+    "idexists": "A new {{ entityName }} cannot already have an ID",
+    "idnull": "Invalid ID",
+    "idinvalid": "Invalid ID",
+    "idnotfound": "ID cannot be found",
+    "file": {
+      "could.not.extract": "Could not extract file",
+      "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""
+    },
+    "title": "Error page!",
+    "http": {
+      "400": "Bad request.",
+      "403": "You are not authorized to access this page.",
+      "404": "The page does not exist.",
+      "405": "The HTTP verb you used is not supported for this URL.",
+      "500": "Internal server error."
+    },
+    "concurrencyFailure": "Another user modified this data at the same time as you. Your changes were rejected.",
+    "validation": "Validation error on the server.",
+    "backToHome": "Go to home"
+  },
+  "feedback": {
+    "toast": {
+      "deleted": "Deleted"
+    },
+    "httpError": {
+      "accessDenied": {
+        "summary": "Access denied",
+        "detail": "You do not have permission to perform this action."
+      },
+      "unexpected": {
+        "summary": "Error",
+        "detail": "An unexpected error occurred. Please try again."
+      }
+    },
+    "security": {
+      "roles": {
+        "deleted": "Role \"{{ param }}\" has been deleted.",
+        "loadFailed": "Failed to load roles.",
+        "deleteFailed": "Failed to delete role."
+      },
+      "rowPolicies": {
+        "deleted": "Row policy \"{{ param }}\" has been deleted.",
+        "loadFailed": "Failed to load row policies.",
+        "deleteFailed": "Failed to delete row policy.",
+        "saveFailed": "Could not save the row policy. Check the expression and try again."
+      },
+      "permissionMatrix": {
+        "loadFailed": "Could not load the permission matrix. Please try again.",
+        "saveFailed": "Could not save the permission changes. Please try again."
+      }
+    },
+    "entities": {
+      "organizations": {
+        "deleted": "Organization deleted successfully."
+      },
+      "departments": {
+        "deleted": "Department deleted successfully."
+      },
+      "employees": {
+        "deleted": "Employee deleted successfully."
+      }
+    }
+  },
+  "footer": "This is your footer",
   "global": {
     "title": "Angapp",
     "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
@@ -58,7 +240,9 @@
           "link": "Register a new account"
         }
       },
-      "error": { "dontmatch": "The password and its confirmation do not match!" },
+      "error": {
+        "dontmatch": "The password and its confirmation do not match!"
+      },
       "validate": {
         "newpassword": {
           "required": "Your password is required.",
@@ -79,73 +263,54 @@
         }
       }
     },
-    "field": { "id": "ID" },
-    "ribbon": { "dev": "Development" },
+    "field": {
+      "id": "ID"
+    },
+    "ribbon": {
+      "dev": "Development"
+    },
     "item-count": "Showing {{first}} - {{second}} of {{total}} items."
   },
-  "entity": {
-    "action": {
-      "addblob": "Add blob",
-      "addimage": "Add image",
-      "back": "Back",
-      "cancel": "Cancel",
-      "delete": "Delete",
-      "edit": "Edit",
-      "open": "Open",
-      "save": "Save",
-      "view": "View",
-      "show": "Show {{otherEntity}}"
+  "home": {
+    "title": "Welcome, Java Hipster!",
+    "subtitle": "This is your homepage",
+    "logged": {
+      "message": "You are logged in as user \"{{username}}\"."
     },
-    "detail": { "field": "Field", "value": "Value" },
-    "delete": { "title": "Confirm delete operation" },
-    "validation": {
-      "required": "This field is required.",
-      "minlength": "This field is required to be at least {{ min }} characters.",
-      "maxlength": "This field cannot be longer than {{ max }} characters.",
-      "min": "This field should be at least {{ min }}.",
-      "max": "This field cannot be more than {{ max }}.",
-      "minbytes": "This field should be at least {{ min }} bytes.",
-      "maxbytes": "This field cannot be more than {{ max }} bytes.",
-      "pattern": "This field should follow pattern for {{ pattern }}.",
-      "number": "This field should be a number.",
-      "datetimelocal": "This field should be a date and time.",
-      "patternLogin": "This field can only contain letters, digits and e-mail addresses."
+    "question": "If you have any question on JHipster:",
+    "link": {
+      "homepage": "JHipster homepage",
+      "stackoverflow": "JHipster on Stack Overflow",
+      "bugtracker": "JHipster bug tracker",
+      "chat": "JHipster public chat room",
+      "follow": "follow @jhipster on Twitter"
     },
-    "filters": {
-      "set": "Following filters are set",
-      "clear": "Clear filter",
-      "clearAll": "Clear all filters"
+    "like": "If you like JHipster, don't forget to give us a star on",
+    "github": "GitHub"
+  },
+  "layout": {
+    "topbar": {
+      "toggleMenu": "Toggle menu",
+      "toggleTheme": "Toggle theme",
+      "login": "Sign in",
+      "logout": "Sign out"
+    },
+    "language": {
+      "en": "English",
+      "vi": "Vietnamese"
+    },
+    "menu": {
+      "security": {
+        "main": "Security Admin",
+        "roles": "Security roles",
+        "permissions": "Permission matrix",
+        "rowPolicies": "Row policies"
+      },
+      "entities": {
+        "employee": "Employees"
+      }
     }
   },
-  "error": {
-    "internalServerError": "Internal server error",
-    "server.not.reachable": "Server not reachable",
-    "url.not.found": "Not found",
-    "NotNull": "Field {{ fieldName }} cannot be empty!",
-    "Size": "Field {{ fieldName }} does not meet min/max size requirements!",
-    "userexists": "Login name already used!",
-    "emailexists": "Email is already in use!",
-    "idexists": "A new {{ entityName }} cannot already have an ID",
-    "idnull": "Invalid ID",
-    "idinvalid": "Invalid ID",
-    "idnotfound": "ID cannot be found",
-    "file": {
-      "could.not.extract": "Could not extract file",
-      "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""
-    },
-    "title": "Error page!",
-    "http": {
-      "400": "Bad request.",
-      "403": "You are not authorized to access this page.",
-      "404": "The page does not exist.",
-      "405": "The HTTP verb you used is not supported for this URL.",
-      "500": "Internal server error."
-    },
-    "concurrencyFailure": "Another user modified this data at the same time as you. Your changes were rejected.",
-    "validation": "Validation error on the server.",
-    "backToHome": "Go to home"
-  },
-  "footer": "This is your footer",
   "login": {
     "title": "Sign in",
     "form": {
@@ -159,113 +324,25 @@
         "authentication": "<strong>Failed to sign in!</strong> Please check your credentials and try again."
       }
     },
-    "password": { "forgot": "Did you forget your password?" }
-  },
-  "home": {
-    "title": "Welcome, Java Hipster!",
-    "subtitle": "This is your homepage",
-    "logged": { "message": "You are logged in as user \"{{username}}\"." },
-    "question": "If you have any question on JHipster:",
-    "link": {
-      "homepage": "JHipster homepage",
-      "stackoverflow": "JHipster on Stack Overflow",
-      "bugtracker": "JHipster bug tracker",
-      "chat": "JHipster public chat room",
-      "follow": "follow @jhipster on Twitter"
-    },
-    "like": "If you like JHipster, don't forget to give us a star on",
-    "github": "GitHub"
-  },
-  "userManagement": {
-    "home": {
-      "title": "Users",
-      "refreshListLabel": "Refresh list",
-      "createLabel": "Create a new user",
-      "createOrEditLabel": "Create or edit a user"
-    },
-    "created": "A new user is created with identifier {{ param }}",
-    "updated": "A user is updated with identifier {{ param }}",
-    "deleted": "A user is deleted with identifier {{ param }}",
-    "delete": { "question": "Are you sure you want to delete user {{ login }}?" },
-    "detail": { "title": "User" },
-    "login": "Login",
-    "firstName": "First name",
-    "lastName": "Last name",
-    "email": "Email",
-    "activated": "Activated",
-    "deactivated": "Deactivated",
-    "profiles": "Profiles",
-    "langKey": "Language",
-    "createdBy": "Created by",
-    "createdDate": "Created date",
-    "lastModifiedBy": "Modified by",
-    "lastModifiedDate": "Modified date",
-    "placeholder": {
-      "phase6": "Full user management screens land in Phase 8. This placeholder preserves the route and service contract."
+    "password": {
+      "forgot": "Did you forget your password?"
     }
   },
-  "angappApp": {
-    "adminAuthority": {
-      "home": {
-        "title": "Authorities",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Authority",
-        "createOrEditLabel": "Create or edit a Authority",
-        "notFound": "No Authorities found"
-      },
-      "created": "A new Authority is created with identifier {{ param }}",
-      "updated": "A Authority is updated with identifier {{ param }}",
-      "deleted": "A Authority is deleted with identifier {{ param }}",
-      "delete": { "question": "Are you sure you want to delete Authority {{ id }}?" },
-      "detail": { "title": "Authority" },
-      "name": "Name"
-    },
-    "organization": {
-      "home": {
-        "title": "Organizations",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Organization",
-        "createOrEditLabel": "Create or edit a Organization",
-        "notFound": "No Organizations found"
-      },
-      "created": "A new Organization is created with identifier {{ param }}",
-      "updated": "A Organization is updated with identifier {{ param }}",
-      "deleted": "A Organization is deleted with identifier {{ param }}",
-      "delete": { "question": "Are you sure you want to delete Organization {{ id }}?" },
-      "detail": { "title": "Organization" },
-      "id": "ID",
-      "code": "Code",
-      "name": "Name",
-      "description": "Description"
-    },
-    "department": {
-      "home": {
-        "title": "Departments",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Department",
-        "createOrEditLabel": "Create or edit a Department",
-        "notFound": "No Departments found"
-      },
-      "created": "A new Department is created with identifier {{ param }}",
-      "updated": "A Department is updated with identifier {{ param }}",
-      "deleted": "A Department is deleted with identifier {{ param }}",
-      "delete": { "question": "Are you sure you want to delete Department {{ id }}?" },
-      "detail": { "title": "Department" },
-      "id": "ID",
-      "name": "Name",
-      "code": "Code"
-    }
-  },
-  "activate": {
-    "title": "Activation",
-    "messages": {
-      "success": "<strong>Your user account has been activated.</strong> Please ",
-      "error": "<strong>Your user could not be activated.</strong> Please use the registration form to sign up."
-    }
+  "pageTitle": {
+    "home": "Home",
+    "login": "Sign in",
+    "accessDenied": "Access denied",
+    "notFound": "Page not found",
+    "error": "Unexpected error",
+    "securityRoles": "Security roles",
+    "permissionMatrix": "Permission matrix",
+    "rowPolicies": "Row policies"
   },
   "password": {
     "title": "Password for [<strong>{{username}}</strong>]",
-    "form": { "button": "Save" },
+    "form": {
+      "button": "Save"
+    },
     "messages": {
       "error": "<strong>An error has occurred!</strong> The password could not be changed.",
       "success": "<strong>Password changed!</strong>"
@@ -273,7 +350,9 @@
   },
   "register": {
     "title": "Registration",
-    "form": { "button": "Register" },
+    "form": {
+      "button": "Register"
+    },
     "messages": {
       "validate": {
         "login": {
@@ -294,7 +373,9 @@
   "reset": {
     "request": {
       "title": "Reset your password",
-      "form": { "button": "Reset password" },
+      "form": {
+        "button": "Reset password"
+      },
       "messages": {
         "info": "Enter the email address you used to register",
         "success": "Check your email for details on how to reset your password."
@@ -302,13 +383,47 @@
     },
     "finish": {
       "title": "Reset password",
-      "form": { "button": "Validate new password" },
+      "form": {
+        "button": "Validate new password"
+      },
       "messages": {
         "info": "Choose a new password",
         "success": "<strong>Your password has been reset.</strong> Please ",
         "keymissing": "The reset key is missing.",
         "error": "Your password couldn't be reset. Remember a password request is only valid for 24 hours."
       }
+    }
+  },
+  "security": {
+    "alert": {
+      "secRole": {
+        "created": "A security role is created with identifier {{ param }}",
+        "updated": "A security role is updated with identifier {{ param }}",
+        "deleted": "A security role is deleted with identifier {{ param }}"
+      },
+      "secPermission": {
+        "created": "A security permission is created with identifier {{ param }}",
+        "updated": "A security permission is updated with identifier {{ param }}",
+        "deleted": "A security permission is deleted with identifier {{ param }}"
+      },
+      "secRowPolicy": {
+        "created": "A row policy is created with identifier {{ param }}",
+        "updated": "A row policy is updated with identifier {{ param }}",
+        "deleted": "A row policy is deleted with identifier {{ param }}"
+      }
+    }
+  },
+  "sessions": {
+    "title": "Active sessions for [<strong>{{username}}</strong>]",
+    "table": {
+      "ipaddress": "IP address",
+      "useragent": "User Agent",
+      "date": "Date",
+      "button": "Invalidate"
+    },
+    "messages": {
+      "success": "<strong>Session invalidated!</strong>",
+      "error": "<strong>An error has occurred!</strong> The session could not be invalidated."
     }
   },
   "settings": {
@@ -341,99 +456,36 @@
       }
     }
   },
-  "sessions": {
-    "title": "Active sessions for [<strong>{{username}}</strong>]",
-    "table": {
-      "ipaddress": "IP address",
-      "useragent": "User Agent",
-      "date": "Date",
-      "button": "Invalidate"
+  "userManagement": {
+    "home": {
+      "title": "Users",
+      "refreshListLabel": "Refresh list",
+      "createLabel": "Create a new user",
+      "createOrEditLabel": "Create or edit a user"
     },
-    "messages": {
-      "success": "<strong>Session invalidated!</strong>",
-      "error": "<strong>An error has occurred!</strong> The session could not be invalidated."
-    }
-  },
-  "pageTitle": {
-    "home": "Home",
-    "login": "Sign in",
-    "accessDenied": "Access denied",
-    "notFound": "Page not found",
-    "error": "Unexpected error",
-    "securityRoles": "Security roles",
-    "permissionMatrix": "Permission matrix",
-    "rowPolicies": "Row policies"
-  },
-  "layout": {
-    "topbar": {
-      "toggleMenu": "Toggle menu",
-      "toggleTheme": "Toggle theme",
-      "login": "Sign in",
-      "logout": "Sign out"
+    "created": "A new user is created with identifier {{ param }}",
+    "updated": "A user is updated with identifier {{ param }}",
+    "deleted": "A user is deleted with identifier {{ param }}",
+    "delete": {
+      "question": "Are you sure you want to delete user {{ login }}?"
     },
-    "language": { "en": "English", "vi": "Vietnamese" },
-    "menu": {
-      "security": {
-        "main": "Security Admin",
-        "roles": "Security roles",
-        "permissions": "Permission matrix",
-        "rowPolicies": "Row policies"
-      },
-      "entities": { "employee": "Employees" }
-    }
-  },
-  "security": {
-    "alert": {
-      "secRole": {
-        "created": "A security role is created with identifier {{ param }}",
-        "updated": "A security role is updated with identifier {{ param }}",
-        "deleted": "A security role is deleted with identifier {{ param }}"
-      },
-      "secPermission": {
-        "created": "A security permission is created with identifier {{ param }}",
-        "updated": "A security permission is updated with identifier {{ param }}",
-        "deleted": "A security permission is deleted with identifier {{ param }}"
-      },
-      "secRowPolicy": {
-        "created": "A row policy is created with identifier {{ param }}",
-        "updated": "A row policy is updated with identifier {{ param }}",
-        "deleted": "A row policy is deleted with identifier {{ param }}"
-      }
-    }
-  },
-  "feedback": {
-    "toast": { "deleted": "Deleted" },
-    "httpError": {
-      "accessDenied": {
-        "summary": "Access denied",
-        "detail": "You do not have permission to perform this action."
-      },
-      "unexpected": {
-        "summary": "Error",
-        "detail": "An unexpected error occurred. Please try again."
-      }
+    "detail": {
+      "title": "User"
     },
-    "security": {
-      "roles": {
-        "deleted": "Role \"{{ param }}\" has been deleted.",
-        "loadFailed": "Failed to load roles.",
-        "deleteFailed": "Failed to delete role."
-      },
-      "rowPolicies": {
-        "deleted": "Row policy \"{{ param }}\" has been deleted.",
-        "loadFailed": "Failed to load row policies.",
-        "deleteFailed": "Failed to delete row policy.",
-        "saveFailed": "Could not save the row policy. Check the expression and try again."
-      },
-      "permissionMatrix": {
-        "loadFailed": "Could not load the permission matrix. Please try again.",
-        "saveFailed": "Could not save the permission changes. Please try again."
-      }
-    },
-    "entities": {
-      "organizations": { "deleted": "Organization deleted successfully." },
-      "departments": { "deleted": "Department deleted successfully." },
-      "employees": { "deleted": "Employee deleted successfully." }
+    "login": "Login",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "activated": "Activated",
+    "deactivated": "Deactivated",
+    "profiles": "Profiles",
+    "langKey": "Language",
+    "createdBy": "Created by",
+    "createdDate": "Created date",
+    "lastModifiedBy": "Modified by",
+    "lastModifiedDate": "Modified date",
+    "placeholder": {
+      "phase6": "Full user management screens land in Phase 8. This placeholder preserves the route and service contract."
     }
   }
 }

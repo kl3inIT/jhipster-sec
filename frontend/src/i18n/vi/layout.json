@@ -1,0 +1,25 @@
+{
+  "layout": {
+    "topbar": {
+      "toggleMenu": "Mở hoặc đóng menu",
+      "toggleTheme": "Đổi giao diện",
+      "login": "Đăng nhập",
+      "logout": "Đăng xuất"
+    },
+    "language": {
+      "en": "English",
+      "vi": "Tiếng Việt"
+    },
+    "menu": {
+      "security": {
+        "main": "Quản trị bảo mật",
+        "roles": "Vai trò bảo mật",
+        "permissions": "Ma trận quyền",
+        "rowPolicies": "Chính sách hàng"
+      },
+      "entities": {
+        "employee": "Nhân viên"
+      }
+    }
+  }
+}

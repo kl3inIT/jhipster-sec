@@ -1,0 +1,21 @@
+{
+  "security": {
+    "alert": {
+      "secRole": {
+        "created": "Một vai trò bảo mật mới được tạo với định danh {{ param }}",
+        "updated": "Một vai trò bảo mật được cập nhật với định danh {{ param }}",
+        "deleted": "Một vai trò bảo mật đã bị xóa với định danh {{ param }}"
+      },
+      "secPermission": {
+        "created": "Một quyền bảo mật mới được tạo với định danh {{ param }}",
+        "updated": "Một quyền bảo mật được cập nhật với định danh {{ param }}",
+        "deleted": "Một quyền bảo mật đã bị xóa với định danh {{ param }}"
+      },
+      "secRowPolicy": {
+        "created": "Một chính sách hàng mới được tạo với định danh {{ param }}",
+        "updated": "Một chính sách hàng được cập nhật với định danh {{ param }}",
+        "deleted": "Một chính sách hàng đã bị xóa với định danh {{ param }}"
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "angappApp": {
+    "adminAuthority": {
+      "home": {
+        "title": "Authorities",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một Authority",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Authority",
+        "notFound": "No Authorities found"
+      },
+      "created": "Một Authority mới được tạo với định danh {{ param }}",
+      "updated": "Một Authority cập nhật với định danh {{ param }}",
+      "deleted": "Một Authority đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Authority {{ id }}?"
+      },
+      "detail": {
+        "title": "Authority"
+      },
+      "name": "Name"
+    }
+  }
+}

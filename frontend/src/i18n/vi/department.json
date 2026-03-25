@@ -1,0 +1,25 @@
+{
+  "angappApp": {
+    "department": {
+      "home": {
+        "title": "Departments",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một Department",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Department",
+        "notFound": "No Departments found"
+      },
+      "created": "Một Department mới được tạo với định danh {{ param }}",
+      "updated": "Một Department cập nhật với định danh {{ param }}",
+      "deleted": "Một Department đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Department {{ id }}?"
+      },
+      "detail": {
+        "title": "Department"
+      },
+      "id": "ID",
+      "name": "Name",
+      "code": "Code"
+    }
+  }
+}
