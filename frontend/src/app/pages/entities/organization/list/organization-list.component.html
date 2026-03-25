@@ -22,10 +22,11 @@
   <p-card class="shadow-sm">
     @if (showListDeniedState()) {
       <div class="flex flex-column gap-3 py-6 text-center">
-        <h2 class="m-0 text-2xl font-semibold">Organization access is limited</h2>
+        <h2 class="m-0 text-2xl font-semibold">
+          {{ 'angappApp.organization.home.denied.title' | translate }}
+        </h2>
         <p class="m-0 text-color-secondary">
-          You can open this workspace from the shell, but you do not have permission to view
-          organization records.
+          {{ 'angappApp.organization.home.denied.message' | translate }}
         </p>
       </div>
     } @else {

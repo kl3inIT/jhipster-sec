@@ -6,7 +6,11 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Thêm mới một Department",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Department",
-        "notFound": "No Departments found"
+        "notFound": "No Departments found",
+        "denied": {
+          "title": "Quyền truy cập phòng ban bị giới hạn",
+          "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi phòng ban."
+        }
       },
       "created": "Một Department mới được tạo với định danh {{ param }}",
       "updated": "Một Department cập nhật với định danh {{ param }}",

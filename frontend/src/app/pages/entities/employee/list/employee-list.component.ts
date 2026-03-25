@@ -2,7 +2,7 @@ import { Component, NgZone, OnInit, OnDestroy, inject, signal, computed } from '
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription, combineLatest, finalize, tap } from 'rxjs';
 import { CardModule } from 'primeng/card';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
@@ -31,6 +31,7 @@ const DEFAULT_SORT_DATA = 'defaultSort';
   imports: [
     CommonModule,
     RouterModule,
+    TranslatePipe,
     CardModule,
     TableModule,
     ButtonModule,

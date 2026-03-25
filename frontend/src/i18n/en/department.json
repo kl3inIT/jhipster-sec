@@ -6,7 +6,11 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Department",
         "createOrEditLabel": "Create or edit a Department",
-        "notFound": "No Departments found"
+        "notFound": "No Departments found",
+        "denied": {
+          "title": "Department access is limited",
+          "message": "You can open this workspace from the shell, but you do not have permission to view department records."
+        }
       },
       "created": "A new Department is created with identifier {{ param }}",
       "updated": "A Department is updated with identifier {{ param }}",

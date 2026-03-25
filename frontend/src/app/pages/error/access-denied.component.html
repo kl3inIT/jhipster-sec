@@ -6,20 +6,32 @@
   <p-card styleClass="shadow-sm">
     <div class="flex flex-column gap-3">
       <p class="m-0 text-lg">
-        You do not have access to
-        <span class="font-semibold">{{
-          blockedLabelKey() ?? 'pageTitle.accessDenied' | translate
-        }}</span
-        >.
+        {{
+          'error.accessDenied.blockedMessage'
+            | translate
+              : {
+                  destination: (blockedLabelKey() ?? 'pageTitle.accessDenied' | translate),
+                }
+        }}
       </p>
       <p class="m-0 text-color-secondary">
-        Go to
-        <span class="font-semibold">{{ fallbackLabelKey() | translate }}</span>
-        or contact an administrator if you think this is a mistake.
+        {{
+          'error.accessDenied.recoveryMessage'
+            | translate
+              : {
+                  fallback: (fallbackLabelKey() | translate),
+                }
+        }}
       </p>
       <div class="pt-2">
         <p-button
-          [label]="'Go to ' + (fallbackLabelKey() | translate)"
+          [label]="
+            'error.accessDenied.goTo'
+              | translate
+                : {
+                    destination: (fallbackLabelKey() | translate),
+                  }
+          "
           icon="pi pi-arrow-right"
           [routerLink]="fallbackRoute()"
         />

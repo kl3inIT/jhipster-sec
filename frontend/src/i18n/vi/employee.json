@@ -1,0 +1,12 @@
+{
+  "angappApp": {
+    "employee": {
+      "home": {
+        "denied": {
+          "title": "Quyền truy cập nhân viên bị giới hạn",
+          "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi nhân viên."
+        }
+      }
+    }
+  }
+}

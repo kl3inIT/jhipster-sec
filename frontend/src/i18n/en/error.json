@@ -25,6 +25,11 @@
     },
     "concurrencyFailure": "Another user modified this data at the same time as you. Your changes were rejected.",
     "validation": "Validation error on the server.",
-    "backToHome": "Go to home"
+    "backToHome": "Go to home",
+    "accessDenied": {
+      "blockedMessage": "You do not have access to {{ destination }}.",
+      "recoveryMessage": "Go to {{ fallback }} or contact an administrator if you think this is a mistake.",
+      "goTo": "Go to {{ destination }}"
+    }
   }
 }

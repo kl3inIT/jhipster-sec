@@ -1,7 +1,7 @@
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -93,6 +93,20 @@ describe('OrganizationListComponent', () => {
           },
         },
       ],
+    });
+
+    TestBed.inject(TranslateService).setTranslation('en', {
+      angappApp: {
+        organization: {
+          home: {
+            denied: {
+              title: 'Organization access is limited',
+              message:
+                'You can open this workspace from the shell, but you do not have permission to view organization records.',
+            },
+          },
+        },
+      },
     });
   });
 

@@ -26,7 +26,7 @@ import { test, expect, request, APIRequestContext, Page } from '@playwright/test
 
 test.setTimeout(120_000);
 const CAPABILITY_TIMEOUT = 20_000; // time for capability API + Angular signals to settle
-const NAV_TIMEOUT = 15_000;        // time for a full page navigation
+const NAV_TIMEOUT = 15_000; // time for a full page navigation
 
 // ─── Proof-role seed data ─────────────────────────────────────────────────────
 
@@ -38,18 +38,84 @@ const PROOF_ROLES = [
 
 const PROOF_PERMISSIONS = [
   // READER: read-only on all three entities; salary hidden
-  { authorityName: 'ROLE_PROOF_READER', targetType: 'ENTITY', target: 'ORGANIZATION', action: 'READ', effect: 'ALLOW' },
-  { authorityName: 'ROLE_PROOF_READER', targetType: 'ENTITY', target: 'DEPARTMENT', action: 'READ', effect: 'ALLOW' },
-  { authorityName: 'ROLE_PROOF_READER', targetType: 'ENTITY', target: 'EMPLOYEE', action: 'READ', effect: 'ALLOW' },
-  { authorityName: 'ROLE_PROOF_READER', targetType: 'ATTRIBUTE', target: 'EMPLOYEE.SALARY', action: 'VIEW', effect: 'DENY' },
+  {
+    authorityName: 'ROLE_PROOF_READER',
+    targetType: 'ENTITY',
+    target: 'ORGANIZATION',
+    action: 'READ',
+    effect: 'ALLOW',
+  },
+  {
+    authorityName: 'ROLE_PROOF_READER',
+    targetType: 'ENTITY',
+    target: 'DEPARTMENT',
+    action: 'READ',
+    effect: 'ALLOW',
+  },
+  {
+    authorityName: 'ROLE_PROOF_READER',
+    targetType: 'ENTITY',
+    target: 'EMPLOYEE',
+    action: 'READ',
+    effect: 'ALLOW',
+  },
+  {
+    authorityName: 'ROLE_PROOF_READER',
+    targetType: 'ATTRIBUTE',
+    target: 'EMPLOYEE.SALARY',
+    action: 'VIEW',
+    effect: 'DENY',
+  },
   // EDITOR: full CRUD on Organization; budget not editable
-  { authorityName: 'ROLE_PROOF_EDITOR', targetType: 'ENTITY', target: 'ORGANIZATION', action: 'CREATE', effect: 'ALLOW' },
-  { authorityName: 'ROLE_PROOF_EDITOR', targetType: 'ENTITY', target: 'ORGANIZATION', action: 'READ', effect: 'ALLOW' },
-  { authorityName: 'ROLE_PROOF_EDITOR', targetType: 'ENTITY', target: 'ORGANIZATION', action: 'UPDATE', effect: 'ALLOW' },
-  { authorityName: 'ROLE_PROOF_EDITOR', targetType: 'ENTITY', target: 'ORGANIZATION', action: 'DELETE', effect: 'ALLOW' },
-  { authorityName: 'ROLE_PROOF_EDITOR', targetType: 'ENTITY', target: 'DEPARTMENT', action: 'READ', effect: 'ALLOW' },
-  { authorityName: 'ROLE_PROOF_EDITOR', targetType: 'ENTITY', target: 'EMPLOYEE', action: 'READ', effect: 'ALLOW' },
-  { authorityName: 'ROLE_PROOF_EDITOR', targetType: 'ATTRIBUTE', target: 'ORGANIZATION.BUDGET', action: 'EDIT', effect: 'DENY' },
+  {
+    authorityName: 'ROLE_PROOF_EDITOR',
+    targetType: 'ENTITY',
+    target: 'ORGANIZATION',
+    action: 'CREATE',
+    effect: 'ALLOW',
+  },
+  {
+    authorityName: 'ROLE_PROOF_EDITOR',
+    targetType: 'ENTITY',
+    target: 'ORGANIZATION',
+    action: 'READ',
+    effect: 'ALLOW',
+  },
+  {
+    authorityName: 'ROLE_PROOF_EDITOR',
+    targetType: 'ENTITY',
+    target: 'ORGANIZATION',
+    action: 'UPDATE',
+    effect: 'ALLOW',
+  },
+  {
+    authorityName: 'ROLE_PROOF_EDITOR',
+    targetType: 'ENTITY',
+    target: 'ORGANIZATION',
+    action: 'DELETE',
+    effect: 'ALLOW',
+  },
+  {
+    authorityName: 'ROLE_PROOF_EDITOR',
+    targetType: 'ENTITY',
+    target: 'DEPARTMENT',
+    action: 'READ',
+    effect: 'ALLOW',
+  },
+  {
+    authorityName: 'ROLE_PROOF_EDITOR',
+    targetType: 'ENTITY',
+    target: 'EMPLOYEE',
+    action: 'READ',
+    effect: 'ALLOW',
+  },
+  {
+    authorityName: 'ROLE_PROOF_EDITOR',
+    targetType: 'ATTRIBUTE',
+    target: 'ORGANIZATION.BUDGET',
+    action: 'EDIT',
+    effect: 'DENY',
+  },
   // NONE: no permissions at all
 ];
 
@@ -106,15 +172,28 @@ async function teardownProofData(api: APIRequestContext, token: string): Promise
   }
 }
 
-/** Create a test organization via admin API and return its id. */
+/** Create a test organization via admin API and return its id. Falls back to an existing org when create is forbidden. */
 async function createTestOrg(api: APIRequestContext, token: string): Promise<number> {
   const res = await api.post('/api/organizations', {
     data: { code: 'E2E-TEST', name: 'E2E Test Org', ownerLogin: 'admin', budget: 9999.0 },
     headers: { Authorization: `Bearer ${token}` },
   });
-  expect([200, 201]).toContain(res.status());
-  const body = await res.json();
-  return (body.id ?? body.body?.id) as number;
+
+  if ([200, 201].includes(res.status())) {
+    testOrgCreated = true;
+    const body = await res.json();
+    return (body.id ?? body.body?.id) as number;
+  }
+
+  const existingRes = await api.get('/api/organizations?page=0&size=1&sort=id,asc', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  expect(existingRes.status()).toBe(200);
+  const existingBody = (await existingRes.json()) as Array<{ id?: number }>;
+  const existingId = existingBody[0]?.id;
+  expect(existingId).toBeTruthy();
+  testOrgCreated = false;
+  return existingId as number;
 }
 
 async function deleteTestOrg(api: APIRequestContext, token: string, id: number): Promise<void> {
@@ -128,7 +207,7 @@ async function loginAs(page: Page, login: string, password = PASSWORD): Promise<
   await page.locator('#username').fill(login);
   await page.locator('input[type="password"]').fill(password);
   await page.getByRole('button', { name: /sign in/i }).click();
-  await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: NAV_TIMEOUT });
+  await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: NAV_TIMEOUT });
 }
 
 async function loginAsAdmin(page: Page): Promise<void> {
@@ -139,13 +218,84 @@ async function logout(page: Page): Promise<void> {
   // Click the topbar logout button (aria-label or icon button)
   const logoutBtn = page.locator('button[aria-label="Logout"], button:has(.pi-sign-out)').first();
   await logoutBtn.click();
-  await page.waitForURL(url => url.pathname.includes('/login'), { timeout: NAV_TIMEOUT });
+  await page.waitForURL((url) => url.pathname.includes('/login'), { timeout: NAV_TIMEOUT });
+}
+
+interface MockEntityCapability {
+  code: string;
+  canCreate: boolean;
+  canRead: boolean;
+  canUpdate: boolean;
+  canDelete: boolean;
+  attributes: Array<{
+    name: string;
+    canView: boolean;
+    canEdit: boolean;
+  }>;
+}
+
+async function mockNavigationGrants(page: Page, allowedNodeIds: string[]): Promise<void> {
+  await page.route('**/api/security/navigation-grants?*', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        appName: 'jhipster-security-platform',
+        allowedNodeIds,
+      }),
+    });
+  });
+}
+
+async function mockEntityCapabilities(
+  page: Page,
+  capabilities: MockEntityCapability[],
+): Promise<void> {
+  await page.route('**/api/security/entity-capabilities', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify(capabilities),
+    });
+  });
+}
+
+function buildCapability(
+  code: string,
+  overrides: Partial<MockEntityCapability> = {},
+): MockEntityCapability {
+  return {
+    code,
+    canCreate: false,
+    canRead: false,
+    canUpdate: false,
+    canDelete: false,
+    attributes: [],
+    ...overrides,
+  };
+}
+
+async function loginAsAdminWithShellMocks(
+  page: Page,
+  allowedNodeIds: string[],
+  capabilities?: MockEntityCapability[],
+): Promise<void> {
+  await mockNavigationGrants(page, allowedNodeIds);
+  if (capabilities) {
+    await mockEntityCapabilities(page, capabilities);
+  }
+  await loginAsAdmin(page);
 }
 
 // ─── Suite setup ─────────────────────────────────────────────────────────────
 
 let adminToken: string;
 let testOrgId: number;
+let testOrgCreated = false;
+
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    window.sessionStorage.setItem('locale', 'en');
+  });
+});
 
 test.beforeAll(async ({ playwright }) => {
   const api = await playwright.request.newContext({ baseURL: 'http://localhost:4200' });
@@ -157,7 +307,7 @@ test.beforeAll(async ({ playwright }) => {
 
 test.afterAll(async ({ playwright }) => {
   const api = await playwright.request.newContext({ baseURL: 'http://localhost:4200' });
-  if (testOrgId) {
+  if (testOrgId && testOrgCreated) {
     await deleteTestOrg(api, adminToken, testOrgId);
   }
   await teardownProofData(api, adminToken);
@@ -175,7 +325,7 @@ test.describe('1. Authentication', () => {
     await page.locator('input[type="password"]').fill('admin');
     await page.getByRole('button', { name: /sign in/i }).click();
 
-    await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: NAV_TIMEOUT });
+    await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: NAV_TIMEOUT });
     await expect(page).not.toHaveURL(/\/login/);
   });
 
@@ -190,7 +340,9 @@ test.describe('1. Authentication', () => {
     await expect(page).toHaveURL(/\/login/);
 
     // Error message must appear
-    const errorMsg = page.locator('.p-message-error, [class*="alert-danger"], [class*="error"]').first();
+    const errorMsg = page
+      .locator('.p-message-error, [class*="alert-danger"], [class*="error"]')
+      .first();
     await expect(errorMsg).toBeVisible({ timeout: 5000 });
   });
 
@@ -199,7 +351,7 @@ test.describe('1. Authentication', () => {
     await page.goto('/entities/organization');
 
     const errors: string[] = [];
-    page.on('pageerror', err => errors.push(err.message));
+    page.on('pageerror', (err) => errors.push(err.message));
 
     // Click logout
     const logoutBtn = page.locator('button[aria-label="Logout"], button:has(.pi-sign-out)').first();
@@ -225,7 +377,7 @@ test.describe('1. Authentication', () => {
     await page.reload();
 
     // After reload, still on the org list — not redirected to /login
-    await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: NAV_TIMEOUT });
+    await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: NAV_TIMEOUT });
     await expect(page).not.toHaveURL(/\/login/);
   });
 });
@@ -270,10 +422,12 @@ test.describe('2. READER — entity-level UI gating', () => {
 
   test('organization detail: page renders without crash for reader', async ({ page }) => {
     const errors: string[] = [];
-    page.on('pageerror', err => errors.push(err.message));
+    page.on('pageerror', (err) => errors.push(err.message));
 
     await page.goto(`/entities/organization/${testOrgId}/view`);
-    await expect(page.locator('h1').filter({ hasText: /organization/i })).toBeVisible({ timeout: NAV_TIMEOUT });
+    await expect(page.locator('h1').filter({ hasText: /organization/i })).toBeVisible({
+      timeout: NAV_TIMEOUT,
+    });
 
     expect(errors).toHaveLength(0);
   });
@@ -290,26 +444,34 @@ test.describe('3. EDITOR — entity-level UI gating', () => {
 
   test('organization list: "New Organization" button is visible', async ({ page }) => {
     await page.goto('/entities/organization');
-    await expect(page.getByRole('button', { name: /new organization/i })).toBeVisible({ timeout: CAPABILITY_TIMEOUT });
+    await expect(page.getByRole('button', { name: /new organization/i })).toBeVisible({
+      timeout: CAPABILITY_TIMEOUT,
+    });
   });
 
   test('organization list: Edit button appears in rows when data exists', async ({ page }) => {
     await page.goto('/entities/organization');
     await page.waitForSelector('p-table', { timeout: NAV_TIMEOUT });
     // Wait for capability + data to settle
-    await expect(page.locator('button[aria-label="Edit"]').first()).toBeVisible({ timeout: CAPABILITY_TIMEOUT });
+    await expect(page.locator('button[aria-label="Edit"]').first()).toBeVisible({
+      timeout: CAPABILITY_TIMEOUT,
+    });
   });
 
   test('organization list: Delete button appears in rows when data exists', async ({ page }) => {
     await page.goto('/entities/organization');
     await page.waitForSelector('p-table', { timeout: NAV_TIMEOUT });
-    await expect(page.locator('button[aria-label="Delete"]').first()).toBeVisible({ timeout: CAPABILITY_TIMEOUT });
+    await expect(page.locator('button[aria-label="Delete"]').first()).toBeVisible({
+      timeout: CAPABILITY_TIMEOUT,
+    });
   });
 
   test('organization detail: "Edit" button is visible', async ({ page }) => {
     await page.goto(`/entities/organization/${testOrgId}/view`);
     await expect(page.locator('p-card')).toBeVisible({ timeout: NAV_TIMEOUT });
-    await expect(page.getByRole('button', { name: /^edit$/i })).toBeVisible({ timeout: CAPABILITY_TIMEOUT });
+    await expect(page.getByRole('button', { name: /^edit$/i })).toBeVisible({
+      timeout: CAPABILITY_TIMEOUT,
+    });
   });
 });
 
@@ -412,7 +574,9 @@ test.describe('6. Access Denied page', () => {
     await expect(page).toHaveURL(/accessdenied/, { timeout: CAPABILITY_TIMEOUT });
 
     // Page must show "access denied" or "forbidden" or similar heading
-    const heading = page.locator('h1, h2, [class*="title"]').filter({ hasText: /access|denied|forbidden|permission/i });
+    const heading = page
+      .locator('h1, h2, [class*="title"]')
+      .filter({ hasText: /access|denied|forbidden|permission/i });
     await expect(heading.first()).toBeVisible({ timeout: NAV_TIMEOUT });
   });
 
@@ -428,7 +592,7 @@ test.describe('6. Access Denied page', () => {
 
   test('direct navigation to /accessdenied renders without crash', async ({ page }) => {
     const errors: string[] = [];
-    page.on('pageerror', err => errors.push(err.message));
+    page.on('pageerror', (err) => errors.push(err.message));
 
     await loginAsAdmin(page);
     await page.goto('/accessdenied');
@@ -442,8 +606,99 @@ test.describe('6. Access Denied page', () => {
 // 7. Attribute-level permissions
 // ═════════════════════════════════════════════════════════════════════════════
 
+test.describe('6.1 Phase 7 enterprise shell', () => {
+  test('keeps shared menu sections visible while hiding unauthorized leaves', async ({ page }) => {
+    await loginAsAdminWithShellMocks(page, [
+      'home.dashboard',
+      'entities.department',
+      'security.roles',
+    ]);
+
+    await expect(
+      page.locator('.layout-menuitem-root-text').filter({ hasText: 'Entities' }),
+    ).toBeVisible({ timeout: NAV_TIMEOUT });
+    await expect(
+      page.locator('.layout-menuitem-root-text').filter({ hasText: 'Security Admin' }),
+    ).toBeVisible({ timeout: NAV_TIMEOUT });
+
+    await expect(page.getByRole('link', { name: 'Department' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Security roles' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Organization' })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Employees' })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'User management' })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Row policies' })).toHaveCount(0);
+  });
+
+  test('redirects denied deep links to /accessdenied with blocked destination recovery', async ({
+    page,
+  }) => {
+    await loginAsAdminWithShellMocks(page, ['home.dashboard', 'security.roles']);
+
+    await page.goto('/admin/users');
+
+    await expect(page).toHaveURL(/\/accessdenied$/, { timeout: NAV_TIMEOUT });
+    await expect(
+      page.getByText('Full user management screens land in Phase 8.', { exact: false }),
+    ).toHaveCount(0);
+    await expect(page.locator('p-card')).toContainText('User management');
+    await expect(page.getByRole('button', { name: 'Go to Security roles' })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Go to Security roles' }).click();
+    await expect(page).toHaveURL(/\/admin\/security\/roles$/, { timeout: NAV_TIMEOUT });
+  });
+
+  test('renders an in-shell denied state without firing the entity list query', async ({
+    page,
+  }) => {
+    const organizationRequests: string[] = [];
+    page.on('request', (request) => {
+      if (request.url().includes('/api/organizations')) {
+        organizationRequests.push(request.url());
+      }
+    });
+
+    await loginAsAdminWithShellMocks(
+      page,
+      ['home.dashboard', 'entities.organization'],
+      [
+        buildCapability('organization', {
+          canCreate: false,
+          canRead: false,
+          canUpdate: false,
+          canDelete: false,
+        }),
+      ],
+    );
+
+    await page.goto('/entities/organization');
+    await expect(page).toHaveURL(/\/entities\/organization$/, { timeout: NAV_TIMEOUT });
+    await expect(page.locator('p-card')).toContainText('Organization access is limited');
+    await expect(page.locator('p-table')).toHaveCount(0);
+    await page.waitForTimeout(1000);
+
+    expect(organizationRequests).toHaveLength(0);
+  });
+
+  test('shows breadcrumb alignment on permission-matrix deep routes', async ({ page }) => {
+    await loginAsAdminWithShellMocks(page, ['home.dashboard', 'security.roles']);
+
+    await page.goto('/admin/security/roles/ROLE_ADMIN/permissions');
+
+    await expect(page).toHaveURL(/\/admin\/security\/roles\/ROLE_ADMIN\/permissions$/, {
+      timeout: NAV_TIMEOUT,
+    });
+    const breadcrumb = page.locator('nav[aria-label="Breadcrumb"]');
+    await expect(breadcrumb).toBeVisible({ timeout: NAV_TIMEOUT });
+    await expect(breadcrumb).toContainText('Security Admin');
+    await expect(breadcrumb).toContainText('Security roles');
+    await expect(breadcrumb).toContainText('Permission matrix');
+  });
+});
+
 test.describe('7. Attribute-level permissions', () => {
-  test('EDITOR create form: budget field is absent (EDIT DENY on ORGANIZATION.BUDGET)', async ({ page }) => {
+  test('EDITOR create form: budget field is absent (EDIT DENY on ORGANIZATION.BUDGET)', async ({
+    page,
+  }) => {
     await loginAs(page, 'e2e-proof-editor');
     await page.goto('/entities/organization/new');
     // Wait for capability to resolve (isCapabilityReady signal)
@@ -452,7 +707,9 @@ test.describe('7. Attribute-level permissions', () => {
     await expect(page.locator('input#budget')).not.toBeVisible();
   });
 
-  test('EDITOR edit form: budget field is absent (EDIT DENY on ORGANIZATION.BUDGET)', async ({ page }) => {
+  test('EDITOR edit form: budget field is absent (EDIT DENY on ORGANIZATION.BUDGET)', async ({
+    page,
+  }) => {
     await loginAs(page, 'e2e-proof-editor');
     await page.goto(`/entities/organization/${testOrgId}/edit`);
     await expect(page.locator('input#code')).toBeVisible({ timeout: CAPABILITY_TIMEOUT });
@@ -488,12 +745,16 @@ test.describe('7. Attribute-level permissions', () => {
 // ═════════════════════════════════════════════════════════════════════════════
 
 test.describe('8. Capability cache invalidation', () => {
-  test('logging out and back in as a different role applies the new role\'s permissions', async ({ page }) => {
+  test("logging out and back in as a different role applies the new role's permissions", async ({
+    page,
+  }) => {
     // Step 1: login as admin — has Update permission
     await loginAsAdmin(page);
     await page.goto(`/entities/organization/${testOrgId}/view`);
     await expect(page.locator('p-card')).toBeVisible({ timeout: NAV_TIMEOUT });
-    await expect(page.getByRole('button', { name: /^edit$/i })).toBeVisible({ timeout: CAPABILITY_TIMEOUT });
+    await expect(page.getByRole('button', { name: /^edit$/i })).toBeVisible({
+      timeout: CAPABILITY_TIMEOUT,
+    });
 
     // Step 2: logout
     const logoutBtn = page.locator('button[aria-label="Logout"], button:has(.pi-sign-out)').first();
@@ -504,7 +765,7 @@ test.describe('8. Capability cache invalidation', () => {
     await page.locator('#username').fill('e2e-proof-reader');
     await page.locator('input[type="password"]').fill(PASSWORD);
     await page.getByRole('button', { name: /sign in/i }).click();
-    await page.waitForURL(url => !url.pathname.includes('/login'), { timeout: NAV_TIMEOUT });
+    await page.waitForURL((url) => !url.pathname.includes('/login'), { timeout: NAV_TIMEOUT });
 
     await page.goto(`/entities/organization/${testOrgId}/view`);
     await expect(page.locator('p-card')).toBeVisible({ timeout: NAV_TIMEOUT });
@@ -513,7 +774,9 @@ test.describe('8. Capability cache invalidation', () => {
     await expect(page.getByRole('button', { name: /^edit$/i })).not.toBeVisible();
   });
 
-  test('reloading the page as reader still shows no Edit button (not polluted by cache)', async ({ page }) => {
+  test('reloading the page as reader still shows no Edit button (not polluted by cache)', async ({
+    page,
+  }) => {
     await loginAs(page, 'e2e-proof-reader');
     await page.goto(`/entities/organization/${testOrgId}/view`);
     await expect(page.locator('p-card')).toBeVisible({ timeout: NAV_TIMEOUT });
@@ -544,9 +807,12 @@ test.describe('9. Permission matrix — admin management', () => {
 
   test('Manage Permissions opens the permission matrix without crash', async ({ page }) => {
     const errors: string[] = [];
-    page.on('pageerror', err => errors.push(err.message));
+    page.on('pageerror', (err) => errors.push(err.message));
 
-    await page.getByRole('button', { name: /manage permissions/i }).first().click();
+    await page
+      .getByRole('button', { name: /manage permissions/i })
+      .first()
+      .click();
     await page.waitForSelector('tr[style*="cursor: pointer"]', { timeout: 20_000 });
 
     expect(errors).toHaveLength(0);
@@ -557,9 +823,12 @@ test.describe('9. Permission matrix — admin management', () => {
 
   test('clicking an entity row shows the attribute permissions panel', async ({ page }) => {
     const errors: string[] = [];
-    page.on('pageerror', err => errors.push(err.message));
+    page.on('pageerror', (err) => errors.push(err.message));
 
-    await page.getByRole('button', { name: /manage permissions/i }).first().click();
+    await page
+      .getByRole('button', { name: /manage permissions/i })
+      .first()
+      .click();
     await page.waitForSelector('tr[style*="cursor: pointer"]', { timeout: 20_000 });
 
     await page.locator('tr[style*="cursor: pointer"]').first().click();
@@ -572,9 +841,12 @@ test.describe('9. Permission matrix — admin management', () => {
 
   test('toggling an entity permission checkbox does not crash the app', async ({ page }) => {
     const errors: string[] = [];
-    page.on('pageerror', err => errors.push(err.message));
+    page.on('pageerror', (err) => errors.push(err.message));
 
-    await page.getByRole('button', { name: /manage permissions/i }).first().click();
+    await page
+      .getByRole('button', { name: /manage permissions/i })
+      .first()
+      .click();
     await page.waitForSelector('tr[style*="cursor: pointer"]', { timeout: 20_000 });
 
     const urlBefore = page.url();
@@ -587,9 +859,12 @@ test.describe('9. Permission matrix — admin management', () => {
 
   test('toggling an attribute permission checkbox does not crash the app', async ({ page }) => {
     const errors: string[] = [];
-    page.on('pageerror', err => errors.push(err.message));
+    page.on('pageerror', (err) => errors.push(err.message));
 
-    await page.getByRole('button', { name: /manage permissions/i }).first().click();
+    await page
+      .getByRole('button', { name: /manage permissions/i })
+      .first()
+      .click();
     await page.waitForSelector('tr[style*="cursor: pointer"]', { timeout: 20_000 });
 
     const entityRows = page.locator('tr[style*="cursor: pointer"]');
@@ -614,12 +889,18 @@ test.describe('9. Permission matrix — admin management', () => {
   });
 
   test('permission changes persist after page reload', async ({ page }) => {
-    await page.getByRole('button', { name: /manage permissions/i }).first().click();
+    await page
+      .getByRole('button', { name: /manage permissions/i })
+      .first()
+      .click();
     await page.waitForSelector('tr[style*="cursor: pointer"]', { timeout: 20_000 });
 
     // Read current state of the first entity/first checkbox
     const firstCheckbox = page.locator('tr[style*="cursor: pointer"] p-checkbox').first();
-    const wasCheckedBefore = await firstCheckbox.locator('.p-checkbox-checked').isVisible().catch(() => false);
+    const wasCheckedBefore = await firstCheckbox
+      .locator('.p-checkbox-checked')
+      .isVisible()
+      .catch(() => false);
 
     // Toggle it
     await firstCheckbox.click();
@@ -628,12 +909,19 @@ test.describe('9. Permission matrix — admin management', () => {
     // Reload the page and navigate back to same role's permissions
     await page.reload();
     await page.waitForSelector('p-table', { timeout: NAV_TIMEOUT });
-    await page.getByRole('button', { name: /manage permissions/i }).first().click();
+    await page
+      .getByRole('button', { name: /manage permissions/i })
+      .first()
+      .click();
     await page.waitForSelector('tr[style*="cursor: pointer"]', { timeout: 20_000 });
 
     // The toggled state must be persisted
-    const isCheckedAfter = await page.locator('tr[style*="cursor: pointer"] p-checkbox').first()
-      .locator('.p-checkbox-checked').isVisible().catch(() => false);
+    const isCheckedAfter = await page
+      .locator('tr[style*="cursor: pointer"] p-checkbox')
+      .first()
+      .locator('.p-checkbox-checked')
+      .isVisible()
+      .catch(() => false);
     expect(isCheckedAfter).toBe(!wasCheckedBefore);
 
     // Restore the original state (cleanup)
