@@ -17,6 +17,7 @@ import { DepartmentService } from '../../department/service/department.service';
 import { IEmployee, NewEmployee } from '../employee.model';
 import { EmployeeService } from '../service/employee.service';
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
+import { WorkspaceContextService } from '../../shared/service/workspace-context.service';
 import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 @Component({
@@ -44,6 +45,7 @@ export default class EmployeeUpdateComponent implements OnInit {
   private readonly departmentService = inject(DepartmentService);
   private readonly messageService = inject(MessageService);
   private readonly translateService = inject(TranslateService);
+  private readonly workspaceContextService = inject(WorkspaceContextService);
 
   form: FormGroup = this.fb.group({
     id: [null as number | null],
@@ -60,6 +62,10 @@ export default class EmployeeUpdateComponent implements OnInit {
   isCapabilityReady = signal(false);
   showSalaryField = signal(false);
   departments = signal<IDepartment[]>([]);
+
+  private readonly navigationNodeId = this.route.snapshot.data['navigationNodeId'] as
+    | string
+    | undefined;
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -150,14 +156,14 @@ export default class EmployeeUpdateComponent implements OnInit {
 
     request$.pipe(finalize(() => this.isSaving.set(false))).subscribe({
       next: () => {
-        this.router.navigate(['/entities/employee']);
+        this.navigateToWorkspaceList();
       },
       error: (err: unknown) => handleHttpError(this.messageService, this.translateService, err),
     });
   }
 
   cancel(): void {
-    this.router.navigate(['/entities/employee']);
+    this.navigateToWorkspaceList();
   }
 
   private canEditAttribute(capability: ISecuredEntityCapability, attributeName: string): boolean {
@@ -174,5 +180,15 @@ export default class EmployeeUpdateComponent implements OnInit {
     return this.departments()
       .filter((d) => d.id !== undefined && d.name !== undefined)
       .map((d) => ({ label: d.name!, value: d.id! }));
+  }
+
+  private navigateToWorkspaceList(): void {
+    const context = this.navigationNodeId
+      ? this.workspaceContextService.get(this.navigationNodeId)
+      : null;
+    this.router.navigate(
+      ['/entities/employee'],
+      context ? { queryParams: context.queryParams } : undefined,
+    );
   }
 }

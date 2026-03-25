@@ -5,6 +5,7 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
+import { WorkspaceContextService } from '../../shared/service/workspace-context.service';
 import { IOrganization } from '../organization.model';
 import { OrganizationService } from '../service/organization.service';
 
@@ -23,9 +24,15 @@ export default class OrganizationDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly organizationService = inject(OrganizationService);
+  private readonly workspaceContextService = inject(WorkspaceContextService);
+
+  private readonly navigationNodeId = this.route.snapshot.data['navigationNodeId'] as
+    | string
+    | undefined;
 
   ngOnInit(): void {
-    const capability = (this.route.snapshot.data['capability'] ?? null) as ISecuredEntityCapability | null;
+    const capability = (this.route.snapshot.data['capability'] ??
+      null) as ISecuredEntityCapability | null;
     this.canUpdate.set(capability?.canUpdate ?? false);
     if (capability?.attributes) {
       const vis: Record<string, boolean> = {};
@@ -36,11 +43,11 @@ export default class OrganizationDetailComponent implements OnInit {
     }
     this.capabilityLoaded.set(true);
 
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
         this.organizationService.find(Number(id)).subscribe({
-          next: res => this.organization.set(res.body ?? null),
+          next: (res) => this.organization.set(res.body ?? null),
           error: (err: any) => {
             if (err.status === 404) {
               this.router.navigate(['/404']);
@@ -52,7 +59,13 @@ export default class OrganizationDetailComponent implements OnInit {
   }
 
   back(): void {
-    this.router.navigate(['/entities/organization']);
+    const context = this.navigationNodeId
+      ? this.workspaceContextService.get(this.navigationNodeId)
+      : null;
+    this.router.navigate(
+      ['/entities/organization'],
+      context ? { queryParams: context.queryParams } : undefined,
+    );
   }
 
   edit(org: IOrganization): void {

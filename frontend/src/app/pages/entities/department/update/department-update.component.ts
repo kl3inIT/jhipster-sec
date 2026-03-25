@@ -17,6 +17,7 @@ import { OrganizationService } from '../../organization/service/organization.ser
 import { IDepartment, NewDepartment } from '../department.model';
 import { DepartmentService } from '../service/department.service';
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
+import { WorkspaceContextService } from '../../shared/service/workspace-context.service';
 import { handleHttpError } from 'app/shared/error/http-error.utils';
 
 @Component({
@@ -44,6 +45,7 @@ export default class DepartmentUpdateComponent implements OnInit {
   private readonly organizationService = inject(OrganizationService);
   private readonly messageService = inject(MessageService);
   private readonly translateService = inject(TranslateService);
+  private readonly workspaceContextService = inject(WorkspaceContextService);
 
   form: FormGroup = this.fb.group({
     id: [null as number | null],
@@ -57,6 +59,10 @@ export default class DepartmentUpdateComponent implements OnInit {
   isEdit = signal(false);
   isCapabilityReady = signal(false);
   organizations = signal<IOrganization[]>([]);
+
+  private readonly navigationNodeId = this.route.snapshot.data['navigationNodeId'] as
+    | string
+    | undefined;
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -141,14 +147,14 @@ export default class DepartmentUpdateComponent implements OnInit {
 
     request$.pipe(finalize(() => this.isSaving.set(false))).subscribe({
       next: () => {
-        this.router.navigate(['/entities/department']);
+        this.navigateToWorkspaceList();
       },
       error: (err: unknown) => handleHttpError(this.messageService, this.translateService, err),
     });
   }
 
   cancel(): void {
-    this.router.navigate(['/entities/department']);
+    this.navigateToWorkspaceList();
   }
 
   private navigateToAccessDenied(): void {
@@ -159,5 +165,15 @@ export default class DepartmentUpdateComponent implements OnInit {
     return this.organizations()
       .filter((o) => o.id !== undefined && o.name !== undefined)
       .map((o) => ({ label: o.name!, value: o.id! }));
+  }
+
+  private navigateToWorkspaceList(): void {
+    const context = this.navigationNodeId
+      ? this.workspaceContextService.get(this.navigationNodeId)
+      : null;
+    this.router.navigate(
+      ['/entities/department'],
+      context ? { queryParams: context.queryParams } : undefined,
+    );
   }
 }

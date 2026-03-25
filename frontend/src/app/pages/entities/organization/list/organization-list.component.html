@@ -7,89 +7,120 @@
       <h1 class="m-0 text-2xl font-semibold">Organizations</h1>
     </div>
     <div class="flex gap-2">
-      @if (canCreate()) {
-        <button pButton type="button" icon="pi pi-plus" label="New Organization" (click)="create()"></button>
+      @if (canRead() && canCreate()) {
+        <button
+          pButton
+          type="button"
+          icon="pi pi-plus"
+          label="New Organization"
+          (click)="create()"
+        ></button>
       }
     </div>
   </div>
 
   <p-card class="shadow-sm">
-    <p-table
-      [value]="organizations()"
-      [lazy]="true"
-      [paginator]="true"
-      [rows]="itemsPerPage"
-      [totalRecords]="totalItems"
-      [first]="firstRow"
-      [loading]="loading()"
-      [sortField]="sortState().predicate ?? 'id'"
-      [sortOrder]="(sortState().order === 'desc' ? -1 : 1)"
-      [tableStyle]="{ 'min-width': '100%' }"
-      styleClass="p-datatable-gridlines p-datatable-sm"
-      dataKey="id"
-      (onLazyLoad)="onLazyLoad($event)"
-      [rowsPerPageOptions]="[10, 20, 30]"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-    >
-      <ng-template pTemplate="header">
-        <tr>
-          <th pSortableColumn="id" style="width: 6rem">
-            ID <p-sortIcon field="id" />
-          </th>
-          <th pSortableColumn="code">Code <p-sortIcon field="code" /></th>
-          <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
-          <th pSortableColumn="ownerLogin">Owner Login <p-sortIcon field="ownerLogin" /></th>
-          @if (showBudgetColumn()) {
-            <th pSortableColumn="budget">Budget <p-sortIcon field="budget" /></th>
-          }
-          <th style="width: 10rem; text-align: center">Actions</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-row>
-        <tr>
-          <td>
-            <a [routerLink]="['/entities/organization', row.id, 'view']" class="font-medium">{{ row.id }}</a>
-          </td>
-          <td>{{ row.code }}</td>
-          <td>{{ row.name }}</td>
-          <td>{{ row.ownerLogin }}</td>
-          @if (showBudgetColumn()) {
-            <td>{{ row.budget !== undefined ? (row.budget | number: '1.2-2') : '' }}</td>
-          }
-          <td style="text-align: center">
-            @if (capabilityLoaded()) {
-              <div class="flex items-center justify-center gap-2">
-                @if (canRead()) {
-                  <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-eye" aria-label="View" (click)="view(row)"></button>
-                }
-                @if (canUpdate()) {
-                  <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-pencil" aria-label="Edit" (click)="edit(row)"></button>
-                }
-                @if (canDelete()) {
-                  <button
-                    pButton
-                    type="button"
-                    class="p-button-text p-button-danger p-button-sm"
-                    icon="pi pi-trash"
-                    aria-label="Delete"
-                    (click)="confirmDelete(row)"
-                  ></button>
-                }
-              </div>
-            } @else {
-              <i class="pi pi-spin pi-spinner text-gray-400"></i>
+    @if (showListDeniedState()) {
+      <div class="flex flex-column gap-3 py-6 text-center">
+        <h2 class="m-0 text-2xl font-semibold">Organization access is limited</h2>
+        <p class="m-0 text-color-secondary">
+          You can open this workspace from the shell, but you do not have permission to view
+          organization records.
+        </p>
+      </div>
+    } @else {
+      <p-table
+        [value]="organizations()"
+        [lazy]="true"
+        [paginator]="true"
+        [rows]="itemsPerPage"
+        [totalRecords]="totalItems"
+        [first]="firstRow"
+        [loading]="loading()"
+        [sortField]="sortState().predicate ?? 'id'"
+        [sortOrder]="sortState().order === 'desc' ? -1 : 1"
+        [tableStyle]="{ 'min-width': '100%' }"
+        styleClass="p-datatable-gridlines p-datatable-sm"
+        dataKey="id"
+        (onLazyLoad)="onLazyLoad($event)"
+        [rowsPerPageOptions]="[10, 20, 30]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="id" style="width: 6rem">ID <p-sortIcon field="id" /></th>
+            <th pSortableColumn="code">Code <p-sortIcon field="code" /></th>
+            <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
+            <th pSortableColumn="ownerLogin">Owner Login <p-sortIcon field="ownerLogin" /></th>
+            @if (showBudgetColumn()) {
+              <th pSortableColumn="budget">Budget <p-sortIcon field="budget" /></th>
             }
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td [attr.colspan]="showBudgetColumn() ? 6 : 5" class="text-center py-4">
-            No organizations found. Create the first organization using the New Organization button.
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+            <th style="width: 10rem; text-align: center">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td>
+              <a [routerLink]="['/entities/organization', row.id, 'view']" class="font-medium">{{
+                row.id
+              }}</a>
+            </td>
+            <td>{{ row.code }}</td>
+            <td>{{ row.name }}</td>
+            <td>{{ row.ownerLogin }}</td>
+            @if (showBudgetColumn()) {
+              <td>{{ row.budget !== undefined ? (row.budget | number: '1.2-2') : '' }}</td>
+            }
+            <td style="text-align: center">
+              @if (capabilityLoaded()) {
+                <div class="flex items-center justify-center gap-2">
+                  @if (canRead()) {
+                    <button
+                      pButton
+                      type="button"
+                      class="p-button-text p-button-sm"
+                      icon="pi pi-eye"
+                      aria-label="View"
+                      (click)="view(row)"
+                    ></button>
+                  }
+                  @if (canUpdate()) {
+                    <button
+                      pButton
+                      type="button"
+                      class="p-button-text p-button-sm"
+                      icon="pi pi-pencil"
+                      aria-label="Edit"
+                      (click)="edit(row)"
+                    ></button>
+                  }
+                  @if (canDelete()) {
+                    <button
+                      pButton
+                      type="button"
+                      class="p-button-text p-button-danger p-button-sm"
+                      icon="pi pi-trash"
+                      aria-label="Delete"
+                      (click)="confirmDelete(row)"
+                    ></button>
+                  }
+                </div>
+              } @else {
+                <i class="pi pi-spin pi-spinner text-gray-400"></i>
+              }
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="showBudgetColumn() ? 6 : 5" class="text-center py-4">
+              No organizations found. Create the first organization using the New Organization
+              button.
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
   </p-card>
 </div>
