@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Repair databases left on the pre-rename menu grant schema. -->
+    <changeSet id="20260325000300-1" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_navigation_grant"/>
+            <not>
+                <tableExists tableName="sec_menu_permission"/>
+            </not>
+        </preConditions>
+        <renameTable oldTableName="sec_navigation_grant" newTableName="sec_menu_permission"/>
+    </changeSet>
+
+    <changeSet id="20260325000300-2" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_permission"/>
+            <columnExists tableName="sec_menu_permission" columnName="authority_name"/>
+            <not>
+                <columnExists tableName="sec_menu_permission" columnName="role"/>
+            </not>
+        </preConditions>
+        <renameColumn tableName="sec_menu_permission"
+                      oldColumnName="authority_name"
+                      newColumnName="role"
+                      columnDataType="varchar(50)"/>
+    </changeSet>
+
+    <changeSet id="20260325000300-3" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_permission"/>
+            <columnExists tableName="sec_menu_permission" columnName="node_id"/>
+            <not>
+                <columnExists tableName="sec_menu_permission" columnName="menu_id"/>
+            </not>
+        </preConditions>
+        <renameColumn tableName="sec_menu_permission"
+                      oldColumnName="node_id"
+                      newColumnName="menu_id"
+                      columnDataType="varchar(150)"/>
+    </changeSet>
+
+    <changeSet id="20260325000300-4" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_permission"/>
+            <uniqueConstraintExists tableName="sec_menu_permission"
+                                    constraintName="ux_sec_navigation_grant_authority_app_node"/>
+        </preConditions>
+        <dropUniqueConstraint tableName="sec_menu_permission"
+                              constraintName="ux_sec_navigation_grant_authority_app_node"/>
+    </changeSet>
+
+    <changeSet id="20260325000300-5" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_permission"/>
+            <not>
+                <uniqueConstraintExists tableName="sec_menu_permission"
+                                        constraintName="ux_sec_menu_permission_role_app_menu"/>
+            </not>
+        </preConditions>
+        <addUniqueConstraint tableName="sec_menu_permission"
+                             columnNames="role, app_name, menu_id"
+                             constraintName="ux_sec_menu_permission_role_app_menu"/>
+    </changeSet>
+
+    <changeSet id="20260325000300-6" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_permission"/>
+            <indexExists tableName="sec_menu_permission" indexName="idx_sec_navigation_grant_app_authority"/>
+        </preConditions>
+        <dropIndex tableName="sec_menu_permission" indexName="idx_sec_navigation_grant_app_authority"/>
+    </changeSet>
+
+    <changeSet id="20260325000300-7" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_permission"/>
+            <not>
+                <indexExists tableName="sec_menu_permission" indexName="idx_sec_menu_permission_app_role"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_sec_menu_permission_app_role" tableName="sec_menu_permission">
+            <column name="app_name"/>
+            <column name="role"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20260325000300-8" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_permission"/>
+            <indexExists tableName="sec_menu_permission" indexName="idx_sec_navigation_grant_app_node"/>
+        </preConditions>
+        <dropIndex tableName="sec_menu_permission" indexName="idx_sec_navigation_grant_app_node"/>
+    </changeSet>
+
+    <changeSet id="20260325000300-9" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_permission"/>
+            <not>
+                <indexExists tableName="sec_menu_permission" indexName="idx_sec_menu_permission_app_menu"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_sec_menu_permission_app_menu" tableName="sec_menu_permission">
+            <column name="app_name"/>
+            <column name="menu_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="20260325000300-10" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_permission"/>
+            <foreignKeyConstraintExists foreignKeyTableName="sec_menu_permission"
+                                        foreignKeyName="fk_sec_navigation_grant_authority"/>
+        </preConditions>
+        <dropForeignKeyConstraint baseTableName="sec_menu_permission"
+                                  constraintName="fk_sec_navigation_grant_authority"/>
+    </changeSet>
+
+    <changeSet id="20260325000300-11" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_permission"/>
+            <not>
+                <foreignKeyConstraintExists foreignKeyTableName="sec_menu_permission"
+                                            foreignKeyName="fk_sec_menu_permission_role"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint
+            baseTableName="sec_menu_permission"
+            baseColumnNames="role"
+            referencedTableName="jhi_authority"
+            referencedColumnNames="name"
+            constraintName="fk_sec_menu_permission_role"
+            onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="20260325000300-12" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="sec_menu_definition"/>
+            </not>
+        </preConditions>
+        <createTable tableName="sec_menu_definition">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="menu_id" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="app_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="menu_name" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(500)"/>
+            <column name="parent_menu_id" type="varchar(150)"/>
+            <column name="route" type="varchar(300)"/>
+            <column name="icon" type="varchar(100)"/>
+            <column name="ordering" type="integer" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20260325000300-13" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_definition"/>
+            <not>
+                <columnExists tableName="sec_menu_definition" columnName="menu_name"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="sec_menu_definition">
+            <column name="menu_name" type="varchar(200)" defaultValue="">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20260325000300-14" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_definition"/>
+            <not>
+                <uniqueConstraintExists tableName="sec_menu_definition"
+                                        constraintName="ux_sec_menu_definition_app_menu"/>
+            </not>
+        </preConditions>
+        <addUniqueConstraint tableName="sec_menu_definition"
+                             columnNames="app_name, menu_id"
+                             constraintName="ux_sec_menu_definition_app_menu"/>
+    </changeSet>
+
+    <changeSet id="20260325000300-15" author="dev">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_definition"/>
+            <not>
+                <indexExists tableName="sec_menu_definition" indexName="idx_sec_menu_definition_app_parent"/>
+            </not>
+        </preConditions>
+        <createIndex indexName="idx_sec_menu_definition_app_parent" tableName="sec_menu_definition">
+            <column name="app_name"/>
+            <column name="parent_menu_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
