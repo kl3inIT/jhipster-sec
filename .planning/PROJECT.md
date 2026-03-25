@@ -79,6 +79,7 @@ Current context shaping `v1.1`:
 
 - **Compatibility**: Preserve the functional security capabilities already working in `angapp` - entity CRUD checks, attribute permissions, row policies, secure merge behavior, and fetch-plan-driven secure reads must still work after the merge.
 - **Frontend structure**: The new UI must live in a standalone `frontend/` app modeled after `aef-main/aef-main` - PrimeNG Sakai plus JHipster-style Angular structure.
+- **PrimeNG-first UI**: Frontend work must use official PrimeNG components and current `https://primeng.org/` examples or best practices whenever a suitable component exists; custom UI is allowed only for layout composition or gaps where PrimeNG has no suitable component.
 - **Fetch plans**: Fetch plans must be defined in YAML or code builders only - database storage for fetch-plan definitions is not allowed.
 - **Brownfield safety**: Existing authentication, account, admin-user, and mail flows in the current backend must not regress during the migration.
 - **API boundary**: Existing JHipster account/user APIs may keep minimal boundary request/response models where dropping them would destabilize the public contract or validation model.
@@ -96,6 +97,7 @@ Current context shaping `v1.1`:
 | Use proof-domain entities to validate the merged security engine end to end | The platform needed real sample entities to prove CRUD, row, and attribute behavior | Validated in phase 4 |
 | Use fetch plans from YAML and code builders only | Database-backed fetch-plan storage was explicitly disallowed by project constraints | Confirmed in `v1.0` |
 | Remove DTOs incrementally rather than project-wide on day one | Existing JHipster user/account APIs still benefit from contract-protecting boundary models | Confirmed in `v1.0` |
+| Use PrimeNG official components as the default frontend vocabulary | The project needs consistent component behavior, accessibility, and implementation patterns across phases, with custom UI only for PrimeNG gaps | Pending in `v1.1` |
 | Use `angapp` as the canonical donor for user-management, i18n, and shared support files | The previous frontend milestone shipped the new app without full JHipster parity | Pending in `v1.1` |
 | Replace hardcoded frontend menus with backend-driven navigation contracts | Enterprise role-based navigation must scale with backend-managed permissions | Pending in `v1.1` |
 | Rework admin flows toward a Jmix-style master-detail shell rather than isolated page tweaks | The requested UX shift is structural, not cosmetic | Pending in `v1.1` |

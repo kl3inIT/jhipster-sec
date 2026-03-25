@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Phase 8 context gathered
-last_updated: "2026-03-25T14:20:21.954Z"
+stopped_at: Phase 8 UI-SPEC approved
+last_updated: "2026-03-25T14:38:48.830Z"
 last_activity: 2026-03-25
 progress:
   total_phases: 6
@@ -114,6 +114,7 @@ Recent decisions affecting current work:
 - [Milestone v1.1]: `angapp/` is the canonical donor for in-scope JHipster support files, translations, and user-management flows that must be migrated into `frontend/`
 - [Milestone v1.1]: Menu visibility and route protection should move to backend-driven navigation and permission data rather than a hardcoded client menu model
 - [Milestone v1.1]: Enterprise admin usability requires a structural shell and layout upgrade, not isolated page tweaks
+- [Milestone v1.1]: Frontend work is PrimeNG-first; use official `primeng.org` components and current examples whenever a suitable component exists, and allow custom UI only for layout composition or gaps where PrimeNG has no suitable component
 - [Phase 06-frontend-parity-foundation]: Translation assets ship as static `frontend/public/i18n/en.json` and `frontend/public/i18n/vi.json` bundles; the old JHipster namespace merge build step stays retired
 - [Phase 06-frontend-parity-foundation]: Stored locale in `StateStorageService` overrides the default `vi`; `account.langKey` is only a fallback when no locale has been stored
 - [Phase 06-frontend-parity-foundation]: `frontend/src/app.routes.ts` is the authoritative root route tree and `frontend/src/app/app.routes.ts` now re-exports it for compatibility
@@ -150,6 +151,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last activity: 2026-03-25
-Last session: 2026-03-25T14:20:21.944Z
-Stopped at: Phase 8 context gathered
-Resume file: .planning/phases/08-user-management-delivery/08-CONTEXT.md
+Last session: 2026-03-25T14:38:48.825Z
+Stopped at: Phase 8 UI-SPEC approved
+Resume file: .planning/phases/08-user-management-delivery/08-UI-SPEC.md

@@ -33,6 +33,7 @@
 - Root backend quality relies on Gradle JHipster quality conventions plus `checkstyle.xml`. The active custom rules are lightweight: keep HTTP URLs out of code and do not require Javadoc on every method in `checkstyle.xml`.
 - `angapp/` enforces stricter frontend linting through `angapp/eslint.config.mjs`. Follow explicit return types, selector naming (`jhi-...` elements and `jhi...` attributes), `eqeqeq`, `curly`, `prefer-nullish-coalescing`, `prefer-optional-chain`, and no `console` except `warn` and `error`.
 - `angapp/tsconfig.json` enables strict TypeScript, strict Angular templates, `noImplicitReturns`, and `strictNullChecks`. New frontend code should compile under that baseline.
+- `frontend/` UI must be PrimeNG-first: use official `primeng.org` components and current examples for the installed major version (`primeng` 21.x in `frontend/package.json`) whenever a suitable component exists. Custom UI is allowed only when PrimeNG has no suitable component or as thin composition around PrimeNG primitives.
 
 ## Import Organization
 
