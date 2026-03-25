@@ -84,6 +84,14 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="20260325000200-11" author="dev">
+        <addColumn tableName="sec_menu_definition">
+            <column name="menu_name" type="varchar(200)">
+                <constraints nullable="false" defaultValue=""/>
+            </column>
+        </addColumn>
+    </changeSet>
+
     <changeSet id="20260325000200-9" author="dev">
         <addUniqueConstraint tableName="sec_menu_definition"
                              columnNames="app_name, menu_id"

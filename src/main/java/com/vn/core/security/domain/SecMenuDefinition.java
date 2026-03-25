@@ -38,6 +38,9 @@ public class SecMenuDefinition implements Serializable {
     @Column(name = "app_name", nullable = false, length = 100)
     private String appName;
 
+    @Column(name = "menu_name", nullable = false, length = 200)
+    private String menuName;
+
     @Column(name = "label", nullable = false, length = 200)
     private String label;
 
@@ -92,6 +95,19 @@ public class SecMenuDefinition implements Serializable {
 
     public SecMenuDefinition appName(String appName) {
         this.setAppName(appName);
+        return this;
+    }
+
+    public String getMenuName() {
+        return menuName;
+    }
+
+    public void setMenuName(String menuName) {
+        this.menuName = menuName;
+    }
+
+    public SecMenuDefinition menuName(String menuName) {
+        this.setMenuName(menuName);
         return this;
     }
 
@@ -197,6 +213,7 @@ public class SecMenuDefinition implements Serializable {
             "id=" + getId() +
             ", menuId='" + getMenuId() + "'" +
             ", appName='" + getAppName() + "'" +
+            ", menuName='" + getMenuName() + "'" +
             ", label='" + getLabel() + "'" +
             ", description='" + getDescription() + "'" +
             ", parentMenuId='" + getParentMenuId() + "'" +
