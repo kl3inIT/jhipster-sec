@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-stopped_at: Phase 8 UI-SPEC approved
-last_updated: "2026-03-25T14:38:48.830Z"
+status: Ready to execute
+stopped_at: Completed 08-03-PLAN.md
+last_updated: "2026-03-25T16:43:09.104Z"
 last_activity: 2026-03-25
 progress:
   total_phases: 6
   completed_phases: 3
-  total_plans: 14
-  completed_plans: 14
+  total_plans: 18
+  completed_plans: 17
 ---
 
 # Project State
@@ -20,12 +20,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
-**Current focus:** Phase 07.1 — menu-management
+**Current focus:** Phase 08 — user-management-delivery
 
 ## Current Position
 
-Phase: 07.1 (menu-management) — EXECUTING
-Plan: 3 of 3
+Phase: 08 (user-management-delivery) — EXECUTING
+Plan: 4 of 4
 
 ## Performance Metrics
 
@@ -49,12 +49,15 @@ Plan: 3 of 3
 
 - Phase 6 completed with green `frontend` production build and focused Angular regression coverage
 - Standalone i18n, alerting, admin route foundations, and translated shell surfaces are now live in `frontend/`
-- Next actionable work: plan and execute Phase 7
+- Next actionable work: execute Phase 08 plan 04
 
 | Phase 07 P05 | 4 | 2 tasks | 19 files |
 | Phase 07.1-menu-management P01 | 25 | 2 tasks | 10 files |
 | Phase 07.1-menu-management P02 | 5 | 2 tasks | 10 files |
 | Phase 07.1-menu-management P03 | 5 | 2 tasks | 4 files |
+| Phase 08 P01 | 2 | 2 tasks | 4 files |
+| Phase 08 P02 | 10 | 2 tasks | 14 files |
+| Phase 08 P03 | 10 min | 2 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -128,6 +131,13 @@ Recent decisions affecting current work:
 - [Phase 07.1-03]: AdminMenuPermissionService.query() returns plain body following SecPermissionService pattern for internal consumption
 - [Phase 07.1-03]: p-tabpanel is the correct PrimeNG v20+ selector (not p-tab-panel); corrected from plan spec
 - [Phase 07.1-03]: standalone: true removed from PermissionMatrixComponent per CLAUDE.md Angular v20+ default
+- [Phase 08]: UserRepository extends JpaSpecificationExecutor for Specification-based admin user browse queries
+- [Phase 08]: buildManagedUserQuery uses cb.coalesce for nullable firstName/lastName to prevent null comparison failures
+- [Phase 08]: UserManagementService.query accepts SearchWithPagination for combined search and pagination
+- [Phase 08]: Authority labels resolve from i18n keys with raw authority code as fallback
+- [Phase 08]: Create and edit reuse one split-page component so the detail and edit surfaces stay structurally aligned — Keeps detail and edit on the same mental model while leaving role assignment visible in both flows.
+- [Phase 08]: The first authority-save proof uses deterministic Playwright API mocks to verify a persisted grant changes downstream admin route access — This proves the workflow through the real frontend routes without requiring a dedicated backend seed environment for every smoke run.
+- [Phase 08]: UserManagementFormService owns trim and default mapping so create and edit flows serialize one consistent IUser payload — Prevents route-specific form drift and keeps POST or PUT payloads aligned with the preserved admin-user contract.
 
 ### Pending Todos
 
@@ -151,6 +161,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last activity: 2026-03-25
-Last session: 2026-03-25T14:38:48.825Z
-Stopped at: Phase 8 UI-SPEC approved
-Resume file: .planning/phases/08-user-management-delivery/08-UI-SPEC.md
+Last session: 2026-03-25T16:43:09.099Z
+Stopped at: Completed 08-03-PLAN.md
+Resume file: None
