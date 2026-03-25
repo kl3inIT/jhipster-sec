@@ -409,38 +409,44 @@
     }
   },
   "feedback": {
-    "toast": { "deleted": "?? x?a" },
+    "toast": { "deleted": "\u0110\u00e3 x\u00f3a" },
     "httpError": {
       "accessDenied": {
-        "summary": "T? ch?i truy c?p",
-        "detail": "B?n kh?ng c? quy?n th?c hi?n h?nh ??ng n?y."
+        "summary": "T\u1eeb ch\u1ed1i truy c\u1eadp",
+        "detail": "B\u1ea1n kh\u00f4ng c\u00f3 quy\u1ec1n th\u1ef1c hi\u1ec7n h\u00e0nh \u0111\u1ed9ng n\u00e0y."
       },
       "unexpected": {
-        "summary": "L?i",
-        "detail": "?? x?y ra l?i kh?ng mong mu?n. Vui l?ng th? l?i."
+        "summary": "L\u1ed7i",
+        "detail": "\u0110\u00e3 x\u1ea3y ra l\u1ed7i kh\u00f4ng mong mu\u1ed1n. Vui l\u00f2ng th\u1eed l\u1ea1i."
       }
     },
     "security": {
       "roles": {
-        "deleted": "Vai tr? \"{{ param }}\" ?? b? x?a.",
-        "loadFailed": "Kh?ng th? t?i danh s?ch vai tr? b?o m?t.",
-        "deleteFailed": "Kh?ng th? x?a vai tr? b?o m?t."
+        "deleted": "Vai tr\u00f2 \"{{ param }}\" \u0111\u00e3 b\u1ecb x\u00f3a.",
+        "loadFailed": "Kh\u00f4ng th\u1ec3 t\u1ea3i danh s\u00e1ch vai tr\u00f2 b\u1ea3o m\u1eadt.",
+        "deleteFailed": "Kh\u00f4ng th\u1ec3 x\u00f3a vai tr\u00f2 b\u1ea3o m\u1eadt."
       },
       "rowPolicies": {
-        "deleted": "Ch?nh s?ch h?ng \"{{ param }}\" ?? b? x?a.",
-        "loadFailed": "Kh?ng th? t?i danh s?ch ch?nh s?ch h?ng.",
-        "deleteFailed": "Kh?ng th? x?a ch?nh s?ch h?ng.",
-        "saveFailed": "Kh?ng th? l?u ch?nh s?ch h?ng. H?y ki?m tra bi?u th?c v? th? l?i."
+        "deleted": "Ch\u00ednh s\u00e1ch h\u00e0ng \"{{ param }}\" \u0111\u00e3 b\u1ecb x\u00f3a.",
+        "loadFailed": "Kh\u00f4ng th\u1ec3 t\u1ea3i danh s\u00e1ch ch\u00ednh s\u00e1ch h\u00e0ng.",
+        "deleteFailed": "Kh\u00f4ng th\u1ec3 x\u00f3a ch\u00ednh s\u00e1ch h\u00e0ng.",
+        "saveFailed": "Kh\u00f4ng th\u1ec3 l\u01b0u ch\u00ednh s\u00e1ch h\u00e0ng. H\u00e3y ki\u1ec3m tra bi\u1ec3u th\u1ee9c v\u00e0 th\u1eed l\u1ea1i."
       },
       "permissionMatrix": {
-        "loadFailed": "Kh?ng th? t?i ma tr?n quy?n. Vui l?ng th? l?i.",
-        "saveFailed": "Kh?ng th? l?u c?c thay ??i quy?n. Vui l?ng th? l?i."
+        "loadFailed": "Kh\u00f4ng th\u1ec3 t\u1ea3i ma tr\u1eadn quy\u1ec1n. Vui l\u00f2ng th\u1eed l\u1ea1i.",
+        "saveFailed": "Kh\u00f4ng th\u1ec3 l\u01b0u c\u00e1c thay \u0111\u1ed5i quy\u1ec1n. Vui l\u00f2ng th\u1eed l\u1ea1i."
       }
     },
     "entities": {
-      "organizations": { "deleted": "?? x?a t? ch?c th?nh c?ng." },
-      "departments": { "deleted": "?? x?a ph?ng ban th?nh c?ng." },
-      "employees": { "deleted": "?? x?a nh?n vi?n th?nh c?ng." }
+      "organizations": {
+        "deleted": "\u0110\u00e3 x\u00f3a t\u1ed5 ch\u1ee9c th\u00e0nh c\u00f4ng."
+      },
+      "departments": {
+        "deleted": "\u0110\u00e3 x\u00f3a ph\u00f2ng ban th\u00e0nh c\u00f4ng."
+      },
+      "employees": {
+        "deleted": "\u0110\u00e3 x\u00f3a nh\u00e2n vi\u00ean th\u00e0nh c\u00f4ng."
+      }
     }
   }
 }
