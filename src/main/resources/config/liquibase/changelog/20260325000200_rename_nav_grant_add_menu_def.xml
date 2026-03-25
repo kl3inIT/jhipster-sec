@@ -86,8 +86,8 @@
 
     <changeSet id="20260325000200-11" author="dev">
         <addColumn tableName="sec_menu_definition">
-            <column name="menu_name" type="varchar(200)">
-                <constraints nullable="false" defaultValue=""/>
+            <column name="menu_name" type="varchar(200)" defaultValue="">
+                <constraints nullable="false"/>
             </column>
         </addColumn>
     </changeSet>
