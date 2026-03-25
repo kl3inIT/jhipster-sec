@@ -3,21 +3,51 @@
     type="button"
     class="inline-flex items-center justify-center p-2 rounded-lg border-0 cursor-pointer"
     (click)="layoutService.onMenuToggle()"
-    aria-label="Toggle menu"
+    [attr.aria-label]="'layout.topbar.toggleMenu' | translate"
   >
     <i class="pi pi-bars text-xl"></i>
   </button>
   <div class="ml-auto flex items-center gap-2">
-    <button type="button" class="inline-flex items-center justify-center p-2 rounded-lg border-0 cursor-pointer" (click)="toggleDarkMode()" aria-label="Toggle dark mode">
+    <div class="flex items-center gap-1 rounded-full surface-100 p-1">
+      @for (language of languages; track language) {
+        <button
+          type="button"
+          class="rounded-full border-0 px-3 py-1 text-sm font-medium cursor-pointer"
+          [class.bg-white]="activeLanguage() === language"
+          [class.shadow-1]="activeLanguage() === language"
+          [attr.aria-label]="('layout.language.' + language) | translate"
+          [attr.aria-pressed]="activeLanguage() === language"
+          (click)="changeLanguage(language)"
+        >
+          {{ ('layout.language.' + language) | translate }}
+        </button>
+      }
+    </div>
+    <button
+      type="button"
+      class="inline-flex items-center justify-center p-2 rounded-lg border-0 cursor-pointer"
+      (click)="toggleDarkMode()"
+      [attr.aria-label]="'layout.topbar.toggleTheme' | translate"
+    >
       <i [ngClass]="{ 'pi text-xl': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme() }"></i>
     </button>
     @if (currentAccount) {
       <span class="text-sm font-medium">{{ currentAccount.login }}</span>
-      <button type="button" class="inline-flex items-center justify-center p-2 rounded-lg border-0 cursor-pointer" (click)="logout()" aria-label="Logout">
+      <button
+        type="button"
+        class="inline-flex items-center justify-center p-2 rounded-lg border-0 cursor-pointer"
+        (click)="logout()"
+        [attr.aria-label]="'layout.topbar.logout' | translate"
+      >
         <i class="pi pi-sign-out text-xl"></i>
       </button>
     } @else {
-      <button type="button" class="inline-flex items-center justify-center p-2 rounded-lg border-0 cursor-pointer" (click)="login()" aria-label="Login">
+      <button
+        type="button"
+        class="inline-flex items-center justify-center p-2 rounded-lg border-0 cursor-pointer"
+        (click)="login()"
+        [attr.aria-label]="'layout.topbar.login' | translate"
+      >
         <i class="pi pi-sign-in text-xl"></i>
       </button>
     }

@@ -8,6 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MessageModule } from 'primeng/message';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthServerProvider } from 'app/core/auth/auth-jwt.service';
 import { AccountService } from 'app/core/auth/account.service';
@@ -26,6 +27,7 @@ import { SecuredEntityCapabilityService } from 'app/pages/entities/shared/servic
     PasswordModule,
     CheckboxModule,
     MessageModule,
+    TranslatePipe,
   ],
   templateUrl: './login.component.html',
 })

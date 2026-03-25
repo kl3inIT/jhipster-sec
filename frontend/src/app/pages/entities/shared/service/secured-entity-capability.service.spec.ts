@@ -1,7 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { of } from 'rxjs';
 
+import { AccountService } from 'app/core/auth/account.service';
+import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { SecuredEntityCapabilityService } from './secured-entity-capability.service';
 import { ISecuredEntityCapability } from '../secured-entity-capability.model';
 
@@ -29,8 +32,14 @@ describe('SecuredEntityCapabilityService', () => {
   ];
 
   beforeEach(() => {
+    sessionStorage.clear();
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: ApplicationConfigService, useValue: { getEndpointFor: (path: string) => path } },
+        { provide: AccountService, useValue: { getAuthenticationState: () => of(null) } },
+      ],
     });
     service = TestBed.inject(SecuredEntityCapabilityService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -38,6 +47,7 @@ describe('SecuredEntityCapabilityService', () => {
 
   afterEach(() => {
     httpMock.verify();
+    sessionStorage.clear();
   });
 
   it("should return getEntityCapability('organization') from the cached capability list", () => {

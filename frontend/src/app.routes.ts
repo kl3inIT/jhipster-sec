@@ -5,6 +5,7 @@ export const appRoutes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./app/pages/login/login.component'),
+    title: 'pageTitle.login',
   },
   {
     path: '',
@@ -14,18 +15,22 @@ export const appRoutes: Routes = [
         path: '',
         loadComponent: () => import('./app/pages/home/home.component'),
         canActivate: [UserRouteAccessService],
+        title: 'pageTitle.home',
       },
       {
         path: 'accessdenied',
         loadComponent: () => import('./app/pages/error/access-denied.component'),
+        title: 'pageTitle.accessDenied',
       },
       {
         path: '404',
         loadComponent: () => import('./app/pages/error/not-found.component'),
+        title: 'pageTitle.notFound',
       },
       {
         path: 'error',
         loadComponent: () => import('./app/pages/error/error.component'),
+        title: 'pageTitle.error',
       },
       {
         path: 'entities',
@@ -33,8 +38,8 @@ export const appRoutes: Routes = [
         canActivate: [UserRouteAccessService],
       },
       {
-        path: 'admin/security',
-        loadChildren: () => import('./app/pages/admin/security/security.routes'),
+        path: 'admin',
+        loadChildren: () => import('./app/pages/admin/admin.routes'),
         canActivate: [UserRouteAccessService],
         data: { authorities: ['ROLE_ADMIN'] },
       },

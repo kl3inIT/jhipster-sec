@@ -5,11 +5,12 @@ import { AppTopbar } from '../topbar/app.topbar';
 import { AppSidebar } from '../sidebar/app.sidebar';
 import { AppFooter } from '../footer/app.footer';
 import { LayoutService } from 'app/layout/service/layout.service';
+import { AlertComponent } from 'app/shared/alert/alert.component';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, AppTopbar, AppSidebar, RouterModule, AppFooter],
+  imports: [CommonModule, AppTopbar, AppSidebar, RouterModule, AppFooter, AlertComponent],
   template: `<div class="layout-wrapper" [ngClass]="containerClass()">
     <div class="layout-sidebar">
       <div class="sidebar-header">
@@ -24,6 +25,7 @@ import { LayoutService } from 'app/layout/service/layout.service';
     <div class="layout-main-container">
       <app-topbar></app-topbar>
       <div class="layout-main">
+        <jhi-alert></jhi-alert>
         <router-outlet></router-outlet>
       </div>
       <app-footer></app-footer>
