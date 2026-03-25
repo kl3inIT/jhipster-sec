@@ -1,0 +1,95 @@
+@if (user(); as user) {
+  <div class="space-y-4">
+    <div class="flex items-center justify-between gap-3">
+      <h1 class="m-0 text-2xl font-semibold">{{ 'userManagement.detail.title' | translate }}: {{ user.login }}</h1>
+      <div class="flex gap-2">
+        <button pButton type="button" icon="pi pi-pencil" [label]="'userManagement.actions.edit' | translate" (click)="edit()"></button>
+        <button pButton type="button" severity="secondary" icon="pi pi-arrow-left" [label]="'userManagement.detail.backToList' | translate" (click)="back()"></button>
+      </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 65fr 35fr; gap: 1rem;">
+      <!-- Left: User summary -->
+      <p-card [header]="'userManagement.detail.summaryTitle' | translate">
+        <div class="flex flex-column gap-3">
+          <div>
+            <span class="font-semibold">{{ 'userManagement.login' | translate }}:</span>
+            <span class="ml-2">{{ user.login }}</span>
+          </div>
+          <div>
+            <span class="font-semibold">{{ 'userManagement.firstName' | translate }}:</span>
+            <span class="ml-2">{{ user.firstName }}</span>
+          </div>
+          <div>
+            <span class="font-semibold">{{ 'userManagement.lastName' | translate }}:</span>
+            <span class="ml-2">{{ user.lastName }}</span>
+          </div>
+          <div>
+            <span class="font-semibold">{{ 'userManagement.email' | translate }}:</span>
+            <span class="ml-2">{{ user.email }}</span>
+          </div>
+          <div>
+            <span class="font-semibold">{{ 'userManagement.langKey' | translate }}:</span>
+            <span class="ml-2">{{ user.langKey }}</span>
+          </div>
+          <div>
+            <span class="font-semibold">{{ 'userManagement.columns.status' | translate }}:</span>
+            <span class="ml-2">
+              @if (user.activated) {
+                <p-tag [value]="'userManagement.status.active' | translate" severity="success" />
+              } @else {
+                <p-tag [value]="'userManagement.status.inactive' | translate" severity="danger" />
+              }
+            </span>
+          </div>
+        </div>
+
+        @if (user.createdBy || user.lastModifiedBy) {
+          <div class="mt-4 pt-3 border-top-1 surface-border">
+            <h3 class="m-0 mb-2 text-base font-semibold">{{ 'userManagement.detail.auditTitle' | translate }}</h3>
+            <div class="flex flex-column gap-2 text-color-secondary text-sm">
+              @if (user.createdBy) {
+                <div>{{ 'userManagement.createdBy' | translate }}: {{ user.createdBy }} ({{ user.createdDate }})</div>
+              }
+              @if (user.lastModifiedBy) {
+                <div>{{ 'userManagement.lastModifiedBy' | translate }}: {{ user.lastModifiedBy }} ({{ user.lastModifiedDate }})</div>
+              }
+            </div>
+          </div>
+        }
+      </p-card>
+
+      <!-- Right: Role assignment (disabled) -->
+      <p-card [header]="'userManagement.detail.rolesTitle' | translate">
+        <p-table [value]="roleRows()" [tableStyle]="{ 'min-width': '100%' }" styleClass="p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 3rem"></th>
+              <th>{{ 'userManagement.columns.roles' | translate }}</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-row>
+            <tr>
+              <td>
+                <p-checkbox [binary]="true" [ngModel]="row.selected" [disabled]="true" [attr.aria-label]="row.label" />
+              </td>
+              <td>
+                <div>
+                  <span class="font-medium">{{ row.label }}</span>
+                  @if (row.label !== row.authority) {
+                    <span class="ml-1 text-color-secondary text-sm">({{ row.authority }})</span>
+                  }
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="2" class="text-center py-4 text-color-secondary">No roles configured</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+  </div>
+}
