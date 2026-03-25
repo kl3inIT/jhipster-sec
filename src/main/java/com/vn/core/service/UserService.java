@@ -13,12 +13,12 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.springframework.data.jpa.domain.Specification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -283,15 +283,16 @@ public class UserService {
 
     private Specification<User> buildManagedUserQuery(String query) {
         if (query == null || query.isBlank()) {
-            return Specification.where(null);
+            return (root, cq, cb) -> null;
         }
         String pattern = "%" + query.trim().toLowerCase(Locale.ROOT) + "%";
-        return (root, cq, cb) -> cb.or(
-            cb.like(cb.lower(root.get("login")), pattern),
-            cb.like(cb.lower(root.get("email")), pattern),
-            cb.like(cb.lower(cb.coalesce(root.get("firstName"), "")), pattern),
-            cb.like(cb.lower(cb.coalesce(root.get("lastName"), "")), pattern)
-        );
+        return (root, cq, cb) ->
+            cb.or(
+                cb.like(cb.lower(root.get("login")), pattern),
+                cb.like(cb.lower(root.get("email")), pattern),
+                cb.like(cb.lower(cb.coalesce(root.get("firstName"), "")), pattern),
+                cb.like(cb.lower(cb.coalesce(root.get("lastName"), "")), pattern)
+            );
     }
 
     @Transactional(readOnly = true)
