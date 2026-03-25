@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Enterprise Admin Experience
-status: Phase 6 context gathered
-stopped_at: Phase 6 context gathered
-last_updated: "2026-03-25T01:33:21+07:00"
-last_activity: 2026-03-25 - Captured Phase 6 context for Frontend Parity Foundation
+milestone: v1.0
+milestone_name: milestone
+status: "Phase 06 shipped — PR #2"
+stopped_at: Ready to plan Phase 7
+last_updated: "2026-03-25T04:50:33.008Z"
+last_activity: 2026-03-25
 progress:
   total_phases: 5
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  completed_phases: 1
+  total_plans: 6
+  completed_plans: 6
 ---
 
 # Project State
@@ -20,29 +20,26 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
-**Current focus:** Phase 6 planning
+**Current focus:** Phase 07 - enterprise-navigation-shell
 
 ## Current Position
 
-Milestone: v1.1 Enterprise Admin Experience
-Phase: 6 - Frontend Parity Foundation
+Phase: 07 (enterprise-navigation-shell) - READY TO PLAN
 Plan: -
-Status: Context captured, ready for phase planning
-Last activity: 2026-03-25 - Captured Phase 6 context for Frontend Parity Foundation
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed this milestone: 0
-- Average duration: -
-- Total execution time: 0.0 hours
+- Total plans completed this milestone: 6
+- Average duration: 8.3 min
+- Total execution time: 0.8 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 6 - Frontend Parity Foundation | 0 | - | - |
+| 6 - Frontend Parity Foundation | 6 | 50 min | 8.3 min |
 | 7 - Enterprise Navigation Shell | 0 | - | - |
 | 8 - User Management Delivery | 0 | - | - |
 | 9 - Enterprise UX And Performance Hardening | 0 | - | - |
@@ -50,8 +47,9 @@ Last activity: 2026-03-25 - Captured Phase 6 context for Frontend Parity Foundat
 
 **Recent Trend:**
 
-- Roadmap initialized
-- Next actionable work: plan Phase 6
+- Phase 6 completed with green `frontend` production build and focused Angular regression coverage
+- Standalone i18n, alerting, admin route foundations, and translated shell surfaces are now live in `frontend/`
+- Next actionable work: plan and execute Phase 7
 
 ## Accumulated Context
 
@@ -107,15 +105,19 @@ Recent decisions affecting current work:
 - [Milestone v1.1]: `angapp/` is the canonical donor for in-scope JHipster support files, translations, and user-management flows that must be migrated into `frontend/`
 - [Milestone v1.1]: Menu visibility and route protection should move to backend-driven navigation and permission data rather than a hardcoded client menu model
 - [Milestone v1.1]: Enterprise admin usability requires a structural shell and layout upgrade, not isolated page tweaks
+- [Phase 06-frontend-parity-foundation]: Translation assets ship as static `frontend/public/i18n/en.json` and `frontend/public/i18n/vi.json` bundles; the old JHipster namespace merge build step stays retired
+- [Phase 06-frontend-parity-foundation]: Stored locale in `StateStorageService` overrides the default `vi`; `account.langKey` is only a fallback when no locale has been stored
+- [Phase 06-frontend-parity-foundation]: `frontend/src/app.routes.ts` is the authoritative root route tree and `frontend/src/app/app.routes.ts` now re-exports it for compatibility
+- [Phase 06-frontend-parity-foundation]: Menu root items must track stable ids, not translated labels, to keep language switching change-detection safe
 
 ### Pending Todos
 
-- Plan Phase 6 - Frontend Parity Foundation.
+- Plan and execute Phase 7 - Enterprise Navigation Shell.
 
 ### Blockers/Concerns
 
 - No open milestone blockers yet.
-- Frontend parity work is large because `frontend/` still trails `angapp/` in shared support files, translations, and admin surface area.
+- Frontend production build still exceeds the configured initial bundle budget warning threshold (886.96 kB vs 500 kB warning).
 - Planning debt remains on validation metadata for phases 1, 3, and 4; product verification and the milestone audit both passed.
 
 ### Quick Tasks Completed
@@ -127,7 +129,7 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last activity: 2026-03-25 - Captured Phase 6 context for Frontend Parity Foundation
-Last session: 2026-03-25T01:33:21+07:00
-Stopped at: Phase 6 context gathered
-Resume file: .planning/phases/06-frontend-parity-foundation/06-CONTEXT.md
+Last activity: 2026-03-25
+Last session: 2026-03-25T11:34:39.7370232+07:00
+Stopped at: Ready to plan Phase 7
+Resume file: .planning/ROADMAP.md

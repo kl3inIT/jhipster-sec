@@ -10,7 +10,7 @@
 | Milestone | Phases | Requirements | Status | Archive |
 |-----------|--------|--------------|--------|---------|
 | v1.0 MVP | 1-5 | 18/18 complete | Shipped 2026-03-25 | `.planning/milestones/v1.0-ROADMAP.md` |
-| v1.1 Enterprise Admin Experience | 6-10 | 0/16 complete | Planned 2026-03-25 | - |
+| v1.1 Enterprise Admin Experience | 6-10 | 2/16 complete | Active | - |
 
 ## Overview
 
@@ -22,7 +22,7 @@ This roadmap builds on the shipped security platform by first closing the missin
 - Integer phases continue across milestones by default.
 - `v1.0` ended at Phase 5, so `v1.1` starts at Phase 6.
 
-- [ ] **Phase 6: Frontend Parity Foundation** - Copy and adapt the required `angapp` support files, translations, and shared admin/account infrastructure into `frontend/`.
+- [x] **Phase 6: Frontend Parity Foundation** - Copy and adapt the required `angapp` support files, translations, and shared admin/account infrastructure into `frontend/`. (completed 2026-03-25)
 - [ ] **Phase 7: Enterprise Navigation Shell** - Replace hardcoded navigation with backend-driven menu and permission-aware route control inside a Jmix-style shell.
 - [ ] **Phase 8: User Management Delivery** - Deliver the full frontend admin user-management surface, including role assignment.
 - [ ] **Phase 9: Enterprise UX And Performance Hardening** - Improve consistency, responsiveness, data-fetch efficiency, and route-level loading costs.
@@ -38,7 +38,14 @@ This roadmap builds on the shipped security platform by first closing the missin
 1. Required JHipster support files and translation assets for in-scope flows exist in `frontend/` and are wired into the Angular runtime.
 2. Shared frontend services and utilities for language, alerts, request helpers, and admin or user-management foundations are aligned with the migrated shell needs.
 3. The frontend can render core migrated shell and user-management UI text from copied translation assets without fallback gaps.
-**Plans:** Pending phase planning
+**Plans:** 6/6 plans complete
+Plans:
+- [x] 06-01-PLAN.md - Standalone i18n bootstrap, merged vi or en bundles, route-title translation, and locale precedence
+- [x] 06-02-PLAN.md - Visible translated alerts, backend alert-key normalization, and donor-compatible authority helpers
+- [x] 06-03-PLAN.md - Typed request or pagination helpers plus the preserved user-management model, service, and route foundation
+- [x] 06-04-PLAN.md - Translated shell, login, and error surfaces with a persisted vi or en language switcher
+- [x] 06-05-PLAN.md - Root or admin route mounting and route reachability coverage for the migrated foundation
+- [x] 06-06-PLAN.md - Close the remaining UAT gaps for admin discoverability and locale-aware MessageService feedback
 
 ### Phase 7: Enterprise Navigation Shell
 **Goal**: Navigation, route protection, and enterprise shell behavior are driven by backend-aware contracts rather than hardcoded client assumptions.

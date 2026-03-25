@@ -1,0 +1,90 @@
+{
+  "global": {
+    "title": "Angapp",
+    "browsehappy": "Bạn đang sử dụng một trình duyệt <strong>quá cũ</strong>. Vui lòng <a href=\"http://browsehappy.com/?locale=en\">nâng cấp trình duyệt</a> của bạn để có trải nghiệm tốt nhất.",
+    "menu": {
+      "home": "Trang chủ",
+      "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
+      "entities": {
+        "main": "Thực thể",
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "department": "Department",
+        "organization": "Organization"
+      },
+      "account": {
+        "main": "Tài khoản",
+        "settings": "Cài đặt",
+        "password": "Mật khẩu",
+        "sessions": "Phiên đăng nhập",
+        "login": "Đăng nhập",
+        "logout": "Đăng xuất",
+        "register": "Đăng ký"
+      },
+      "admin": {
+        "main": "Quản trị",
+        "userManagement": "Quản lý tài khoản",
+        "tracker": "Theo dõi người dùng",
+        "metrics": "Số liệu",
+        "health": "Tình trạng",
+        "configuration": "Cấu hình",
+        "logs": "Ghi logs",
+        "apidocs": "API",
+        "database": "Cơ sở dữ liệu",
+        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+      },
+      "language": "Ngôn ngữ"
+    },
+    "form": {
+      "username.label": "Tên tài khoản",
+      "username.placeholder": "Nhập tên tài khoản của bạn",
+      "newpassword.label": "Mật khẩu mới",
+      "newpassword.placeholder": "Nhập mật khẩu mới",
+      "confirmpassword.label": "Xác nhận mật khẩu mới",
+      "confirmpassword.placeholder": "Nhập lại mật khẩu mới",
+      "email.label": "Email",
+      "email.placeholder": "Nhập email của bạn"
+    },
+    "messages": {
+      "info": {
+        "authenticated": {
+          "prefix": "Nếu bạn muốn ",
+          "link": "đăng nhập",
+          "suffix": ", bạn có thể thử với tài khoản mặc định:<br/>- Quản trị viên (tài khoản=\"admin\" và mật khẩu=\"admin\") <br/>- Người dùng (tài khoản=\"user\" và mật khẩu=\"user\")."
+        },
+        "register": {
+          "noaccount": "Bạn vẫn chưa có tài khoản?",
+          "link": "Đăng ký tài khoản mới"
+        }
+      },
+      "error": {
+        "dontmatch": "Xác nhận mật khẩu không khớp!"
+      },
+      "validate": {
+        "newpassword": {
+          "required": "Bạn phải nhập mật khẩu.",
+          "minlength": "Mật khẩu phải có ít nhất 4 ký tự.",
+          "maxlength": "Mật khẩu không được vượt quá 50 ký tự.",
+          "strength": "Độ mạnh của mật khẩu:"
+        },
+        "confirmpassword": {
+          "required": "Bạn phải nhập lại mật khẩu để xác nhận.",
+          "minlength": "Mật khẩu phải có ít nhất 4 ký tự.",
+          "maxlength": "Mật khẩu không được vượt quá 50 ký tự."
+        },
+        "email": {
+          "required": "Bạn phải nhập email.",
+          "invalid": "Email bạn nhập không hợp lệ.",
+          "minlength": "Email phải có ít nhất 5 ký tự.",
+          "maxlength": "Email không được vượt quá 50 ký tự."
+        }
+      }
+    },
+    "field": {
+      "id": "ID"
+    },
+    "ribbon": {
+      "dev": "Phát triển"
+    },
+    "item-count": "Showing {{first}} - {{second}} of {{total}} items."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "pageTitle": {
+    "home": "Trang chủ",
+    "login": "Đăng nhập",
+    "accessDenied": "Từ chối truy cập",
+    "notFound": "Không tìm thấy trang",
+    "error": "Lỗi không mong muốn",
+    "securityRoles": "Vai trò bảo mật",
+    "permissionMatrix": "Ma trận quyền",
+    "rowPolicies": "Chính sách hàng"
+  }
+}

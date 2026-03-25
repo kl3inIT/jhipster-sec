@@ -1,0 +1,488 @@
+{
+  "activate": {
+    "title": "Kích hoạt",
+    "messages": {
+      "success": "<strong>Tài khoản của bạn đã được kích hoạt.</strong> Bạn vui lòng ",
+      "error": "<strong>Không thể kích hoạt tài khoản của bạn.</strong> Vui lòng quay lại trang đăng ký để tạo tài khoản."
+    }
+  },
+  "angappApp": {
+    "adminAuthority": {
+      "home": {
+        "title": "Authorities",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một Authority",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Authority",
+        "notFound": "No Authorities found"
+      },
+      "created": "Một Authority mới được tạo với định danh {{ param }}",
+      "updated": "Một Authority cập nhật với định danh {{ param }}",
+      "deleted": "Một Authority đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Authority {{ id }}?"
+      },
+      "detail": {
+        "title": "Authority"
+      },
+      "name": "Name"
+    },
+    "department": {
+      "home": {
+        "title": "Departments",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một Department",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Department",
+        "notFound": "No Departments found"
+      },
+      "created": "Một Department mới được tạo với định danh {{ param }}",
+      "updated": "Một Department cập nhật với định danh {{ param }}",
+      "deleted": "Một Department đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Department {{ id }}?"
+      },
+      "detail": {
+        "title": "Department"
+      },
+      "id": "ID",
+      "name": "Name",
+      "code": "Code"
+    },
+    "organization": {
+      "home": {
+        "title": "Organizations",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một Organization",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Organization",
+        "notFound": "No Organizations found"
+      },
+      "created": "Một Organization mới được tạo với định danh {{ param }}",
+      "updated": "Một Organization cập nhật với định danh {{ param }}",
+      "deleted": "Một Organization đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Organization {{ id }}?"
+      },
+      "detail": {
+        "title": "Organization"
+      },
+      "id": "ID",
+      "code": "Code",
+      "name": "Name",
+      "description": "Description"
+    }
+  },
+  "entity": {
+    "action": {
+      "addblob": "Thêm nội dung",
+      "addimage": "Thêm ảnh",
+      "back": "Quay lại",
+      "cancel": "Hủy",
+      "delete": "Xóa",
+      "edit": "Sửa",
+      "open": "Mở",
+      "save": "Lưu",
+      "view": "Xem",
+      "show": "Show {{otherEntity}}"
+    },
+    "detail": {
+      "field": "Trường",
+      "value": "Giá trị"
+    },
+    "delete": {
+      "title": "Xác nhận hành động xóa"
+    },
+    "validation": {
+      "required": "Trường này bắt buộc phải nhập.",
+      "minlength": "Trường này phải có ít nhất {{ min }} ký tự.",
+      "maxlength": "Trường này không được vượt quá {{ max }} ký tự.",
+      "min": "Trường này phải lớn hơn {{ min }}.",
+      "max": "Trường này phải nhỏ hơn {{ max }}.",
+      "minbytes": "Dung lượng trường này phải lớn hơn {{ min }} bytes.",
+      "maxbytes": "Dung lượng trường này phải nhỏ hơn {{ max }} bytes.",
+      "pattern": "Trường này phải theo định dạng {{ pattern }}.",
+      "number": "Trường này phải là một số.",
+      "datetimelocal": "Trường này phải là định dạng thời gian."
+    },
+    "filters": {
+      "set": "Following filters are set",
+      "clear": "Clear filter",
+      "clearAll": "Clear all filters"
+    }
+  },
+  "error": {
+    "internalServerError": "Lỗi máy chủ nội bộ",
+    "server.not.reachable": "Không tìm thấy máy chủ",
+    "url.not.found": "Không tìm thấy",
+    "NotNull": "Trường {{ fieldName }} không được để trống!",
+    "Size": "Trường {{ fieldName }} không nằm trong giới hạn tối thiểu/tối đa!",
+    "userexists": "Tên đăng nhập đã được sử dụng!",
+    "emailexists": "Email đã được sử dụng!",
+    "idexists": "Thêm mới {{ entityName }} không được trùng với định danh đã tồn tại",
+    "idnull": "Invalid ID",
+    "idinvalid": "Invalid Id",
+    "idnotfound": "ID cannot be found",
+    "file": {
+      "could.not.extract": "Could not extract file",
+      "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""
+    },
+    "title": "Trang thông tin lỗi!",
+    "http": {
+      "400": "Bad request.",
+      "403": "Bạn không có quyền xem trang này.",
+      "404": "Trang không tồn tại.",
+      "405": "The HTTP verb you used is not supported for this URL.",
+      "500": "Internal server error."
+    },
+    "concurrencyFailure": "Another user modified this data at the same time as you. Your changes were rejected.",
+    "validation": "Validation error on the server.",
+    "backToHome": "Về trang chủ"
+  },
+  "feedback": {
+    "toast": {
+      "deleted": "Đã xóa"
+    },
+    "httpError": {
+      "accessDenied": {
+        "summary": "Từ chối truy cập",
+        "detail": "Bạn không có quyền thực hiện hành động này."
+      },
+      "unexpected": {
+        "summary": "Lỗi",
+        "detail": "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại."
+      }
+    },
+    "security": {
+      "roles": {
+        "deleted": "Vai trò \"{{ param }}\" đã bị xóa.",
+        "loadFailed": "Không thể tải danh sách vai trò bảo mật.",
+        "deleteFailed": "Không thể xóa vai trò bảo mật."
+      },
+      "rowPolicies": {
+        "deleted": "Chính sách hàng \"{{ param }}\" đã bị xóa.",
+        "loadFailed": "Không thể tải danh sách chính sách hàng.",
+        "deleteFailed": "Không thể xóa chính sách hàng.",
+        "saveFailed": "Không thể lưu chính sách hàng. Hãy kiểm tra biểu thức và thử lại."
+      },
+      "permissionMatrix": {
+        "loadFailed": "Không thể tải ma trận quyền. Vui lòng thử lại.",
+        "saveFailed": "Không thể lưu các thay đổi quyền. Vui lòng thử lại."
+      }
+    },
+    "entities": {
+      "organizations": {
+        "deleted": "Đã xóa tổ chức thành công."
+      },
+      "departments": {
+        "deleted": "Đã xóa phòng ban thành công."
+      },
+      "employees": {
+        "deleted": "Đã xóa nhân viên thành công."
+      }
+    }
+  },
+  "footer": "Đây là chân trang của bạn",
+  "global": {
+    "title": "Angapp",
+    "browsehappy": "Bạn đang sử dụng một trình duyệt <strong>quá cũ</strong>. Vui lòng <a href=\"http://browsehappy.com/?locale=en\">nâng cấp trình duyệt</a> của bạn để có trải nghiệm tốt nhất.",
+    "menu": {
+      "home": "Trang chủ",
+      "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
+      "entities": {
+        "main": "Thực thể",
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "department": "Department",
+        "organization": "Organization"
+      },
+      "account": {
+        "main": "Tài khoản",
+        "settings": "Cài đặt",
+        "password": "Mật khẩu",
+        "sessions": "Phiên đăng nhập",
+        "login": "Đăng nhập",
+        "logout": "Đăng xuất",
+        "register": "Đăng ký"
+      },
+      "admin": {
+        "main": "Quản trị",
+        "userManagement": "Quản lý tài khoản",
+        "tracker": "Theo dõi người dùng",
+        "metrics": "Số liệu",
+        "health": "Tình trạng",
+        "configuration": "Cấu hình",
+        "logs": "Ghi logs",
+        "apidocs": "API",
+        "database": "Cơ sở dữ liệu",
+        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+      },
+      "language": "Ngôn ngữ"
+    },
+    "form": {
+      "username.label": "Tên tài khoản",
+      "username.placeholder": "Nhập tên tài khoản của bạn",
+      "newpassword.label": "Mật khẩu mới",
+      "newpassword.placeholder": "Nhập mật khẩu mới",
+      "confirmpassword.label": "Xác nhận mật khẩu mới",
+      "confirmpassword.placeholder": "Nhập lại mật khẩu mới",
+      "email.label": "Email",
+      "email.placeholder": "Nhập email của bạn"
+    },
+    "messages": {
+      "info": {
+        "authenticated": {
+          "prefix": "Nếu bạn muốn ",
+          "link": "đăng nhập",
+          "suffix": ", bạn có thể thử với tài khoản mặc định:<br/>- Quản trị viên (tài khoản=\"admin\" và mật khẩu=\"admin\") <br/>- Người dùng (tài khoản=\"user\" và mật khẩu=\"user\")."
+        },
+        "register": {
+          "noaccount": "Bạn vẫn chưa có tài khoản?",
+          "link": "Đăng ký tài khoản mới"
+        }
+      },
+      "error": {
+        "dontmatch": "Xác nhận mật khẩu không khớp!"
+      },
+      "validate": {
+        "newpassword": {
+          "required": "Bạn phải nhập mật khẩu.",
+          "minlength": "Mật khẩu phải có ít nhất 4 ký tự.",
+          "maxlength": "Mật khẩu không được vượt quá 50 ký tự.",
+          "strength": "Độ mạnh của mật khẩu:"
+        },
+        "confirmpassword": {
+          "required": "Bạn phải nhập lại mật khẩu để xác nhận.",
+          "minlength": "Mật khẩu phải có ít nhất 4 ký tự.",
+          "maxlength": "Mật khẩu không được vượt quá 50 ký tự."
+        },
+        "email": {
+          "required": "Bạn phải nhập email.",
+          "invalid": "Email bạn nhập không hợp lệ.",
+          "minlength": "Email phải có ít nhất 5 ký tự.",
+          "maxlength": "Email không được vượt quá 50 ký tự."
+        }
+      }
+    },
+    "field": {
+      "id": "ID"
+    },
+    "ribbon": {
+      "dev": "Phát triển"
+    },
+    "item-count": "Showing {{first}} - {{second}} of {{total}} items."
+  },
+  "home": {
+    "title": "Chào mừng bạn đến với Java Hipster!",
+    "subtitle": "Đây là trang chủ của bạn",
+    "logged": {
+      "message": "Bạn đang đăng nhập bằng tài khoản \"{{username}}\"."
+    },
+    "question": "Nếu bạn có bất kỳ câu hỏi nào về JHipster vui lòng truy cập:",
+    "link": {
+      "homepage": "Trang chủ JHipster",
+      "stackoverflow": "JHipster trên Stack Overflow",
+      "bugtracker": "Theo dõi các lỗi JHipster",
+      "chat": "Phòng chat công cộng JHipster",
+      "follow": "Theo dõi @jhipster trên Twitter"
+    },
+    "like": "Nếu bạn thích JHipster, đừng quên cho chúng tôi thêm một ngôi sao trên",
+    "github": "GitHub"
+  },
+  "layout": {
+    "topbar": {
+      "toggleMenu": "Mở hoặc đóng menu",
+      "toggleTheme": "Đổi giao diện",
+      "login": "Đăng nhập",
+      "logout": "Đăng xuất"
+    },
+    "language": {
+      "en": "English",
+      "vi": "Tiếng Việt"
+    },
+    "menu": {
+      "security": {
+        "main": "Quản trị bảo mật",
+        "roles": "Vai trò bảo mật",
+        "permissions": "Ma trận quyền",
+        "rowPolicies": "Chính sách hàng"
+      },
+      "entities": {
+        "employee": "Nhân viên"
+      }
+    }
+  },
+  "login": {
+    "title": "Đăng nhập",
+    "form": {
+      "password": "Mật khẩu",
+      "password.placeholder": "Nhập mật khẩu của bạn",
+      "rememberme": "Nhớ tài khoản",
+      "button": "Đăng nhập"
+    },
+    "messages": {
+      "error": {
+        "authentication": "<strong>Đăng nhập thất bại!</strong> Bạn vui lòng kiểm tra thông tin đăng nhập và thử lại."
+      }
+    },
+    "password": {
+      "forgot": "Bạn quên mật khẩu?"
+    }
+  },
+  "pageTitle": {
+    "home": "Trang chủ",
+    "login": "Đăng nhập",
+    "accessDenied": "Từ chối truy cập",
+    "notFound": "Không tìm thấy trang",
+    "error": "Lỗi không mong muốn",
+    "securityRoles": "Vai trò bảo mật",
+    "permissionMatrix": "Ma trận quyền",
+    "rowPolicies": "Chính sách hàng"
+  },
+  "password": {
+    "title": "Mật khẩu cho tài khoản [<strong>{{username}}</strong>]",
+    "form": {
+      "button": "Lưu"
+    },
+    "messages": {
+      "error": "<strong>Có lỗi xảy ra!</strong> Không thể thay đổi mật khẩu.",
+      "success": "<strong>Mật khẩu đã được thay đổi!</strong>"
+    }
+  },
+  "register": {
+    "title": "Đăng ký",
+    "form": {
+      "button": "Đăng ký"
+    },
+    "messages": {
+      "validate": {
+        "login": {
+          "required": "Bạn phải nhập tên tài khoản.",
+          "minlength": "Tên tài khoản phải có ít nhất 1 ký tự.",
+          "maxlength": "Tên tài khoản không được vượt quá 50 ký tự.",
+          "pattern": "Your username is invalid."
+        }
+      },
+      "success": "<strong>Đăng ký thành công!</strong> Bạn vui lòng kiểm tra hộp thư để xác nhận tài khoản.",
+      "error": {
+        "fail": "<strong>Đăng ký thất bại!</strong> Vui lòng thử lại sau.",
+        "userexists": "<strong>Tên tài khoản này đã được sử dụng!</strong> Bạn vui lòng chọn tên tài khoản khác.",
+        "emailexists": "<strong>Email này đã được sử dụng!</strong> Bạn vui lòng nhập email khác."
+      }
+    }
+  },
+  "reset": {
+    "request": {
+      "title": "Đặt lại mật khẩu của bạn",
+      "form": {
+        "button": "Đặt lại mật khẩu"
+      },
+      "messages": {
+        "info": "Nhập địa chỉ email mà bạn đã sử dụng để đăng ký",
+        "success": "Vui lòng kiểm tra hòm thư của bạn để xem chi tiết cách lấy lại mật khẩu."
+      }
+    },
+    "finish": {
+      "title": "Đặt lại mật khẩu",
+      "form": {
+        "button": "Kiểm tra mật khẩu mới"
+      },
+      "messages": {
+        "info": "Chọn mật khẩu mới",
+        "success": "<strong>Mật khẩu của bạn đã được đặt lại.</strong> Bạn vui lòng ",
+        "keymissing": "Không tìm thấy khóa để đặt lại mật khẩu.",
+        "error": "Không thể đặt lại mật khẩu của bạn. Lưu ý, yêu cầu đặt lại mật khẩu chỉ có hiệu lực trong 24 giờ."
+      }
+    }
+  },
+  "security": {
+    "alert": {
+      "secRole": {
+        "created": "Một vai trò bảo mật mới được tạo với định danh {{ param }}",
+        "updated": "Một vai trò bảo mật được cập nhật với định danh {{ param }}",
+        "deleted": "Một vai trò bảo mật đã bị xóa với định danh {{ param }}"
+      },
+      "secPermission": {
+        "created": "Một quyền bảo mật mới được tạo với định danh {{ param }}",
+        "updated": "Một quyền bảo mật được cập nhật với định danh {{ param }}",
+        "deleted": "Một quyền bảo mật đã bị xóa với định danh {{ param }}"
+      },
+      "secRowPolicy": {
+        "created": "Một chính sách hàng mới được tạo với định danh {{ param }}",
+        "updated": "Một chính sách hàng được cập nhật với định danh {{ param }}",
+        "deleted": "Một chính sách hàng đã bị xóa với định danh {{ param }}"
+      }
+    }
+  },
+  "sessions": {
+    "title": "Các phiên đăng nhập hiện tại của [<strong>{{username}}</strong>]",
+    "table": {
+      "ipaddress": "Địa chỉ IP",
+      "useragent": "Trình duyệt",
+      "date": "Ngày",
+      "button": "Đóng phiên này"
+    },
+    "messages": {
+      "success": "<strong>Phiên đăng nhập đã được đóng!</strong>",
+      "error": "<strong>Có lỗi xảy ra!</strong> Không thể đóng phiên đăng nhập."
+    }
+  },
+  "settings": {
+    "title": "Cài đặt người dùng của [<strong>{{username}}</strong>]",
+    "form": {
+      "firstname": "Tên",
+      "firstname.placeholder": "Nhập tên của bạn",
+      "lastname": "Họ",
+      "lastname.placeholder": "Nhập họ của bạn",
+      "language": "Ngôn ngữ",
+      "button": "Lưu"
+    },
+    "messages": {
+      "error": {
+        "fail": "<strong>Có lỗi xảy ra!</strong> Không thể lưu cài đặt.",
+        "emailexists": "<strong>Email đã được sử dụng!</strong> Vui lòng nhập email khác."
+      },
+      "success": "<strong>Đã lưu cài đặt!</strong>",
+      "validate": {
+        "firstname": {
+          "required": "Bạn phải nhập tên.",
+          "minlength": "Tên phải có ít nhất 1 ký tự",
+          "maxlength": "Tên không được vượt quá 50 ký tự"
+        },
+        "lastname": {
+          "required": "Bạn phải nhập họ tên.",
+          "minlength": "Họ tên phải có ít nhất 1 ký tự",
+          "maxlength": "Họ tên không được vượt quá 50 ký tự"
+        }
+      }
+    }
+  },
+  "userManagement": {
+    "home": {
+      "title": "Tài khoản",
+      "refreshListLabel": "Refresh list",
+      "createLabel": "Tạo tài khoản mới",
+      "createOrEditLabel": "Tạo hoặc sửa tài khoản"
+    },
+    "created": "Một tài khoản mới đã được tạo với định danh {{ param }}",
+    "updated": "Một tài khoản đã được cập nhật với định danh {{ param }}",
+    "deleted": "Một tài khoản đã bị xóa với định danh {{ param }}",
+    "delete": {
+      "question": "Bạn có chắc chắn muốn xóa tài khoản {{ login }}?"
+    },
+    "detail": {
+      "title": "Tài khoản"
+    },
+    "login": "Tên đăng nhập",
+    "firstName": "Tên",
+    "lastName": "Họ",
+    "email": "Email",
+    "activated": "Kích hoạt",
+    "deactivated": "Khóa",
+    "profiles": "Các quyền",
+    "langKey": "Ngôn ngữ",
+    "createdBy": "Người tạo",
+    "createdDate": "Ngày tạo",
+    "lastModifiedBy": "Người sửa",
+    "lastModifiedDate": "Ngày sửa",
+    "placeholder": {
+      "phase6": "Màn hình quản lý người dùng đầy đủ sẽ hoàn thành ở Phase 8. Placeholder này giữ nguyên hợp đồng route và service."
+    }
+  }
+}

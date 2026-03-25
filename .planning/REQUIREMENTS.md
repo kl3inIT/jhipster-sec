@@ -25,8 +25,8 @@
 
 ### Internationalization And Migration Parity
 
-- [ ] **I18N-01**: Required JHipster support files from `angapp/` for in-scope frontend features are migrated into `frontend/` instead of being reimplemented incompletely.
-- [ ] **I18N-02**: Migrated admin, user-management, and shared shell flows can render translated UI strings and preserve language-aware behavior using copied JHipster translation assets.
+- [x] **I18N-01**: Required JHipster support files from `angapp/` for in-scope frontend features are migrated into `frontend/` instead of being reimplemented incompletely.
+- [x] **I18N-02**: Migrated admin, user-management, and shared shell flows can render translated UI strings and preserve language-aware behavior using copied JHipster translation assets.
 
 ### Performance And Scalability
 
@@ -67,8 +67,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| I18N-01 | Phase 6 | Pending |
-| I18N-02 | Phase 6 | Pending |
+| I18N-01 | Phase 6 | Complete |
+| I18N-02 | Phase 6 | Complete |
 | ROUTE-01 | Phase 7 | Pending |
 | ROUTE-02 | Phase 7 | Pending |
 | ROUTE-03 | Phase 7 | Pending |
@@ -91,4 +91,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-25*
-*Last updated: 2026-03-25 after roadmap creation*
+*Last updated: 2026-03-25 after Phase 6 completion*

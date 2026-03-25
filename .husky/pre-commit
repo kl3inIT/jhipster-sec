@@ -1,6 +1,9 @@
-if [ -z "$(which lint-staged)" ]; then
-    echo 'Running package manager install'
-    ./npmw install
+#!/usr/bin/env sh
+set -e
+
+if ! command -v npx >/dev/null 2>&1; then
+  echo "npx is required to run the pre-commit hook."
+  exit 127
 fi
 
-lint-staged
+npx --no-install lint-staged

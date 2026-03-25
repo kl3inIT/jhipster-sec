@@ -1,0 +1,45 @@
+{
+  "feedback": {
+    "toast": {
+      "deleted": "Deleted"
+    },
+    "httpError": {
+      "accessDenied": {
+        "summary": "Access denied",
+        "detail": "You do not have permission to perform this action."
+      },
+      "unexpected": {
+        "summary": "Error",
+        "detail": "An unexpected error occurred. Please try again."
+      }
+    },
+    "security": {
+      "roles": {
+        "deleted": "Role \"{{ param }}\" has been deleted.",
+        "loadFailed": "Failed to load roles.",
+        "deleteFailed": "Failed to delete role."
+      },
+      "rowPolicies": {
+        "deleted": "Row policy \"{{ param }}\" has been deleted.",
+        "loadFailed": "Failed to load row policies.",
+        "deleteFailed": "Failed to delete row policy.",
+        "saveFailed": "Could not save the row policy. Check the expression and try again."
+      },
+      "permissionMatrix": {
+        "loadFailed": "Could not load the permission matrix. Please try again.",
+        "saveFailed": "Could not save the permission changes. Please try again."
+      }
+    },
+    "entities": {
+      "organizations": {
+        "deleted": "Organization deleted successfully."
+      },
+      "departments": {
+        "deleted": "Department deleted successfully."
+      },
+      "employees": {
+        "deleted": "Employee deleted successfully."
+      }
+    }
+  }
+}

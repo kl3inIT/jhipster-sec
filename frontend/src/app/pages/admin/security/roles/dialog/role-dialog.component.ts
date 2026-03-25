@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
 
 import { ButtonModule } from 'primeng/button';
@@ -17,7 +18,15 @@ import { handleHttpError } from 'app/shared/error/http-error.utils';
 @Component({
   selector: 'app-role-dialog',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonModule, ConfirmDialogModule, DialogModule, InputTextModule, SelectModule, ToastModule],
+  imports: [
+    ReactiveFormsModule,
+    ButtonModule,
+    ConfirmDialogModule,
+    DialogModule,
+    InputTextModule,
+    SelectModule,
+    ToastModule,
+  ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './role-dialog.component.html',
 })
@@ -35,14 +44,21 @@ export default class RoleDialogComponent implements OnChanges {
   ];
 
   editForm = new FormGroup({
-    name: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(50)] }),
-    displayName: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(255)] }),
+    name: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(50)],
+    }),
+    displayName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.maxLength(255)],
+    }),
     type: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
 
   private readonly secRoleService = inject(SecRoleService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
 
   ngOnChanges(): void {
     if (this.visible) {
@@ -80,16 +96,16 @@ export default class RoleDialogComponent implements OnChanges {
       displayName: this.editForm.getRawValue().displayName || undefined,
       type: this.editForm.getRawValue().type,
     };
-    const request$ = this.role ? this.secRoleService.update(roleData) : this.secRoleService.create(roleData);
-    request$
-      .pipe(finalize(() => (this.isSaving = false)))
-      .subscribe({
-        next: () => {
-          this.saved.emit();
-          this.close();
-        },
-        error: (err: any) => handleHttpError(this.messageService, err),
-      });
+    const request$ = this.role
+      ? this.secRoleService.update(roleData)
+      : this.secRoleService.create(roleData);
+    request$.pipe(finalize(() => (this.isSaving = false))).subscribe({
+      next: () => {
+        this.saved.emit();
+        this.close();
+      },
+      error: (err: unknown) => handleHttpError(this.messageService, this.translateService, err),
+    });
   }
 
   close(): void {

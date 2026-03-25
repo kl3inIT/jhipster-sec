@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
 
 import { ButtonModule } from 'primeng/button';
@@ -11,12 +18,19 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ISecRowPolicy } from '../sec-row-policy.model';
 import { SecRowPolicyService } from '../service/sec-row-policy.service';
 import RowPolicyDialogComponent from '../dialog/row-policy-dialog.component';
-import { handleHttpError } from 'app/shared/error/http-error.utils';
+import { addTranslatedMessage, handleHttpError } from 'app/shared/error/http-error.utils';
 
 @Component({
   selector: 'app-row-policy-list',
   standalone: true,
-  imports: [ButtonModule, TableModule, CardModule, ToastModule, ConfirmDialogModule, RowPolicyDialogComponent],
+  imports: [
+    ButtonModule,
+    TableModule,
+    CardModule,
+    ToastModule,
+    ConfirmDialogModule,
+    RowPolicyDialogComponent,
+  ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './row-policy-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +44,7 @@ export default class RowPolicyListComponent implements OnInit {
   private readonly secRowPolicyService = inject(SecRowPolicyService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
@@ -40,10 +55,21 @@ export default class RowPolicyListComponent implements OnInit {
     this.isLoading = true;
     this.secRowPolicyService
       .query()
-      .pipe(finalize(() => { this.isLoading = false; this.cdr.markForCheck(); }))
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        }),
+      )
       .subscribe({
-        next: response => (this.rowPolicies = response.body ?? []),
-        error: (err: any) => handleHttpError(this.messageService, err, 'Failed to load row policies.'),
+        next: (response) => (this.rowPolicies = response.body ?? []),
+        error: (err: unknown) =>
+          handleHttpError(
+            this.messageService,
+            this.translateService,
+            err,
+            'feedback.security.rowPolicies.loadFailed',
+          ),
       });
   }
 
@@ -85,10 +111,21 @@ export default class RowPolicyListComponent implements OnInit {
     }
     this.secRowPolicyService.delete(policy.id).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Deleted', detail: `Row policy "${policy.code}" has been deleted.` });
+        addTranslatedMessage(this.messageService, this.translateService, {
+          severity: 'success',
+          summary: 'feedback.toast.deleted',
+          detail: 'feedback.security.rowPolicies.deleted',
+          detailParams: { param: policy.code },
+        });
         this.loadPolicies();
       },
-      error: (err: any) => handleHttpError(this.messageService, err, 'Failed to delete row policy.'),
+      error: (err: unknown) =>
+        handleHttpError(
+          this.messageService,
+          this.translateService,
+          err,
+          'feedback.security.rowPolicies.deleteFailed',
+        ),
     });
   }
 }

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, map, of } from 'rxjs';
 
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -72,6 +73,7 @@ export default class PermissionMatrixComponent implements OnInit {
   private readonly permissionService = inject(SecPermissionService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   roleName = '';
@@ -121,8 +123,9 @@ export default class PermissionMatrixComponent implements OnInit {
         error: (err: any) =>
           handleHttpError(
             this.messageService,
+            this.translateService,
             err,
-            'Could not load the permission matrix. Please try again.',
+            'feedback.security.permissionMatrix.loadFailed',
           ),
       });
   }
@@ -305,8 +308,8 @@ export default class PermissionMatrixComponent implements OnInit {
 
   private showSaveError(
     err: unknown,
-    fallback = 'Could not save the permission changes. Please try again.',
+    fallback = 'feedback.security.permissionMatrix.saveFailed',
   ): void {
-    handleHttpError(this.messageService, err, fallback);
+    handleHttpError(this.messageService, this.translateService, err, fallback);
   }
 }

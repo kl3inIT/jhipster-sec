@@ -1,8 +1,10 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { MenuItem } from 'primeng/api';
-import { Subject, takeUntil } from 'rxjs';
+import { merge } from 'rxjs';
 import { AccountService } from 'app/core/auth/account.service';
 import { Authority } from 'app/config/authority.constants';
 import { AppMenuitem } from './app.menuitem';
@@ -12,7 +14,7 @@ import { AppMenuitem } from './app.menuitem';
   standalone: true,
   imports: [CommonModule, AppMenuitem, RouterModule],
   template: `<ul class="layout-menu">
-    @for (item of model; track item.label) {
+    @for (item of model; track item.id ?? $index) {
       @if (!item.separator) {
         <li app-menuitem [item]="item" [root]="true"></li>
       } @else {
@@ -21,46 +23,75 @@ import { AppMenuitem } from './app.menuitem';
     }
   </ul>`,
 })
-export class AppMenu implements OnInit, OnDestroy {
+export class AppMenu implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly accountService = inject(AccountService);
-  private readonly destroy$ = new Subject<void>();
+  private readonly translateService = inject(TranslateService);
   model: MenuItem[] = [];
 
   ngOnInit(): void {
-    this.accountService
-      .getAuthenticationState()
-      .pipe(takeUntil(this.destroy$))
+    merge(this.accountService.getAuthenticationState(), this.translateService.onLangChange)
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.buildMenu());
     this.buildMenu();
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   buildMenu(): void {
     const isAdmin = this.accountService.hasAnyAuthority(Authority.ADMIN);
     this.model = [
       {
-        label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/'] }],
+        id: 'home',
+        label: this.translateService.instant('global.menu.home'),
+        items: [
+          {
+            label: this.translateService.instant('global.menu.home'),
+            icon: 'pi pi-home',
+            routerLink: ['/'],
+          },
+        ],
       },
       {
-        label: 'Entities',
+        id: 'entities',
+        label: this.translateService.instant('global.menu.entities.main'),
         items: [
-          { label: 'Organizations', icon: 'pi pi-building', routerLink: ['/entities/organization'] },
-          { label: 'Departments', icon: 'pi pi-sitemap', routerLink: ['/entities/department'] },
-          { label: 'Employees', icon: 'pi pi-users', routerLink: ['/entities/employee'] },
+          {
+            label: this.translateService.instant('global.menu.entities.organization'),
+            icon: 'pi pi-building',
+            routerLink: ['/entities/organization'],
+          },
+          {
+            label: this.translateService.instant('global.menu.entities.department'),
+            icon: 'pi pi-sitemap',
+            routerLink: ['/entities/department'],
+          },
+          {
+            label: this.translateService.instant('layout.menu.entities.employee'),
+            icon: 'pi pi-users',
+            routerLink: ['/entities/employee'],
+          },
         ],
       },
       ...(isAdmin
         ? [
             {
-              label: 'Security Admin',
+              id: 'security',
+              label: this.translateService.instant('layout.menu.security.main'),
               items: [
-                { label: 'Roles & Permissions', icon: 'pi pi-shield', routerLink: ['/admin/security/roles'] },
-                { label: 'Row Policies', icon: 'pi pi-filter', routerLink: ['/admin/security/row-policies'] },
+                {
+                  label: this.translateService.instant('global.menu.admin.userManagement'),
+                  icon: 'pi pi-users',
+                  routerLink: ['/admin/users'],
+                },
+                {
+                  label: this.translateService.instant('layout.menu.security.roles'),
+                  icon: 'pi pi-shield',
+                  routerLink: ['/admin/security/roles'],
+                },
+                {
+                  label: this.translateService.instant('layout.menu.security.rowPolicies'),
+                  icon: 'pi pi-filter',
+                  routerLink: ['/admin/security/row-policies'],
+                },
               ],
             },
           ]

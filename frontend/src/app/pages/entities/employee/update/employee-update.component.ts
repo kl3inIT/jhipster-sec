@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -42,6 +43,7 @@ export default class EmployeeUpdateComponent implements OnInit {
   private readonly employeeService = inject(EmployeeService);
   private readonly departmentService = inject(DepartmentService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
 
   form: FormGroup = this.fb.group({
     id: [null as number | null],
@@ -60,7 +62,7 @@ export default class EmployeeUpdateComponent implements OnInit {
   departments = signal<IDepartment[]>([]);
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       const idParam = params.get('id');
       this.isCapabilityReady.set(false);
       this.showSalaryField.set(false);
@@ -70,7 +72,8 @@ export default class EmployeeUpdateComponent implements OnInit {
         this.isEdit.set(false);
       }
 
-      const capability = (this.route.snapshot.data['capability'] ?? null) as ISecuredEntityCapability | null;
+      const capability = (this.route.snapshot.data['capability'] ??
+        null) as ISecuredEntityCapability | null;
 
       if (!capability) {
         this.navigateToAccessDenied();
@@ -94,13 +97,13 @@ export default class EmployeeUpdateComponent implements OnInit {
 
   private loadDepartments(): void {
     this.departmentService.query({ page: 0, size: 1000, sort: ['name,asc'] }).subscribe({
-      next: res => this.departments.set(res.body ?? []),
+      next: (res) => this.departments.set(res.body ?? []),
     });
   }
 
   private load(id: number): void {
     this.employeeService.find(id).subscribe({
-      next: res => {
+      next: (res) => {
         const emp = res.body;
         if (emp) {
           this.form.patchValue({
@@ -128,7 +131,7 @@ export default class EmployeeUpdateComponent implements OnInit {
     this.isSaving.set(true);
     const formValue = this.form.value;
     const selectedDept = formValue.departmentId
-      ? this.departments().find(d => d.id === formValue.departmentId)
+      ? this.departments().find((d) => d.id === formValue.departmentId)
       : undefined;
 
     const payload: IEmployee | NewEmployee = {
@@ -149,7 +152,7 @@ export default class EmployeeUpdateComponent implements OnInit {
       next: () => {
         this.router.navigate(['/entities/employee']);
       },
-      error: (err: any) => handleHttpError(this.messageService, err),
+      error: (err: unknown) => handleHttpError(this.messageService, this.translateService, err),
     });
   }
 
@@ -158,7 +161,9 @@ export default class EmployeeUpdateComponent implements OnInit {
   }
 
   private canEditAttribute(capability: ISecuredEntityCapability, attributeName: string): boolean {
-    return capability.attributes.some(attribute => attribute.name === attributeName && attribute.canEdit);
+    return capability.attributes.some(
+      (attribute) => attribute.name === attributeName && attribute.canEdit,
+    );
   }
 
   private navigateToAccessDenied(): void {
@@ -167,7 +172,7 @@ export default class EmployeeUpdateComponent implements OnInit {
 
   get departmentOptions(): { label: string; value: number }[] {
     return this.departments()
-      .filter(d => d.id !== undefined && d.name !== undefined)
-      .map(d => ({ label: d.name!, value: d.id! }));
+      .filter((d) => d.id !== undefined && d.name !== undefined)
+      .map((d) => ({ label: d.name!, value: d.id! }));
   }
 }

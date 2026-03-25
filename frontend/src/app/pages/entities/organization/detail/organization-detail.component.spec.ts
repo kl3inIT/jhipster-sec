@@ -1,15 +1,14 @@
 import { HttpResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { Subject, of } from 'rxjs';
+import { of } from 'rxjs';
 
 import { ISecuredEntityCapability } from '../../shared/secured-entity-capability.model';
-import { SecuredEntityCapabilityService } from '../../shared/service/secured-entity-capability.service';
 import { OrganizationService } from '../service/organization.service';
 import OrganizationDetailComponent from './organization-detail.component';
 
 describe('OrganizationDetailComponent', () => {
-  let capability$: Subject<ISecuredEntityCapability | null>;
+  let routeSnapshot: { data: { capability: ISecuredEntityCapability | null } };
 
   const organizationService = {
     find: () =>
@@ -29,7 +28,7 @@ describe('OrganizationDetailComponent', () => {
   };
 
   beforeEach(() => {
-    capability$ = new Subject<ISecuredEntityCapability | null>();
+    routeSnapshot = { data: { capability: buildCapability(false) } };
 
     TestBed.configureTestingModule({
       imports: [OrganizationDetailComponent],
@@ -37,17 +36,12 @@ describe('OrganizationDetailComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
+            snapshot: routeSnapshot,
             paramMap: of(convertToParamMap({ id: '1' })),
           },
         },
         { provide: Router, useValue: router },
         { provide: OrganizationService, useValue: organizationService },
-        {
-          provide: SecuredEntityCapabilityService,
-          useValue: {
-            getEntityCapability: () => capability$.asObservable(),
-          },
-        },
       ],
     });
   });
@@ -57,18 +51,17 @@ describe('OrganizationDetailComponent', () => {
 
     fixture.detectChanges();
     await fixture.whenStable();
-    capability$.next(buildCapability(false));
     fixture.detectChanges();
 
     expect(getEditButton(fixture.nativeElement as HTMLElement)).toBeNull();
   });
 
   it('shows the Edit button when update capability is true', async () => {
+    routeSnapshot.data.capability = buildCapability(true);
     const fixture = TestBed.createComponent(OrganizationDetailComponent);
 
     fixture.detectChanges();
     await fixture.whenStable();
-    capability$.next(buildCapability(true));
     fixture.detectChanges();
 
     expect(getEditButton(fixture.nativeElement as HTMLElement)).not.toBeNull();
