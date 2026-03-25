@@ -23,7 +23,7 @@ This roadmap builds on the shipped security platform by first closing the missin
 - `v1.0` ended at Phase 5, so `v1.1` starts at Phase 6.
 
 - [x] **Phase 6: Frontend Parity Foundation** - Copy and adapt the required `angapp` support files, translations, and shared admin/account infrastructure into `frontend/`. (completed 2026-03-25)
-- [ ] **Phase 7: Enterprise Navigation Shell** - Replace hardcoded navigation with backend-driven menu and permission-aware route control inside a Jmix-style shell.
+- [x] **Phase 7: Enterprise Navigation Shell** - Replace hardcoded navigation with backend-driven menu and permission-aware route control inside a Jmix-style shell. (completed 2026-03-25)
 - [ ] **Phase 8: User Management Delivery** - Deliver the full frontend admin user-management surface, including role assignment.
 - [ ] **Phase 9: Enterprise UX And Performance Hardening** - Improve consistency, responsiveness, data-fetch efficiency, and route-level loading costs.
 - [ ] **Phase 10: Frontend Reliability And Regression Coverage** - Lock the milestone down with targeted frontend tests across user management, routing, and core UI infrastructure.
@@ -56,7 +56,7 @@ Plans:
 2. Unauthorized routes redirect or deny before component content renders, and unauthorized menu entries never appear.
 3. Admin and entity areas load through distinct lazy route boundaries rather than forcing the whole app shell to load eagerly.
 4. The shell uses enterprise master-detail navigation patterns consistently across admin and secured-entity sections.
-**Plans:** Pending phase planning
+**Plans:** 5/5 plans complete
 
 ### Phase 8: User Management Delivery
 **Goal**: The new frontend exposes the full JHipster-style admin user-management experience on top of the preserved backend contracts.
@@ -96,7 +96,7 @@ Plans:
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
 | 6 | Frontend Parity Foundation | Bring required `angapp` support files and i18n foundations into `frontend/` | I18N-01, I18N-02 | 3 |
-| 7 | Enterprise Navigation Shell | Build a backend-driven, permission-aware enterprise shell | ROUTE-01, ROUTE-02, ROUTE-03, UI-04 | 4 |
+| 7 | Enterprise Navigation Shell | 5/5 | Complete   | 2026-03-25 |
 | 8 | User Management Delivery | Deliver full admin user management with role assignment | UMGT-01, UMGT-02, UMGT-03 | 3 |
 | 9 | Enterprise UX And Performance Hardening | Improve consistency, responsiveness, and data-loading efficiency | UI-05, PERF-01, PERF-02, PERF-03 | 4 |
 | 10 | Frontend Reliability And Regression Coverage | Add high-value automated coverage for the new frontend foundation | TEST-01, TEST-02, TEST-03 | 3 |
