@@ -129,10 +129,11 @@ Recent decisions affecting current work:
 |---|-------------|------|--------|-----------|
 | 260324-xae | Fix @SecuredEntity catalog and N+1 capability loading | 2026-03-24 | a223896 | [260324-xae-fix-securedentity-catalog-and-n-1-capabi](.planning/quick/260324-xae-fix-securedentity-catalog-and-n-1-capabi/) |
 | 260325-0ze | append Angular/TypeScript agent instructions to CLAUDE.md and AGENTS.md | 2026-03-24 | c012a5d | [260325-0ze-append-angular-typescript-agent-instruct](.planning/quick/260325-0ze-append-angular-typescript-agent-instruct/) |
+| 260325-lae | Rename SecNavigationGrant to SecMenuPermission, add SecMenuDefinition, update frontend | 2026-03-25 | d877771 | [260325-lae-rename-secnavigationgrant-to-secmenuperm](.planning/quick/260325-lae-rename-secnavigationgrant-to-secmenuperm/) |
 
 ## Session Continuity
 
 Last activity: 2026-03-25
-Last session: 2026-03-25T08:11:16.298Z
-Stopped at: Completed 07-05-PLAN.md
+Last session: 2026-03-25T15:32:00.000Z
+Stopped at: Completed quick task 260325-lae
 Resume file: None
