@@ -49,7 +49,7 @@ const routes: Routes = [
   },
   {
     path: 'new',
-    loadComponent: () => import('./user-management-placeholder.component'),
+    loadComponent: () => import('./update/user-management-update.component'),
     canActivate: [UserRouteAccessService],
     resolve: {
       user: userManagementResolve,
@@ -63,7 +63,7 @@ const routes: Routes = [
   },
   {
     path: ':login/edit',
-    loadComponent: () => import('./user-management-placeholder.component'),
+    loadComponent: () => import('./update/user-management-update.component'),
     canActivate: [UserRouteAccessService],
     resolve: {
       user: userManagementResolve,
