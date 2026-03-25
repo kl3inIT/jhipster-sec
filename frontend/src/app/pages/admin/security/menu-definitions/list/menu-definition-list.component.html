@@ -21,11 +21,11 @@
   <p-treetable [value]="treeNodes" [loading]="isLoading" dataKey="key" [tableStyle]="{ 'min-width': '52rem' }">
     <ng-template #header>
       <tr>
-        <th>Label / Menu ID</th>
-        <th style="width: 14rem">Route</th>
-        <th style="width: 7rem">Icon</th>
-        <th style="width: 5rem">Order</th>
-        <th style="width: 9rem">Actions</th>
+        <th>{{ 'security.menuDefinitions.columns.labelMenuId' | translate }}</th>
+        <th style="width: 14rem">{{ 'security.menuDefinitions.columns.route' | translate }}</th>
+        <th style="width: 7rem">{{ 'security.menuDefinitions.columns.icon' | translate }}</th>
+        <th style="width: 5rem">{{ 'security.menuDefinitions.columns.ordering' | translate }}</th>
+        <th style="width: 9rem">{{ 'security.menuDefinitions.columns.actions' | translate }}</th>
       </tr>
     </ng-template>
 
@@ -37,7 +37,7 @@
             @if (rowData.icon) {
               <i [class]="rowData.icon + ' text-color-secondary'"></i>
             }
-            <span class="font-semibold">{{ rowData.label }}</span>
+            <span class="font-semibold">{{ rowData.menuName }}</span>
             <span class="text-xs text-color-secondary opacity-70">{{ rowData.menuId }}</span>
           </div>
         </td>
@@ -46,8 +46,22 @@
         <td class="text-center">{{ rowData.ordering }}</td>
         <td>
           <div class="flex gap-1">
-            <p-button icon="pi pi-pencil" severity="secondary" size="small" [text]="true" (onClick)="openEdit(rowData)" />
-            <p-button icon="pi pi-trash" severity="danger" size="small" [text]="true" (onClick)="confirmDelete(rowData)" />
+            <p-button
+              icon="pi pi-pencil"
+              severity="secondary"
+              size="small"
+              [text]="true"
+              [ariaLabel]="'entity.action.edit' | translate"
+              (onClick)="openEdit(rowData)"
+            />
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              size="small"
+              [text]="true"
+              [ariaLabel]="'entity.action.delete' | translate"
+              (onClick)="confirmDelete(rowData)"
+            />
           </div>
         </td>
       </tr>
