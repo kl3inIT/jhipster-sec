@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,7 +18,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 /**
  * Unit tests for {@link UnconstrainedDataManagerImpl} verifying it bypasses all security
@@ -91,6 +97,78 @@ class UnconstrainedDataManagerImplTest {
 
         assertThat(saved).isSameAs(entity);
         verify(repo).save(entity);
+    }
+
+    @Test
+    void testCreateReturnsNewInstance() {
+        TestEntity first = dataManager.create(TestEntity.class);
+        TestEntity second = dataManager.create(TestEntity.class);
+
+        assertThat(first).isNotNull().isNotSameAs(second);
+        assertThat(second).isNotNull();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testLoadOneDelegatesToSpecificationExecutor() {
+        JpaSpecificationExecutor<TestEntity> specExecutor = mock(JpaSpecificationExecutor.class);
+        when(repositoryRegistry.getSpecificationExecutor(TestEntity.class)).thenReturn((JpaSpecificationExecutor) specExecutor);
+
+        Specification<TestEntity> spec = (root, query, cb) -> cb.conjunction();
+        TestEntity entity = new TestEntity(7L);
+        when(specExecutor.findOne(spec)).thenReturn(Optional.of(entity));
+
+        Optional<TestEntity> result = dataManager.loadOne(TestEntity.class, spec);
+
+        assertThat(result).containsSame(entity);
+        verify(specExecutor).findOne(spec);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testLoadListDelegatesToSpecificationExecutor() {
+        JpaSpecificationExecutor<TestEntity> specExecutor = mock(JpaSpecificationExecutor.class);
+        when(repositoryRegistry.getSpecificationExecutor(TestEntity.class)).thenReturn((JpaSpecificationExecutor) specExecutor);
+
+        Specification<TestEntity> spec = (root, query, cb) -> cb.conjunction();
+        List<TestEntity> entities = List.of(new TestEntity(1L), new TestEntity(2L));
+        when(specExecutor.findAll(spec)).thenReturn(entities);
+
+        List<TestEntity> result = dataManager.loadList(TestEntity.class, spec);
+
+        assertThat(result).containsExactlyElementsOf(entities);
+        verify(specExecutor).findAll(spec);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testLoadPageDelegatesToSpecificationExecutor() {
+        JpaSpecificationExecutor<TestEntity> specExecutor = mock(JpaSpecificationExecutor.class);
+        when(repositoryRegistry.getSpecificationExecutor(TestEntity.class)).thenReturn((JpaSpecificationExecutor) specExecutor);
+
+        Specification<TestEntity> spec = (root, query, cb) -> cb.conjunction();
+        PageRequest pageable = PageRequest.of(0, 10);
+        Page<TestEntity> page = new PageImpl<>(List.of(new TestEntity(1L)), pageable, 1);
+        when(specExecutor.findAll(spec, pageable)).thenReturn(page);
+
+        Page<TestEntity> result = dataManager.loadPage(TestEntity.class, spec, pageable);
+
+        assertThat(result).isSameAs(page);
+        verify(specExecutor).findAll(spec, pageable);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void testDeleteEntityDelegatesDirectlyToRepository() {
+        JpaRepository<TestEntity, Object> repo = mock(JpaRepository.class);
+        when(repositoryRegistry.getRepository(TestEntity.class)).thenReturn((JpaRepository) repo);
+
+        TestEntity entity = new TestEntity(3L);
+
+        dataManager.delete(entity);
+
+        verify(repo).delete(entity);
+        verify(repo, never()).findById(any());
     }
 
     @Test

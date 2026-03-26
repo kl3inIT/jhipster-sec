@@ -3,6 +3,10 @@ package com.vn.core.security.data;
 import com.vn.core.security.repository.RepositoryRegistry;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +53,45 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
     }
 
     /**
+     * Load one entity matching the given specification with no security checks.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public <T> Optional<T> loadOne(Class<T> entityClass, Specification<T> spec) {
+        return repositoryRegistry.getSpecificationExecutor(entityClass).findOne(spec);
+    }
+
+    /**
+     * Load all entities matching the given specification with no security checks.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public <T> List<T> loadList(Class<T> entityClass, Specification<T> spec) {
+        return repositoryRegistry.getSpecificationExecutor(entityClass).findAll(spec);
+    }
+
+    /**
+     * Load a page of entities matching the given specification with no security checks.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public <T> Page<T> loadPage(Class<T> entityClass, Specification<T> spec, Pageable pageable) {
+        return repositoryRegistry.getSpecificationExecutor(entityClass).findAll(spec, pageable);
+    }
+
+    /**
+     * Create a new entity instance with no security checks.
+     */
+    @Override
+    public <T> T create(Class<T> entityClass) {
+        try {
+            return entityClass.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Failed to create entity: " + entityClass.getName(), e);
+        }
+    }
+
+    /**
      * Save an entity with no permission checks.
      */
     @Override
@@ -66,6 +109,15 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
     @SuppressWarnings("unchecked")
     public void delete(Class<?> entityClass, Object id) {
         Object entity = load((Class<Object>) entityClass, id);
-        ((JpaRepository<Object, Object>) repositoryRegistry.getRepository(entityClass)).delete(entity);
+        delete(entity);
+    }
+
+    /**
+     * Delete an entity instance with no permission checks.
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public void delete(Object entity) {
+        ((JpaRepository<Object, Object>) repositoryRegistry.getRepository((Class<Object>) entity.getClass())).delete(entity);
     }
 }
