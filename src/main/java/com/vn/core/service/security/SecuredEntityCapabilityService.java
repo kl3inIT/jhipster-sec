@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Aggregates current-user entity and attribute capabilities for secured entities.
+ * Capability answers follow default-deny plus union-of-ALLOW semantics.
  */
 @Service
 public class SecuredEntityCapabilityService {
@@ -93,65 +94,36 @@ public class SecuredEntityCapabilityService {
 
     /**
      * In-memory permission matrix built from a single bulk query.
-     * Preserves existing permission semantics:
-     * <ul>
-     *   <li>Entity-level: DENY-wins, no ALLOW record = denied</li>
-     *   <li>Attribute-level: deny-default (no records = denied), DENY-wins when records exist,
-     *       wildcard ENTITY.* pattern supported for ALLOW</li>
-     * </ul>
+     * Empty match sets deny access; any matching ALLOW grants access.
+     * Attribute checks also honor wildcard ENTITY.* ALLOW rows.
      */
     private static class PermissionMatrix {
 
         static final PermissionMatrix EMPTY = new PermissionMatrix(List.of());
 
         private final Set<String> allowedKeys;
-        private final Set<String> deniedKeys;
 
         PermissionMatrix(List<SecPermission> permissions) {
             Set<String> allowed = new HashSet<>();
-            Set<String> denied = new HashSet<>();
             for (SecPermission p : permissions) {
-                String key = p.getTargetType().name() + ":" + p.getTarget() + ":" + p.getAction();
-                if ("DENY".equals(p.getEffect())) {
-                    denied.add(key);
-                } else if ("ALLOW".equals(p.getEffect())) {
+                if ("ALLOW".equals(p.getEffect())) {
+                    String key = p.getTargetType().name() + ":" + p.getTarget() + ":" + p.getAction();
                     allowed.add(key);
                 }
             }
             this.allowedKeys = Set.copyOf(allowed);
-            this.deniedKeys = Set.copyOf(denied);
         }
 
-        /**
-         * Entity-level: DENY-wins, no ALLOW = denied.
-         */
         boolean isEntityPermitted(String target, String action) {
             String key = TargetType.ENTITY.name() + ":" + target + ":" + action;
-            if (deniedKeys.contains(key)) {
-                return false;
-            }
             return allowedKeys.contains(key);
         }
 
-        /**
-         * Attribute-level: deny-default (no records = denied), DENY-wins when records exist.
-         * Supports wildcard ENTITY.* pattern for ALLOW.
-         */
         boolean isAttributePermitted(String attrTarget, String action) {
             String key = TargetType.ATTRIBUTE.name() + ":" + attrTarget + ":" + action;
             String entityPart = attrTarget.split("\\.")[0];
             String wildcardKey = TargetType.ATTRIBUTE.name() + ":" + entityPart + ".*:" + action;
-
-            // DENY-wins for specific or wildcard
-            if (deniedKeys.contains(key) || deniedKeys.contains(wildcardKey)) {
-                return false;
-            }
-            // ALLOW for specific or wildcard
-            if (allowedKeys.contains(key) || allowedKeys.contains(wildcardKey)) {
-                return true;
-            }
-            // No matching records = denied (deny-default)
-            return false;
+            return allowedKeys.contains(key) || allowedKeys.contains(wildcardKey);
         }
     }
 }
