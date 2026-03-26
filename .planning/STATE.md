@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: "Phase 08 shipped — PR #5"
 stopped_at: Completed 08-04-PLAN.md
-last_updated: "2026-03-25T18:18:30.000Z"
+last_updated: "2026-03-26T09:57:10.1391433+07:00"
 last_activity: 2026-03-26
 progress:
   total_phases: 6
@@ -161,10 +161,11 @@ Recent decisions affecting current work:
 | 260324-xae | Fix @SecuredEntity catalog and N+1 capability loading | 2026-03-24 | a223896 | [260324-xae-fix-securedentity-catalog-and-n-1-capabi](.planning/quick/260324-xae-fix-securedentity-catalog-and-n-1-capabi/) |
 | 260325-0ze | append Angular/TypeScript agent instructions to CLAUDE.md and AGENTS.md | 2026-03-24 | c012a5d | [260325-0ze-append-angular-typescript-agent-instruct](.planning/quick/260325-0ze-append-angular-typescript-agent-instruct/) |
 | 260325-lae | Rename SecNavigationGrant to SecMenuPermission, add SecMenuDefinition, update frontend | 2026-03-25 | d877771 | [260325-lae-rename-secnavigationgrant-to-secmenuperm](.planning/quick/260325-lae-rename-secnavigationgrant-to-secmenuperm/) |
+| 260326-dmh | fix missing entity.list.actions translation and explain admin menu permission union behavior | 2026-03-26 | 48d25c8 | [260326-dmh-fix-missing-entity-list-actions-translat](./quick/260326-dmh-fix-missing-entity-list-actions-translat/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-26
+Last activity: 2026-03-26 - Completed quick task 260326-dmh: fix missing entity.list.actions translation and explain admin menu permission union behavior
 Last session: 2026-03-25T16:49:20.884Z
 Stopped at: Completed 08-04-PLAN.md
 Resume file: None
