@@ -151,6 +151,9 @@
     },
     "pagination": {
       "report": "Showing {first} to {last} of {totalRecords} entries"
+    },
+    "list": {
+      "actions": "Actions"
     }
   },
   "error": {

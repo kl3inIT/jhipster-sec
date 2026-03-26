@@ -40,6 +40,9 @@
     },
     "pagination": {
       "report": "Hiển thị {first} đến {last} trên tổng số {totalRecords} bản ghi"
+    },
+    "list": {
+      "actions": "Thao t\u00e1c"
     }
   }
 }
