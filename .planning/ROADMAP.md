@@ -109,7 +109,7 @@ Plans:
 4. Resource permissions accumulate `ALLOW` across multiple roles without a global deny-wins merge strategy for menu or similar resource-role permissions unless a specific deviation is documented.
 5. Row-level restrictions continue to filter protected reads/writes correctly, while unconstrained access bypasses authorization by design.
 6. Tests prove multi-role `ALLOW` accumulation, menu/resource union behavior, row-level enforcement, unconstrained bypass, and no regression in existing auth/account/admin/mail flows.
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] Recommended split: architecture alignment and interface extraction
@@ -147,6 +147,6 @@ Plans:
 | 7 | Enterprise Navigation Shell | Complete | ROUTE-01, ROUTE-02, ROUTE-03, UI-04 | 2026-03-25 |
 | 07.1 | Menu Management | Complete | MENU-01, MENU-02, MENU-03, MENU-04, MENU-05 | 2026-03-25 |
 | 8 | User Management Delivery | Complete | UMGT-01, UMGT-02, UMGT-03 | 2026-03-25 |
-| 08.1 | Jmix-Style DataManager Core Alignment | 1/3 | In Progress|  |
+| 08.1 | Jmix-Style DataManager Core Alignment | 2/3 | In Progress|  |
 | 9 | Enterprise UX And Performance Hardening | Planned | UI-05, PERF-01, PERF-02, PERF-03 | - |
 | 10 | Frontend Reliability And Regression Coverage | Planned | TEST-01, TEST-02, TEST-03 | - |

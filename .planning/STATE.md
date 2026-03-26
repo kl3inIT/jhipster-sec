@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 08.1-01-PLAN.md
-last_updated: "2026-03-26T03:44:35.431Z"
+stopped_at: Completed 08.1-02-PLAN.md
+last_updated: "2026-03-26T03:57:31.511Z"
 last_activity: 2026-03-26
 progress:
   total_phases: 7
   completed_phases: 4
   total_plans: 21
-  completed_plans: 19
+  completed_plans: 20
 ---
 
 # Project State
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 08.1 (jmix-style-datamanager-core-alignment) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Plan: 2 of 3
 | Phase 08 P03 | 10 min | 2 tasks | 12 files |
 | Phase 08 P04 | 5 min | 2 tasks | 2 files |
 | Phase 08.1 P01 | 14 min | 2 tasks | 8 files |
+| Phase 08.1 P02 | 11 min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -149,6 +150,8 @@ Recent decisions affecting current work:
 - [Phase 08.1]: Introduce an internal DataManager secure-default layer with explicit unconstrained bypass, keep SecureDataManager as the application-facing facade, and move resource permissions toward default-deny plus union-of-ALLOW semantics unless a brownfield deviation is documented
 - [Phase 08.1]: DataManager extends UnconstrainedDataManager but injects the bypass bean via @Qualifier(unconstrainedDataManagerImpl) to avoid self-injection ambiguity.
 - [Phase 08.1]: SecureDataManagerImpl keeps row-policy, fetch-plan, merge, and serialization orchestration while delegating CRUD-checked mechanics through DataManager.
+- [Phase 08.1]: Attribute permission checks fetch exact and wildcard targets in one repository query so live enforcement and capability payloads evaluate the same grant set.
+- [Phase 08.1]: PermissionMatrix now stores only ALLOW-derived keys so empty matches deny access and DENY rows do not override another authority's ALLOW.
 
 ### Pending Todos
 
@@ -173,6 +176,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last activity: 2026-03-26
-Last session: 2026-03-26T03:44:35.424Z
-Stopped at: Completed 08.1-01-PLAN.md
+Last session: 2026-03-26T03:57:31.503Z
+Stopped at: Completed 08.1-02-PLAN.md
 Resume file: None
