@@ -60,8 +60,8 @@
 
 **`src/main/java/com/vn/core/security/`:**
 - Purpose: Place authentication, claim, authority, and auditing helpers that are not generic framework config.
-- Contains: `UserDetailsService`, security utilities, authority constants, auditing support.
-- Key files: `src/main/java/com/vn/core/security/DomainUserDetailsService.java`, `src/main/java/com/vn/core/security/SecurityUtils.java`, `src/main/java/com/vn/core/security/SpringSecurityAuditorAware.java`
+- Contains: `UserDetailsService`, security utilities, authority constants, auditing support, plus the secure data-access contracts and implementations under `security/data/`.
+- Key files: `src/main/java/com/vn/core/security/DomainUserDetailsService.java`, `src/main/java/com/vn/core/security/SecurityUtils.java`, `src/main/java/com/vn/core/security/SpringSecurityAuditorAware.java`, `src/main/java/com/vn/core/security/data/SecureDataManager.java`, `src/main/java/com/vn/core/security/data/DataManager.java`, `src/main/java/com/vn/core/security/data/UnconstrainedDataManager.java`
 
 **`src/main/resources/config/`:**
 - Purpose: Store runtime configuration overlays and Liquibase migration definitions.
