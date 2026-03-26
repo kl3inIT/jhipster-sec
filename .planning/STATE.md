@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: "Phase 08 shipped — PR #5"
-stopped_at: Completed 08-04-PLAN.md
-last_updated: "2026-03-26T09:57:10.1391433+07:00"
+status: unknown
+stopped_at: Completed 08.1-01-PLAN.md
+last_updated: "2026-03-26T03:44:35.431Z"
 last_activity: 2026-03-26
 progress:
-  total_phases: 6
+  total_phases: 7
   completed_phases: 4
-  total_plans: 18
-  completed_plans: 18
+  total_plans: 21
+  completed_plans: 19
 ---
 
 # Project State
@@ -20,12 +20,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
-**Current focus:** Phase 09 — enterprise-ux-and-performance-hardening
+**Current focus:** Phase 08.1 — jmix-style-datamanager-core-alignment
 
 ## Current Position
 
-Phase: 09 (enterprise-ux-and-performance-hardening) — NOT STARTED
-Plan: Not started
+Phase: 08.1 (jmix-style-datamanager-core-alignment) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -42,6 +42,7 @@ Plan: Not started
 | 6 - Frontend Parity Foundation | 6 | 50 min | 8.3 min |
 | 7 - Enterprise Navigation Shell | 0 | - | - |
 | 8 - User Management Delivery | 0 | - | - |
+| 8.1 - Jmix-Style DataManager Core Alignment | 0 | - | - |
 | 9 - Enterprise UX And Performance Hardening | 0 | - | - |
 | 10 - Frontend Reliability And Regression Coverage | 0 | - | - |
 
@@ -49,7 +50,8 @@ Plan: Not started
 
 - Phase 6 completed with green `frontend` production build and focused Angular regression coverage
 - Standalone i18n, alerting, admin route foundations, and translated shell surfaces are now live in `frontend/`
-- Next actionable work: plan Phase 09
+- Phase 08.1 inserted to align the internal security data-access core with Jmix-style layering before Phase 9 begins
+- Next actionable work: plan Phase 08.1
 
 | Phase 07 P05 | 4 | 2 tasks | 19 files |
 | Phase 07.1-menu-management P01 | 25 | 2 tasks | 10 files |
@@ -59,12 +61,14 @@ Plan: Not started
 | Phase 08 P02 | 10 | 2 tasks | 14 files |
 | Phase 08 P03 | 10 min | 2 tasks | 12 files |
 | Phase 08 P04 | 5 min | 2 tasks | 2 files |
+| Phase 08.1 P01 | 14 min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
 ### Roadmap Evolution
 
 - Phase 07.1 inserted after Phase 7: Menu Management (INSERTED) — admin CRUD for SecMenuDefinition and role-based SecMenuPermission assignment
+- Phase 08.1 inserted after Phase 8: Jmix-Style DataManager Core Alignment (URGENT) — align internal data-access architecture with a Jmix-style DataManager/UnconstrainedDataManager split while preserving the SecureDataManager facade and brownfield contract
 
 ### Decisions
 
@@ -142,10 +146,13 @@ Recent decisions affecting current work:
 - [Phase 08]: User-route-access coverage should assert /admin/users directly against the effective authority set, not just a generic hidden-leaf case — This keeps the regression pinned to the exact admin surface Phase 8 introduced.
 - [Phase 08]: The user-management smoke proves both grant-then-allow and revoke-then-deny against the same mocked admin flow — It closes UMGT-03 with positive and negative route outcomes instead of a single saved-payload assertion.
 - [Phase 08]: Blank user browse queries use a lambda no-op Specification instead of Specification.where(null) for Java 25 compatibility — Spring Data's Java 25 overload set makes Specification.where(null) ambiguous in this project, so the no-op lambda is the stable empty-query pattern.
+- [Phase 08.1]: Introduce an internal DataManager secure-default layer with explicit unconstrained bypass, keep SecureDataManager as the application-facing facade, and move resource permissions toward default-deny plus union-of-ALLOW semantics unless a brownfield deviation is documented
+- [Phase 08.1]: DataManager extends UnconstrainedDataManager but injects the bypass bean via @Qualifier(unconstrainedDataManagerImpl) to avoid self-injection ambiguity.
+- [Phase 08.1]: SecureDataManagerImpl keeps row-policy, fetch-plan, merge, and serialization orchestration while delegating CRUD-checked mechanics through DataManager.
 
 ### Pending Todos
 
-- Plan and execute Phase 7 - Enterprise Navigation Shell.
+- Plan and execute Phase 08.1 - Jmix-Style DataManager Core Alignment.
 
 ### Blockers/Concerns
 
@@ -165,7 +172,7 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last activity: 2026-03-26 - Completed quick task 260326-dmh: fix missing entity.list.actions translation and explain admin menu permission union behavior
-Last session: 2026-03-25T16:49:20.884Z
-Stopped at: Completed 08-04-PLAN.md
+Last activity: 2026-03-26
+Last session: 2026-03-26T03:44:35.424Z
+Stopped at: Completed 08.1-01-PLAN.md
 Resume file: None
