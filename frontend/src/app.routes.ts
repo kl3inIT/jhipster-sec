@@ -14,7 +14,7 @@ export const appRoutes: Routes = [
       {
         path: '',
         loadComponent: () => import('./app/pages/home/home.component'),
-        canActivate: [UserRouteAccessService],
+        // canActivate: [UserRouteAccessService],
         data: {
           navigationNodeId: 'home.dashboard',
           sectionId: 'home',
@@ -42,17 +42,17 @@ export const appRoutes: Routes = [
       {
         path: 'entities',
         loadChildren: () => import('./app/pages/entities/entity.routes'),
-        canActivate: [UserRouteAccessService],
+        // canActivate: [UserRouteAccessService],
       },
       {
         path: 'entities/movie',
         loadChildren: () => import('./app/pages/movie/movie.routes'),
-        canActivate: [UserRouteAccessService],
+        // canActivate: [UserRouteAccessService],
       },
       {
         path: 'admin',
         loadChildren: () => import('./app/pages/admin/admin.routes'),
-        canActivate: [UserRouteAccessService],
+        // canActivate: [UserRouteAccessService],
       },
     ],
   },

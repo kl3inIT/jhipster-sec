@@ -379,7 +379,8 @@
         "menuDefinitions": "Menu definitions"
       },
       "entities": {
-        "employee": "Employees"
+        "employee": "Employees",
+        "movie": "Movie Profiles"
       }
     }
   },

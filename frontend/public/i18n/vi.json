@@ -378,7 +378,8 @@
         "menuDefinitions": "Định nghĩa menu"
       },
       "entities": {
-        "employee": "Nhân viên"
+        "employee": "Nhân viên",
+        "movie": "Dự án Phim"
       }
     }
   },
