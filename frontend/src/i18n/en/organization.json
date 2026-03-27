@@ -20,7 +20,20 @@
         "question": "Are you sure you want to delete this organization? This action cannot be undone."
       },
       "detail": {
-        "title": "Organization"
+        "title": "Organization",
+        "workbench": {
+          "subtitle": "Inspect and change the root organization together with its departments and employees from one secured workspace.",
+          "loading": "Loading organization workbench...",
+          "departmentCountLabel": "Departments in this organization",
+          "employeeCountLabel": "Employees in this organization",
+          "departmentsHelp": "Select a department to inspect its record and manage child employees without leaving the page.",
+          "employeeSectionHelp": "This selected department stays editable from the same workbench flow.",
+          "employeeCrudHelp": "Create, update, and delete employee records here, then reload the secured root graph.",
+          "departmentEmployeeCount": "{{ count }} employee(s)",
+          "emptyDepartments": "No departments are linked to this organization yet.",
+          "emptyEmployees": "No employees are linked to the selected department yet.",
+          "selectDepartment": "Select a department on the left to open its employee workspace."
+        }
       },
       "id": "ID",
       "code": "Code",

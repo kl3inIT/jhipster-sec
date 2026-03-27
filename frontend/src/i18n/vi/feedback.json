@@ -45,13 +45,16 @@
     },
     "entities": {
       "organizations": {
-        "deleted": "Đã xóa tổ chức thành công."
+        "deleted": "Đã xóa tổ chức thành công.",
+        "saved": "Đã lưu tổ chức thành công."
       },
       "departments": {
-        "deleted": "Đã xóa phòng ban thành công."
+        "deleted": "Đã xóa phòng ban thành công.",
+        "saved": "Đã lưu phòng ban thành công."
       },
       "employees": {
-        "deleted": "Đã xóa nhân viên thành công."
+        "deleted": "Đã xóa nhân viên thành công.",
+        "saved": "Đã lưu nhân viên thành công."
       }
     }
   }

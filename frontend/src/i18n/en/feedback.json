@@ -2,7 +2,8 @@
   "feedback": {
     "toast": {
       "deleted": "Deleted",
-      "success": "Success"
+      "success": "Success",
+      "saved": "Saved"
     },
     "httpError": {
       "accessDenied": {
@@ -44,13 +45,16 @@
     },
     "entities": {
       "organizations": {
-        "deleted": "Organization deleted successfully."
+        "deleted": "Organization deleted successfully.",
+        "saved": "Organization saved successfully."
       },
       "departments": {
-        "deleted": "Department deleted successfully."
+        "deleted": "Department deleted successfully.",
+        "saved": "Department saved successfully."
       },
       "employees": {
-        "deleted": "Employee deleted successfully."
+        "deleted": "Employee deleted successfully.",
+        "saved": "Employee saved successfully."
       }
     }
   }

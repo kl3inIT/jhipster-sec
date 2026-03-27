@@ -1,58 +1,626 @@
-<div class="max-w-2xl mx-auto space-y-4">
-  <h1 class="m-0 text-2xl font-semibold">{{ 'angappApp.organization.detail.title' | translate }}</h1>
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>
 
-  @if (organization(); as org) {
-    <p-card class="shadow-sm">
-      <div class="grid grid-cols-1 gap-4">
-        <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium">{{ 'angappApp.organization.id' | translate }}</span>
-          <span>{{ org.id }}</span>
-        </div>
-        @if (canViewField('code')) {
-          <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">{{ 'angappApp.organization.code' | translate }}</span>
-            <span>{{ org.code }}</span>
-          </div>
-        }
-        @if (canViewField('name')) {
-          <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">{{ 'angappApp.organization.name' | translate }}</span>
-            <span>{{ org.name }}</span>
-          </div>
-        }
-        @if (canViewField('ownerLogin')) {
-          <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">{{ 'angappApp.organization.ownerLogin' | translate }}</span>
-            <span>{{ org.ownerLogin }}</span>
-          </div>
-        }
-        @if (canViewField('budget') && org.budget !== undefined) {
-          <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">{{ 'angappApp.organization.budget' | translate }}</span>
-            <span>{{ org.budget | number: '1.2-2' }}</span>
-          </div>
-        }
-      </div>
-
-      <div class="flex gap-2 mt-4 pt-4" style="border-top: 1px solid var(--surface-border)">
+<div class="space-y-4">
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <div class="space-y-1">
+      <h1 class="m-0 text-2xl font-semibold">
+        {{ 'angappApp.organization.detail.title' | translate }}
+      </h1>
+      <p class="m-0 text-color-secondary">
+        {{ 'angappApp.organization.detail.workbench.subtitle' | translate }}
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button
+        type="button"
+        pButton
+        class="p-button-outlined"
+        icon="pi pi-arrow-left"
+        [label]="'entity.action.back' | translate"
+        (click)="back()"
+      ></button>
+      @if (canUpdateOrganization()) {
         <button
           type="button"
           pButton
-          class="p-button-outlined"
-          icon="pi pi-arrow-left"
-          [label]="'entity.action.back' | translate"
-          (click)="back()"
+          icon="pi pi-pencil"
+          [label]="'entity.action.edit' | translate"
+          (click)="openOrganizationDialog()"
+          data-testid="organization-edit-button"
         ></button>
-        @if (capabilityLoaded() && canUpdate()) {
-          <button
-            type="button"
-            pButton
-            icon="pi pi-pencil"
-            [label]="'entity.action.edit' | translate"
-            (click)="edit(org)"
-          ></button>
-        }
+      }
+      @if (canCreateDepartment()) {
+        <button
+          type="button"
+          pButton
+          icon="pi pi-plus"
+          [label]="'angappApp.department.home.createLabel' | translate"
+          (click)="openCreateDepartmentDialog()"
+          data-testid="department-create-button"
+        ></button>
+      }
+      @if (canCreateEmployee() && selectedDepartment()) {
+        <button
+          type="button"
+          pButton
+          class="p-button-secondary"
+          icon="pi pi-user-plus"
+          [label]="'angappApp.employee.home.createLabel' | translate"
+          (click)="openCreateEmployeeDialog()"
+          data-testid="employee-create-button"
+        ></button>
+      }
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p-card class="shadow-sm">
+      <div class="flex items-center gap-3 py-5">
+        <i class="pi pi-spin pi-spinner text-xl text-primary"></i>
+        <span>{{ 'entity.action.loading' | translate }}</span>
       </div>
     </p-card>
+  } @else if (organization(); as organization) {
+    <p-card class="shadow-sm">
+      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">{{ 'angappApp.organization.id' | translate }}</span>
+          <span>{{ organization.id }}</span>
+        </div>
+        @if (canViewOrganizationField('code')) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">{{ 'angappApp.organization.code' | translate }}</span>
+            <span>{{ organization.code }}</span>
+          </div>
+        }
+        @if (canViewOrganizationField('name')) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">{{ 'angappApp.organization.name' | translate }}</span>
+            <span>{{ organization.name }}</span>
+          </div>
+        }
+        @if (canViewOrganizationField('ownerLogin')) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">{{
+              'angappApp.organization.ownerLogin' | translate
+            }}</span>
+            <span>{{ organization.ownerLogin }}</span>
+          </div>
+        }
+        @if (showBudgetSummary()) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">{{
+              'angappApp.organization.budget' | translate
+            }}</span>
+            <span>{{ organization.budget | number: '1.2-2' }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="mt-4 grid gap-3 md:grid-cols-2">
+        <div class="rounded-xl border p-4" style="border-color: var(--surface-border)">
+          <div class="text-sm text-color-secondary">
+            {{ 'angappApp.organization.detail.workbench.departmentCountLabel' | translate }}
+          </div>
+          <div class="mt-1 text-2xl font-semibold">{{ departmentCount() }}</div>
+        </div>
+        <div class="rounded-xl border p-4" style="border-color: var(--surface-border)">
+          <div class="text-sm text-color-secondary">
+            {{ 'angappApp.organization.detail.workbench.employeeCountLabel' | translate }}
+          </div>
+          <div class="mt-1 text-2xl font-semibold">{{ employeeCount() }}</div>
+        </div>
+      </div>
+    </p-card>
+
+    <div class="grid gap-4 xl:grid-cols-[22rem_minmax(0,1fr)]">
+      <p-card class="shadow-sm">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <h2 class="m-0 text-xl font-semibold">
+              {{ 'angappApp.department.home.title' | translate }}
+            </h2>
+            <p class="mt-1 mb-0 text-sm text-color-secondary">
+              {{ 'angappApp.organization.detail.workbench.departmentsHelp' | translate }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-4 space-y-3">
+          @if (sortedDepartments().length === 0) {
+            <div
+              class="rounded-xl border border-dashed px-4 py-6 text-center text-color-secondary"
+              style="border-color: var(--surface-border)"
+            >
+              {{ 'angappApp.organization.detail.workbench.emptyDepartments' | translate }}
+            </div>
+          } @else {
+            @for (department of sortedDepartments(); track department.id ?? $index) {
+              <button
+                type="button"
+                class="block w-full rounded-xl border px-4 py-4 text-left transition-colors"
+                style="border-color: var(--surface-border); background: var(--surface-card)"
+                [style.borderColor]="
+                  selectedDepartmentId() === department.id
+                    ? 'var(--primary-color)'
+                    : 'var(--surface-border)'
+                "
+                (click)="selectDepartment(department)"
+                [attr.data-testid]="'department-card-' + (department.id ?? $index)"
+              >
+                <div class="flex items-start justify-between gap-3">
+                  <div class="min-w-0">
+                    <div class="font-semibold">{{ department.name ?? department.code }}</div>
+                    <div class="mt-1 text-sm text-color-secondary">
+                      {{ department.code }}
+                    </div>
+                    @if (canViewDepartmentField('costCenter') && department.costCenter) {
+                      <div class="mt-2 text-sm text-color-secondary">
+                        {{ department.costCenter }}
+                      </div>
+                    }
+                    <div class="mt-2 text-sm text-color-secondary">
+                      {{
+                        'angappApp.organization.detail.workbench.departmentEmployeeCount'
+                          | translate: { count: department.employees?.length ?? 0 }
+                      }}
+                    </div>
+                  </div>
+                  <div class="flex shrink-0 items-center gap-1">
+                    @if (canUpdateDepartment()) {
+                      <button
+                        type="button"
+                        pButton
+                        class="p-button-text p-button-sm"
+                        icon="pi pi-pencil"
+                        [attr.aria-label]="'entity.action.edit' | translate"
+                        (click)="$event.stopPropagation(); openEditDepartmentDialog(department)"
+                        [attr.data-testid]="'department-edit-button-' + (department.id ?? $index)"
+                      ></button>
+                    }
+                    @if (canDeleteDepartment()) {
+                      <button
+                        type="button"
+                        pButton
+                        class="p-button-text p-button-danger p-button-sm"
+                        icon="pi pi-trash"
+                        [attr.aria-label]="'entity.action.delete' | translate"
+                        (click)="$event.stopPropagation(); confirmDeleteDepartment(department)"
+                        [attr.data-testid]="'department-delete-button-' + (department.id ?? $index)"
+                      ></button>
+                    }
+                  </div>
+                </div>
+              </button>
+            }
+          }
+        </div>
+      </p-card>
+
+      <div class="space-y-4">
+        @if (selectedDepartment(); as department) {
+          <p-card class="shadow-sm">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 class="m-0 text-xl font-semibold">{{ department.name ?? department.code }}</h2>
+                <p class="mt-1 mb-0 text-sm text-color-secondary">
+                  {{ 'angappApp.organization.detail.workbench.employeeSectionHelp' | translate }}
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                @if (canUpdateDepartment()) {
+                  <button
+                    type="button"
+                    pButton
+                    class="p-button-outlined"
+                    icon="pi pi-pencil"
+                    [label]="'entity.action.edit' | translate"
+                    (click)="openEditDepartmentDialog(department)"
+                    data-testid="selected-department-edit-button"
+                  ></button>
+                }
+                @if (canCreateEmployee()) {
+                  <button
+                    type="button"
+                    pButton
+                    class="p-button-secondary"
+                    icon="pi pi-user-plus"
+                    [label]="'angappApp.employee.home.createLabel' | translate"
+                    (click)="openCreateEmployeeDialog()"
+                    data-testid="selected-department-employee-create-button"
+                  ></button>
+                }
+              </div>
+            </div>
+
+            <div class="mt-4 grid gap-4 md:grid-cols-3">
+              <div class="flex flex-col gap-1">
+                <span class="text-sm font-medium">{{ 'angappApp.department.id' | translate }}</span>
+                <span>{{ department.id }}</span>
+              </div>
+              <div class="flex flex-col gap-1">
+                <span class="text-sm font-medium">{{
+                  'angappApp.department.code' | translate
+                }}</span>
+                <span>{{ department.code }}</span>
+              </div>
+              <div class="flex flex-col gap-1">
+                <span class="text-sm font-medium">{{
+                  'angappApp.department.name' | translate
+                }}</span>
+                <span>{{ department.name }}</span>
+              </div>
+              @if (canViewDepartmentField('costCenter')) {
+                <div class="flex flex-col gap-1">
+                  <span class="text-sm font-medium">{{
+                    'angappApp.department.costCenter' | translate
+                  }}</span>
+                  <span>{{ department.costCenter || '—' }}</span>
+                </div>
+              }
+              <div class="flex flex-col gap-1">
+                <span class="text-sm font-medium">{{
+                  'angappApp.department.organization' | translate
+                }}</span>
+                <span>{{ organization.name }}</span>
+              </div>
+            </div>
+          </p-card>
+
+          <p-card class="shadow-sm">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 class="m-0 text-xl font-semibold">
+                  {{ 'angappApp.employee.home.title' | translate }}
+                </h2>
+                <p class="mt-1 mb-0 text-sm text-color-secondary">
+                  {{ 'angappApp.organization.detail.workbench.employeeCrudHelp' | translate }}
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <p-table
+                [value]="selectedDepartmentEmployees()"
+                dataKey="id"
+                styleClass="p-datatable-gridlines p-datatable-sm"
+                [tableStyle]="{ 'min-width': '100%' }"
+                data-testid="employee-table"
+              >
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th style="width: 8rem">{{ 'angappApp.employee.id' | translate }}</th>
+                    <th>{{ 'angappApp.employee.employeeNumber' | translate }}</th>
+                    <th>{{ 'angappApp.employee.firstName' | translate }}</th>
+                    <th>{{ 'angappApp.employee.lastName' | translate }}</th>
+                    <th>{{ 'angappApp.employee.email' | translate }}</th>
+                    @if (showEmployeeSalaryColumn()) {
+                      <th>{{ 'angappApp.employee.salary' | translate }}</th>
+                    }
+                    <th style="width: 8rem; text-align: center">
+                      {{ 'entity.list.actions' | translate }}
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-employee>
+                  <tr [attr.data-testid]="'employee-row-' + employee.id">
+                    <td>{{ employee.id }}</td>
+                    <td>{{ employee.employeeNumber }}</td>
+                    <td>{{ employee.firstName }}</td>
+                    <td>{{ employee.lastName }}</td>
+                    <td>{{ employee.email }}</td>
+                    @if (showEmployeeSalaryColumn()) {
+                      <td>
+                        {{
+                          employee.salary !== undefined ? (employee.salary | number: '1.2-2') : ''
+                        }}
+                      </td>
+                    }
+                    <td style="text-align: center">
+                      <div class="flex items-center justify-center gap-1">
+                        @if (canUpdateEmployee()) {
+                          <button
+                            type="button"
+                            pButton
+                            class="p-button-text p-button-sm"
+                            icon="pi pi-pencil"
+                            [attr.aria-label]="'entity.action.edit' | translate"
+                            (click)="openEditEmployeeDialog(employee)"
+                            [attr.data-testid]="'employee-edit-button-' + employee.id"
+                          ></button>
+                        }
+                        @if (canDeleteEmployee()) {
+                          <button
+                            type="button"
+                            pButton
+                            class="p-button-text p-button-danger p-button-sm"
+                            icon="pi pi-trash"
+                            [attr.aria-label]="'entity.action.delete' | translate"
+                            (click)="confirmDeleteEmployee(employee)"
+                            [attr.data-testid]="'employee-delete-button-' + employee.id"
+                          ></button>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td
+                      [attr.colspan]="showEmployeeSalaryColumn() ? 7 : 6"
+                      class="py-4 text-center text-color-secondary"
+                    >
+                      {{ 'angappApp.organization.detail.workbench.emptyEmployees' | translate }}
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </p-card>
+        } @else {
+          <p-card class="shadow-sm">
+            <div
+              class="rounded-xl border border-dashed px-4 py-8 text-center text-color-secondary"
+              style="border-color: var(--surface-border)"
+            >
+              {{ 'angappApp.organization.detail.workbench.selectDepartment' | translate }}
+            </div>
+          </p-card>
+        }
+      </div>
+    </div>
   }
 </div>
+
+<p-dialog
+  [header]="'angappApp.organization.home.createOrEditLabel' | translate"
+  [visible]="organizationDialogVisible()"
+  (visibleChange)="organizationDialogVisible.set($event)"
+  [modal]="true"
+  [style]="{ width: '32rem', maxWidth: '95vw' }"
+>
+  <form [formGroup]="organizationForm" (ngSubmit)="saveOrganization()">
+    <div class="flex flex-col gap-4 pt-2">
+      <div class="flex flex-col gap-1">
+        <label for="organizationCode" class="font-semibold">{{
+          'angappApp.organization.code' | translate
+        }}</label>
+        <input pInputText id="organizationCode" formControlName="code" class="w-full" />
+        @if (
+          organizationForm.controls['code'].invalid && organizationForm.controls['code'].touched
+        ) {
+          <p-message severity="error" [text]="'entity.validation.required' | translate"></p-message>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="organizationName" class="font-semibold">{{
+          'angappApp.organization.name' | translate
+        }}</label>
+        <input pInputText id="organizationName" formControlName="name" class="w-full" />
+        @if (
+          organizationForm.controls['name'].invalid && organizationForm.controls['name'].touched
+        ) {
+          <p-message severity="error" [text]="'entity.validation.required' | translate"></p-message>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="organizationOwnerLogin" class="font-semibold">{{
+          'angappApp.organization.ownerLogin' | translate
+        }}</label>
+        <input pInputText id="organizationOwnerLogin" formControlName="ownerLogin" class="w-full" />
+        @if (
+          organizationForm.controls['ownerLogin'].invalid &&
+          organizationForm.controls['ownerLogin'].touched
+        ) {
+          <p-message severity="error" [text]="'entity.validation.required' | translate"></p-message>
+        }
+      </div>
+
+      @if (canEditOrganizationField('budget')) {
+        <div class="flex flex-col gap-1">
+          <label for="organizationBudget" class="font-semibold">{{
+            'angappApp.organization.budget' | translate
+          }}</label>
+          <p-inputNumber
+            inputId="organizationBudget"
+            formControlName="budget"
+            mode="decimal"
+            class="w-full"
+          ></p-inputNumber>
+        </div>
+      }
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button
+      [label]="'entity.action.cancel' | translate"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="organizationDialogVisible.set(false)"
+    />
+    <p-button
+      [label]="'entity.action.save' | translate"
+      [disabled]="isSavingOrganization()"
+      (onClick)="saveOrganization()"
+    />
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  [header]="
+    departmentDialogMode() === 'create'
+      ? ('angappApp.department.home.createLabel' | translate)
+      : ('angappApp.department.home.createOrEditLabel' | translate)
+  "
+  [visible]="departmentDialogVisible()"
+  (visibleChange)="departmentDialogVisible.set($event)"
+  [modal]="true"
+  [style]="{ width: '30rem', maxWidth: '95vw' }"
+>
+  <form [formGroup]="departmentForm" (ngSubmit)="saveDepartment()">
+    <div class="flex flex-col gap-4 pt-2">
+      <div
+        class="rounded-xl border px-3 py-3 text-sm text-color-secondary"
+        style="border-color: var(--surface-border)"
+      >
+        <div class="font-medium text-color">
+          {{ 'angappApp.department.organization' | translate }}
+        </div>
+        <div class="mt-1">{{ organization()?.name }}</div>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="departmentCode" class="font-semibold">{{
+          'angappApp.department.code' | translate
+        }}</label>
+        <input pInputText id="departmentCode" formControlName="code" class="w-full" />
+        @if (departmentForm.controls['code'].invalid && departmentForm.controls['code'].touched) {
+          <p-message severity="error" [text]="'entity.validation.required' | translate"></p-message>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="departmentName" class="font-semibold">{{
+          'angappApp.department.name' | translate
+        }}</label>
+        <input pInputText id="departmentName" formControlName="name" class="w-full" />
+        @if (departmentForm.controls['name'].invalid && departmentForm.controls['name'].touched) {
+          <p-message severity="error" [text]="'entity.validation.required' | translate"></p-message>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="departmentCostCenter" class="font-semibold">{{
+          'angappApp.department.costCenter' | translate
+        }}</label>
+        <input pInputText id="departmentCostCenter" formControlName="costCenter" class="w-full" />
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button
+      [label]="'entity.action.cancel' | translate"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="departmentDialogVisible.set(false)"
+    />
+    <p-button
+      [label]="'entity.action.save' | translate"
+      [disabled]="isSavingDepartment()"
+      (onClick)="saveDepartment()"
+    />
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  [header]="
+    employeeDialogMode() === 'create'
+      ? ('angappApp.employee.home.createLabel' | translate)
+      : ('angappApp.employee.home.createOrEditLabel' | translate)
+  "
+  [visible]="employeeDialogVisible()"
+  (visibleChange)="employeeDialogVisible.set($event)"
+  [modal]="true"
+  [style]="{ width: '36rem', maxWidth: '95vw' }"
+>
+  <form [formGroup]="employeeForm" (ngSubmit)="saveEmployee()">
+    <div class="grid gap-4 pt-2 md:grid-cols-2">
+      <div class="flex flex-col gap-1">
+        <label for="employeeNumber" class="font-semibold">{{
+          'angappApp.employee.employeeNumber' | translate
+        }}</label>
+        <input pInputText id="employeeNumber" formControlName="employeeNumber" class="w-full" />
+        @if (
+          employeeForm.controls['employeeNumber'].invalid &&
+          employeeForm.controls['employeeNumber'].touched
+        ) {
+          <p-message severity="error" [text]="'entity.validation.required' | translate"></p-message>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="employeeDepartmentId" class="font-semibold">{{
+          'angappApp.employee.department' | translate
+        }}</label>
+        <p-select
+          inputId="employeeDepartmentId"
+          formControlName="departmentId"
+          [options]="departmentOptions"
+          optionLabel="label"
+          optionValue="value"
+          class="w-full"
+        ></p-select>
+        @if (
+          employeeForm.controls['departmentId'].invalid &&
+          employeeForm.controls['departmentId'].touched
+        ) {
+          <p-message severity="error" [text]="'entity.validation.required' | translate"></p-message>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="employeeFirstName" class="font-semibold">{{
+          'angappApp.employee.firstName' | translate
+        }}</label>
+        <input pInputText id="employeeFirstName" formControlName="firstName" class="w-full" />
+        @if (
+          employeeForm.controls['firstName'].invalid && employeeForm.controls['firstName'].touched
+        ) {
+          <p-message severity="error" [text]="'entity.validation.required' | translate"></p-message>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="employeeLastName" class="font-semibold">{{
+          'angappApp.employee.lastName' | translate
+        }}</label>
+        <input pInputText id="employeeLastName" formControlName="lastName" class="w-full" />
+        @if (
+          employeeForm.controls['lastName'].invalid && employeeForm.controls['lastName'].touched
+        ) {
+          <p-message severity="error" [text]="'entity.validation.required' | translate"></p-message>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1 md:col-span-2">
+        <label for="employeeEmail" class="font-semibold">{{
+          'angappApp.employee.email' | translate
+        }}</label>
+        <input pInputText id="employeeEmail" formControlName="email" class="w-full" />
+      </div>
+
+      @if (canEditEmployeeField('salary')) {
+        <div class="flex flex-col gap-1">
+          <label for="employeeSalary" class="font-semibold">{{
+            'angappApp.employee.salary' | translate
+          }}</label>
+          <p-inputNumber
+            inputId="employeeSalary"
+            formControlName="salary"
+            mode="decimal"
+            class="w-full"
+          ></p-inputNumber>
+        </div>
+      }
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button
+      [label]="'entity.action.cancel' | translate"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="employeeDialogVisible.set(false)"
+    />
+    <p-button
+      [label]="'entity.action.save' | translate"
+      [disabled]="isSavingEmployee()"
+      (onClick)="saveEmployee()"
+    />
+  </ng-template>
+</p-dialog>

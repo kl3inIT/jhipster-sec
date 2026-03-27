@@ -100,7 +100,20 @@
         "question": "Bạn có chắc muốn xóa tổ chức này không? Hành động này không thể hoàn tác."
       },
       "detail": {
-        "title": "Tổ chức"
+        "title": "Tổ chức",
+        "workbench": {
+          "subtitle": "Xem và thao tác trên tổ chức gốc cùng các phòng ban, nhân viên liên quan trong một workspace bảo mật duy nhất.",
+          "loading": "Đang tải workspace tổ chức...",
+          "departmentCountLabel": "Số phòng ban trong tổ chức",
+          "employeeCountLabel": "Số nhân viên trong tổ chức",
+          "departmentsHelp": "Chọn một phòng ban để xem bản ghi và quản lý nhân viên con ngay trên cùng màn hình.",
+          "employeeSectionHelp": "Phòng ban đang chọn vẫn có thể chỉnh sửa ngay trong cùng flow workbench.",
+          "employeeCrudHelp": "Tạo, cập nhật, xóa nhân viên tại đây rồi reload lại root graph đã được bảo mật.",
+          "departmentEmployeeCount": "{{ count }} nhân viên",
+          "emptyDepartments": "Tổ chức này chưa có phòng ban nào.",
+          "emptyEmployees": "Phòng ban đang chọn chưa có nhân viên nào.",
+          "selectDepartment": "Chọn một phòng ban ở cột bên trái để mở workspace nhân viên."
+        }
       },
       "id": "ID",
       "code": "Mã",
@@ -235,13 +248,16 @@
     },
     "entities": {
       "organizations": {
-        "deleted": "Đã xóa tổ chức thành công."
+        "deleted": "Đã xóa tổ chức thành công.",
+        "saved": "Đã lưu tổ chức thành công."
       },
       "departments": {
-        "deleted": "Đã xóa phòng ban thành công."
+        "deleted": "Đã xóa phòng ban thành công.",
+        "saved": "Đã lưu phòng ban thành công."
       },
       "employees": {
-        "deleted": "Đã xóa nhân viên thành công."
+        "deleted": "Đã xóa nhân viên thành công.",
+        "saved": "Đã lưu nhân viên thành công."
       }
     }
   },
@@ -624,9 +640,6 @@
         "menu": "Quyền menu"
       },
       "menu": {
-        "appLabel": "Ứng dụng",
-        "emptyDefinitions": "Không tìm thấy định nghĩa menu cho {{ appName }}.",
-        "noApps": "Không có ứng dụng khả dụng.",
         "node": "Nút điều hướng"
       },
       "entity": {

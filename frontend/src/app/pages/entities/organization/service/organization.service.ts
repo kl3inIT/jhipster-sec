@@ -4,10 +4,12 @@ import { Observable } from 'rxjs';
 
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
+import { IOrganizationWorkbench } from '../detail/organization-workbench.model';
 import { IOrganization, NewOrganization } from '../organization.model';
 
 export type EntityResponseType = HttpResponse<IOrganization>;
 export type EntityArrayResponseType = HttpResponse<IOrganization[]>;
+export type WorkbenchResponseType = HttpResponse<IOrganizationWorkbench>;
 
 @Injectable({ providedIn: 'root' })
 export class OrganizationService {
@@ -21,16 +23,27 @@ export class OrganizationService {
   }
 
   update(organization: IOrganization): Observable<EntityResponseType> {
-    return this.http.put<IOrganization>(`${this.resourceUrl}/${organization.id}`, organization, { observe: 'response' });
+    return this.http.put<IOrganization>(`${this.resourceUrl}/${organization.id}`, organization, {
+      observe: 'response',
+    });
   }
 
   find(id: number): Observable<EntityResponseType> {
     return this.http.get<IOrganization>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  findWorkbench(id: number): Observable<WorkbenchResponseType> {
+    return this.http.get<IOrganizationWorkbench>(`${this.resourceUrl}/${id}`, {
+      observe: 'response',
+    });
+  }
+
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
-    return this.http.get<IOrganization[]>(this.resourceUrl, { params: options, observe: 'response' });
+    return this.http.get<IOrganization[]>(this.resourceUrl, {
+      params: options,
+      observe: 'response',
+    });
   }
 
   delete(id: number): Observable<HttpResponse<{}>> {

@@ -3,14 +3,18 @@ package com.vn.core.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vn.core.domain.Organization;
+import com.vn.core.repository.OrganizationRepository;
 import com.vn.core.security.data.SecureDataManager;
 import com.vn.core.security.data.SecuredLoadQuery;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,13 +31,22 @@ public class DepartmentService {
     private static final String ENTITY_CODE = "department";
     private static final String LIST_FETCH_PLAN = "department-list";
     private static final String DETAIL_FETCH_PLAN = "department-detail";
+    private static final String ORGANIZATION_ENTITY_CODE = "organization";
+    private static final String ORGANIZATION_REFERENCE_FIELD = "organization";
+    private static final String ORGANIZATION_REFERENCE_FETCH_PLAN = "organization-list";
 
     private final SecureDataManager secureDataManager;
     private final ObjectMapper objectMapper;
+    private final OrganizationRepository organizationRepository;
 
-    public DepartmentService(SecureDataManager secureDataManager, ObjectMapper objectMapper) {
+    public DepartmentService(
+        SecureDataManager secureDataManager,
+        ObjectMapper objectMapper,
+        OrganizationRepository organizationRepository
+    ) {
         this.secureDataManager = secureDataManager;
         this.objectMapper = objectMapper;
+        this.organizationRepository = organizationRepository;
     }
 
     @Transactional(readOnly = true)
@@ -87,6 +100,41 @@ public class DepartmentService {
     }
 
     private Map<String, Object> toAttributeMap(JsonNode attributes) {
-        return objectMapper.convertValue(attributes, ATTRIBUTE_MAP_TYPE);
+        Map<String, Object> attributeMap = objectMapper.convertValue(attributes, ATTRIBUTE_MAP_TYPE);
+        adaptOrganizationReference(attributeMap);
+        return attributeMap;
+    }
+
+    private void adaptOrganizationReference(Map<String, Object> attributes) {
+        if (!attributes.containsKey(ORGANIZATION_REFERENCE_FIELD)) {
+            return;
+        }
+
+        Long organizationId = extractReferenceId(attributes.get(ORGANIZATION_REFERENCE_FIELD));
+        if (organizationId == null) {
+            throw new IllegalArgumentException("department.organization reference requires an id");
+        }
+
+        secureDataManager
+            .loadOne(ORGANIZATION_ENTITY_CODE, organizationId, ORGANIZATION_REFERENCE_FETCH_PLAN)
+            .orElseThrow(() -> new AccessDeniedException("Organization reference not found or not accessible: " + organizationId));
+
+        Organization organization = organizationRepository
+            .findById(organizationId)
+            .orElseThrow(() -> new EntityNotFoundException("Organization not found: " + organizationId));
+        attributes.put(ORGANIZATION_REFERENCE_FIELD, organization);
+    }
+
+    private Long extractReferenceId(Object referenceValue) {
+        if (referenceValue instanceof Number number) {
+            return number.longValue();
+        }
+        if (referenceValue instanceof Map<?, ?> referenceMap) {
+            Object idValue = referenceMap.get("id");
+            if (idValue instanceof Number number) {
+                return number.longValue();
+            }
+        }
+        return null;
     }
 }

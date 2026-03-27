@@ -3,14 +3,18 @@ package com.vn.core.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vn.core.domain.Department;
+import com.vn.core.repository.DepartmentRepository;
 import com.vn.core.security.data.SecureDataManager;
 import com.vn.core.security.data.SecuredLoadQuery;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,13 +31,18 @@ public class EmployeeService {
     private static final String ENTITY_CODE = "employee";
     private static final String LIST_FETCH_PLAN = "employee-list";
     private static final String DETAIL_FETCH_PLAN = "employee-detail";
+    private static final String DEPARTMENT_ENTITY_CODE = "department";
+    private static final String DEPARTMENT_REFERENCE_FIELD = "department";
+    private static final String DEPARTMENT_REFERENCE_FETCH_PLAN = "department-list";
 
     private final SecureDataManager secureDataManager;
     private final ObjectMapper objectMapper;
+    private final DepartmentRepository departmentRepository;
 
-    public EmployeeService(SecureDataManager secureDataManager, ObjectMapper objectMapper) {
+    public EmployeeService(SecureDataManager secureDataManager, ObjectMapper objectMapper, DepartmentRepository departmentRepository) {
         this.secureDataManager = secureDataManager;
         this.objectMapper = objectMapper;
+        this.departmentRepository = departmentRepository;
     }
 
     @Transactional(readOnly = true)
@@ -87,6 +96,41 @@ public class EmployeeService {
     }
 
     private Map<String, Object> toAttributeMap(JsonNode attributes) {
-        return objectMapper.convertValue(attributes, ATTRIBUTE_MAP_TYPE);
+        Map<String, Object> attributeMap = objectMapper.convertValue(attributes, ATTRIBUTE_MAP_TYPE);
+        adaptDepartmentReference(attributeMap);
+        return attributeMap;
+    }
+
+    private void adaptDepartmentReference(Map<String, Object> attributes) {
+        if (!attributes.containsKey(DEPARTMENT_REFERENCE_FIELD)) {
+            return;
+        }
+
+        Long departmentId = extractReferenceId(attributes.get(DEPARTMENT_REFERENCE_FIELD));
+        if (departmentId == null) {
+            throw new IllegalArgumentException("employee.department reference requires an id");
+        }
+
+        secureDataManager
+            .loadOne(DEPARTMENT_ENTITY_CODE, departmentId, DEPARTMENT_REFERENCE_FETCH_PLAN)
+            .orElseThrow(() -> new AccessDeniedException("Department reference not found or not accessible: " + departmentId));
+
+        Department department = departmentRepository
+            .findById(departmentId)
+            .orElseThrow(() -> new EntityNotFoundException("Department not found: " + departmentId));
+        attributes.put(DEPARTMENT_REFERENCE_FIELD, department);
+    }
+
+    private Long extractReferenceId(Object referenceValue) {
+        if (referenceValue instanceof Number number) {
+            return number.longValue();
+        }
+        if (referenceValue instanceof Map<?, ?> referenceMap) {
+            Object idValue = referenceMap.get("id");
+            if (idValue instanceof Number number) {
+                return number.longValue();
+            }
+        }
+        return null;
     }
 }
