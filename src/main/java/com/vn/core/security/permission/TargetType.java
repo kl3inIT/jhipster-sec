@@ -7,5 +7,4 @@ package com.vn.core.security.permission;
 public enum TargetType {
     ENTITY,
     ATTRIBUTE,
-    ROW_POLICY,
 }

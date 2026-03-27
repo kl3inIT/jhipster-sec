@@ -44,7 +44,7 @@ class SecRoleAdminResourceIT {
     private static final String DEFAULT_DISPLAY_NAME = "Test Role";
     private static final String DEFAULT_TYPE = "RESOURCE";
     private static final String UPDATED_DISPLAY_NAME = "Updated Test Role";
-    private static final String UPDATED_TYPE = "ROW_LEVEL";
+    private static final String UPDATED_TYPE = "RESOURCE";
 
     @Autowired
     private ObjectMapper om;
@@ -98,7 +98,7 @@ class SecRoleAdminResourceIT {
 
     @Test
     void testGetRole() throws Exception {
-        authorityRepository.saveAndFlush(createAuthority("TEST_ROLE_GET", "Get Role", RoleType.ROW_LEVEL));
+        authorityRepository.saveAndFlush(createAuthority("TEST_ROLE_GET", "Get Role", RoleType.RESOURCE));
 
         restMockMvc
             .perform(get(ENTITY_API_URL_ID, "TEST_ROLE_GET"))
@@ -106,7 +106,7 @@ class SecRoleAdminResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.name").value("TEST_ROLE_GET"))
             .andExpect(jsonPath("$.displayName").value("Get Role"))
-            .andExpect(jsonPath("$.type").value("ROW_LEVEL"));
+            .andExpect(jsonPath("$.type").value("RESOURCE"));
     }
 
     @Test
@@ -128,7 +128,7 @@ class SecRoleAdminResourceIT {
 
         Authority persisted = authorityRepository.findById(DEFAULT_NAME).orElseThrow();
         assertThat(persisted.getDisplayName()).isEqualTo(UPDATED_DISPLAY_NAME);
-        assertThat(persisted.getType()).isEqualTo(RoleType.ROW_LEVEL);
+        assertThat(persisted.getType()).isEqualTo(RoleType.RESOURCE);
     }
 
     @Test
@@ -137,7 +137,9 @@ class SecRoleAdminResourceIT {
         SecRoleDTO dto = createRoleDto("TEST_ROLE_OTHER", "Other", DEFAULT_TYPE);
 
         restMockMvc
-            .perform(put(ENTITY_API_URL_ID, "TEST_ROLE_MISMATCH").contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dto)))
+            .perform(
+                put(ENTITY_API_URL_ID, "TEST_ROLE_MISMATCH").contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dto))
+            )
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.message").value("error.namemismatch"));
     }

@@ -1,10 +1,12 @@
 package com.vn.core.web.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vn.core.domain.Organization;
+import com.vn.core.security.data.SecureDataManager.EntityMutation;
+import com.vn.core.security.web.SecuredEntityJsonAdapter;
+import com.vn.core.security.web.SecuredEntityPayloadValidator;
 import com.vn.core.service.OrganizationService;
 import com.vn.core.web.rest.vm.SecuredEntityQueryVM;
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +18,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -29,7 +31,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.PaginationUtil;
 
@@ -44,69 +45,104 @@ public class OrganizationResource {
     private static final Logger LOG = LoggerFactory.getLogger(OrganizationResource.class);
     private static final int DEFAULT_PAGE = 0;
     private static final int DEFAULT_SIZE = 20;
+    private static final String LIST_FETCH_PLAN = "organization-list";
+    private static final String DETAIL_FETCH_PLAN = "organization-detail";
 
     private final OrganizationService organizationService;
-    private final ObjectMapper objectMapper;
+    private final SecuredEntityJsonAdapter securedEntityJsonAdapter;
+    private final SecuredEntityPayloadValidator securedEntityPayloadValidator;
 
-    public OrganizationResource(OrganizationService organizationService, ObjectMapper objectMapper) {
+    public OrganizationResource(
+        OrganizationService organizationService,
+        SecuredEntityJsonAdapter securedEntityJsonAdapter,
+        SecuredEntityPayloadValidator securedEntityPayloadValidator
+    ) {
         this.organizationService = organizationService;
-        this.objectMapper = objectMapper;
+        this.securedEntityJsonAdapter = securedEntityJsonAdapter;
+        this.securedEntityPayloadValidator = securedEntityPayloadValidator;
     }
 
     @GetMapping("")
+    @Transactional(readOnly = true)
     public ResponseEntity<String> getAllOrganizations(@ParameterObject Pageable pageable) {
         LOG.debug("REST request to get organizations");
-        Page<JsonNode> page = organizationService.list(pageable);
+        Page<Organization> page = organizationService.list(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_JSON).body(writeJson(page.getContent()));
+        return ResponseEntity.ok()
+            .headers(headers)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(securedEntityJsonAdapter.toJsonArrayString(page.getContent(), LIST_FETCH_PLAN));
     }
 
     @GetMapping("/{id}")
+    @Transactional(readOnly = true)
     public ResponseEntity<String> getOrganization(@PathVariable("id") Long id) {
         LOG.debug("REST request to get organization : {}", id);
         return organizationService
             .findOne(id)
-            .map(body -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(writeJson(body)))
+            .map(organization ->
+                ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(securedEntityJsonAdapter.toJsonString(organization, DETAIL_FETCH_PLAN))
+            )
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("")
+    @Transactional
     public ResponseEntity<String> createOrganization(@RequestBody String attributesJson) {
-        JsonNode attributes = parseObject(attributesJson);
-        LOG.debug("REST request to create organization : {}", attributes);
-        JsonNode result = organizationService.create(attributes);
-        return ResponseEntity.created(URI.create("/api/organizations/" + result.path("id").asText()))
+        LOG.debug("REST request to create organization");
+        EntityMutation<Organization> mutation = securedEntityJsonAdapter.fromJson(attributesJson, Organization.class);
+        Organization result = organizationService.create(mutation);
+        return ResponseEntity.created(URI.create("/api/organizations/" + result.getId()))
             .contentType(MediaType.APPLICATION_JSON)
-            .body(writeJson(result));
+            .body(securedEntityJsonAdapter.toJsonString(result, DETAIL_FETCH_PLAN));
     }
 
     @PutMapping("/{id}")
+    @Transactional
     public ResponseEntity<String> updateOrganization(@PathVariable("id") Long id, @RequestBody String attributesJson) {
-        JsonNode attributes = parseObject(attributesJson);
         LOG.debug("REST request to update organization : {}", id);
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(writeJson(organizationService.update(id, attributes)));
+        EntityMutation<Organization> mutation = securedEntityJsonAdapter.fromJson(attributesJson, Organization.class);
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(securedEntityJsonAdapter.toJsonString(organizationService.update(id, mutation), DETAIL_FETCH_PLAN));
     }
 
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    @Transactional
     public ResponseEntity<String> patchOrganization(@PathVariable("id") Long id, @RequestBody String attributesJson) {
-        JsonNode attributes = parseObject(attributesJson);
         LOG.debug("REST request to patch organization : {}", id);
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(writeJson(organizationService.patch(id, attributes)));
+        EntityMutation<Organization> mutation = securedEntityJsonAdapter.fromJson(attributesJson, Organization.class);
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(securedEntityJsonAdapter.toJsonString(organizationService.patch(id, mutation), DETAIL_FETCH_PLAN));
     }
 
     @PostMapping("/query")
-    public ResponseEntity<String> queryOrganizations(@RequestBody SecuredEntityQueryVM request) {
+    @Transactional(readOnly = true)
+    public ResponseEntity<String> queryOrganizations(@Valid @RequestBody SecuredEntityQueryVM request) {
         LOG.debug("REST request to query organizations");
-        Page<JsonNode> page = organizationService.query(request.fetchPlanCode(), buildPageable(request), request.filters());
+        String fetchPlanCode = resolveFetchPlanCode(request.fetchPlanCode(), LIST_FETCH_PLAN);
+        securedEntityPayloadValidator.validateQuery(request, Organization.class, fetchPlanCode);
+        Page<Organization> page = organizationService.query(fetchPlanCode, buildPageable(request), request.filters());
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_JSON).body(writeJson(page.getContent()));
+        return ResponseEntity.ok()
+            .headers(headers)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(securedEntityJsonAdapter.toJsonArrayString(page.getContent(), fetchPlanCode));
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<Void> deleteOrganization(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete organization : {}", id);
         organizationService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private String resolveFetchPlanCode(String fetchPlanCode, String defaultFetchPlanCode) {
+        return fetchPlanCode == null || fetchPlanCode.isBlank() ? defaultFetchPlanCode : fetchPlanCode;
     }
 
     private Pageable buildPageable(SecuredEntityQueryVM request) {
@@ -138,25 +174,5 @@ public class OrganizationResource {
         }
 
         return orders.isEmpty() ? Sort.unsorted() : Sort.by(orders);
-    }
-
-    private JsonNode parseObject(String body) {
-        try {
-            JsonNode parsed = objectMapper.readTree(body);
-            if (parsed == null || !parsed.isObject()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body must be a JSON object");
-            }
-            return parsed;
-        } catch (JsonProcessingException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body must be valid JSON", ex);
-        }
-    }
-
-    private String writeJson(Object value) {
-        try {
-            return objectMapper.writeValueAsString(value);
-        } catch (JsonProcessingException ex) {
-            throw new IllegalStateException("Failed to serialize organization response", ex);
-        }
     }
 }

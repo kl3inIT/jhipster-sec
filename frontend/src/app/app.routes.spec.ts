@@ -37,7 +37,7 @@ describe('app routes shim', () => {
     expect(userManagementRoutes.every(route => route.data?.['navigationNodeId'] === 'security.users')).toBe(true);
     expect(securityRoutes[0]?.data?.['navigationNodeId']).toBe('security.roles');
     expect(securityRoutes[1]?.data?.['navigationNodeId']).toBe('security.roles');
-    expect(securityRoutes[2]?.data?.['navigationNodeId']).toBe('security.row-policies');
+    expect(securityRoutes[2]?.data?.['navigationNodeId']).toBe('security.menu-definitions');
   });
 
   it('uses translation keys for shell error and security route titles', () => {
@@ -49,7 +49,7 @@ describe('app routes shim', () => {
     expect(securityRoutes.map(route => route.title)).toEqual([
       'pageTitle.securityRoles',
       'pageTitle.permissionMatrix',
-      'pageTitle.rowPolicies',
+      'pageTitle.menuDefinitions',
     ]);
   });
 });

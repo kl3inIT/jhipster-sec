@@ -4,8 +4,9 @@ import com.vn.core.security.fetch.FetchPlan;
 import java.util.Map;
 
 /**
- * Serializes a JPA entity instance to a map, including only properties
- * declared in the {@link FetchPlan} that the current user is permitted to view.
+ * Serializes a JPA entity instance to an attribute-filtered map for explicit JSON
+ * edge adapters, including only properties declared in the {@link FetchPlan}
+ * that the current user is permitted to view.
  */
 public interface SecureEntitySerializer {
     /**

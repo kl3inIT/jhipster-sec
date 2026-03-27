@@ -48,7 +48,7 @@ export default class RoleDialogComponent implements OnChanges {
       nonNullable: true,
       validators: [Validators.maxLength(255)],
     }),
-    type: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    type: new FormControl('RESOURCE', { nonNullable: true, validators: [Validators.required] }),
   });
 
   private readonly secRoleService = inject(SecRoleService);
@@ -57,10 +57,7 @@ export default class RoleDialogComponent implements OnChanges {
   private readonly translateService = inject(TranslateService);
 
   get typeOptions(): Array<{ label: string; value: string }> {
-    return [
-      { label: this.translateService.instant('security.roles.type.resource'), value: 'RESOURCE' },
-      { label: this.translateService.instant('security.roles.type.rowLevel'), value: 'ROW_LEVEL' },
-    ];
+    return [{ label: this.translateService.instant('security.roles.type.resource'), value: 'RESOURCE' }];
   }
 
   ngOnChanges(): void {
@@ -73,7 +70,7 @@ export default class RoleDialogComponent implements OnChanges {
         });
         this.editForm.get('name')?.disable();
       } else {
-        this.editForm.reset();
+        this.editForm.reset({ name: '', displayName: '', type: 'RESOURCE' });
         this.editForm.get('name')?.enable();
       }
     }

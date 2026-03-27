@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.vn.core.security.MergedSecurityService;
+import com.vn.core.security.domain.MenuAppName;
 import com.vn.core.security.domain.SecMenuPermission;
 import com.vn.core.security.repository.SecMenuPermissionRepository;
 import java.util.List;
@@ -17,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class CurrentUserMenuPermissionServiceTest {
 
-    private static final String APP_NAME = "jhipster-security-platform";
+    private static final MenuAppName APP_NAME = MenuAppName.JHIPSTER_SECURITY_PLATFORM;
 
     @Mock
     private MergedSecurityService mergedSecurityService;

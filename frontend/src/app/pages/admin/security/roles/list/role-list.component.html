@@ -24,14 +24,7 @@
         <td>{{ role.name }}</td>
         <td>{{ role.displayName ?? '-' }}</td>
         <td>
-          <p-tag
-            [value]="
-              role.type === 'RESOURCE'
-                ? ('security.roles.type.resource' | translate)
-                : ('security.roles.type.rowLevel' | translate)
-            "
-            [severity]="role.type === 'RESOURCE' ? 'info' : 'warn'"
-          />
+          <p-tag [value]="'security.roles.type.resource' | translate" severity="info" />
         </td>
         <td>
           <div class="flex gap-2">

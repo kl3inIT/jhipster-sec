@@ -150,9 +150,9 @@ describe('NavigationService', () => {
     const fallbackPromise = firstValueFrom(service.resolveFallbackRoute('security'));
 
     const request = httpMock.expectOne(req => req.url === 'api/security/menu-permissions');
-    request.flush({ appName: SHELL_APP_NAME, allowedMenuIds: ['entities.employee', 'security.row-policies'] });
+    request.flush({ appName: SHELL_APP_NAME, allowedMenuIds: ['entities.employee', 'security.roles'] });
 
-    expect(await fallbackPromise).toBe('/admin/security/row-policies');
+    expect(await fallbackPromise).toBe('/admin/security/roles');
 
     const overallFallback = await firstValueFrom(service.resolveFallbackRoute('home'));
     expect(overallFallback).toBe('/entities/employee');

@@ -1,6 +1,7 @@
 package com.vn.core.web.rest.admin.security;
 
 import com.vn.core.security.AuthoritiesConstants;
+import com.vn.core.security.domain.MenuAppName;
 import com.vn.core.security.domain.SecMenuDefinition;
 import com.vn.core.security.repository.SecMenuDefinitionRepository;
 import com.vn.core.security.repository.SecMenuPermissionRepository;
@@ -150,7 +151,9 @@ public class SecMenuDefinitionAdminResource {
         SecMenuDefinition entity = secMenuDefinitionRepository
             .findById(id)
             .orElseThrow(() -> new BadRequestAlertException("Menu definition not found", ENTITY_NAME, "notfound"));
-        secMenuPermissionRepository.deleteByAppNameAndMenuId(entity.getAppName(), entity.getMenuId());
+        MenuAppName.fromValue(entity.getAppName()).ifPresent(appName ->
+            secMenuPermissionRepository.deleteByAppNameAndMenuId(appName, entity.getMenuId())
+        );
         secMenuDefinitionRepository.deleteById(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, entity.getMenuId()))

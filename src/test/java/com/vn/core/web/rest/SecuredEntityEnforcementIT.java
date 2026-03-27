@@ -58,15 +58,17 @@ class SecuredEntityEnforcementIT {
 
     @Test
     @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
-    void getOrganizations_returnsOwnedRowsOnly() throws Exception {
+    void getOrganizations_returnsReadableRowsAndOmitsDeniedFields() throws Exception {
         grantReadableOrganizationGraph("ROLE_PROOF_READER");
 
         restMockMvc
             .perform(get(ORGANIZATION_API_URL + "?sort=id,asc"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$.length()").value(2))
             .andExpect(jsonPath("$[0].id").value(100))
             .andExpect(jsonPath("$[0].code").value("ORG-OWNED"))
+            .andExpect(jsonPath("$[1].id").value(101))
+            .andExpect(jsonPath("$[1].code").value("ORG-OTHER"))
             .andExpect(jsonPath("$[0].budget").doesNotExist());
     }
 
@@ -91,7 +93,7 @@ class SecuredEntityEnforcementIT {
 
     @Test
     @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
-    void queryOrganizations_returnsOwnedRowsOnlyAndOmitsDeniedFields() throws Exception {
+    void queryOrganizations_returnsFilteredRowsAndOmitsDeniedFields() throws Exception {
         grantReadableOrganizationGraph("ROLE_PROOF_READER");
 
         Map<String, Object> payload = Map.of(
@@ -161,12 +163,12 @@ class SecuredEntityEnforcementIT {
                 )
             )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$.length()").value(2))
             .andExpect(jsonPath("$[0].code").value("ORG-OWNED"));
     }
 
     @Test
-    void getOrganizations_unionOfAllowAcrossAuthorities_returnsOwnedRow() throws Exception {
+    void getOrganizations_unionOfAllowAcrossAuthorities_returnsReadableRows() throws Exception {
         Map<String, Object> denyPermissionPayload = Map.of(
             "authorityName",
             "ROLE_PROOF_NONE",
@@ -201,15 +203,22 @@ class SecuredEntityEnforcementIT {
                 )
             )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$.length()").value(2))
             .andExpect(jsonPath("$[0].id").value(100))
             .andExpect(jsonPath("$[0].code").value("ORG-OWNED"));
     }
 
     @Test
     @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
-    void getOrganization_outsideRowPolicy_returnsNotFound() throws Exception {
-        restMockMvc.perform(get(ORGANIZATION_API_URL + "/{id}", 101)).andExpect(status().isNotFound());
+    void getOrganization_withReadPermission_canAccessAnotherUsersRow() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_READER");
+
+        restMockMvc
+            .perform(get(ORGANIZATION_API_URL + "/{id}", 101))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(101))
+            .andExpect(jsonPath("$.code").value("ORG-OTHER"))
+            .andExpect(jsonPath("$.budget").doesNotExist());
     }
 
     @Test
@@ -229,7 +238,7 @@ class SecuredEntityEnforcementIT {
         restMockMvc
             .perform(get(ORGANIZATION_API_URL + "?sort=id,asc"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(2))
+            .andExpect(jsonPath("$.length()").value(3))
             .andExpect(jsonPath("$.[*].code").value(hasItem("ORG-NEW")));
     }
 
@@ -313,9 +322,9 @@ class SecuredEntityEnforcementIT {
     }
 
     @Test
-    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_EDITOR")
-    void deleteOrganization_outsideRowPolicy_returnsForbidden() throws Exception {
-        restMockMvc.perform(delete(ORGANIZATION_API_URL + "/{id}", 101)).andExpect(status().isForbidden());
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
+    void deleteOrganization_withoutDeletePermission_returnsForbidden() throws Exception {
+        restMockMvc.perform(delete(ORGANIZATION_API_URL + "/{id}", 100)).andExpect(status().isForbidden());
     }
 
     @Test
@@ -450,6 +459,107 @@ class SecuredEntityEnforcementIT {
 
         restMockMvc.perform(delete(EMPLOYEE_API_URL + "/{id}", createdEmployeeId)).andExpect(status().isNoContent());
         restMockMvc.perform(get(EMPLOYEE_API_URL + "/{id}", createdEmployeeId)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_EDITOR")
+    void createOrganization_withUnknownField_returnsBadRequest() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_EDITOR");
+        grantEditableOrganizationFields("ROLE_PROOF_EDITOR");
+
+        Map<String, Object> payload = Map.of(
+            "code",
+            "ORG-INVALID",
+            "name",
+            "Invalid Org",
+            "ownerLogin",
+            "proof-owner",
+            "unexpectedField",
+            "nope"
+        );
+
+        restMockMvc
+            .perform(post(ORGANIZATION_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_DEPARTMENT_WORKBENCH")
+    void createDepartment_withNonObjectPayload_returnsBadRequest() throws Exception {
+        String authorityName = "ROLE_PROOF_DEPARTMENT_WORKBENCH";
+        grantEntityPermission(authorityName, "organization", "READ");
+        grantReadableOrganizationGraph(authorityName);
+        grantDepartmentCrudForWorkbench(authorityName);
+
+        restMockMvc
+            .perform(post(DEPARTMENT_API_URL).contentType(MediaType.APPLICATION_JSON).content("[]"))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_DEPARTMENT_WORKBENCH")
+    void createDepartment_withMissingOrganizationId_returnsBadRequest() throws Exception {
+        String authorityName = "ROLE_PROOF_DEPARTMENT_WORKBENCH";
+        grantEntityPermission(authorityName, "organization", "READ");
+        grantReadableOrganizationGraph(authorityName);
+        grantDepartmentCrudForWorkbench(authorityName);
+
+        Map<String, Object> payload = Map.of(
+            "code",
+            "DEPT-INVALID",
+            "name",
+            "Invalid Department",
+            "costCenter",
+            "OPS",
+            "organization",
+            Map.of("name", "Owned Org")
+        );
+
+        restMockMvc
+            .perform(post(DEPARTMENT_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
+    void queryOrganizations_withNegativePage_returnsBadRequest() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_READER");
+
+        Map<String, Object> payload = Map.of(
+            "fetchPlanCode",
+            "organization-list",
+            "page",
+            -1,
+            "size",
+            20,
+            "filters",
+            Map.of("ownerLogin", "proof-owner")
+        );
+
+        restMockMvc
+            .perform(post(ORGANIZATION_API_URL + "/query").contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
+    void queryOrganizations_withUnsafeNestedFilter_returnsBadRequest() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_READER");
+
+        Map<String, Object> payload = Map.of(
+            "fetchPlanCode",
+            "organization-list",
+            "page",
+            0,
+            "size",
+            20,
+            "filters",
+            Map.of("ownerLogin", Map.of("eq", "proof-owner"))
+        );
+
+        restMockMvc
+            .perform(post(ORGANIZATION_API_URL + "/query").contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
+            .andExpect(status().isBadRequest());
     }
 
     private void grantReadableOrganizationGraph(String authorityName) throws Exception {

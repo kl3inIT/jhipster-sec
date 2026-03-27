@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.core.IntegrationTest;
 import com.vn.core.security.AuthoritiesConstants;
+import com.vn.core.security.domain.MenuAppName;
 import com.vn.core.security.domain.SecMenuDefinition;
 import com.vn.core.security.domain.SecMenuPermission;
 import com.vn.core.security.repository.SecMenuDefinitionRepository;
@@ -41,7 +42,7 @@ class SecMenuDefinitionAdminResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
     private static final String SYNC_URL = ENTITY_API_URL + "/sync";
 
-    private static final String DEFAULT_APP = "jhipster-security-platform";
+    private static final String DEFAULT_APP = MenuAppName.JHIPSTER_SECURITY_PLATFORM.getValue();
     private static final String DEFAULT_MENU_ID = "test-menu-home";
     private static final String DEFAULT_MENU_NAME = "Home Menu";
     private static final String DEFAULT_LABEL = "Home";
@@ -159,7 +160,11 @@ class SecMenuDefinitionAdminResourceIT {
     void deleteMenuDefinition_cascadesPermissions() throws Exception {
         SecMenuDefinition saved = secMenuDefinitionRepository.saveAndFlush(createEntity(DEFAULT_MENU_ID, DEFAULT_APP));
         SecMenuPermission perm = secMenuPermissionRepository.saveAndFlush(
-            new SecMenuPermission().role(AuthoritiesConstants.ADMIN).appName(DEFAULT_APP).menuId(DEFAULT_MENU_ID).effect("ALLOW")
+            new SecMenuPermission()
+                .role(AuthoritiesConstants.ADMIN)
+                .appName(MenuAppName.JHIPSTER_SECURITY_PLATFORM)
+                .menuId(DEFAULT_MENU_ID)
+                .effect("ALLOW")
         );
 
         restMockMvc.perform(delete(ENTITY_API_URL_ID, saved.getId())).andExpect(status().isNoContent());
