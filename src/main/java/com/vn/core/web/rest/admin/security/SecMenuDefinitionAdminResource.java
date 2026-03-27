@@ -79,15 +79,19 @@ public class SecMenuDefinitionAdminResource {
     /**
      * {@code GET /api/admin/sec/menu-definitions} : Get all menu definitions for an app.
      *
-     * @param appName the application name to filter by.
+     * @param appName the optional application name to filter by.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of definitions.
      */
     @GetMapping("")
-    public ResponseEntity<List<SecMenuDefinitionDTO>> getAllMenuDefinitions(
-        @RequestParam(required = false, defaultValue = "jhipster-security-platform") String appName
-    ) {
+    public ResponseEntity<List<SecMenuDefinitionDTO>> getAllMenuDefinitions(@RequestParam(required = false) String appName) {
         LOG.debug("REST request to get all SecMenuDefinitions for appName={}", appName);
-        List<SecMenuDefinitionDTO> dtos = secMenuDefinitionRepository.findAllByAppName(appName).stream().map(this::toDto).toList();
+        List<SecMenuDefinitionDTO> dtos = (
+            appName == null || appName.isBlank()
+                ? secMenuDefinitionRepository.findAllByOrderByAppNameAscOrderingAscIdAsc()
+                : secMenuDefinitionRepository.findAllByAppNameOrderByOrderingAscIdAsc(appName)
+        ).stream()
+            .map(this::toDto)
+            .toList();
         return ResponseEntity.ok(dtos);
     }
 

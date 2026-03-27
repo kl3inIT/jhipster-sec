@@ -624,6 +624,9 @@
         "menu": "Quyền menu"
       },
       "menu": {
+        "appLabel": "Ứng dụng",
+        "emptyDefinitions": "Không tìm thấy định nghĩa menu cho {{ appName }}.",
+        "noApps": "Không có ứng dụng khả dụng.",
         "node": "Nút điều hướng"
       },
       "entity": {

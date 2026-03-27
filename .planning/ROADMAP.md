@@ -14,7 +14,7 @@
 
 ## Overview
 
-This roadmap builds on the shipped security platform by first closing the missing JHipster frontend parity gap, then moving navigation and permissions to backend-driven contracts, then delivering full admin user management, inserting a Jmix-style internal data-access alignment step to stabilize secure architecture and permission semantics, and finally hardening the enterprise UI for performance and regression safety.
+This roadmap builds on the shipped security platform by first closing the missing JHipster frontend parity gap, then moving navigation and permissions to backend-driven contracts, then delivering full admin user management, inserting a Jmix-style internal data-access alignment step to stabilize secure architecture and permission semantics, then extending menu-role assignment across multiple apps while moving secured entity endpoints to Jmix-style raw JSON with preserved query loading and PATCH support, and finally hardening the enterprise UI for performance and regression safety.
 
 ## Phases
 
@@ -26,6 +26,7 @@ This roadmap builds on the shipped security platform by first closing the missin
 - [x] **Phase 7: Enterprise Navigation Shell** - Replace hardcoded navigation with backend-driven menu and permission-aware route control inside a Jmix-style shell. (completed 2026-03-25)
 - [x] **Phase 8: User Management Delivery** - Deliver the full frontend admin user-management surface, including role assignment. (completed 2026-03-25)
 - [x] **Phase 08.1: Jmix-Style DataManager Core Alignment** - Align the internal security data-access core with a Jmix-style `DataManager` / `UnconstrainedDataManager` split while preserving the current `SecureDataManager` boundary. (completed 2026-03-26)
+- [x] **Phase 08.2: Multi-App Menu Roles and Jmix-Style JSON Entity Controllers** - Extend app-scoped menu authorization to multi-app role assignment and move secured entity endpoints to raw JSON with preserved `loadByQuery` and explicit `PATCH`. (completed 2026-03-27)
 - [ ] **Phase 9: Enterprise UX And Performance Hardening** - Improve consistency, responsiveness, data-fetch efficiency, and route-level loading costs.
 - [ ] **Phase 10: Frontend Reliability And Regression Coverage** - Lock the milestone down with targeted frontend tests across user management, routing, and core UI infrastructure.
 
@@ -116,9 +117,35 @@ Plans:
 - [x] Recommended split: secure/unconstrained refactor plus permission-semantic migration
 - [x] Recommended split: regression and behavior verification
 
+### Phase 08.2: Multi-App Menu Roles and Jmix-Style JSON Entity Controllers (INSERTED)
+
+**Goal**: Restore the missing secured query capability while extending app-scoped menu authorization to clean multi-app role assignment and refactoring secured entity endpoints to a Jmix-style raw JSON boundary with explicit PATCH support.
+**Outcome**: Roles can hold menu grants for multiple apps without losing per-app resolution, and protected entity controllers expose raw JSON request/response flows for load/query/save operations while preserving `loadByQuery`, partial-update semantics, and the existing security enforcement stack.
+**Depends on:** Phase 08.1
+**Requirements**: Cross-cutting menu authorization, secured-entity API alignment, and documented brownfield-safe contract evolution
+**Scope**:
+1. Extend the backend menu-permission model, repositories, admin APIs, and role-management flows so one role can hold app-scoped menu permissions for multiple apps without collapsing app boundaries or regressing backend-driven per-app menu resolution.
+2. Refactor protected entity controller and service boundaries away from `Map<String, Object>` request signatures toward Jmix-style raw JSON request/response handling for list, loadOne, create, update, delete, and secured query-based loading flows.
+3. Restore and preserve `loadByQuery` as a first-class secured capability end to end, including controller exposure, service orchestration, and secure data-layer enforcement rather than leaving it as an internal or degraded path.
+4. Add explicit `PATCH` support for partial updates using raw JSON bodies that apply only provided fields, leave omitted fields untouched, and enforce attribute-level EDIT security on every patched field while keeping row-level and CRUD checks intact.
+5. Update verification coverage and document any intentional API contract changes, especially the move to raw JSON entity boundaries and the addition of PATCH, without regressing auth/account/admin/mail flows or the existing backend-driven navigation model.
+**Risks**:
+1. Multi-app menu-role assignment can accidentally flatten app scoping and leak one app's grants into another app's navigation resolution.
+2. Replacing controller `Map<String, Object>` boundaries with raw JSON can silently break validation, serialization, or brownfield consumers if the contract shift is not documented and regression-tested.
+3. Restoring query-based loading while refactoring the secured boundary can reintroduce the Phase 08.1 `loadByQuery` regression or weaken row-level enforcement if query/search flows bypass the established secure pipeline.
+4. PATCH on associations or nested collections can cause unintended removals or security gaps if partial-update semantics diverge from the current secure merge and row-filter restore behavior.
+**Success Criteria** (what must be TRUE):
+1. A single role can hold menu permissions for multiple apps in backend storage and admin APIs, while current-user menu resolution still returns only the requested app's allowed menu ids.
+2. Admin flows can inspect and manage menu grants for a role across apps without duplicating role records or abandoning app-scoped menu permission semantics.
+3. Protected entity controllers use a Jmix-style raw JSON boundary for create, update, and query operations instead of exposing `Map<String, Object>` request signatures.
+4. `loadByQuery` is restored and verified end to end as a first-class secured capability, not just a leftover internal method.
+5. PATCH accepts raw JSON request bodies, updates only provided fields, preserves omitted fields, and continues to enforce CRUD, row-level, attribute-level, and fetch-plan security on protected entities.
+6. Brownfield auth/account/admin/mail flows and backend-driven navigation do not regress, and any intentional API contract changes are documented before implementation handoff.
+**Plans:** 4/4 plans complete
+
 ### Phase 9: Enterprise UX And Performance Hardening
 **Goal**: The richer enterprise frontend stays consistent, responsive, and efficient under realistic admin usage.
-**Depends on**: Phase 08.1
+**Depends on**: Phase 08.2
 **Requirements**: UI-05, PERF-01, PERF-02, PERF-03
 **Success Criteria** (what must be TRUE):
 1. Key admin and entity screens share a consistent responsive layout plus predictable loading, empty, and feedback states.
@@ -139,7 +166,7 @@ Plans:
 
 ## Summary
 
-**7 phases** | **16 requirements mapped** | All covered
+**8 phases** | **16 milestone requirements + inserted cross-cutting security phases** | All covered
 
 | # | Phase | Status | Requirements | Completed |
 |---|-------|--------|--------------|-----------|
@@ -148,5 +175,6 @@ Plans:
 | 07.1 | Menu Management | Complete | MENU-01, MENU-02, MENU-03, MENU-04, MENU-05 | 2026-03-25 |
 | 8 | User Management Delivery | Complete | UMGT-01, UMGT-02, UMGT-03 | 2026-03-25 |
 | 08.1 | Jmix-Style DataManager Core Alignment | Complete | Cross-cutting security architecture alignment | 2026-03-26 |
+| 08.2 | Multi-App Menu Roles and Jmix-Style JSON Entity Controllers | 4/4 | Complete    | 2026-03-27 |
 | 9 | Enterprise UX And Performance Hardening | Planned | UI-05, PERF-01, PERF-02, PERF-03 | - |
 | 10 | Frontend Reliability And Regression Coverage | Planned | TEST-01, TEST-02, TEST-03 | - |

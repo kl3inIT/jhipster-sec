@@ -71,24 +71,19 @@ public class AdminMenuPermissionResource {
     }
 
     /**
-     * {@code GET /api/admin/sec/menu-permissions} : Query menu permissions by role.
+     * {@code GET /api/admin/sec/menu-permissions} : Query menu permissions by role across all apps or one app.
      *
      * @param role the role to filter by.
-     * @param appName the application name to filter by.
+     * @param appName the optional application name to filter by.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of permissions.
      */
     @GetMapping("")
-    public ResponseEntity<List<SecMenuPermissionDTO>> getMenuPermissions(
-        @RequestParam String role,
-        @RequestParam(required = false, defaultValue = "jhipster-security-platform") String appName
-    ) {
-        LOG.debug("REST request to get SecMenuPermissions for role={}, appName={}", role, appName);
-        List<SecMenuPermissionDTO> dtos = secMenuPermissionRepository
-            .findAllByRole(role)
-            .stream()
-            .filter(p -> appName.equals(p.getAppName()))
-            .map(this::toDto)
-            .toList();
+    public ResponseEntity<List<SecMenuPermissionDTO>> getMenuPermissions(@RequestParam String role, @RequestParam(required = false) String appName) {
+        LOG.debug("REST request to get SecMenuPermissions for role={} with optional appName filter={}", role, appName);
+        List<SecMenuPermission> permissions = appName == null || appName.isBlank()
+            ? secMenuPermissionRepository.findAllByRoleOrderByAppNameAscMenuIdAsc(role)
+            : secMenuPermissionRepository.findAllByRoleAndAppNameOrderByMenuIdAsc(role, appName);
+        List<SecMenuPermissionDTO> dtos = permissions.stream().map(this::toDto).toList();
         return ResponseEntity.ok(dtos);
     }
 

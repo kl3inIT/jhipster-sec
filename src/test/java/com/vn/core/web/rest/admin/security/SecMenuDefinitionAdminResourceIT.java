@@ -106,6 +106,22 @@ class SecMenuDefinitionAdminResourceIT {
     }
 
     @Test
+    void getAllMenuDefinitions_withoutAppFilter_returnsDefinitionsAcrossApps() throws Exception {
+        secMenuDefinitionRepository.saveAndFlush(createEntity(DEFAULT_MENU_ID, DEFAULT_APP));
+        secMenuDefinitionRepository.saveAndFlush(createEntity("sales-home", "sales-console"));
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.length()").value(2))
+            .andExpect(jsonPath("$.[*].appName").value(hasItem(DEFAULT_APP)))
+            .andExpect(jsonPath("$.[*].appName").value(hasItem("sales-console")))
+            .andExpect(jsonPath("$.[*].menuId").value(hasItem(DEFAULT_MENU_ID)))
+            .andExpect(jsonPath("$.[*].menuId").value(hasItem("sales-home")));
+    }
+
+    @Test
     void getMenuDefinition_notFound_returns404() throws Exception {
         restMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
