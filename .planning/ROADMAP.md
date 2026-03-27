@@ -25,7 +25,7 @@ This roadmap builds on the shipped security platform by first closing the missin
 - [x] **Phase 6: Frontend Parity Foundation** - Copy and adapt the required `angapp` support files, translations, and shared admin/account infrastructure into `frontend/`. (completed 2026-03-25)
 - [x] **Phase 7: Enterprise Navigation Shell** - Replace hardcoded navigation with backend-driven menu and permission-aware route control inside a Jmix-style shell. (completed 2026-03-25)
 - [x] **Phase 8: User Management Delivery** - Deliver the full frontend admin user-management surface, including role assignment. (completed 2026-03-25)
-- [ ] **Phase 08.1: Jmix-Style DataManager Core Alignment** - Align the internal security data-access core with a Jmix-style `DataManager` / `UnconstrainedDataManager` split while preserving the current `SecureDataManager` boundary. (inserted 2026-03-26)
+- [x] **Phase 08.1: Jmix-Style DataManager Core Alignment** - Align the internal security data-access core with a Jmix-style `DataManager` / `UnconstrainedDataManager` split while preserving the current `SecureDataManager` boundary. (completed 2026-03-26)
 - [ ] **Phase 9: Enterprise UX And Performance Hardening** - Improve consistency, responsiveness, data-fetch efficiency, and route-level loading costs.
 - [ ] **Phase 10: Frontend Reliability And Regression Coverage** - Lock the milestone down with targeted frontend tests across user management, routing, and core UI infrastructure.
 
@@ -109,12 +109,12 @@ Plans:
 4. Resource permissions accumulate `ALLOW` across multiple roles without a global deny-wins merge strategy for menu or similar resource-role permissions unless a specific deviation is documented.
 5. Row-level restrictions continue to filter protected reads/writes correctly, while unconstrained access bypasses authorization by design.
 6. Tests prove multi-role `ALLOW` accumulation, menu/resource union behavior, row-level enforcement, unconstrained bypass, and no regression in existing auth/account/admin/mail flows.
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
-- [ ] Recommended split: architecture alignment and interface extraction
-- [ ] Recommended split: secure/unconstrained refactor plus permission-semantic migration
-- [ ] Recommended split: regression and behavior verification
+- [x] Recommended split: architecture alignment and interface extraction
+- [x] Recommended split: secure/unconstrained refactor plus permission-semantic migration
+- [x] Recommended split: regression and behavior verification
 
 ### Phase 9: Enterprise UX And Performance Hardening
 **Goal**: The richer enterprise frontend stays consistent, responsive, and efficient under realistic admin usage.
@@ -147,6 +147,6 @@ Plans:
 | 7 | Enterprise Navigation Shell | Complete | ROUTE-01, ROUTE-02, ROUTE-03, UI-04 | 2026-03-25 |
 | 07.1 | Menu Management | Complete | MENU-01, MENU-02, MENU-03, MENU-04, MENU-05 | 2026-03-25 |
 | 8 | User Management Delivery | Complete | UMGT-01, UMGT-02, UMGT-03 | 2026-03-25 |
-| 08.1 | Jmix-Style DataManager Core Alignment | 2/3 | In Progress|  |
+| 08.1 | Jmix-Style DataManager Core Alignment | Complete | Cross-cutting security architecture alignment | 2026-03-26 |
 | 9 | Enterprise UX And Performance Hardening | Planned | UI-05, PERF-01, PERF-02, PERF-03 | - |
 | 10 | Frontend Reliability And Regression Coverage | Planned | TEST-01, TEST-02, TEST-03 | - |
