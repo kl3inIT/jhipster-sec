@@ -3,8 +3,8 @@ package com.vn.core.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vn.core.security.data.SecuredLoadQuery;
 import com.vn.core.security.data.SecureDataManager;
+import com.vn.core.security.data.SecuredLoadQuery;
 import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -55,6 +55,11 @@ public class EmployeeService {
 
     public JsonNode update(Long id, JsonNode attributes) {
         LOG.debug("Request to update employee : {}", id);
+        return objectMapper.valueToTree(secureDataManager.save(ENTITY_CODE, id, toAttributeMap(attributes), DETAIL_FETCH_PLAN));
+    }
+
+    public JsonNode patch(Long id, JsonNode attributes) {
+        LOG.debug("Request to patch employee : {}", id);
         return objectMapper.valueToTree(secureDataManager.save(ENTITY_CODE, id, toAttributeMap(attributes), DETAIL_FETCH_PLAN));
     }
 

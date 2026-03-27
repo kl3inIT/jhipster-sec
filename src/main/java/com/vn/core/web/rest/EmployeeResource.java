@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -74,8 +75,7 @@ public class EmployeeResource {
         JsonNode attributes = parseObject(attributesJson);
         LOG.debug("REST request to create employee : {}", attributes);
         JsonNode result = employeeService.create(attributes);
-        return ResponseEntity
-            .created(URI.create("/api/employees/" + result.path("id").asText()))
+        return ResponseEntity.created(URI.create("/api/employees/" + result.path("id").asText()))
             .contentType(MediaType.APPLICATION_JSON)
             .body(writeJson(result));
     }
@@ -85,6 +85,13 @@ public class EmployeeResource {
         JsonNode attributes = parseObject(attributesJson);
         LOG.debug("REST request to update employee : {}", id);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(writeJson(employeeService.update(id, attributes)));
+    }
+
+    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
+    public ResponseEntity<String> patchEmployee(@PathVariable("id") Long id, @RequestBody String attributesJson) {
+        JsonNode attributes = parseObject(attributesJson);
+        LOG.debug("REST request to patch employee : {}", id);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(writeJson(employeeService.patch(id, attributes)));
     }
 
     @PostMapping("/query")
@@ -125,9 +132,8 @@ public class EmployeeResource {
                 continue;
             }
 
-            Sort.Direction direction = parts.length > 1 && "desc".equalsIgnoreCase(parts[1].trim())
-                ? Sort.Direction.DESC
-                : Sort.Direction.ASC;
+            Sort.Direction direction =
+                parts.length > 1 && "desc".equalsIgnoreCase(parts[1].trim()) ? Sort.Direction.DESC : Sort.Direction.ASC;
             orders.add(new Sort.Order(direction, property));
         }
 

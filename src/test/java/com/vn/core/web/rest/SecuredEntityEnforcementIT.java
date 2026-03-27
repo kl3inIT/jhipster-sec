@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -253,6 +254,46 @@ class SecuredEntityEnforcementIT {
         restMockMvc
             .perform(
                 put(ORGANIZATION_API_URL + "/{id}", 100).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload))
+            )
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_EDITOR")
+    void patchOrganization_withAllowedFields_preservesOmittedFields() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_EDITOR");
+        grantEditableOrganizationFields("ROLE_PROOF_EDITOR");
+
+        Map<String, Object> payload = Map.of("name", "Owned Org Patched");
+
+        restMockMvc
+            .perform(
+                patch(ORGANIZATION_API_URL + "/{id}", 100).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload))
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(100))
+            .andExpect(jsonPath("$.code").value("ORG-OWNED"))
+            .andExpect(jsonPath("$.name").value("Owned Org Patched"));
+
+        restMockMvc
+            .perform(get(ORGANIZATION_API_URL + "/{id}", 100))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(100))
+            .andExpect(jsonPath("$.code").value("ORG-OWNED"))
+            .andExpect(jsonPath("$.name").value("Owned Org Patched"));
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_EDITOR")
+    void patchOrganization_withDeniedBudgetEdit_returnsForbidden() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_EDITOR");
+        grantEditableOrganizationFields("ROLE_PROOF_EDITOR");
+
+        Map<String, Object> payload = Map.of("budget", 999999.00);
+
+        restMockMvc
+            .perform(
+                patch(ORGANIZATION_API_URL + "/{id}", 100).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload))
             )
             .andExpect(status().isForbidden());
     }
