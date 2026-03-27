@@ -37,6 +37,7 @@ public class SecureDataManagerImpl implements SecureDataManager {
     private final FetchPlanResolver fetchPlanResolver;
     private final SecureEntitySerializer secureEntitySerializer;
     private final SecureMergeService secureMergeService;
+    private final SecureQuerySpecificationFactory secureQuerySpecificationFactory;
 
     public SecureDataManagerImpl(
         DataManager dataManager,
@@ -44,7 +45,8 @@ public class SecureDataManagerImpl implements SecureDataManager {
         RowLevelSpecificationBuilder rowLevelSpecificationBuilder,
         FetchPlanResolver fetchPlanResolver,
         SecureEntitySerializer secureEntitySerializer,
-        SecureMergeService secureMergeService
+        SecureMergeService secureMergeService,
+        SecureQuerySpecificationFactory secureQuerySpecificationFactory
     ) {
         this.dataManager = dataManager;
         this.catalog = catalog;
@@ -52,6 +54,7 @@ public class SecureDataManagerImpl implements SecureDataManager {
         this.fetchPlanResolver = fetchPlanResolver;
         this.secureEntitySerializer = secureEntitySerializer;
         this.secureMergeService = secureMergeService;
+        this.secureQuerySpecificationFactory = secureQuerySpecificationFactory;
     }
 
     @Override
@@ -82,7 +85,6 @@ public class SecureDataManagerImpl implements SecureDataManager {
         Class<Object> entityClass = (Class<Object>) entry.entityClass();
 
         Specification<Object> rowSpec = rowLevelSpecificationBuilder.build(entityClass, EntityOp.READ);
-        Specification<Object> finalSpec = rowSpec;
         if (query.jpql() != null && !query.jpql().isBlank()) {
             if (!entry.jpqlAllowed()) {
                 throw new AccessDeniedException("JPQL queries not allowed for " + query.entityCode());
@@ -90,6 +92,8 @@ public class SecureDataManagerImpl implements SecureDataManager {
             throw new AccessDeniedException("JPQL query translation is not implemented for secured queries: " + query.jpql());
         }
 
+        Specification<Object> filterSpec = secureQuerySpecificationFactory.build(entityClass, query.parameters());
+        Specification<Object> finalSpec = combineSpecifications(rowSpec, filterSpec);
         Page<Object> page = dataManager.loadPage(entityClass, finalSpec, query.pageable(), EntityOp.READ);
         FetchPlan fetchPlan = fetchPlanResolver.resolve(entityClass, query.fetchPlanCode());
 
@@ -171,5 +175,15 @@ public class SecureDataManagerImpl implements SecureDataManager {
         return catalog
             .findByCode(entityCode)
             .orElseThrow(() -> new IllegalArgumentException("Entity code not in secured catalog: " + entityCode));
+    }
+
+    private static <T> Specification<T> combineSpecifications(Specification<T> first, Specification<T> second) {
+        if (first == null) {
+            return second;
+        }
+        if (second == null) {
+            return first;
+        }
+        return first.and(second);
     }
 }
