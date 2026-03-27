@@ -75,6 +75,31 @@ class SecuredEntityEnforcementIT {
     }
 
     @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
+    void queryOrganizations_returnsOwnedRowsOnlyAndOmitsDeniedFields() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_READER");
+
+        Map<String, Object> payload = Map.of(
+            "fetchPlanCode",
+            "organization-list",
+            "page",
+            0,
+            "size",
+            20,
+            "filters",
+            Map.of("ownerLogin", "proof-owner")
+        );
+
+        restMockMvc
+            .perform(post(ORGANIZATION_API_URL + "/query").contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].id").value(100))
+            .andExpect(jsonPath("$[0].code").value("ORG-OWNED"))
+            .andExpect(jsonPath("$[0].budget").doesNotExist());
+    }
+
+    @Test
     @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_NONE")
     void getOrganizations_withoutReadPermission_returnsForbidden() throws Exception {
         restMockMvc.perform(get(ORGANIZATION_API_URL)).andExpect(status().isForbidden());
