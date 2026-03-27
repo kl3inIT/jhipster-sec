@@ -1,106 +1,117 @@
 # External Integrations
 
-**Analysis Date:** 2026-03-21
+**Analysis Date:** 2026-03-27
 
 ## APIs & External Services
 
-**Business APIs:**
-- Not detected. The code under `src/main/java/com/vn/core/**` does not include SDK imports or outbound HTTP client integrations for Stripe, AWS, Twilio, SendGrid, Slack, or similar third-party business APIs.
+**First-party HTTP APIs:**
+- Root Spring REST API - consumed by the standalone Angular app through `frontend/proxy.conf.json`, `frontend/src/app/core/config/application-config.service.ts`, and controllers under `src/main/java/com/vn/core/web/rest/**`.
+  - SDK/Client: Angular `HttpClient` plus interceptors in `frontend/src/app/core/interceptor/*.ts`
+  - Auth: Bearer JWTs issued by `src/main/java/com/vn/core/web/rest/AuthenticateController.java` and attached by `frontend/src/app/core/interceptor/auth.interceptor.ts`
+- Security and admin API surface - the frontend currently integrates with account, admin user, security catalog, roles, permissions, row policies, menu definitions, menu permissions, and secured entity endpoints exposed from `src/main/java/com/vn/core/web/rest/**` and `src/main/java/com/vn/core/web/rest/admin/security/**`.
+  - SDK/Client: service wrappers under `frontend/src/app/pages/admin/**/service/*.ts`, `frontend/src/app/pages/entities/**/service/*.ts`, and `frontend/src/app/layout/navigation/navigation.service.ts`
+  - Auth: route guards and token lifecycle are handled in `frontend/src/app/core/auth/*.ts` and `frontend/src/app/core/interceptor/*.ts`
+- Frontend-to-backend development proxy - the Angular dev server proxies `/api`, `/services`, `/management`, `/v3/api-docs`, `/h2-console`, and `/health` to the backend in `frontend/proxy.conf.json`.
+  - SDK/Client: Angular dev server in `frontend/angular.json`
+  - Auth: same-origin proxy for local development; application auth still uses JWT
 
-**Infrastructure Services:**
-- PostgreSQL - primary relational database for the application, wired through `src/main/resources/config/application-dev.yml`, `src/main/resources/config/application-prod.yml`, `gradle/liquibase.gradle`, `src/main/docker/postgresql.yml`, and `src/test/java/com/vn/core/config/DatabaseTestcontainer.java`.
-  - SDK/Client: `org.postgresql:postgresql`, Spring Data JPA, Hibernate, and HikariCP from `build.gradle`.
-  - Auth: datasource username/password are configured in `src/main/resources/config/application-dev.yml` and `src/main/resources/config/application-prod.yml`; container overrides are present in `src/main/docker/app.yml`.
-- Hazelcast - embedded distributed cache and Hibernate second-level cache, configured in `src/main/java/com/vn/core/config/CacheConfiguration.java` and `src/main/resources/config/application.yml`.
-  - SDK/Client: `com.hazelcast:hazelcast-spring` and `com.hazelcast:hazelcast-hibernate53` from `build.gradle` and `gradle/libs.versions.toml`.
-  - Auth: none detected; management UI is exposed separately by `src/main/docker/hazelcast-management-center.yml`.
-- SMTP mail relay - outbound account lifecycle emails are sent by `src/main/java/com/vn/core/service/MailService.java` using templates in `src/main/resources/templates/mail/*.html`.
-  - SDK/Client: Spring Mail via `spring-boot-starter-mail` in `build.gradle`.
-  - Auth: `spring.mail.*` properties are configured in `src/main/resources/config/application-dev.yml` and `src/main/resources/config/application-prod.yml`; no dedicated env-var-only mail secret flow is defined.
-- Prometheus and Grafana - local monitoring stack defined in `src/main/docker/monitoring.yml`, with scrape config in `src/main/docker/prometheus/prometheus.yml` and Grafana provisioning in `src/main/docker/grafana/provisioning/**`.
-  - SDK/Client: `io.micrometer:micrometer-registry-prometheus-simpleclient` in `build.gradle`.
-  - Auth: local compose setup uses default Grafana env vars in `src/main/docker/monitoring.yml`; no app-side auth integration is required for Prometheus scraping.
-- JHipster Control Center - optional operations companion defined in `src/main/docker/jhipster-control-center.yml`.
-  - SDK/Client: external Docker service only; the application integrates by exposing management endpoints and sharing the JWT secret.
-  - Auth: compose env vars include `SPRING_SECURITY_USER_PASSWORD` and `JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET` in `src/main/docker/jhipster-control-center.yml`.
-- SonarQube - local code quality service for developer workflows, defined in `src/main/docker/sonar.yml` and configured by `sonar-project.properties`.
-  - SDK/Client: `org.sonarsource.scanner.gradle:sonarqube-gradle-plugin` from `buildSrc/gradle/libs.versions.toml`.
-  - Auth: `sonar.login` and `sonar.password` properties are referenced in `README.md` and `sonar-project.properties`, but no secret manager integration is present.
+**Email/SMTP:**
+- SMTP server - outbound activation, creation, and reset-password mail is sent by `src/main/java/com/vn/core/service/MailService.java` using templates in `src/main/resources/templates/mail/*.html`.
+  - SDK/Client: Spring `JavaMailSender`
+  - Auth: Spring Mail properties from `src/main/resources/config/application-dev.yml` and `src/main/resources/config/application-prod.yml`
+
+**Monitoring and admin tooling:**
+- Prometheus - metrics are exposed at `/management/prometheus` through `src/main/resources/config/application.yml` and scraped by `src/main/docker/prometheus/prometheus.yml`.
+  - SDK/Client: `io.micrometer:micrometer-registry-prometheus-simpleclient`
+  - Auth: `/management/prometheus` is permitted by `src/main/java/com/vn/core/config/SecurityConfiguration.java`
+- Grafana - optional local dashboards are provisioned from `src/main/docker/grafana/provisioning/**`.
+  - SDK/Client: Docker image `grafana/grafana:12.4.1` in `src/main/docker/monitoring.yml`
+  - Auth: local Grafana defaults configured in provisioning files under `src/main/docker/grafana/provisioning/**`
+- Hazelcast Management Center - optional local cache inspection is defined in `src/main/docker/hazelcast-management-center.yml`.
+  - SDK/Client: Docker image `hazelcast/management-center:5.10.0`
+  - Auth: local container configuration only
+- JHipster Control Center - optional local admin console is defined in `src/main/docker/jhipster-control-center.yml`.
+  - SDK/Client: Docker image `jhipster/jhipster-control-center:v0.5.0`
+  - Auth: Spring environment variables defined in `src/main/docker/jhipster-control-center.yml`
+- SonarQube - optional local code-quality server is defined in `src/main/docker/sonar.yml` and configured by `sonar-project.properties`.
+  - SDK/Client: Docker image `sonarqube:26.3.0.120487-community`
+  - Auth: local Sonar credentials referenced in `README.md` and `sonar-project.properties`
+
+**Messaging:**
+- Not detected - no Kafka, RabbitMQ, JMS, AMQP, or other queue/stream client is referenced in `build.gradle`, `src/main/java/com/vn/core/**`, or `frontend/src/**`.
 
 ## Data Storage
 
 **Databases:**
-- PostgreSQL
-  - Connection: `spring.datasource.url`, `spring.datasource.username`, and `spring.datasource.password` are set in `src/main/resources/config/application-dev.yml` and `src/main/resources/config/application-prod.yml`. Containerized deployment overrides use `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`, and `SPRING_LIQUIBASE_URL` in `src/main/docker/app.yml`.
-  - Client: Spring Data JPA/Hibernate from `build.gradle`, with schema managed by Liquibase through `src/main/resources/config/liquibase/master.xml` and `gradle/liquibase.gradle`.
+- PostgreSQL - the primary relational store for users, authorities, security rules, and secured entities is configured in `src/main/resources/config/application-dev.yml`, `src/main/resources/config/application-prod.yml`, `gradle/liquibase.gradle`, and `src/main/docker/postgresql.yml`.
+  - Connection: `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`, and `SPRING_LIQUIBASE_URL` appear in `src/main/docker/app.yml`; equivalent Spring properties are defined in `src/main/resources/config/application-*.yml`
+  - Client: Spring Data JPA and Hibernate repositories under `src/main/java/com/vn/core/repository/**` and `src/main/java/com/vn/core/security/repository/**`
+- Test PostgreSQL - integration tests use a containerized PostgreSQL instance in `src/test/java/com/vn/core/config/DatabaseTestcontainer.java`.
+  - Connection: dynamic properties are registered from Testcontainers in `src/test/java/com/vn/core/config/DatabaseTestcontainer.java`
+  - Client: Spring Boot integration tests under `src/test/java/com/vn/core/**`
 
 **File Storage:**
-- Local filesystem/classpath only. Templates, i18n bundles, and logging config live under `src/main/resources/**`; no S3, Azure Blob, GCS, or other object storage integration is detected.
+- Local filesystem and classpath only - frontend static assets live in `frontend/public/**`, mail templates live in `src/main/resources/templates/**`, and fetch-plan definitions live in `src/main/resources/fetch-plans.yml`.
 
 **Caching:**
-- Hazelcast embedded cache in `src/main/java/com/vn/core/config/CacheConfiguration.java`, backed by JHipster cache properties in `src/main/resources/config/application.yml`, `src/main/resources/config/application-dev.yml`, and `src/main/resources/config/application-prod.yml`.
+- Embedded Hazelcast - application cache and Hibernate second-level cache are configured in `src/main/java/com/vn/core/config/CacheConfiguration.java` and `src/main/resources/config/application.yml`.
+- Browser session/local storage - the frontend stores JWTs, cached menu permissions, and cached secured entity capabilities in `frontend/src/app/core/auth/state-storage.service.ts`, `frontend/src/app/layout/navigation/navigation.service.ts`, and `frontend/src/app/pages/entities/shared/service/secured-entity-capability.service.ts`.
 
 ## Authentication & Identity
 
 **Auth Provider:**
-- Custom local authentication with JWT tokens
-  - Implementation: credentials are authenticated through Spring Security in `src/main/java/com/vn/core/config/SecurityConfiguration.java`; JWT tokens are issued by `src/main/java/com/vn/core/web/rest/AuthenticateController.java`; signing and verification are implemented by Nimbus-based beans in `src/main/java/com/vn/core/config/SecurityJwtConfiguration.java`.
-- User and authority data are stored in the local database through `src/main/java/com/vn/core/domain/User.java`, `src/main/java/com/vn/core/domain/Authority.java`, `src/main/java/com/vn/core/repository/UserRepository.java`, and `src/main/java/com/vn/core/repository/AuthorityRepository.java`.
-- External identity providers are not configured. `.yo-rc.json` sets `authenticationType` to `jwt`, and there is no `issuer-uri`, `jwk-set-uri`, Keycloak, Okta, Auth0, or OAuth client registration in `src/main/resources/config/*.yml`.
+- Custom username/email + password login backed by the local `User` and `Authority` tables - authentication is implemented in `src/main/java/com/vn/core/security/DomainUserDetailsService.java`, token issuance in `src/main/java/com/vn/core/web/rest/AuthenticateController.java`, token validation in `src/main/java/com/vn/core/config/SecurityJwtConfiguration.java`, and request enforcement in `src/main/java/com/vn/core/config/SecurityConfiguration.java`.
+  - Implementation: Spring Security authenticates against PostgreSQL, issues HMAC-signed JWTs, and the Angular client stores and sends the token through `frontend/src/app/core/auth/auth-jwt.service.ts`, `frontend/src/app/core/interceptor/auth.interceptor.ts`, and `frontend/src/app/core/interceptor/auth-expired.interceptor.ts`
+- Current-user merged authority resolution - runtime permission checks validate JWT authority names against persisted authority rows in `src/main/java/com/vn/core/security/bridge/MergedSecurityContextBridge.java`.
+  - Implementation: permission, row-policy, menu-permission, and secure-data services resolve access from DB-backed security repositories under `src/main/java/com/vn/core/security/repository/**`
+- External identity provider - not detected; there is no Keycloak, LDAP, external OIDC client, or SSO connector wired in `src/main/java/com/vn/core/**` or `frontend/src/**`.
 
 ## Monitoring & Observability
 
 **Error Tracking:**
-- None detected. There are no Sentry, Bugsnag, Rollbar, New Relic, or Datadog application SDKs declared in `build.gradle` or referenced under `src/main/java/com/vn/core/**`.
+- None detected - no Sentry, Rollbar, New Relic, Bugsnag, or similar SDK is referenced in `src/main/java/com/vn/core/**` or `frontend/src/**`.
 
 **Logs:**
-- Logback is the active logging backend via `src/main/resources/logback-spring.xml`.
-- Optional JSON logging and Logstash TCP forwarding are wired in `src/main/java/com/vn/core/config/LoggingConfiguration.java` and configured through `jhipster.logging.use-json-format` and `jhipster.logging.logstash.*` in `src/main/resources/config/application-dev.yml` and `src/main/resources/config/application-prod.yml`.
+- Backend logging uses Logback with optional JSON and Logstash socket forwarding via `src/main/java/com/vn/core/config/LoggingConfiguration.java`, `src/main/resources/logback-spring.xml`, `src/main/resources/config/application-dev.yml`, and `src/main/resources/config/application-prod.yml`.
+- Frontend logging is minimal browser-side warning/error output from interceptors such as `frontend/src/app/core/interceptor/error-handler.interceptor.ts`.
 
-**Metrics and Health:**
-- Spring Boot Actuator management endpoints are exposed under `/management` by `src/main/resources/config/application.yml`.
-- Prometheus metrics export is enabled in `src/main/resources/config/application.yml` and can be re-enabled for containers through `MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED` in `src/main/docker/app.yml`.
-- Prometheus scrapes `/management/prometheus` according to `src/main/docker/prometheus/prometheus.yml`.
-- Grafana dashboards and datasource provisioning live in `src/main/docker/grafana/provisioning/**`.
-
-**Admin/Ops Consoles:**
-- JHipster Control Center is available through `src/main/docker/jhipster-control-center.yml`.
-- Hazelcast Management Center is available through `src/main/docker/hazelcast-management-center.yml`.
-- SonarQube is available through `src/main/docker/sonar.yml`.
+**Metrics:**
+- Micrometer + Prometheus metrics are enabled in `src/main/resources/config/application.yml`; optional local dashboarding is defined in `src/main/docker/monitoring.yml` and `src/main/docker/grafana/provisioning/**`.
 
 ## CI/CD & Deployment
 
 **Hosting:**
-- Not pinned to a cloud provider. The current repository supports direct JVM deployment from `README.md` and `package.json`, plus container image builds through Jib in `buildSrc/src/main/groovy/jhipster.docker-conventions.gradle`.
+- Backend JVM and container deployment - Gradle `bootJar` and `bootWar` packaging is exposed through `package.json` and `README.md`, while OCI images are built by Jib from `buildSrc/src/main/groovy/jhipster.docker-conventions.gradle`.
+- Frontend standalone SPA deployment - the Angular app is built separately from `frontend/` using `ng build` in `frontend/package.json`; local dev traffic proxies to the backend through `frontend/proxy.conf.json`.
+- Local Docker runtime stacks - `src/main/docker/app.yml` composes the backend image with PostgreSQL, `src/main/docker/services.yml` and `src/main/docker/postgresql.yml` bring up the database, `src/main/docker/monitoring.yml` brings up Prometheus and Grafana, and `src/main/docker/jhipster-control-center.yml` / `src/main/docker/sonar.yml` provide optional local tooling.
 
 **CI Pipeline:**
-- None detected. There is no `.github/workflows/**`, `.gitlab-ci.yml`, `Jenkinsfile`, or `.circleci/**` file in the repository root scan.
-
-**Deployment Wiring:**
-- `src/main/docker/services.yml` starts dependency services only.
-- `src/main/docker/app.yml` runs the application image plus PostgreSQL for a local full stack.
-- `package.json` exposes the main operational commands: `services:up`, `app:up`, `java:jar:*`, `java:war:*`, and `java:docker*`.
+- Not detected - no GitHub Actions, GitLab CI, CircleCI, Azure Pipelines, or other repository-native CI definition was found during this scan.
 
 ## Environment Configuration
 
 **Required env vars:**
-- Application container overrides in `src/main/docker/app.yml`: `_JAVA_OPTIONS`, `SPRING_PROFILES_ACTIVE`, `MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED`, `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`, and `SPRING_LIQUIBASE_URL`.
-- JHipster Control Center overrides in `src/main/docker/jhipster-control-center.yml`: `_JAVA_OPTIONS`, `SPRING_PROFILES_ACTIVE`, `SPRING_SECURITY_USER_PASSWORD`, `JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET`, `SPRING_CLOUD_DISCOVERY_CLIENT_SIMPLE_INSTANCES_JHIPSTER-SEC_0_URI`, and `LOGGING_FILE_NAME`.
-- No `.env`-based variable loading is referenced from `package.json`, `src/main/resources/config/application.yml`, or the compose files.
+- `SPRING_PROFILES_ACTIVE` - used by the backend container in `src/main/docker/app.yml` and by the optional control center in `src/main/docker/jhipster-control-center.yml`.
+- `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, and `SPRING_DATASOURCE_PASSWORD` - primary database connection keys used in `src/main/docker/app.yml` and mirrored by Spring config in `src/main/resources/config/application-*.yml`.
+- `SPRING_LIQUIBASE_URL` - Liquibase connection override used in `src/main/docker/app.yml`.
+- `JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET` - JWT signing secret consumed by `src/main/java/com/vn/core/config/SecurityJwtConfiguration.java`.
+- `SPRING_MAIL_HOST`, `SPRING_MAIL_PORT`, and `JHIPSTER_MAIL_BASE_URL` - mail delivery and link-generation settings implied by `src/main/resources/config/application-dev.yml` and `src/main/resources/config/application-prod.yml`.
+- `MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED` - container-side metrics toggle set in `src/main/docker/app.yml`.
+- `LOGGING_LOGSTASH_ENABLED`, `LOGGING_LOGSTASH_HOST`, and `LOGGING_LOGSTASH_PORT` - optional log shipping settings mapped from `src/main/resources/config/application-dev.yml` and `src/main/resources/config/application-prod.yml`.
+- `SERVER_API_URL` - frontend API prefix configured in `frontend/src/environments/environment.ts` and `frontend/src/environments/environment.development.ts`.
 
 **Secrets location:**
-- Current secrets and sample credentials are stored directly in tracked configuration files such as `src/main/resources/config/application-secret-samples.yml`, `src/main/resources/config/application-dev.yml`, `src/main/resources/config/application-prod.yml`, `gradle/liquibase.gradle`, and `src/main/docker/jhipster-control-center.yml`.
-- External secret storage such as Vault, AWS Secrets Manager, Azure Key Vault, Kubernetes Secrets, or Doppler is not detected.
+- Sensitive values are currently stored directly in tracked Spring, Docker, and Gradle config files such as `src/main/resources/config/application-dev.yml`, `src/main/resources/config/application-prod.yml`, `src/main/resources/config/application-secret-samples.yml`, `src/main/resources/config/application-tls.yml`, `gradle/liquibase.gradle`, `src/main/docker/app.yml`, and `src/main/docker/jhipster-control-center.yml`.
+- No `.env`, `.env.*`, or other root dotenv files were detected in this repository scan.
 
 ## Webhooks & Callbacks
 
 **Incoming:**
-- None detected. Controllers under `src/main/java/com/vn/core/web/rest/**` expose authentication, account, user, authority, and management-related APIs, not webhook receivers.
+- None detected - the backend exposes REST endpoints under `src/main/java/com/vn/core/web/rest/**`, but no webhook-specific callback controller or signature verifier is present.
 
 **Outgoing:**
-- SMTP email delivery from `src/main/java/com/vn/core/service/MailService.java`.
-- No outbound webhook publisher or generic HTTP client integration is detected in `src/main/java/com/vn/core/**`.
+- None detected - the application sends email through SMTP from `src/main/java/com/vn/core/service/MailService.java`, but no outbound webhook or event-delivery client is wired.
 
 ---
 
-*Integration audit: 2026-03-21*
+*Integration audit: 2026-03-27*

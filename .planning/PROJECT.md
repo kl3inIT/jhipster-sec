@@ -75,6 +75,8 @@ The next phase of `v1.1` now starts from this context:
 Current context shaping `v1.1`:
 
 - `angapp/` is the canonical donor for the missing user-management, translation, and shared support files that the first frontend milestone left behind.
+- `aef-main/aef-main/` is the canonical frontend reference for `frontend/`, especially for standalone bootstrap, route/layout structure, and shared UI composition.
+- PrimeNG Sakai remains the canonical frontend shell, layout, and component baseline; new frontend work should extend that system instead of introducing a competing layout language.
 - The current PrimeNG shell must evolve toward an enterprise/Jmix-style navigation model without discarding the standalone Angular structure already shipped.
 - Dynamic routing and permission-aware menus need backend contracts so enterprise admin scale does not depend on hardcoded client navigation.
 - Frontend test coverage must increase around user management, routing, and shared UI infrastructure because this milestone will touch foundational client files.
@@ -83,7 +85,7 @@ Current context shaping `v1.1`:
 ## Constraints
 
 - **Compatibility**: Preserve the functional security capabilities already working in `angapp` - entity CRUD checks, attribute permissions, row policies, secure merge behavior, and fetch-plan-driven secure reads must still work after the merge.
-- **Frontend structure**: The new UI must live in a standalone `frontend/` app modeled after `aef-main/aef-main` - PrimeNG Sakai plus JHipster-style Angular structure.
+- **Frontend structure**: The new UI must live in a standalone `frontend/` app modeled after `aef-main/aef-main`; `aef-main/aef-main` is the canonical frontend reference and PrimeNG Sakai is the canonical layout/component shell, with JHipster-style Angular structure layered on top.
 - **PrimeNG-first UI**: Frontend work must use official PrimeNG components and current `https://primeng.org/` examples or best practices whenever a suitable component exists; custom UI is allowed only for layout composition or gaps where PrimeNG has no suitable component.
 - **Fetch plans**: Fetch plans must be defined in YAML or code builders only - database storage for fetch-plan definitions is not allowed.
 - **Brownfield safety**: Existing authentication, account, admin-user, and mail flows in the current backend must not regress during the migration.
@@ -97,7 +99,8 @@ Current context shaping `v1.1`:
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | Merge the security models into a project-native role/permission design | The project must preserve `angapp` behavior without forcing a brittle one-to-one schema copy | Confirmed in `v1.0` |
-| Create a standalone Angular app under `frontend/` using the `aef-main` structure as reference | The new client needed a clear Angular/PrimeNG foundation that still fit JHipster conventions | Shipped in `v1.0` |
+| Create a standalone Angular app under `frontend/` using `aef-main/aef-main` as the canonical frontend reference | The new client needed a clear Angular/PrimeNG foundation that still fit JHipster conventions, and the repo needed one authoritative shell/layout reference | Shipped in `v1.0` |
+| Keep PrimeNG Sakai as the canonical frontend shell, layout, and component baseline | Enterprise UX work needs a stable visual and structural system instead of multiple competing frontend patterns | Active in `v1.1` |
 | Use `SecureDataManager` as the single secured data path and `UnconstrainedDataManager` as the trusted bypass | Security enforcement had to stay centralized and explicit | Validated in phases 3-5 |
 | Use proof-domain entities to validate the merged security engine end to end | The platform needed real sample entities to prove CRUD, row, and attribute behavior | Validated in phase 4 |
 | Use fetch plans from YAML and code builders only | Database-backed fetch-plan storage was explicitly disallowed by project constraints | Confirmed in `v1.0` |

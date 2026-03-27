@@ -1,128 +1,155 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-03-21
+**Analysis Date:** 2026-03-27
 
 ## Naming Patterns
 
 **Files:**
-- Use one top-level Java type per file with PascalCase names, for example `src/main/java/com/vn/core/service/UserService.java`, `src/main/java/com/vn/core/web/rest/errors/ExceptionTranslator.java`, and `angapp/src/main/java/com/mycompany/myapp/service/impl/OrganizationServiceImpl.java`.
-- Use package names and directories as lowercase technical layers: `config`, `domain`, `repository`, `security`, `service`, `service/dto`, `service/mapper`, `web/rest`, and `web/rest/errors`.
-- Use Angular kebab-case filenames with role suffixes, for example `angapp/src/main/webapp/app/entities/organization/update/organization-update.component.ts`, `angapp/src/main/webapp/app/entities/organization/service/organization.service.ts`, and `angapp/src/main/webapp/app/core/auth/account.service.ts`.
-- Name backend tests with `*Test`, `*Tests`, or `*IT`, for example `src/test/java/com/vn/core/service/mapper/UserMapperTest.java` and `src/test/java/com/vn/core/web/rest/UserResourceIT.java`. Name frontend tests `*.spec.ts`, for example `angapp/src/main/webapp/app/core/auth/account.service.spec.ts`.
+- Use one top-level Java type per file with PascalCase names under `src/main/java/com/vn/core/**`, for example `src/main/java/com/vn/core/service/UserService.java` and `src/main/java/com/vn/core/security/data/SecureDataManagerImpl.java`.
+- Name backend tests with `*Test.java`, `*IT.java`, or purpose-built annotation suffixes such as `src/test/java/com/vn/core/security/jwt/AuthenticationIntegrationTest.java`.
+- Use kebab-case Angular filenames in `frontend/src/app/**` with role suffixes such as `.component.ts`, `.service.ts`, `.model.ts`, `.routes.ts`, and `.spec.ts`, for example `frontend/src/app/pages/entities/organization/update/organization-update.component.ts`.
+- Keep route-loaded Angular components as default exports in feature folders, for example `frontend/src/app/pages/entities/organization/list/organization-list.component.ts` and `frontend/src/app/pages/admin/security/permission-matrix/permission-matrix.component.ts`.
+- Keep thin route re-export wrappers where needed, such as `frontend/src/app/app.routes.ts`.
 
 **Functions:**
-- Use lowerCamelCase verbs for methods and helpers, for example `registerUser`, `completePasswordReset`, `partialUpdate`, `addOrganizationToCollectionIfMissing`, and `navigateToStoredUrl` in `src/main/java/com/vn/core/service/UserService.java`, `angapp/src/main/java/com/mycompany/myapp/service/impl/OrganizationServiceImpl.java`, and `angapp/src/main/webapp/app/core/auth/account.service.ts`.
-- Keep boolean-returning methods phrased as predicates, for example `isAuthenticated`, `hasAnyAuthority`, and `compareOrganization` in `angapp/src/main/webapp/app/core/auth/account.service.ts` and `angapp/src/main/webapp/app/entities/organization/service/organization.service.ts`.
+- Use lowerCamelCase verbs for Java and TypeScript methods, for example `registerUser`, `completePasswordReset`, `queryBackend`, and `navigateToWorkspaceList`.
+- Phrase boolean helpers and computed UI state as predicates, for example `hasAnyAuthority`, `isAuthenticated`, `canEditAttribute`, `showListDeniedState`, and `capabilityLoaded`.
 
 **Variables:**
-- Use `UPPER_SNAKE_CASE` for constants, for example `DEFAULT_LOGIN`, `UPDATED_EMAIL`, `DETAIL_FETCH_PLAN_CODE`, and `FIELD_ERRORS_KEY` in `src/test/java/com/vn/core/web/rest/UserResourceIT.java`, `angapp/src/main/java/com/mycompany/myapp/service/impl/OrganizationServiceImpl.java`, and `src/main/java/com/vn/core/web/rest/errors/ExceptionTranslator.java`.
-- Use `LOG` for SLF4J loggers and descriptive lowerCamelCase names for dependencies, for example `userRepository`, `authorityRepository`, `organizationMapper`, and `applicationConfigService` in `src/main/java/com/vn/core/service/UserService.java`, `angapp/src/main/java/com/mycompany/myapp/service/impl/OrganizationServiceImpl.java`, and `angapp/src/main/webapp/app/core/auth/account.service.ts`.
+- Use `private static final Logger LOG` for backend loggers, as in `src/main/java/com/vn/core/service/UserService.java` and `src/main/java/com/vn/core/security/fetch/YamlFetchPlanRepository.java`.
+- Use `UPPER_SNAKE_CASE` for shared constants in Java and TypeScript, for example `FIELD_ERRORS_KEY`, `ITEMS_PER_PAGE`, and `TOTAL_COUNT_RESPONSE_HEADER`.
+- In `frontend/`, keep injected collaborators in `readonly` fields and mutable view state in `signal(...)` or `computed(...)`, as in `frontend/src/app/pages/entities/organization/list/organization-list.component.ts`.
 
 **Types:**
-- Use `DTO` suffix for service payloads, `VM` suffix for request/view models, and `Mapper` suffix for mapping components, for example `AdminUserDTO`, `OrganizationDTO`, `LoginVM`, `ManagedUserVM`, `UserMapper`, and `OrganizationMapper` in `src/main/java/com/vn/core/service/dto/`, `src/main/java/com/vn/core/web/rest/vm/`, and `angapp/src/main/java/com/mycompany/myapp/service/mapper/`.
-- Use Angular `IType` and `NewType` aliases for entity models, for example `IOrganization` and `NewOrganization` in `angapp/src/main/webapp/app/entities/organization/organization.model.ts`.
+- Use `DTO`, `VM`, `Mapper`, and `Service` suffixes on backend transport and mapping types, for example `AdminUserDTO`, `LoginVM`, `SecPermissionMapper`, and `OrganizationService`.
+- Use `IType` interfaces and `NewType` aliases for Angular entity models, for example `IOrganization` and `NewOrganization` in `frontend/src/app/pages/entities/organization/organization.model.ts`.
+- Keep request and response aliases close to the API service that owns them, for example `EntityResponseType` and `EntityArrayResponseType` in `frontend/src/app/pages/entities/organization/service/organization.service.ts`.
 
 ## Code Style
 
 **Formatting:**
-- Use `.editorconfig` and Prettier as the baseline formatter. `.editorconfig` sets LF endings, UTF-8, trimmed trailing whitespace, 2-space indentation globally, and 4-space indentation for `*.java` in `.editorconfig`.
-- Keep Java and TypeScript aligned with `.prettierrc`: `printWidth: 140`, `singleQuote: true`, `tabWidth: 2`, `arrowParens: avoid`, plus `prettier-plugin-java` and `prettier-plugin-packagejson` in `.prettierrc`.
-- Preserve final newlines and avoid tabs unless a file already requires them. The repo standard is spaces in `.editorconfig`.
+- Root formatting is driven by `.editorconfig`, `.prettierrc`, `.lintstagedrc.cjs`, and `buildSrc/src/main/groovy/jhipster.code-quality-conventions.gradle`.
+- Keep Java at 4 spaces and other tracked text files at 2 spaces per `.editorconfig`.
+- Root Prettier uses `printWidth: 140`, single quotes, no tabs, and `prettier-plugin-java` in `.prettierrc`.
+- `frontend/` has its own `.editorconfig` and `.prettierrc`; keep TS, SCSS, and HTML at 2 spaces, single quotes, and `printWidth: 100`.
+- Angular templates in `frontend/` are formatted with the Angular parser via `frontend/.prettierrc`.
 
 **Linting:**
-- Root backend quality relies on Gradle JHipster quality conventions plus `checkstyle.xml`. The active custom rules are lightweight: keep HTTP URLs out of code and do not require Javadoc on every method in `checkstyle.xml`.
-- `angapp/` enforces stricter frontend linting through `angapp/eslint.config.mjs`. Follow explicit return types, selector naming (`jhi-...` elements and `jhi...` attributes), `eqeqeq`, `curly`, `prefer-nullish-coalescing`, `prefer-optional-chain`, and no `console` except `warn` and `error`.
-- `angapp/tsconfig.json` enables strict TypeScript, strict Angular templates, `noImplicitReturns`, and `strictNullChecks`. New frontend code should compile under that baseline.
-- `frontend/` UI must be PrimeNG-first: use official `primeng.org` components and current examples for the installed major version (`primeng` 21.x in `frontend/package.json`) whenever a suitable component exists. Custom UI is allowed only when PrimeNG has no suitable component or as thin composition around PrimeNG primitives.
+- Backend quality gates run through Checkstyle, NoHTTP, Spotless, Modernizer, JaCoCo, and Sonar as wired in `checkstyle.xml`, `buildSrc/src/main/groovy/jhipster.code-quality-conventions.gradle`, and `sonar-project.properties`.
+- `checkstyle.xml` currently enforces NoHTTP scanning and relaxes the missing-method-Javadoc rule; do not assume a large custom Checkstyle rule set exists.
+- The active `frontend/` app does not define a repo-local ESLint config or `lint` script in `frontend/package.json`; current safety comes from strict TypeScript compilation and tests.
+- `angapp/` still carries a stricter Angular ESLint baseline in `angapp/eslint.config.mjs`. Use it as a migration reference when porting screens from `angapp/`, not as an automatically enforced rule set for `frontend/`.
 
 ## Import Organization
 
 **Order:**
-1. `package` declaration, then grouped Java imports with blank lines between logical groups, as seen in `src/main/java/com/vn/core/service/UserService.java` and `angapp/src/main/java/com/mycompany/myapp/service/impl/OrganizationServiceImpl.java`.
-2. For Java tests, place static imports first, then project imports, then JDK and third-party imports, as seen in `src/test/java/com/vn/core/web/rest/UserResourceIT.java` and `src/test/java/com/vn/core/TechnicalStructureTest.java`.
-3. For Angular, import framework packages first, then RxJS, then aliased app imports (`app/...`), then relative imports, as seen in `angapp/src/main/webapp/app/core/auth/account.service.ts` and `angapp/src/main/webapp/app/entities/organization/service/organization.service.ts`.
+1. Put static imports first in Java tests, as seen in `src/test/java/com/vn/core/web/rest/UserResourceIT.java` and `src/test/java/com/vn/core/security/data/SecureDataManagerImplTest.java`.
+2. Group framework imports ahead of project-local imports in TypeScript, then separate `app/...` aliases from same-feature relative imports with a blank line, as in `frontend/src/app/core/auth/account.service.ts`.
+3. In Java source files, keep project-local imports near the top, then Jakarta and JDK imports, then third-party frameworks, matching files such as `src/main/java/com/vn/core/web/rest/UserResource.java`.
 
 **Path Aliases:**
-- Use the Angular `baseUrl` in `angapp/tsconfig.json` and prefer `app/...` imports instead of long relative paths, for example `app/core/auth/account.model` and `app/core/config/application-config.service`.
-- Use relative imports only for same-feature siblings, for example `../organization.model` and `./organization-form.service` in `angapp/src/main/webapp/app/entities/organization/`.
+- Use `app/*`, `@/*`, and `environments/*` from `frontend/tsconfig.json` for cross-feature imports.
+- Use relative imports only for same-feature siblings, for example `../organization.model` and `./organization-list.component`.
+- Legacy `angapp/tsconfig.json` keeps `baseUrl: src/main/webapp/`; keep that only when editing `angapp/`.
 
 ## Layering Conventions
 
-**Backend Layers:**
-- Keep the root service aligned with the ArchUnit rule in `src/test/java/com/vn/core/TechnicalStructureTest.java`: `web` may depend on `service` and `config`, `service` may depend on `repository` and `security`, and `domain` stays at the bottom.
-- Keep the same shape in `angapp/` using `angapp/src/test/java/com/mycompany/myapp/TechnicalStructureTest.java`.
-- Put REST entry points in `web/rest`, business logic in `service` or `service/impl`, persistence in `repository`, and transport types in `service/dto` or `web/rest/vm`. Do not reach from controllers directly into unrelated layers when a service already exists.
-
-**Frontend Features:**
-- Group Angular code by feature under `angapp/src/main/webapp/app/`, for example `core/`, `shared/`, `admin/`, and `entities/organization/`.
-- Keep feature-local models, routes, services, forms, components, and samples together, as shown by `angapp/src/main/webapp/app/entities/organization/organization.model.ts`, `organization.routes.ts`, `service/organization.service.ts`, `update/organization-form.service.ts`, and `organization.test-samples.ts`.
+- Keep backend package boundaries aligned with `src/test/java/com/vn/core/TechnicalStructureTest.java`.
+- `src/main/java/com/vn/core/web/**` owns HTTP transport, validation, and status translation. Controllers should delegate business rules rather than assemble security logic inline.
+- `src/main/java/com/vn/core/service/**` owns transactions, DTO assembly, and application workflows, as in `src/main/java/com/vn/core/service/UserService.java` and `src/main/java/com/vn/core/service/OrganizationService.java`.
+- `src/main/java/com/vn/core/security/**` owns permission evaluation, secure data access, row policies, fetch plans, and bridge code. Keep new security rules in this tree, not in generic services.
+- `src/main/java/com/vn/core/repository/**` stays focused on persistence and query methods. Business branching belongs above it.
+- `src/main/java/com/vn/core/domain/**` and `src/main/java/com/vn/core/security/domain/**` stay as data definitions and should not absorb controller or service behavior.
+- `frontend/src/app/core/` holds app-wide concerns such as auth, config, interceptors, and request helpers.
+- `frontend/src/app/layout/` owns shell structure, navigation registry, menu trees, breadcrumbs, and layout services. Keep this aligned with the Sakai-style shell pattern established by `aef-main/aef-main/src/app/layout/**` and already adapted in `frontend/src/app/layout/**`.
+- `frontend/src/app/pages/` owns business screens. Keep feature folders self-contained with `model`, `service`, `list`, `detail`, `update`, and `routes` siblings, as in `frontend/src/app/pages/entities/organization/` and `frontend/src/app/pages/admin/user-management/`.
+- Put route guards, capability resolvers, and navigation metadata in route files such as `frontend/src/app/pages/entities/organization/organization.routes.ts`, not inside component constructors.
+- Prefer official PrimeNG components and the existing Sakai surface patterns for page composition; do not introduce a parallel layout/component system when the current `frontend/` shell or `aef-main/aef-main/` reference already covers the need.
 
 ## Error Handling
 
 **Patterns:**
-- Validate request payloads at the boundary with `@Valid` and field constraints on DTOs/VMs/entities, as shown in `src/main/java/com/vn/core/web/rest/UserResource.java`, `src/main/java/com/vn/core/web/rest/AccountResource.java`, `src/main/java/com/vn/core/service/dto/AdminUserDTO.java`, and `src/main/java/com/vn/core/web/rest/vm/LoginVM.java`.
-- Throw domain-specific exceptions from services and controllers instead of ad hoc status handling. Examples: `UsernameAlreadyUsedException`, `EmailAlreadyUsedException`, `InvalidPasswordException`, and `BadRequestAlertException` in `src/main/java/com/vn/core/service/` and `src/main/java/com/vn/core/web/rest/errors/`.
-- Let `ExceptionTranslator` convert backend failures into RFC7807 problem details with message keys, field errors, and request paths. Root implementation lives in `src/main/java/com/vn/core/web/rest/errors/ExceptionTranslator.java`; `angapp/` mirrors it in `angapp/src/main/java/com/mycompany/myapp/web/rest/errors/ExceptionTranslator.java`.
-- In `angapp/` service implementations that read secure map payloads, translate missing entities to `Optional.empty()` or `EntityNotFoundException` at the service boundary, as shown in `angapp/src/main/java/com/mycompany/myapp/service/impl/OrganizationServiceImpl.java`.
-- On the frontend, keep save flows symmetrical: set an `isSaving` flag, subscribe with `next` and `error`, and clear state in `finalize`, as shown in `angapp/src/main/webapp/app/entities/organization/update/organization-update.component.ts`.
+- Validate request payloads at the HTTP boundary with `@Valid`, `@Pattern`, and typed DTO or VM classes, as in `src/main/java/com/vn/core/web/rest/UserResource.java` and `src/main/java/com/vn/core/web/rest/vm/LoginVM.java`.
+- Throw typed backend exceptions instead of ad hoc status branching, then let `src/main/java/com/vn/core/web/rest/errors/ExceptionTranslator.java` map them into RFC7807 problem responses.
+- Use `Optional<T>` plus `ResponseUtil.wrapOrNotFound(...)` for lookup endpoints, as in `src/main/java/com/vn/core/web/rest/UserResource.java`.
+- Fail closed in security services. The tests in `src/test/java/com/vn/core/security/data/SecureDataManagerImplTest.java` show denied CRUD and unsupported secured JPQL becoming exceptions rather than soft fallbacks.
+- Centralize Angular toast-friendly error handling through `frontend/src/app/shared/error/http-error.utils.ts` instead of repeating message mapping in each component.
+- Keep save flows symmetrical with `isSaving` state and `finalize(...)`, as in `frontend/src/app/pages/entities/organization/update/organization-update.component.ts` and `frontend/src/app/pages/admin/user-management/update/user-management-update.component.ts`.
 
 ## Logging
 
-**Framework:** SLF4J on the backend, no general-purpose console logging on the frontend.
+**Framework:** SLF4J on the backend, PrimeNG `MessageService` and translation-backed toast helpers on the active frontend.
 
 **Patterns:**
-- Declare a class-local `private static final Logger LOG` and log request-level or lifecycle events at `debug` or `info`, as shown in `src/main/java/com/vn/core/service/UserService.java`, `src/main/java/com/vn/core/JhipsterSecApp.java`, and `angapp/src/main/java/com/mycompany/myapp/service/impl/OrganizationServiceImpl.java`.
-- Keep cross-cutting logging in dedicated infrastructure classes such as `src/main/java/com/vn/core/aop/logging/LoggingAspect.java` and `angapp/src/main/java/com/mycompany/myapp/aop/logging/LoggingAspect.java`.
-- In Angular, avoid `console.log`; `angapp/eslint.config.mjs` only permits `console.warn` and `console.error`.
+- Declare backend loggers as `private static final Logger LOG`, for example in `src/main/java/com/vn/core/service/UserService.java`, `src/main/java/com/vn/core/service/OrganizationService.java`, and `src/main/java/com/vn/core/security/fetch/YamlFetchPlanRepository.java`.
+- Let `src/main/java/com/vn/core/aop/logging/LoggingAspect.java` handle cross-cutting entry, exit, and exception logging for repositories, services, and REST controllers.
+- Keep controller and service logs at request or lifecycle granularity. The codebase favors `LOG.debug(...)` over verbose info logs.
+- On the frontend, surface user-visible failures with `addTranslatedMessage(...)` and `handleHttpError(...)` from `frontend/src/app/shared/error/http-error.utils.ts`.
+- Avoid `console.log` in application code. Existing `frontend/` files already prefer silent catch blocks or injected services over browser-console output.
 
 ## Comments
 
 **When to Comment:**
-- Keep class-level Javadoc on major Spring components and tests, as shown in `src/main/java/com/vn/core/service/UserService.java`, `src/main/java/com/vn/core/web/rest/errors/ExceptionTranslator.java`, and `src/test/java/com/vn/core/web/rest/UserResourceIT.java`.
-- Use inline comments sparingly for non-obvious runtime workarounds or generated extension hooks, for example the Hazelcast workaround in `src/main/java/com/vn/core/JhipsterSecApp.java`, test setup notes in `src/test/java/com/vn/core/web/rest/UserResourceIT.java`, and `jhipster-needle-*` placeholders in generated config classes.
+- Keep class-level Javadoc on Spring services, controllers, mappers, and tests, as seen in `src/main/java/com/vn/core/service/UserService.java`, `src/main/java/com/vn/core/web/rest/errors/ExceptionTranslator.java`, and `src/test/java/com/vn/core/service/mapper/UserMapperTest.java`.
+- Use block comments to explain non-obvious contracts, especially around security and e2e setup, as in `frontend/e2e/proof-role-gating.spec.ts` and `frontend/e2e/security-comprehensive.spec.ts`.
+- Keep inline comments for permission-gated fields, generated extension points, or migration markers only, for example `frontend/src/app/pages/entities/organization/organization.model.ts` and `src/main/java/com/vn/core/config/ApplicationProperties.java`.
 
 **JSDoc/TSDoc:**
-- Frontend code uses lightweight block comments mainly for generated type helpers, for example `angapp/src/main/webapp/app/entities/organization/update/organization-form.service.ts`. New Angular code should follow that restraint and avoid comment noise.
+- Backend favors Javadoc on public classes and selected methods.
+- Active `frontend/` uses very little TSDoc. Prefer expressive names and short inline comments over large docblocks.
 
 ## Function Design
 
-**Size:** Keep public methods narrow and push transformations into private helpers. Examples: `clearUserCaches` in `src/main/java/com/vn/core/service/UserService.java`, `toDto`, `toEmployeeLinkDto`, and `asLong` in `angapp/src/main/java/com/mycompany/myapp/service/impl/OrganizationServiceImpl.java`.
+**Size:** Keep controllers thin, lift repeated business rules into services, and extract reusable private helpers for permission math, route parsing, and query shaping.
 
 **Parameters:**
-- Favor constructor injection with final fields in Spring classes, as seen in `src/main/java/com/vn/core/service/UserService.java` and `angapp/src/main/java/com/mycompany/myapp/service/impl/OrganizationServiceImpl.java`.
-- Favor `inject(...)` fields instead of constructors in Angular services and components, as seen in `angapp/src/main/webapp/app/core/auth/account.service.ts` and `angapp/src/main/webapp/app/entities/organization/update/organization-update.component.ts`.
+- Backend service and controller methods prefer typed DTOs, `Pageable`, `Optional`, and `Map<String, Object>` only at explicit dynamic-security boundaries such as `src/main/java/com/vn/core/service/OrganizationService.java`.
+- Frontend services should prefer typed request models. A few generated-style methods still accept `req?: any` in `frontend/src/app/pages/entities/organization/service/organization.service.ts`; newer code in `frontend/src/app/pages/admin/user-management/service/user-management.service.ts` shows the preferred typed approach.
+- Favor `inject(...)` fields in Angular services and components, as seen throughout `frontend/src/app/core/**` and `frontend/src/app/pages/**`.
 
 **Return Values:**
-- Return `Optional<T>` for backend lookups that can miss, `Page<T>` for pagination, and `ResponseEntity<T>` from controllers. Use those shapes consistently in `src/main/java/com/vn/core/service/UserService.java`, `src/main/java/com/vn/core/web/rest/UserResource.java`, and `angapp/src/main/java/com/mycompany/myapp/service/OrganizationService.java`.
-- Return `Observable<HttpResponse<T>>` from Angular API services and plain model values from form services, as shown in `angapp/src/main/webapp/app/entities/organization/service/organization.service.ts` and `angapp/src/main/webapp/app/entities/organization/update/organization-form.service.ts`.
+- Backend queries return `Optional<T>`, `Page<T>`, or `ResponseEntity<T>`.
+- Frontend API services return `Observable<HttpResponse<T>>` or `Observable<T>`.
+- Keep UI state in `signal(...)` and `computed(...)` instead of mutable booleans where possible, as in `frontend/src/app/pages/entities/organization/list/organization-list.component.ts`.
 
 ## Mapping Patterns
 
-**Backend DTO Mapping:**
-- Root user mapping is hand-written and registered as a Spring service in `src/main/java/com/vn/core/service/mapper/UserMapper.java`. Follow that pattern only where generated MapStruct support is intentionally avoided.
-- `angapp/` prefers MapStruct interfaces extending `EntityMapper`, for example `angapp/src/main/java/com/mycompany/myapp/service/mapper/OrganizationMapper.java`, `DepartmentMapper.java`, and `EmployeeMapper.java`.
-- When partial updates are required, add an explicit `partialUpdate(@MappingTarget ...)` contract as in `angapp/src/main/java/com/mycompany/myapp/service/mapper/OrganizationMapper.java`.
-
-**Secure View Mapping:**
-- `angapp/` also contains manual map-to-DTO shaping for secured fetch-plan results in `angapp/src/main/java/com/mycompany/myapp/service/impl/OrganizationServiceImpl.java`. Keep those conversions private to the service that owns the secure payload format.
+- Keep manual mapping where entity exposure is special-cased, especially `src/main/java/com/vn/core/service/mapper/UserMapper.java`.
+- Use `src/main/java/com/vn/core/service/mapper/EntityMapper.java` as the base contract for MapStruct mappers that support two-way conversion plus `partialUpdate`.
+- Security admin DTO mapping lives under `src/main/java/com/vn/core/service/mapper/security/`, for example `SecPermissionMapper.java` and `SecRowPolicyMapper.java`.
+- When type translation is non-trivial, encode it directly in the mapper interface with explicit `@Mapping(...)` expressions, as in `src/main/java/com/vn/core/service/mapper/security/SecPermissionMapper.java`.
+- On the frontend, keep transport and form models close to the feature they serve: `frontend/src/app/pages/entities/organization/organization.model.ts`, `frontend/src/app/pages/entities/organization/service/organization.service.ts`, and `frontend/src/app/pages/admin/user-management/update/user-management-form.service.ts`.
 
 ## Configuration Practices
 
-**Backend Configuration:**
-- Bind application-specific settings through typed `@ConfigurationProperties` classes such as `src/main/java/com/vn/core/config/ApplicationProperties.java` and `angapp/src/main/java/com/mycompany/myapp/config/ApplicationProperties.java` instead of scattering `@Value` fields.
-- Keep profile-specific runtime config in YAML under `src/main/resources/config/` and `angapp/src/main/resources/config/`, with test overrides under `src/test/resources/config/application.yml` and `angapp/src/test/resources/config/application.yml`.
-- Keep generated extension markers like `jhipster-needle-*` intact in files such as `src/main/java/com/vn/core/config/ApplicationProperties.java` and `build.gradle`.
-
-**Frontend Configuration:**
-- Resolve API URLs through `ApplicationConfigService` in `angapp/src/main/webapp/app/core/config/application-config.service.ts`. Do not hardcode raw endpoint prefixes in feature services.
-- Centralize compiler and lint behavior in `angapp/tsconfig.json`, `angapp/tsconfig.spec.json`, `angapp/eslint.config.mjs`, and `.prettierrc`.
+- Bind backend application settings through typed properties classes such as `src/main/java/com/vn/core/config/ApplicationProperties.java`; avoid scattering raw `@Value` lookups beyond framework-boundary cases like `applicationName`.
+- Keep runtime YAML under `src/main/resources/config/*.yml` and test overrides under `src/test/resources/config/*.yml`.
+- Treat `src/main/resources/config/application-secret-samples.yml`, `src/main/resources/config/application-tls.yml`, and JWT-bearing test configs under `src/test/resources/config/` and `src/test/java/com/vn/core/security/jwt/AuthenticationIntegrationTest.java` as sensitive locations. Mention the files, not the secret values.
+- Keep fetch-plan definitions in YAML files such as `src/main/resources/fetch-plans.yml` and `src/test/resources/fetch-plans-test.yml`, loaded via `src/main/java/com/vn/core/security/fetch/YamlFetchPlanRepository.java`.
+- Keep frontend environment and provider setup centralized in `frontend/src/environments/*.ts`, `frontend/src/app/app.config.ts`, `frontend/src/app/config/translation.config.ts`, and `frontend/src/app/core/config/application-config.service.ts`.
+- Set API bases through `ApplicationConfigService.getEndpointFor(...)` instead of hardcoding prefixes in feature services.
+- Preserve generated or migration marker comments such as `jhipster-needle-*` when editing Gradle or configuration files.
 
 ## Module Design
 
-**Exports:** Keep Java APIs explicit through class and interface names, and keep Angular exports explicit per feature file. Shared barrels are limited to utility areas such as `angapp/src/main/webapp/app/shared/sort/index.ts` and `angapp/src/main/webapp/app/shared/date/index.ts`.
+**Exports:**
+- Backend files usually expose one concrete class or interface each.
+- Angular route-loaded components and route arrays default-export the feature artifact, for example `frontend/src/app/pages/entities/organization/organization.routes.ts` and `frontend/src/app/pages/admin/security/permission-matrix/permission-matrix.component.ts`.
+- Shared helpers and services use named exports, for example `frontend/src/app/shared/error/http-error.utils.ts` and `frontend/src/app/config/translation.config.ts`.
 
-**Barrel Files:** Use barrels only in shared frontend utility folders. Feature folders such as `angapp/src/main/webapp/app/entities/organization/` import concrete files directly.
+**Barrel Files:**
+- Barrel usage is intentionally light. The main example is `frontend/src/app/core/interceptor/index.ts`.
+- Prefer direct imports over broad barrels so feature ownership stays obvious.
+
+## Frontend Conventions
+
+- The active Angular app lives in `frontend/`. Treat `angapp/` as a legacy reference workspace, not the primary implementation target.
+- Keep route-loaded feature components standalone and colocated with their templates. Current files still declare `standalone: true` explicitly, for example `frontend/src/app/pages/entities/organization/list/organization-list.component.ts` and `frontend/src/app/pages/entities/organization/update/organization-update.component.ts`. Match the local file style when editing nearby code.
+- Prefer lazy `loadComponent` routes with route metadata and resolvers, as in `frontend/src/app/pages/entities/organization/organization.routes.ts` and `frontend/src/app/pages/admin/security/security.routes.ts`.
+- Use signals for UI state and permission gates, not ad hoc component-level subjects.
+- Keep shell behavior in `layout/` and business workflows in `pages/`.
+- Use translation keys, not hard-coded user-visible strings, for page titles, breadcrumbs, and toasts. Examples live in `frontend/src/app/config/translation.config.ts`, `frontend/src/app/layout/navigation/navigation.service.ts`, and the `*.component.html` files under `frontend/src/app/pages/`.
 
 ---
 
-*Convention analysis: 2026-03-21*
+*Convention analysis: 2026-03-27*

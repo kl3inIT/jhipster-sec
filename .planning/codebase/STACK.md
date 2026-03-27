@@ -1,107 +1,107 @@
 # Technology Stack
 
-**Analysis Date:** 2026-03-21
+**Analysis Date:** 2026-03-27
 
 ## Languages
 
 **Primary:**
-- Java 21 - application code lives under `src/main/java/com/vn/core/**` and tests under `src/test/java/com/vn/core/**`; the version is set in `build.gradle`.
+- Java 25 - backend application, security, persistence, and REST code live under `src/main/java/com/vn/core/**`; backend tests live under `src/test/java/com/vn/core/**`; the toolchain is enforced in `build.gradle`.
+- TypeScript 5.9.x - the standalone Angular frontend lives under `frontend/src/**`; the compiler baseline is set in `frontend/tsconfig.json`, and the package versions are pinned by `frontend/package.json` and `frontend/package-lock.json`.
 
 **Secondary:**
-- Groovy (Gradle DSL) - build logic is defined in `build.gradle`, `settings.gradle`, `gradle/*.gradle`, and `buildSrc/src/main/groovy/*.gradle`.
-- YAML - runtime and infrastructure configuration lives in `src/main/resources/config/*.yml` and `src/main/docker/*.yml`.
-- JSON - project metadata and Node tooling configuration live in `package.json`, `package-lock.json`, `.yo-rc.json`, and `sonar-project.properties`.
-- HTML/Thymeleaf - server-rendered mail templates live in `src/main/resources/templates/mail/*.html`.
-- Properties/XML - logging, Gradle, and migration metadata live in `gradle.properties`, `gradle/wrapper/gradle-wrapper.properties`, `src/main/resources/logback-spring.xml`, and `src/main/resources/config/liquibase/*.xml`.
+- Groovy (Gradle DSL) - build logic and plugin conventions live in `build.gradle`, `gradle/*.gradle`, and `buildSrc/src/main/groovy/*.gradle`.
+- YAML - runtime config, Docker Compose manifests, Liquibase metadata, and fetch-plan definitions live in `src/main/resources/config/*.yml`, `src/main/resources/fetch-plans.yml`, and `src/main/docker/*.yml`.
+- JSON - package manifests, generator metadata, Sonar config, and frontend i18n bundles live in `package.json`, `frontend/package.json`, `.yo-rc.json`, `sonar-project.properties`, and `frontend/public/i18n/*.json`.
+- SCSS/CSS/HTML - Angular styling lives in `frontend/src/assets/**/*.scss` and `frontend/src/assets/tailwind.css`; server-rendered mail templates live in `src/main/resources/templates/mail/*.html`.
 
 ## Runtime
 
 **Environment:**
-- JVM: Java 21, configured by `sourceCompatibility` and `targetCompatibility` in `build.gradle`.
-- Gradle Wrapper: 9.4.0, pinned in `gradle/wrapper/gradle-wrapper.properties`.
-- Node.js: `>=24.14.0`, declared in `package.json`; it is used for scripts, formatting, hooks, and Docker orchestration rather than a browser app.
-- Container runtime: Jib builds an OCI image from `eclipse-temurin:21-jre-noble` in `buildSrc/src/main/groovy/jhipster.docker-conventions.gradle`.
+- JVM: Java 25, enforced by `sourceCompatibility`, `targetCompatibility`, and `assert System.properties["java.specification.version"] == "25"` in `build.gradle`.
+- Browser runtime: the frontend SPA bootstraps from `frontend/src/main.ts` using providers from `frontend/src/app.config.ts`.
+- Node.js: root tooling requires `>=24.14.0` in `package.json`; the frontend package manager is pinned to `npm@11.9.0` in `frontend/package.json`.
 
 **Package Manager:**
-- Gradle Wrapper - backend build and test entrypoint via `gradlew` and `gradlew.bat`.
-- npm - developer scripts and JS tooling via `package.json`.
-- Lockfile: `package-lock.json` present; Gradle wrapper present in `gradle/wrapper/gradle-wrapper.properties`.
+- Gradle Wrapper 9.4.0 - pinned in `gradle/wrapper/gradle-wrapper.properties`.
+- npm - used for root developer scripts in `package.json` and frontend scripts in `frontend/package.json`.
+- Lockfile: `package-lock.json` is present at repo root and `frontend/package-lock.json` is present for the Angular app.
 
 ## Frameworks
 
 **Core:**
-- Spring Boot 4.0.3 - application framework, declared in `gradle/libs.versions.toml` and bootstrapped from `src/main/java/com/vn/core/JhipsterSecApp.java`.
-- JHipster Framework 9.0.0 - application conventions and config helpers, declared in `gradle/libs.versions.toml`; project generation metadata lives in `.yo-rc.json`.
-- Spring MVC + Tomcat + Validation + Jackson + AspectJ + Thymeleaf - enabled by starters in `build.gradle`.
-- Spring Data JPA + Hibernate ORM - persistence layer configured by starters in `build.gradle` and Hibernate settings in `src/main/resources/config/application.yml`.
-- Spring Security + OAuth2 Resource Server - stateless JWT security configured in `src/main/java/com/vn/core/config/SecurityConfiguration.java` and `src/main/java/com/vn/core/config/SecurityJwtConfiguration.java`.
-- Spring Mail + Thymeleaf templates - outbound account emails implemented in `src/main/java/com/vn/core/service/MailService.java` and `src/main/resources/templates/mail/*.html`.
-- Springdoc OpenAPI 3.0.2 - API documentation support from `gradle/libs.versions.toml` and `src/main/resources/config/application.yml`.
-- MapStruct 1.6.3 - DTO/entity mapping declared in `gradle/libs.versions.toml` and used in `src/main/java/com/vn/core/service/mapper/UserMapper.java`.
+- Spring Boot 4.0.3 - backend application framework, declared in `gradle/libs.versions.toml` and bootstrapped from `src/main/java/com/vn/core/JhipsterSecApp.java`.
+- JHipster Framework 9.0.0 - backend conventions and config helpers, declared in `gradle/libs.versions.toml`; generator metadata lives in `.yo-rc.json`.
+- Spring Security OAuth2 Resource Server + Nimbus JWT - stateless auth stack wired in `src/main/java/com/vn/core/config/SecurityConfiguration.java`, `src/main/java/com/vn/core/config/SecurityJwtConfiguration.java`, and `src/main/java/com/vn/core/web/rest/AuthenticateController.java`.
+- Spring Data JPA + Hibernate ORM - persistence stack configured in `build.gradle`, `src/main/java/com/vn/core/config/DatabaseConfiguration.java`, and `src/main/resources/config/application.yml`.
+- Liquibase 5.0.1 - schema migration framework configured in `gradle/liquibase.gradle`, `src/main/java/com/vn/core/config/LiquibaseConfiguration.java`, and `src/main/resources/config/liquibase/master.xml`.
+- Hazelcast 5.5.0 - embedded cache and Hibernate second-level cache configured in `src/main/java/com/vn/core/config/CacheConfiguration.java` and `src/main/resources/config/application.yml`.
+- Angular 21.2.x - standalone frontend application configured in `frontend/angular.json`, `frontend/tsconfig.json`, and `frontend/src/main.ts`.
+- PrimeNG 21.1.x + PrimeFlex + PrimeIcons + Aura theme with Sakai shell patterns - frontend UI stack declared in `frontend/package.json` and provided from `frontend/src/app.config.ts`, `frontend/src/assets/styles.scss`, and the Sakai-style shell components under `frontend/src/app/layout/**`.
+- `@ngx-translate` 17.x - static i18n loading is configured in `frontend/src/app/config/translation.config.ts`; merged language bundles are generated by `frontend/scripts/merge-i18n.cjs` into `frontend/public/i18n/*.json`.
 
 **Testing:**
-- JUnit Platform - enabled by `test` and `integrationTest` in `gradle/spring-boot.gradle`.
-- Spring Boot Test + Spring Security Test - declared in `build.gradle`.
-- Testcontainers + PostgreSQL - integration database support declared in `build.gradle` and implemented in `src/test/java/com/vn/core/config/DatabaseTestcontainer.java`.
-- ArchUnit 1.4.1 - architecture tests declared in `gradle/libs.versions.toml` and used from `src/test/java/com/vn/core/TechnicalStructureTest.java`.
+- JUnit Platform + Spring Boot Test + Spring Security Test - backend test stack declared in `build.gradle` and wired via `gradle/spring-boot.gradle`.
+- Testcontainers PostgreSQL 18.3 - integration database support lives in `src/test/java/com/vn/core/config/DatabaseTestcontainer.java`.
+- ArchUnit 1.4.1 - backend architecture tests are declared in `gradle/libs.versions.toml`.
+- Angular unit testing via `@angular/build:unit-test` with Vitest 4.x and jsdom - configured by `frontend/package.json` and `frontend/angular.json`.
+- Playwright 1.58.x - frontend browser tests are configured in `frontend/playwright.config.ts`.
 
 **Build/Dev:**
-- Liquibase 5.0.1 with Gradle plugin 3.1.0 - schema migration tooling configured in `gradle.properties` and `gradle/liquibase.gradle`.
-- Jib 3.5.3 - container image build plugin declared in `buildSrc/gradle/libs.versions.toml` and applied by `buildSrc/src/main/groovy/jhipster.docker-conventions.gradle`.
-- JaCoCo 0.8.14 - coverage tooling configured in `buildSrc/src/main/groovy/jhipster.code-quality-conventions.gradle`.
-- SonarQube Gradle plugin 7.2.3.7755 - static analysis integration declared in `buildSrc/gradle/libs.versions.toml` and configured by `sonar-project.properties`.
-- Spotless 8.3.0 - Java formatting plugin declared in `buildSrc/gradle/libs.versions.toml`.
-- Modernizer 1.12.0 and NoHTTP 0.0.11 - build hygiene plugins declared in `buildSrc/gradle/libs.versions.toml`.
-- Checkstyle 13.3.0 - code style enforcement configured in `checkstyle.xml` and `buildSrc/src/main/groovy/jhipster.code-quality-conventions.gradle`.
-- Prettier 3.8.1 with `prettier-plugin-java` 2.8.1 and `prettier-plugin-packagejson` 3.0.2 - formatting for non-Java and Java files via `package.json` and `.prettierrc`.
-- Husky 9.1.7 and lint-staged 16.3.3 - local git hook tooling configured in `package.json` and `.lintstagedrc.cjs`.
+- Angular CLI / `@angular/build` 21.2.x - SPA build and dev server stack configured in `frontend/angular.json` and `frontend/package.json`.
+- Jib 3.5.3 - OCI image build plugin configured in `buildSrc/src/main/groovy/jhipster.docker-conventions.gradle`.
+- JaCoCo 0.8.14, SonarQube plugin 7.2.3.7755, Spotless 8.3.0, Modernizer 1.12.0, NoHTTP 0.0.11, and Checkstyle 13.3.0 - backend quality stack configured in `buildSrc/gradle/libs.versions.toml` and `buildSrc/src/main/groovy/jhipster.code-quality-conventions.gradle`.
+- Prettier 3.8.1, `prettier-plugin-java` 2.8.1, `prettier-plugin-packagejson` 3.0.2, Husky 9.1.7, and lint-staged 16.3.3 - repo formatting and hook tooling configured in `package.json`, `.prettierrc`, and `.lintstagedrc.cjs`.
+- Tailwind CSS 3.4.x + PostCSS + Autoprefixer - frontend styling pipeline configured in `frontend/package.json`, `frontend/tailwind.config.js`, and `frontend/src/assets/tailwind.css`.
 
 ## Key Dependencies
 
 **Critical:**
 - `tech.jhipster:jhipster-framework` 9.0.0 - JHipster runtime support used across `src/main/java/com/vn/core/config/**`.
-- `org.springframework.boot:*` starters - the HTTP API, security, JPA, mail, actuator, cache, and validation stack defined in `build.gradle`.
-- `org.postgresql:postgresql` - JDBC driver for the primary SQL database, declared in `build.gradle`.
-- `org.liquibase:liquibase-core` - schema migration engine configured in `gradle/liquibase.gradle` and `src/main/resources/config/liquibase/master.xml`.
-- `com.hazelcast:hazelcast-spring` 5.5.0 and `com.hazelcast:hazelcast-hibernate53` 5.2.0 - application cache and Hibernate second-level cache configured in `src/main/java/com/vn/core/config/CacheConfiguration.java`.
-- `io.micrometer:micrometer-registry-prometheus-simpleclient` - Prometheus metrics export enabled from `build.gradle` and `src/main/resources/config/application.yml`.
-- `org.springdoc:springdoc-openapi-starter-webmvc-api` 3.0.2 - API docs support for `/v3/api-docs`, declared in `gradle/libs.versions.toml`.
-- `org.mapstruct:mapstruct` 1.6.3 - compile-time mapping support used by `src/main/java/com/vn/core/service/mapper/UserMapper.java`.
+- `org.springframework.boot:*` starters - HTTP, security, JPA, mail, validation, actuator, and cache stack defined in `build.gradle`.
+- `org.postgresql:postgresql` - primary SQL driver for runtime and Liquibase, declared in `build.gradle` and `gradle/liquibase.gradle`.
+- `org.liquibase:liquibase-core` - schema migration engine used by `gradle/liquibase.gradle` and `src/main/resources/config/liquibase/master.xml`.
+- `com.hazelcast:hazelcast-spring` 5.5.0 and `com.hazelcast:hazelcast-hibernate53` 5.2.0 - caching infrastructure configured in `build.gradle` and `src/main/java/com/vn/core/config/CacheConfiguration.java`.
+- `org.mapstruct:mapstruct` 1.6.3 - mapper generation used in `src/main/java/com/vn/core/service/mapper/**`.
+- `com.fasterxml.jackson.dataformat:jackson-dataformat-yaml` - YAML parsing support used by `src/main/java/com/vn/core/security/fetch/YamlFetchPlanRepository.java`.
+- `primeng`, `@primeuix/themes`, `@ngx-translate/core`, and `dayjs` - frontend UI, i18n, and date handling dependencies declared in `frontend/package.json` and used across `frontend/src/app/**`.
 
 **Infrastructure:**
-- `com.zaxxer:HikariCP` - datasource pooling configured through `spring.datasource.hikari` in `src/main/resources/config/application-dev.yml` and `src/main/resources/config/application-prod.yml`.
-- `org.testcontainers:*` - containerized test dependencies declared in `build.gradle`.
-- `com.google.cloud.tools:jib-gradle-plugin` 3.5.3 - container image packaging from Gradle without a Dockerfile, configured in `buildSrc/src/main/groovy/jhipster.docker-conventions.gradle`.
+- `io.micrometer:micrometer-registry-prometheus-simpleclient` - Prometheus metrics export enabled from `build.gradle` and `src/main/resources/config/application.yml`.
+- `org.testcontainers:*` - backend integration test infrastructure declared in `build.gradle` and used in `src/test/java/com/vn/core/config/DatabaseTestcontainer.java`.
+- `@angular/build` and `@angular/cli` - frontend build and dev server dependencies declared in `frontend/package.json`.
+- `@playwright/test` - frontend E2E automation dependency declared in `frontend/package.json`.
 
 ## Configuration
 
 **Environment:**
-- Base runtime configuration lives in `src/main/resources/config/application.yml`.
-- Profile-specific overrides live in `src/main/resources/config/application-dev.yml`, `src/main/resources/config/application-prod.yml`, `src/main/resources/config/application-secret-samples.yml`, and `src/main/resources/config/application-tls.yml`.
-- The default Gradle profile is `dev`, set in `gradle.properties` and expanded into `application.yml` by `gradle/spring-boot.gradle`.
-- `spring.docker.compose.enabled` is currently `false` in `src/main/resources/config/application.yml`; Docker services are started explicitly through npm scripts in `package.json` and compose files in `src/main/docker/*.yml`.
-- The project is server-only: `.yo-rc.json` sets `skipClient` to `true`, and there is no generated web client under `src/main/webapp/`.
-- Secrets are not externalized through `.env` files or a secret manager in the current repository state; runtime credentials are stored directly in tracked config files such as `src/main/resources/config/application-*.yml`, `gradle/liquibase.gradle`, and `src/main/docker/*.yml`.
+- Backend runtime config is layered through `src/main/resources/config/application.yml`, `src/main/resources/config/application-dev.yml`, `src/main/resources/config/application-prod.yml`, `src/main/resources/config/application-secret-samples.yml`, and `src/main/resources/config/application-tls.yml`.
+- Application-specific fetch plans are configured through `application.fetch-plans.config` in `src/main/resources/config/application.yml` and resolved from `src/main/resources/fetch-plans.yml` by `src/main/java/com/vn/core/security/fetch/YamlFetchPlanRepository.java`.
+- Frontend environment and dev-server config live in `frontend/src/environments/*.ts`, `frontend/angular.json`, and `frontend/proxy.conf.json`.
+- Generator metadata in `.yo-rc.json` still marks the root JHipster app as `skipClient`; the active SPA is the separate `frontend/` application bootstrapped outside the root Gradle build.
+- Additional reference and migration codebases are present in `angapp/`, `jhipter-angular/`, and `aef-main/`, but `settings.gradle` only includes the root backend, and no root build file wires those trees into the active deliverable.
+- `aef-main/aef-main/` is the canonical frontend reference for `frontend/`, and its PrimeNG Sakai shell/layout/component patterns are the expected baseline when extending the active SPA.
 
 **Build:**
-- Primary build files are `build.gradle`, `settings.gradle`, `gradle.properties`, `gradle/*.gradle`, and `buildSrc/**`.
-- Quality configuration lives in `checkstyle.xml`, `sonar-project.properties`, `.prettierrc`, `.editorconfig`, and `.lintstagedrc.cjs`.
-- Generator metadata lives in `.yo-rc.json`, which defines monolith/JWT/PostgreSQL/Hazelcast generation choices.
+- Primary backend build entrypoints are `build.gradle`, `settings.gradle`, `gradle/spring-boot.gradle`, `gradle/liquibase.gradle`, and `buildSrc/src/main/groovy/*.gradle`.
+- Primary frontend build entrypoints are `frontend/package.json`, `frontend/angular.json`, `frontend/tsconfig.json`, `frontend/playwright.config.ts`, and `frontend/scripts/merge-i18n.cjs`.
+- Docker and runtime manifests live in `src/main/docker/*.yml`, with Jib entrypoint assets in `src/main/docker/jib/`.
+- Sensitive runtime values are currently tracked in files such as `src/main/resources/config/application-dev.yml`, `src/main/resources/config/application-prod.yml`, `src/main/resources/config/application-secret-samples.yml`, `src/main/resources/config/application-tls.yml`, `gradle/liquibase.gradle`, and selected `src/main/docker/*.yml`; no `.env*` files were detected at repo root.
 
 ## Platform Requirements
 
 **Development:**
-- JDK 21 is required by `build.gradle`.
+- JDK 25 is required by `build.gradle`.
 - Gradle 9.4.0 is supplied by `gradle/wrapper/gradle-wrapper.properties`.
-- Node.js 24.14.0 or newer is required by `package.json`.
-- Docker Compose is required for the local dependency stacks defined in `src/main/docker/services.yml`, `src/main/docker/postgresql.yml`, `src/main/docker/monitoring.yml`, `src/main/docker/sonar.yml`, and `src/main/docker/jhipster-control-center.yml`.
-- PostgreSQL is required either through the container in `src/main/docker/postgresql.yml` or an externally reachable database matching the JDBC settings in `src/main/resources/config/application-dev.yml` and `src/main/resources/config/application-prod.yml`.
+- Node.js `>=24.14.0` is required by root tooling in `package.json`; the frontend toolchain resolved in `frontend/package-lock.json` also requires a modern Node runtime.
+- Docker Compose is needed for local PostgreSQL, monitoring, SonarQube, JHipster Control Center, and full app stacks defined in `src/main/docker/*.yml`.
+- Local frontend development uses `ng serve` from `frontend/package.json` on port `4200` and proxies backend traffic to `http://localhost:8080` via `frontend/proxy.conf.json`.
 
 **Production:**
-- Deploy the service as a JVM artifact with `bootJar` or `bootWar` tasks described in `package.json` and `README.md`, or as a container image via Jib in `buildSrc/src/main/groovy/jhipster.docker-conventions.gradle`.
-- Production requires a PostgreSQL database, a JWT secret for `jhipster.security.authentication.jwt.base64-secret`, and optional SMTP, Prometheus, and Logstash endpoints configured through `src/main/resources/config/application-prod.yml` or environment overrides.
-- The generated Jib image exposes port `8080` for HTTP and `5701/udp` for Hazelcast, as configured in `buildSrc/src/main/groovy/jhipster.docker-conventions.gradle`.
+- Deploy the backend as a Spring Boot jar/war from `package.json` and `README.md`, or as the Jib-built OCI image from `buildSrc/src/main/groovy/jhipster.docker-conventions.gradle`.
+- The backend expects PostgreSQL connectivity plus a JWT base64 secret, with optional SMTP, Logstash, and TLS config supplied via Spring property overrides for keys defined in `src/main/resources/config/application-*.yml`.
+- The Jib image exposes `8080` and `5701/udp` as configured in `buildSrc/src/main/groovy/jhipster.docker-conventions.gradle`.
+- The Angular frontend is a separate deployable built from `frontend/` and can run behind the backend or any static host that forwards API traffic to the Spring service.
 
 ---
 
-*Stack analysis: 2026-03-21*
+*Stack analysis: 2026-03-27*

@@ -1,237 +1,225 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-03-21
+**Analysis Date:** 2026-03-27
 
 ## Test Framework
 
 **Runner:**
-- Backend: JUnit 5 via Gradle `test` and `integrationTest` tasks. Root configuration lives in `gradle/spring-boot.gradle` plus `gradle/profile_dev.gradle` and `gradle/profile_prod.gradle`. `angapp/` uses the same split in `angapp/build.gradle` and its `gradle/profile_*.gradle` files.
-- Frontend: Jest for Angular tests in `angapp/jest.conf.js`, wired through `@angular-builders/jest` in `angapp/angular.json`.
-- Config: `src/test/resources/junit-platform.properties` and `angapp/src/test/resources/junit-platform.properties` define default timeouts and custom class ordering.
+- Backend unit and integration tests use JUnit 5 through Gradle `test` and `integrationTest` in `gradle/spring-boot.gradle`, `gradle/profile_dev.gradle`, and `gradle/profile_prod.gradle`.
+- Backend integration suites share the meta-annotation in `src/test/java/com/vn/core/IntegrationTest.java`.
+- Backend JWT slice tests use the narrower meta-annotation in `src/test/java/com/vn/core/security/jwt/AuthenticationIntegrationTest.java`.
+- Frontend unit tests use Angular's `@angular/build:unit-test` builder from `frontend/angular.json`; `frontend/tsconfig.spec.json` loads `vitest/globals`, so specs use `describe`, `it`, `expect`, and `vi`.
+- Browser end-to-end tests use Playwright from `frontend/playwright.config.ts`.
 
 **Assertion Library:**
-- Backend uses AssertJ, Hamcrest, MockMvc result matchers, and Mockito, as seen in `src/test/java/com/vn/core/web/rest/UserResourceIT.java`, `src/test/java/com/vn/core/web/rest/errors/ExceptionTranslatorIT.java`, and `angapp/src/test/java/com/mycompany/myapp/service/impl/OrganizationServiceImplTest.java`.
-- Frontend uses Jest `expect`, Angular `TestBed`, and `HttpTestingController`, as seen in `angapp/src/main/webapp/app/core/auth/account.service.spec.ts` and `angapp/src/main/webapp/app/entities/organization/service/organization.service.spec.ts`.
+- Backend uses AssertJ, Hamcrest JSON matchers, MockMvc result matchers, and Mockito verification helpers.
+- Frontend unit tests use Vitest expectations, Angular `TestBed`, and `HttpTestingController`.
+- E2E tests use Playwright `expect`.
 
 **Run Commands:**
 ```bash
-./gradlew test integrationTest
+./gradlew test
+./gradlew integrationTest
+./gradlew jacocoTestReport
 npm run backend:unit:test
-cd angapp && ./gradlew test integrationTest -x webapp -x webapp_test
-cd angapp && npm test
-cd angapp && npm run jest
+npm --prefix frontend run test
+npm --prefix frontend run test -- --watch
+npm --prefix frontend run e2e
+npm --prefix frontend run e2e:headed
 ```
 
 ## Test File Organization
 
 **Location:**
-- Backend tests are mirrored under `src/test/java/...` and `angapp/src/test/java/...`.
-- Angular tests are co-located with the implementation under `angapp/src/main/webapp/app/**`, for example `account.service.ts` and `account.service.spec.ts`.
+- Backend unit and integration tests live under `src/test/java/com/vn/core/**` and mirror the runtime package layout from `src/main/java/com/vn/core/**`.
+- Backend test resources live under `src/test/resources/**` for profile overrides, Liquibase changelogs, seeded security data, mail templates, and fetch plans.
+- Frontend unit specs are co-located next to source under `frontend/src/app/**` and `frontend/src/*.spec.ts`.
+- Playwright suites live under `frontend/e2e/*.spec.ts`.
+- `angapp/` retains its own separate test stack in `angapp/package.json`, but the active frontend verification path is `frontend/`.
 
 **Naming:**
-- Use `*IT` for Spring integration tests that boot the application context, for example `src/test/java/com/vn/core/web/rest/AccountResourceIT.java` and `angapp/src/test/java/com/mycompany/myapp/web/rest/OrganizationResourceIT.java`.
-- Use `*Test` or `*Tests` for unit tests and structural checks, for example `src/test/java/com/vn/core/service/mapper/UserMapperTest.java`, `src/test/java/com/vn/core/TechnicalStructureTest.java`, and `angapp/src/test/java/com/mycompany/core/fetch/FetchPlanBuilderTest.java`.
-- Use `*.spec.ts` for Angular tests, for example `angapp/src/main/webapp/app/core/auth/account.service.spec.ts`.
+- Backend unit tests use `*Test.java`.
+- Backend integration tests use `*IT.java`.
+- Shared test annotations and helpers use descriptive names such as `IntegrationTest.java`, `AuthenticationIntegrationTest.java`, and `WithUnauthenticatedMockUser.java`.
+- Frontend unit and e2e files use `*.spec.ts`.
 
 **Structure:**
 ```text
-src/test/java/com/vn/core/...                  # root backend tests
-angapp/src/test/java/com/mycompany/myapp/...  # angapp backend tests
-angapp/src/test/java/com/mycompany/core/...   # custom security/fetch/serializer tests
-angapp/src/main/webapp/app/**/**/*.spec.ts    # Angular co-located tests
+src/test/java/com/vn/core/...                  backend unit + integration tests
+src/test/resources/config/...                  backend test profiles
+src/test/resources/config/liquibase/...        test schema + seeded proof data
+src/test/resources/fetch-plans-test.yml        fetch-plan fixture
+frontend/src/app/.../*.spec.ts                 co-located Angular unit tests
+frontend/e2e/*.spec.ts                         Playwright browser suites
 ```
-
-## Integration-Test Setup
-
-**Root Service Setup:**
-- Annotate Spring integration tests with the composite `@IntegrationTest` from `src/test/java/com/vn/core/IntegrationTest.java`.
-- Use `@AutoConfigureMockMvc` and usually `@WithMockUser` for REST tests, as shown in `src/test/java/com/vn/core/web/rest/UserResourceIT.java`, `AccountResourceIT.java`, and `AuthorityResourceIT.java`.
-- Root integration tests import a shared PostgreSQL Testcontainer through `src/test/java/com/vn/core/config/DatabaseTestcontainer.java`. The container is defined once, reused, and registered through `@DynamicPropertySource`.
-
-**angapp Setup:**
-- Annotate Spring integration tests with `@IntegrationTest` from `angapp/src/test/java/com/mycompany/myapp/IntegrationTest.java`.
-- `angapp` uses `@EmbeddedSQL` plus `angapp/src/test/java/com/mycompany/myapp/config/SqlTestContainersSpringContextCustomizerFactory.java` to inject datasource properties when the `testprod` profile is active.
-- Keep the custom container abstraction behind `angapp/src/test/java/com/mycompany/myapp/config/SqlTestContainer.java`.
-
-**Execution Ordering:**
-- Both app trees sort non-Spring tests before full context tests through `src/test/java/com/vn/core/config/SpringBootTestClassOrderer.java` and `angapp/src/test/java/com/mycompany/myapp/config/SpringBootTestClassOrderer.java`.
-- Both JUnit platform property files enforce method timeouts and class ordering in `src/test/resources/junit-platform.properties` and `angapp/src/test/resources/junit-platform.properties`.
 
 ## Test Structure
 
 **Suite Organization:**
 ```java
-@AutoConfigureMockMvc
-@WithMockUser(authorities = AuthoritiesConstants.ADMIN)
 @IntegrationTest
-class UserResourceIT {
+@AutoConfigureMockMvc
+@Transactional
+class SecuredEntityEnforcementIT {
+  @Autowired
+  private MockMvc restMockMvc;
 
-    @Autowired
-    private MockMvc restUserMockMvc;
-
-    @BeforeEach
-    void initTest() {
-        user = initTestUser();
-    }
-
-    @Test
-    @Transactional
-    void createUser() throws Exception {
-        // arrange, act with MockMvc, assert persisted state
-    }
+  @Test
+  @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
+  void getOrganizations_returnsOwnedRowsOnly() throws Exception {
+    restMockMvc.perform(get("/api/organizations?sort=id,asc")).andExpect(status().isOk());
+  }
 }
 ```
 
 ```typescript
-describe('Account Service', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [TranslateModule.forRoot()],
-      providers: [provideHttpClient(), provideHttpClientTesting(), StateStorageService],
-    });
+beforeEach(() => {
+  TestBed.configureTestingModule({
+    imports: [OrganizationListComponent],
+    providers: [...],
   });
+});
 
-  it('should call account saving endpoint with correct values', () => {
-    service.save(account).subscribe();
-    const testRequest = httpMock.expectOne({ method: 'POST', url: applicationConfigService.getEndpointFor('api/account') });
-    testRequest.flush({});
-    expect(testRequest.request.body).toEqual(account);
-  });
+it('renders the list', async () => {
+  const fixture = TestBed.createComponent(OrganizationListComponent);
+  fixture.detectChanges();
+  await fixture.whenStable();
+  fixture.detectChanges();
 });
 ```
 
 **Patterns:**
-- Arrange fixtures with static factory methods or test samples, then assert both HTTP responses and persisted state. See `src/test/java/com/vn/core/web/rest/UserResourceIT.java` and `angapp/src/test/java/com/mycompany/myapp/web/rest/OrganizationResourceIT.java`.
-- Use `@Transactional` on backend tests that touch persistence so each test runs in an isolated transaction, as seen throughout `src/test/java/com/vn/core/web/rest/*.java` and `angapp/src/test/java/com/mycompany/myapp/web/rest/*.java`.
-- In Angular tests, initialize `TestBed`, inject collaborators, subscribe to the observable under test, then flush the request through `HttpTestingController`.
+- Backend integration tests compose `@IntegrationTest`, `@AutoConfigureMockMvc`, optional `@Transactional`, and `@WithMockUser` or request-level `user(...)`, as in `src/test/java/com/vn/core/web/rest/SecuredEntityEnforcementIT.java`.
+- Backend unit tests use `@ExtendWith(MockitoExtension.class)`, `@Mock`, and `@InjectMocks`, as in `src/test/java/com/vn/core/security/data/SecureDataManagerImplTest.java` and `src/test/java/com/vn/core/service/security/SecuredEntityCapabilityServiceTest.java`.
+- Angular service specs usually configure providers only, then use `firstValueFrom(...)` plus `HttpTestingController`, as in `frontend/src/app/layout/navigation/navigation.service.spec.ts`.
+- Angular component specs import the real standalone component, set route and service doubles explicitly, then assert against `fixture.nativeElement`, as in `frontend/src/app/pages/entities/organization/list/organization-list.component.spec.ts`.
 
 ## Mocking
 
-**Framework:** Mockito on the backend, Jest mocks and Angular HTTP testing on the frontend.
+**Framework:** Mockito on the backend, `vi.fn()` and `HttpTestingController` in Angular unit tests, `page.route(...)` and `playwright.request.newContext(...)` in Playwright suites.
 
 **Patterns:**
 ```java
-OrganizationRepository organizationRepository = mock(OrganizationRepository.class);
-SecureDataManager secureDataManager = mock(SecureDataManager.class);
-when(secureDataManager.loadOne(Organization.class, 11L, "organization-detail")).thenReturn(Map.of(...));
+@ExtendWith(MockitoExtension.class)
+class SecureDataManagerImplTest {
+  @Mock
+  private DataManager dataManager;
+
+  @InjectMocks
+  private SecureDataManagerImpl secureDataManager;
+}
 ```
 
 ```typescript
-jest.mock('app/core/auth/state-storage.service');
-jest.spyOn(mockRouter, 'navigateByUrl').mockImplementation(() => Promise.resolve(true));
-const req = httpMock.expectOne({ method: 'GET' });
-req.flush({});
+const router = { navigate: vi.fn(() => Promise.resolve(true)) };
+
+TestBed.configureTestingModule({
+  providers: [{ provide: Router, useValue: router }],
+});
 ```
 
 **What to Mock:**
-- Mock collaborators for isolated backend unit tests, for example repositories, mappers, and secure data services in `angapp/src/test/java/com/mycompany/myapp/service/impl/OrganizationServiceImplTest.java`.
-- Mock role or security collaborators in focused custom-core tests, for example `angapp/src/test/java/com/mycompany/core/security/permission/AttributePermissionEvaluatorImplTest.java`.
-- Mock Angular infrastructure services such as router, storage, and HTTP in `angapp/src/main/webapp/app/core/auth/account.service.spec.ts`.
+- Mock repositories, metamodel access, collaborators, and security services in backend unit tests.
+- Mock HTTP transport with `HttpTestingController` for Angular services and interceptors.
+- Stub route data, router navigation, translations, and PrimeNG services in Angular component specs.
+- Use `page.route(...)` in `frontend/e2e/user-management.spec.ts` when the scenario only needs shell behavior and not a live backend contract.
 
 **What NOT to Mock:**
-- Do not mock the REST layer in backend integration tests. Use the real Spring context with `MockMvc`, as shown in `src/test/java/com/vn/core/web/rest/UserResourceIT.java` and `angapp/src/test/java/com/mycompany/myapp/web/rest/DepartmentResourceIT.java`.
-- Do not mock persistence for root integration tests that already boot Postgres through `DatabaseTestcontainer`.
+- Do not mock the Spring MVC stack, Liquibase schema, or PostgreSQL container in backend `*IT` suites; those tests are meant to verify the full API and security contract.
+- Do not replace standalone Angular components with shallow shells in view specs; import the real component and test the rendered DOM.
+- Do not re-create proof security seed data in every backend test when it already exists in `src/test/resources/config/liquibase/changelog/20260321000800_seed_proof_security_test_data.xml`.
 
 ## Fixtures and Factories
 
 **Test Data:**
 ```java
+// `src/test/java/com/vn/core/web/rest/UserResourceIT.java`
 public static User createEntity() { ... }
 public static User initTestUser() { ... }
 ```
 
 ```typescript
-export const sampleWithRequiredData: IOrganization = { ... };
-Object.freeze(sampleWithRequiredData);
+// `frontend/e2e/user-management.spec.ts`
+function buildUsers(targetAuthorities: string[]): MockUser[] { ... }
 ```
 
 **Location:**
-- Root REST fixtures and helpers live in `src/test/java/com/vn/core/web/rest/UserResourceIT.java` and `src/test/java/com/vn/core/web/rest/TestUtil.java`.
-- Domain assertion helpers and samples live under `src/test/java/com/vn/core/domain/` and `angapp/src/test/java/com/mycompany/myapp/domain/`, for example `AuthorityAsserts.java`, `OrganizationAsserts.java`, and `OrganizationTestSamples.java`.
-- Angular entity fixtures live next to the feature, for example `angapp/src/main/webapp/app/entities/organization/organization.test-samples.ts`.
-- Patch assertions use `createUpdateProxyForBean` from `src/test/java/com/vn/core/web/rest/TestUtil.java` and its `angapp` equivalent.
+- Backend factories are usually local static helpers inside each test class, for example `src/test/java/com/vn/core/web/rest/UserResourceIT.java`.
+- Reusable backend sample data also lives in helper files such as `src/test/java/com/vn/core/domain/AuthorityTestSamples.java`.
+- Shared backend utilities and annotations live in `src/test/java/com/vn/core/IntegrationTest.java`, `src/test/java/com/vn/core/web/rest/TestUtil.java`, `src/test/java/com/vn/core/web/rest/WithUnauthenticatedMockUser.java`, and `src/test/java/com/vn/core/security/jwt/JwtAuthenticationTestUtils.java`.
+- Database seed fixtures live in `src/test/resources/config/liquibase/test-master.xml` and `src/test/resources/config/liquibase/changelog/20260321000800_seed_proof_security_test_data.xml`.
+- Fetch-plan fixtures live in `src/test/resources/fetch-plans-test.yml`.
+- Frontend fixture data is mostly inline per spec near the suite it serves; there is no shared fixture library in `frontend/` yet.
+
+## Helper Infrastructure
+
+- `src/test/java/com/vn/core/IntegrationTest.java` imports `DatabaseTestcontainer`, `JacksonConfiguration`, and async overrides so integration suites boot a consistent Spring test application.
+- `src/test/java/com/vn/core/config/DatabaseTestcontainer.java` provides a reusable PostgreSQL 18.3 container and wires datasource properties through `@DynamicPropertySource`.
+- `src/test/resources/junit-platform.properties` sets global JUnit timeouts and orders classes with `src/test/java/com/vn/core/config/SpringBootTestClassOrderer.java`.
+- `src/test/java/com/vn/core/security/jwt/AuthenticationIntegrationTest.java` provides a targeted JWT-authentication slice without starting the entire application graph.
+- `src/test/java/com/vn/core/web/rest/TestUtil.java` contains shared JSON, date, number, entity-manager, and proxy helpers for REST tests.
+- Playwright suites use `playwright.request.newContext({ baseURL: 'http://localhost:4200' })` for admin setup and cleanup in `frontend/e2e/proof-role-gating.spec.ts` and `frontend/e2e/security-comprehensive.spec.ts`.
 
 ## Coverage
 
-**Requirements:** No numeric coverage threshold is enforced in the explored Gradle or Jest config. Coverage is collected, but not gated.
+**Requirements:** No explicit coverage threshold is enforced for either the backend or the active `frontend/` app.
 
 **View Coverage:**
 ```bash
-cd angapp && npm test
-cd angapp && npm run jest
-./gradlew testReport integrationTestReport
+./gradlew jacocoTestReport
+npm --prefix frontend run test -- --code-coverage
 ```
 
-- Angular/Jest writes coverage and reports under `angapp/build/test-results/` per `angapp/jest.conf.js`.
-- Backend Gradle generates aggregated HTML reports through `testReport` and `integrationTestReport` in `gradle/spring-boot.gradle` and `angapp/build.gradle`.
+- Backend coverage is emitted by JaCoCo from `buildSrc/src/main/groovy/jhipster.code-quality-conventions.gradle`.
+- `sonar-project.properties` consumes backend JUnit reports from `build/test-results/test` and `build/test-results/integrationTest`, plus JaCoCo XML from `build/reports/jacoco/test/jacocoTestReport.xml`.
+- The active `frontend/` app has no dedicated committed coverage reporter config or coverage script. Use Angular builder flags explicitly when coverage is needed.
+- Legacy `angapp/` still exposes `npm --prefix angapp run test` with coverage flags in `angapp/package.json`, but that is no longer the primary frontend test path.
 
 ## Test Types
 
 **Unit Tests:**
-- Root backend unit coverage focuses on utilities, mappers, structure, and config fragments: `src/test/java/com/vn/core/service/mapper/UserMapperTest.java`, `src/test/java/com/vn/core/security/SecurityUtilsUnitTest.java`, `src/test/java/com/vn/core/config/CRLFLogConverterTest.java`, and `src/test/java/com/vn/core/TechnicalStructureTest.java`.
-- `angapp` adds unit tests for custom fetch/security/serializer logic in `angapp/src/test/java/com/mycompany/core/fetch/FetchPlanBuilderTest.java`, `YamlFetchPlanRepositoryTest.java`, `SecureEntitySerializerImplTest.java`, and `AttributePermissionEvaluatorImplTest.java`.
-- Angular unit tests cover services, directives, pipes, forms, and components, for example `angapp/src/main/webapp/app/core/auth/account.service.spec.ts`, `angapp/src/main/webapp/app/shared/sort/sort.directive.spec.ts`, and `angapp/src/main/webapp/app/entities/organization/update/organization-form.service.spec.ts`.
+- Backend unit coverage is concentrated in `src/test/java/com/vn/core/security/**`, `src/test/java/com/vn/core/service/**`, `src/test/java/com/vn/core/management/**`, and mapper/domain helper tests.
+- Angular unit tests cover guards, interceptors, navigation services, list and detail components, admin user-management flows, and admin security screens under `frontend/src/app/**`.
 
 **Integration Tests:**
-- Root backend integration tests focus on REST endpoints, security, mail, and user lifecycle in `src/test/java/com/vn/core/web/rest/*.java`, `src/test/java/com/vn/core/security/jwt/*.java`, `src/test/java/com/vn/core/service/UserServiceIT.java`, and `src/test/java/com/vn/core/service/MailServiceIT.java`.
-- `angapp` integration tests cover generated endpoints plus newer domain endpoints in `angapp/src/test/java/com/mycompany/myapp/web/rest/OrganizationResourceIT.java`, `DepartmentResourceIT.java`, and `SpaWebFilterIT.java`.
+- Backend integration tests hit real controllers through MockMvc, testcontainers PostgreSQL, Liquibase migrations, and Spring Security annotations.
+- REST contract suites such as `src/test/java/com/vn/core/web/rest/UserResourceIT.java`, `src/test/java/com/vn/core/web/rest/SecuredEntityEnforcementIT.java`, and `src/test/java/com/vn/core/web/rest/errors/ExceptionTranslatorIT.java` verify transport shape and security behavior together.
+- Specialized integration slices exist for JWT authentication and metrics under `src/test/java/com/vn/core/security/jwt/**`.
 
 **E2E Tests:**
-- E2E packaging and server scripts exist in `package.json` and `angapp/package.json` (`ci:e2e:*` and `-Pe2e`), but no browser-level E2E specs or a framework like Cypress/Playwright are detected in the explored files.
+- Playwright suites in `frontend/e2e` cover real browser flows against `http://localhost:4200`.
+- Some suites seed and tear down data through live admin APIs, for example `frontend/e2e/proof-role-gating.spec.ts` and `frontend/e2e/security-comprehensive.spec.ts`.
+- Other suites isolate shell behavior by mocking API routes in-browser, for example `frontend/e2e/user-management.spec.ts`.
 
 ## Common Patterns
 
 **Async Testing:**
 ```typescript
-it('should navigate to the previous stored url post successful authentication', () => {
-  service.identity().subscribe();
-  httpMock.expectOne({ method: 'GET' }).flush({});
-  expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('admin/users?page=0');
-});
+const fixture = TestBed.createComponent(OrganizationListComponent);
+fixture.detectChanges();
+await fixture.whenStable();
+fixture.detectChanges();
 ```
 
-```java
-restUserMockMvc
-    .perform(post("/api/admin/users").contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(userDTO)))
-    .andExpect(status().isCreated());
+```typescript
+const queryPromise = firstValueFrom(service.query());
+httpMock.expectOne(req => req.url === 'api/security/menu-permissions').flush(...);
+expect(await queryPromise).toEqual(...);
 ```
 
 **Error Testing:**
 ```java
-restUserMockMvc
-    .perform(post("/api/admin/users").contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(userDTO)))
-    .andExpect(status().isBadRequest());
+mockMvc.perform(get("/api/exception-translator-test/access-denied"))
+  .andExpect(status().isForbidden())
+  .andExpect(jsonPath("$.message").value("error.http.403"));
 ```
 
 ```typescript
-service.identity().subscribe();
-httpMock.expectOne({ method: 'GET' }).error(new ProgressEvent(''));
-expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
+permissionService.create.mockReturnValue(throwError(() => new Error('network error')));
+component.flushChanges();
+expect(component.pendingChanges.has('organization:CREATE')).toBe(true);
 ```
-
-## Helpers and Reusable Test Utilities
-
-**Backend Helpers:**
-- `src/test/java/com/vn/core/web/rest/TestUtil.java` centralizes equality checks, date/number matchers, entity listing, and partial-update proxy generation.
-- `src/test/java/com/vn/core/web/rest/WithUnauthenticatedMockUser.java` and `src/test/java/com/vn/core/security/jwt/JwtAuthenticationTestUtils.java` provide security test support. `angapp/` mirrors these helpers under `angapp/src/test/java/com/mycompany/myapp/`.
-
-**Frontend Helpers:**
-- Entity sample files such as `angapp/src/main/webapp/app/entities/organization/organization.test-samples.ts` provide frozen fixtures for service and form tests.
-- `ApplicationConfigService` is injected rather than re-created in specs, which keeps URL formation behavior aligned with production code in `angapp/src/main/webapp/app/core/config/application-config.service.ts`.
-
-## Obvious Coverage Gaps
-
-**Root Backend:**
-- Only 34 Java test files are present for 68 root `src/main/java` files. Tests heavily cover `web/rest`, security, mail, and user management, but no direct tests were detected for many config classes beyond `WebConfigurer`, `CRLFLogConverter`, and timezone handling in `src/main/java/com/vn/core/config/`.
-- No frontend test suite exists for the root project. Frontend testing only exists under `angapp/`.
-
-**angapp Backend:**
-- `angapp/src/main/java/com/mycompany/core/fetch/` and `angapp/src/main/java/com/mycompany/core/serialize/` have focused unit coverage, but no tests were detected for most of `angapp/src/main/java/com/mycompany/core/security/access/`, `angapp/src/main/java/com/mycompany/core/security/row/`, `angapp/src/main/java/com/mycompany/core/security/core/`, `angapp/src/main/java/com/mycompany/core/merge/`, or `angapp/src/main/java/com/mycompany/core/repository/SpringRepositoryRegistry.java`.
-- `angapp/src/main/java/com/mycompany/myapp/service/impl/OrganizationServiceImpl.java` has a dedicated unit test, but no equivalent implementation tests were detected for `EmployeeServiceImpl.java` or `DepartmentServiceImpl.java`.
-
-**angapp Frontend:**
-- There are 73 Angular `*.spec.ts` files for 314 files under `angapp/src/main/webapp/app/`. Entity areas `sec-role`, `sec-permission`, and `sec-row-policy` have implementation files but no matching `*.spec.ts` files were detected under their feature directories.
 
 ---
 
-*Testing analysis: 2026-03-21*
+*Testing analysis: 2026-03-27*
