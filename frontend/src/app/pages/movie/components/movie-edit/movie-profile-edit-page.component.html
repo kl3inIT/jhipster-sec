@@ -1,0 +1,37 @@
+<div class="film-profile-page edit-route">
+  <p-toast></p-toast>
+
+  <div class="page-header">
+    <div class="page-title">
+      <button
+        pButton
+        type="button"
+        class="p-button-text p-button-sm back-btn"
+        icon="pi pi-arrow-left"
+        label="Chi tiết"
+        [routerLink]="detailBackLink()"
+      ></button>
+      <h1 class="m-0 text-2xl font-semibold">Sửa dự án phim</h1>
+      <p class="m-0 text-color-secondary text-sm">Cập nhật thông tin hồ sơ và ekip</p>
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <p class="text-color-secondary">Đang tải...</p>
+  } @else if (loadError || !profile) {
+    <p class="text-color-secondary">Không tìm thấy hồ sơ phim.</p>
+    <button
+      pButton
+      type="button"
+      label="Về danh sách"
+      [routerLink]="['/entities/movie']"
+      class="p-button-outlined mt-2"
+    ></button>
+  } @else {
+    <app-movie-profile-edit
+      [profile]="profile"
+      (onUpdated)="onUpdated()"
+      (onCancel)="onCancel()"
+    ></app-movie-profile-edit>
+  }
+</div>

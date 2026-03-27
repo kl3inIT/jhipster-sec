@@ -1,0 +1,158 @@
+<div class="film-profile-page">
+  <div class="page-header">
+    <div class="page-title">
+      <h1 class="m-0 text-2xl font-semibold">Hồ sơ phim</h1>
+      <p class="m-0 text-color-secondary text-sm">Quản lý dự án phim và hồ sơ sản xuất</p>
+    </div>
+
+    <div class="page-actions">
+      <button
+        pButton
+        type="button"
+        class="p-button-outlined export-button"
+        icon="pi pi-download"
+        label="Xuất Excel"
+        (click)="exportExcel()"
+      ></button>
+
+      <button
+        pButton
+        type="button"
+        class="primary-button"
+        icon="pi pi-plus"
+        label="Tạo dự án mới"
+        (click)="openCreateDialog()"
+      ></button>
+    </div>
+  </div>
+
+  <p-card class="shadow-sm">
+    <div class="table-toolbar">
+      <span class="p-input-icon-left search-input">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="Tìm theo mã hoặc tên phim..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="filterData()"
+        />
+      </span>
+
+      <select
+        class="status-filter p-inputtext"
+        [(ngModel)]="selectedStatus"
+        (ngModelChange)="filterData()"
+      >
+        <option
+          *ngFor="let option of statusOptions"
+          [value]="option.value"
+        >
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
+
+    <p-table
+      [value]="filteredProfilesData"
+      [loading]="isLoading"
+      [tableStyle]="{ 'min-width': '100%' }"
+      styleClass="p-datatable-gridlines p-datatable-sm"
+    >
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="w-32">Mã hồ sơ</th>
+          <th>Tên phim</th>
+          <th>Loại phim</th>
+          <th>Phân loại</th>
+          <th class="w-28 text-center">Năm SX</th>
+          <th class="w-56">Thời gian</th>
+          <th class="w-40 text-center">Trạng thái</th>
+          <th class="actions-col text-center">Thao tác</th>
+        </tr>
+      </ng-template>
+
+      
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>
+            <span
+              class="font-medium text-primary cursor-pointer hover:underline"
+              (click)="goToDetail(row)"
+              (keyup.enter)="goToDetail(row)"
+              tabindex="0"
+              role="link"
+              >{{ row.profileCode }}</span
+            >
+          </td>
+          <td>{{ row.movieName }}</td>
+          <td>{{ typeLabel(row.movieType) }}</td>
+          <td>{{ categoryLabel(row.classification) }}</td>
+          <td class="text-center">{{ row.productionYear }}</td>
+          <td>{{ getTimeRange(row) }}</td>
+          <td class="text-center">
+            <p-tag
+              [value]="statusLabel(row.status)"
+              [severity]="statusSeverity(row.status)"
+              styleClass="status-tag"
+            ></p-tag>
+          </td>
+          <td class="text-center">
+            <div class="actions-wrap">
+              <button
+                pButton
+                type="button"
+                class="action-btn p-button-text p-button-sm p-button-rounded p-button-plain text-color-secondary"
+                icon="pi pi-eye"
+                (click)="goToDetail(row)"
+              ></button>
+              <button
+                pButton
+                type="button"
+                class="action-btn p-button-text p-button-sm p-button-rounded p-button-plain text-color-secondary"
+                icon="pi pi-pencil"
+                (click)="goToEdit(row)"
+              ></button>
+              <button
+                pButton
+                type="button"
+                class="action-btn p-button-text p-button-sm p-button-rounded p-button-plain text-color-secondary"
+                icon="pi pi-trash"
+                (click)="confirmDelete(row)"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="text-center text-color-secondary py-4">
+            Không tìm thấy hồ sơ phim nào.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <p-toast></p-toast>
+
+  <p-dialog
+    header="Tạo dự án mới"
+    [(visible)]="showCreateDialog"
+    [modal]="true"
+    [style]="{ width: '900px' }"
+    [draggable]="false"
+    [resizable]="false"
+    (onHide)="handleDialogHide()"
+  >
+    <app-movie-profile-create
+      #createDialogRef
+      (onCreated)="handleCreated()"
+      (onCancel)="closeCreateDialog()"
+    ></app-movie-profile-create>
+  </p-dialog>
+
+  <p-confirmDialog></p-confirmDialog>
+</div>

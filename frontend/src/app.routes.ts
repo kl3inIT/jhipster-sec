@@ -45,6 +45,11 @@ export const appRoutes: Routes = [
         canActivate: [UserRouteAccessService],
       },
       {
+        path: 'entities/movie',
+        loadChildren: () => import('./app/pages/movie/movie.routes'),
+        canActivate: [UserRouteAccessService],
+      },
+      {
         path: 'admin',
         loadChildren: () => import('./app/pages/admin/admin.routes'),
         canActivate: [UserRouteAccessService],

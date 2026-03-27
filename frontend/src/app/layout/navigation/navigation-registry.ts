@@ -63,6 +63,16 @@ export const APP_NAVIGATION_TREE: readonly AppNavigationSection[] = [
         breadcrumbKey: 'layout.menu.entities.employee',
         deniedMode: 'in-shell',
       },
+      {
+        id: 'entities.movie',
+        sectionId: 'entities',
+        labelKey: 'layout.menu.entities.movie',
+        icon: 'pi pi-video',
+        routerLink: ['/entities/movie'],
+        routePrefix: '/entities/movie',
+        breadcrumbKey: 'layout.menu.entities.movie',
+        deniedMode: 'in-shell',
+      },
     ],
   },
   {
