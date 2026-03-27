@@ -44,7 +44,7 @@
 **Security Layer:**
 - Purpose: Authenticate users from persistence, expose authority constants and security helpers, and bridge the current principal into auditing.
 - Location: `src/main/java/com/vn/core/security/`
-- Contains: `DomainUserDetailsService`, `SecurityUtils`, `SpringSecurityAuditorAware`, `AuthoritiesConstants`, `UserNotActivatedException`.
+- Contains: `DomainUserDetailsService`, `SecurityUtils`, `SpringSecurityAuditorAware`, `AuthoritiesConstants`, `UserNotActivatedException`, plus the secure data-access seam under `security/data/`.
 - Depends on: `com.vn.core.repository`, `com.vn.core.domain`, Spring Security, JWT claim access.
 - Used by: `src/main/java/com/vn/core/config/SecurityConfiguration.java`, `src/main/java/com/vn/core/web/rest/AuthenticateController.java`, `src/main/java/com/vn/core/service/UserService.java`.
 
@@ -85,6 +85,13 @@
 - Persist durable state in PostgreSQL through JPA and Liquibase-configured schema files under `src/main/resources/config/liquibase/`.
 - Cache user lookups and Hibernate second-level data through Hazelcast in `src/main/java/com/vn/core/config/CacheConfiguration.java` and cache annotations in `src/main/java/com/vn/core/repository/UserRepository.java`.
 
+**Protected Entity Data Flow:**
+
+1. Protected services call `src/main/java/com/vn/core/security/data/SecureDataManager.java`.
+2. `src/main/java/com/vn/core/security/data/SecureDataManagerImpl.java` resolves secured entity metadata, builds row-level specifications, applies fetch plans, and serializes or merges payloads.
+3. CRUD-checked repository access flows through `src/main/java/com/vn/core/security/data/DataManagerImpl.java`.
+4. Raw repository mechanics live in `src/main/java/com/vn/core/security/data/UnconstrainedDataManagerImpl.java`, which remains the explicit bypass path via `DataManager.unconstrained()`.
+
 ## Key Abstractions
 
 **User Aggregate:**
@@ -106,6 +113,11 @@
 - Purpose: Hold app-specific configuration without scattering string lookups.
 - Examples: `src/main/java/com/vn/core/config/ApplicationProperties.java`
 - Pattern: Bind `application.*` keys from `src/main/resources/config/application.yml` into a dedicated configuration properties class.
+
+**Secure Data Access Pipeline:**
+- Purpose: Separate application-facing secure orchestration from CRUD-checked internal data access and explicit unconstrained bypass mechanics.
+- Examples: `src/main/java/com/vn/core/security/data/SecureDataManager.java`, `src/main/java/com/vn/core/security/data/DataManager.java`, `src/main/java/com/vn/core/security/data/UnconstrainedDataManager.java`
+- Pattern: `SecureDataManagerImpl` owns row-policy, fetch-plan, merge, and serialization orchestration; `DataManagerImpl` enforces CRUD permissions; `UnconstrainedDataManagerImpl` owns raw repository-backed mechanics.
 
 ## Entry Points
 

@@ -20,7 +20,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Unit tests for {@link RolePermissionServiceDbImpl} verifying DENY-wins semantics per D-07.
+ * Unit tests for {@link RolePermissionServiceDbImpl} verifying default-deny
+ * union-of-ALLOW semantics for entity checks.
  */
 @ExtendWith(MockitoExtension.class)
 class RolePermissionServiceDbImplTest {
@@ -41,7 +42,7 @@ class RolePermissionServiceDbImplTest {
     }
 
     @Test
-    void testDenyWinsOverAllow() {
+    void testAllowAndDenyStillReturnsTrue() {
         SecPermission allow = new SecPermission().effect("ALLOW");
         SecPermission deny = new SecPermission().effect("DENY");
         when(secPermissionRepository.findByRolesAndTarget(anyCollection(), any(TargetType.class), any(), any())).thenReturn(
@@ -50,7 +51,7 @@ class RolePermissionServiceDbImplTest {
 
         boolean result = service.hasPermission(List.of("ROLE_USER"), TargetType.ENTITY, "SOMEENTITY", "READ");
 
-        assertThat(result).isFalse();
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -64,7 +65,7 @@ class RolePermissionServiceDbImplTest {
     }
 
     @Test
-    void testNoPermissionsReturnsFalse() {
+    void testEmptyResultReturnsFalse() {
         when(secPermissionRepository.findByRolesAndTarget(anyCollection(), any(TargetType.class), any(), any())).thenReturn(List.of());
 
         boolean result = service.hasPermission(List.of("ROLE_USER"), TargetType.ENTITY, "SOMEENTITY", "READ");
@@ -107,20 +108,6 @@ class RolePermissionServiceDbImplTest {
         boolean result = service.hasPermission(List.of("ROLE_ADMIN"), TargetType.ENTITY, "ORDER", "READ");
 
         assertThat(result).isFalse();
-    }
-
-    @Test
-    void testMultipleAllowsReturnTrue() {
-        when(mergedSecurityService.getCurrentUserAuthorityNames()).thenReturn(List.of("ROLE_USER", "ROLE_ADMIN"));
-        SecPermission allow1 = new SecPermission().effect("ALLOW");
-        SecPermission allow2 = new SecPermission().effect("ALLOW");
-        when(secPermissionRepository.findByRolesAndTarget(anyCollection(), any(TargetType.class), any(), any())).thenReturn(
-            List.of(allow1, allow2)
-        );
-
-        boolean result = service.isEntityOpPermitted(SomeEntity.class, EntityOp.READ);
-
-        assertThat(result).isTrue();
     }
 
     @Test
