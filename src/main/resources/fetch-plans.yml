@@ -73,3 +73,43 @@ fetch-plans:
           - id
           - code
           - name
+
+  - entity: com.vn.core.domain.movie.MovieProfile
+    name: movie-profile-list
+    properties:
+      - id
+      - profileCode
+      - movieName
+      - movieType
+      - classification
+      - productionYear
+      - startDate
+      - endDate
+      - status
+
+  - entity: com.vn.core.domain.movie.MovieProfile
+    name: movie-profile-detail
+    extends: movie-profile-list
+    properties:
+      - genre
+      - themeOrientation
+      - summary
+      - name: ekipMembers
+        properties:
+          - id
+          - ekipName
+          - role
+
+  - entity: com.vn.core.domain.movie.ProductionEkip
+    name: production-ekip-list
+    properties:
+      - id
+      - ekipName
+      - role
+      - name: movieProfile
+        properties:
+          - id
+
+  - entity: com.vn.core.domain.movie.ProductionEkip
+    name: production-ekip-detail
+    extends: production-ekip-list

@@ -5,9 +5,13 @@ import com.vn.core.domain.movie.enumeration.Classification;
 import com.vn.core.domain.movie.enumeration.Genre;
 import com.vn.core.domain.movie.enumeration.MovieType;
 import com.vn.core.domain.movie.enumeration.Status;
+import com.vn.core.security.catalog.SecuredEntity;
 import jakarta.persistence.*;
+import java.util.HashSet;
 import java.time.LocalDate;
+import java.util.Set;
 
+@SecuredEntity(code = "movie-profile", fetchPlanCodes = { "movie-profile-list", "movie-profile-detail" })
 @Entity
 @Table(name = "movie_profile")
 public class MovieProfile {
@@ -59,12 +63,23 @@ public class MovieProfile {
     @Column(name = "profile_code", unique = true, length = 30)
     private String profileCode;
 
+    @OneToMany(mappedBy = "movieProfile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProductionEkip> ekipMembers = new HashSet<>();
+
     public String getProfileCode() {
         return profileCode;
     }
 
     public void setProfileCode(String profileCode) {
         this.profileCode = profileCode;
+    }
+
+    public Set<ProductionEkip> getEkipMembers() {
+        return ekipMembers;
+    }
+
+    public void setEkipMembers(Set<ProductionEkip> ekipMembers) {
+        this.ekipMembers = ekipMembers;
     }
 
     public MovieType getMovieType() {

@@ -256,7 +256,8 @@
         "main": "Thực thể",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
         "department": "Department",
-        "organization": "Organization"
+        "organization": "Organization",
+        "movie": "Dự án phim"
       },
       "account": {
         "main": "Tài khoản",
@@ -379,7 +380,7 @@
       },
       "entities": {
         "employee": "Nhân viên",
-        "movie": "Dự án Phim"
+        "movie": "Dự án phim"
       }
     }
   },

@@ -1,0 +1,63 @@
+@if (profile) {
+  <div class="detail-page">
+    <div class="detail-header">
+      <div>
+        <h2 class="title">{{ profile.movieName ?? '—' }}</h2>
+        <div class="code">{{ profile.profileCode ?? '—' }}</div>
+      </div>
+      <div class="actions">
+        <p-tag [value]="statusLabel(profile.status)" [severity]="statusSeverity(profile.status)"></p-tag>
+        <button pButton type="button" icon="pi pi-pencil" label="Chỉnh sửa" class="p-button-outlined" (click)="onEdit()"></button>
+      </div>
+    </div>
+
+    <section class="panel">
+      <h3>Thông tin chung</h3>
+      <div class="grid three-cols">
+        <div class="item"><label>Mã hồ sơ</label><div>{{ profile.profileCode ?? '—' }}</div></div>
+        <div class="item"><label>Tên phim</label><div>{{ profile.movieName ?? '—' }}</div></div>
+        <div class="item"><label>Loại phim</label><div>{{ typeLabel(profile.movieType) }}</div></div>
+        <div class="item"><label>Phân loại</label><div>{{ categoryLabel(profile.classification) }}</div></div>
+        <div class="item"><label>Thể loại</label><div>{{ genreLabel(profile.genre) }}</div></div>
+        <div class="item"><label>Năm sản xuất</label><div>{{ profile.productionYear ?? '—' }}</div></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>Định hướng & Nội dung</h3>
+      <div class="stack">
+        <div class="item"><label>Định hướng đề tài</label><div>{{ profile.themeOrientation ?? '—' }}</div></div>
+        <div class="item"><label>Tóm tắt nội dung</label><div>{{ profile.summary ?? '—' }}</div></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>Kế hoạch thời gian</h3>
+      <div class="grid three-cols">
+        <div class="item"><label>Ngày bắt đầu dự kiến</label><div>{{ formatDate(profile.startDate) }}</div></div>
+        <div class="item"><label>Ngày kết thúc dự kiến</label><div>{{ formatDate(profile.endDate) }}</div></div>
+        <div class="item"><label>Tổng thời gian</label><div>{{ getDurationDays(profile.startDate, profile.endDate) }}</div></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>Tổ ekip sản xuất</h3>
+      <div class="stack">
+        @if (productionEkips.length === 0) {
+        <div class="item"><div>—</div></div>
+        } @else {
+        @for (member of productionEkips; track $index) {
+        <div class="item">
+          <label>{{ roleLabel(member.role) }}</label>
+          <div>{{ member.ekipName ?? '—' }}</div>
+        </div>
+        }
+        }
+      </div>
+    </section>
+
+    <div class="footer-actions">
+      <!-- <button pButton type="button" class="p-button-text" label="Đóng" icon="pi pi-times" (click)="close.emit()"></button> -->
+    </div>
+  </div>
+}

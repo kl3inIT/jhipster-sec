@@ -1,12 +1,10 @@
 <form [formGroup]="form" (ngSubmit)="save()" class="create-form">
 
-  <!-- Error banner -->
   @if (errorMessage) {
   <p-message severity="error" [text]="errorMessage" styleClass="w-full mb-4" />
   }
 
   <div class="form-grid">
-    <!-- Tên phim -->
     <div class="field">
       <label for="name" class="field-label required">Tên phim</label>
       <input id="name" pInputText formControlName="name" placeholder="Nhập tên phim" class="w-full"
@@ -16,7 +14,6 @@
       }
     </div>
 
-    <!-- Loại phim -->
     <div class="field">
       <label for="type" class="field-label required">Loại phim</label>
       <p-select id="type" formControlName="type" [options]="typeOptions" optionLabel="label" optionValue="value"
@@ -26,7 +23,6 @@
       }
     </div>
 
-    <!-- Phân loại -->
     <div class="field">
       <label for="category" class="field-label required">Phân loại</label>
       <p-select id="category" formControlName="category" [options]="categoryOptions" optionLabel="label"
@@ -36,14 +32,12 @@
       }
     </div>
 
-    <!-- Thể loại -->
     <div class="field">
       <label for="genre" class="field-label">Thể loại</label>
       <p-select id="genre" formControlName="genre" [options]="genreOptions" optionLabel="label" optionValue="value"
         placeholder="-- Chọn --" styleClass="w-full" />
     </div>
 
-    <!-- Năm sản xuất -->
     <div class="field">
       <label for="productionYear" class="field-label required">Năm sản xuất</label>
       <input id="productionYear" pInputText type="number" formControlName="productionYear" placeholder="2026"
@@ -54,21 +48,18 @@
       }
     </div>
 
-    <!-- Trạng thái -->
     <div class="field">
       <label for="status" class="field-label">Trạng thái</label>
       <p-select id="status" formControlName="status" [options]="statusOptions" optionLabel="label" optionValue="value"
         placeholder="Nháp" styleClass="w-full" [class.ng-invalid]="isInvalid('status')" />
     </div>
 
-    <!-- Ngày bắt đầu -->
     <div class="field">
       <label for="startDate" class="field-label">Ngày bắt đầu</label>
       <p-datepicker id="startDate" formControlName="startDate" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"
         [showIcon]="true" styleClass="w-full" />
     </div>
 
-    <!-- Ngày kết thúc -->
     <div class="field">
       <label for="endDate" class="field-label">Ngày kết thúc</label>
       <p-datepicker id="endDate" formControlName="endDate" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"
@@ -78,13 +69,11 @@
       }
     </div>
 
-    <!-- Định hướng đề tài -->
     <div class="field field-full">
       <label for="themeOrientation" class="field-label">Định hướng đề tài</label>
       <textarea id="themeOrientation" pTextarea formControlName="themeOrientation" rows="3" class="w-full"></textarea>
     </div>
 
-    <!-- Tóm tắt nội dung -->
     <div class="field field-full">
       <label for="summary" class="field-label">Tóm tắt nội dung</label>
       <textarea id="summary" pTextarea formControlName="summary" rows="10" class="w-full"></textarea>
@@ -96,7 +85,6 @@
         <button pButton type="button" icon="pi pi-plus" label="Thêm thành viên" class="p-button-sm p-button-text"
           (click)="addEkipMember()"></button>
       </div>
-
       @for (member of ekipMembers.controls; track $index) {
       <div [formGroupName]="$index" class="ekip-row">
         <input pInputText formControlName="ekipName" placeholder="Tên thành viên ekip" class="w-full" />
@@ -109,7 +97,6 @@
     </div>
   </div>
 
-  <!-- Actions -->
   <div class="form-actions">
     <button pButton type="button" label="Hủy" class="p-button-outlined" icon="pi pi-times" (click)="cancel()"
       [disabled]="isSaving"></button>
@@ -117,7 +104,7 @@
     <button
       pButton
       type="submit"
-      label="Lưu hồ sơ"
+      label="Cập nhật hồ sơ"
       icon="pi pi-check"
       [loading]="isSaving"
       [disabled]="isSaving || form.invalid"

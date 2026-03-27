@@ -10,7 +10,7 @@
         [routerLink]="['/entities/movie']"
       ></button>
       <h1 class="m-0 text-2xl font-semibold">Chi tiết hồ sơ phim</h1>
-      <p class="m-0 text-color-secondary text-sm">Xem thông tin dự án và ekip sản xuất</p>
+      <!-- <p class="m-0 text-color-secondary text-sm">Xem thông tin dự án và ekip sản xuất</p> -->
     </div>
   </div>
 
@@ -28,6 +28,11 @@
   } @else {
     <app-movie-profile-detail
       [profile]="profile"
+      [statusOptions]="statusOptions"
+      [typeOptions]="typeOptions"
+      [categoryOptions]="categoryOptions"
+      [genreOptions]="genreOptions"
+      [productionRoleOptions]="productionRoleOptions"
       [productionEkips]="productionEkips"
       (edit)="goToEdit($event)"
     ></app-movie-profile-detail>

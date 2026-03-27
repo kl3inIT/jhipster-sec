@@ -1,16 +1,19 @@
 package com.vn.core.domain.movie;
 
 import com.vn.core.domain.movie.enumeration.ekip.ProductionRole;
+import com.vn.core.security.catalog.SecuredEntity;
 import jakarta.persistence.*;
 
+@SecuredEntity(code = "production-ekip", fetchPlanCodes = { "production-ekip-list", "production-ekip-detail" })
 @Entity
 @Table(name = "production_ekip")
 public class ProductionEkip {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
     @SequenceGenerator(name = "sequenceGenerator")
     @Column(name = "id")
-    private Long ekip_id;
+    private Long id;
 
     @Column(name = "ekip_name", length = 50)
     private String ekipName;
@@ -47,11 +50,11 @@ public class ProductionEkip {
         this.ekipName = ekipName;
     }
 
-    public Long getEkip_id() {
-        return ekip_id;
+    public Long getId() {
+        return id;
     }
 
-    public void setEkip_id(Long ekip_id) {
-        this.ekip_id = ekip_id;
+    public void setId(Long id) {
+        this.id = id;
     }
 }

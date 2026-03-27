@@ -25,6 +25,8 @@ public class SecureMergeServiceImpl implements SecureMergeService {
         Class<?> entityClass = entity.getClass();
         BeanWrapperImpl wrapper = new BeanWrapperImpl(entity);
 
+         wrapper.setAutoGrowNestedPaths(true);
+
         for (Map.Entry<String, Object> entry : attributes.entrySet()) {
             String attr = entry.getKey();
 
@@ -33,8 +35,11 @@ public class SecureMergeServiceImpl implements SecureMergeService {
                 continue;
             }
 
-            if (!attributePermissionEvaluator.canEdit(entityClass, attr)) {
-                throw new AccessDeniedException("No EDIT permission for " + entityClass.getSimpleName() + "." + attr);
+            // For nested paths (e.g. "movieProfile.id"), use the root property for permission checks
+            String rootAttr = attr.contains(".") ? attr.substring(0, attr.indexOf('.')) : attr;
+
+            if (!attributePermissionEvaluator.canEdit(entityClass, rootAttr)) {
+                throw new AccessDeniedException("No EDIT permission for " + entityClass.getSimpleName() + "." + rootAttr);
             }
 
             wrapper.setPropertyValue(attr, entry.getValue());

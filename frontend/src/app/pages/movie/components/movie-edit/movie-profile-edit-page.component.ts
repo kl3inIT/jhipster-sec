@@ -7,7 +7,7 @@ import { catchError, finalize, of } from 'rxjs';
 
 import { IMovieProfile } from '../movie-list/movie-profile.model';
 import { MovieProfileService } from '../movie-list/services/movie-profile.service';
-import MovieProfileEditComponent from '../movie-edit/movie-profile-edit.component';
+import MovieProfileEditComponent from './movie-profile-edit/movie-profile-edit.component';
 
 @Component({
   selector: 'app-movie-profile-edit-page',

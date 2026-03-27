@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Output, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output, inject, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule, FormArray, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -10,19 +9,20 @@ import { MessageModule } from 'primeng/message';
 import { TextareaModule } from 'primeng/textarea';
 import { MessageService } from 'primeng/api';
 
-import { MovieProfileService } from '../movie-list/services/movie-profile.service';
-import { NewMovieProfile } from '../movie-list/movie-profile.model';
-import { IProductionEkip } from '../movie-list/production-ekip.model';
+import { MovieProfileService } from '../../movie-list/services/movie-profile.service';
+import { IMovieProfile } from '../../movie-list/movie-profile.model';
+import { IProductionEkip } from '../../movie-list/production-ekip.model';
+import { ProductionEkipService } from '../../movie-list/services/production-ekip.service';
 import {
   CLASSIFICATION_OPTIONS,
   GENRE_OPTIONS,
   MOVIE_TYPE_OPTIONS,
   PRODUCTION_ROLE_OPTIONS,
   STATUS_OPTIONS,
-} from '../../constants/movie-enums.constants';
+} from '../../../constants/movie-enums.constants';
 
 @Component({
-  selector: 'app-movie-profile-create',
+  selector: 'app-movie-profile-edit',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -33,16 +33,18 @@ import {
     MessageModule,
     TextareaModule,
   ],
-  templateUrl: './movie-profile-create.component.html',
+  templateUrl: './movie-profile-edit.component.html',
 })
-export default class MovieProfileCreateComponent implements OnInit {
-  @Output() onCreated = new EventEmitter<void>();
+export default class MovieProfileEditComponent implements OnInit, OnChanges {
+  @Input() movieProfile: IMovieProfile | null = null;
+  @Output() onUpdated = new EventEmitter<void>();
   @Output() onCancel = new EventEmitter<void>();
 
   private readonly fb = inject(FormBuilder);
   private readonly movieProfileService = inject(MovieProfileService);
+  private readonly productionEkipService = inject(ProductionEkipService);
   private readonly messageService = inject(MessageService);
-  private readonly http = inject(HttpClient);
+  private readonly cd = inject(ChangeDetectorRef);
 
   isSaving = false;
   errorMessage: string | null = null;
@@ -54,41 +56,40 @@ export default class MovieProfileCreateComponent implements OnInit {
   productionRoleOptions = [...PRODUCTION_ROLE_OPTIONS];
 
   form: FormGroup = this.fb.group({
-    code:           [{ value: null, disabled: true }, [Validators.required]],
-    name:           [null, [Validators.required, this.noWhitespaceValidator()]],
-    type:           [null, [Validators.required]],
-    category:       [null, [Validators.required]],
-    genre:          [null],
+    code: [{ value: null, disabled: true }, [Validators.required]],
+    name: [null, [Validators.required, this.noWhitespaceValidator()]],
+    type: [null, [Validators.required]],
+    category: [null, [Validators.required]],
+    genre: [null],
     productionYear: [new Date().getFullYear(), [Validators.required, Validators.min(1900), Validators.max(2100)]],
-    startDate:      [null],
-    endDate:        [null],
-    status:         ['PENDING', [Validators.required]],
+    startDate: [null],
+    endDate: [null],
+    status: ['PENDING', [Validators.required]],
     themeOrientation: [null],
-    summary:        [null],
+    summary: [null],
     ekipMembers: this.fb.array([]),
   }, { validators: this.dateRangeValidator() });
 
-  ngOnInit() {
-    this.generateCode(this.form.value.productionYear);
+  private initialized = false;
 
-    this.form.get('productionYear')?.valueChanges.subscribe(year => {
-      if (year && year.toString().length === 4) {
-        this.generateCode(year);
-      }
-    });
+  ngOnInit() {
+    // ngOnChanges is called before ngOnInit, so patchFormForEdit() was already called.
+    // Call it here only if ngOnChanges did not trigger (e.g., no Input changes detected yet).
+    if (!this.initialized) {
+      this.initialized = true;
+      this.patchFormForEdit();
+    }
   }
 
-  generateCode(year: number): void {
-    this.http.get<{ code?: string }>(`/api/movie-profiles/next-code?year=${year}`).subscribe({
-      next: (res) => {
-        this.form.patchValue({ code: res.code ?? null });
-      },
-      error: () => {}
-    });
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['movieProfile']) {
+      this.initialized = true;
+      this.patchFormForEdit();
+    }
   }
 
   save(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || !this.movieProfile?.id) {
       this.form.markAllAsTouched();
       return;
     }
@@ -100,62 +101,47 @@ export default class MovieProfileCreateComponent implements OnInit {
     const trimmedName = this.normalizeText(value.name);
     const trimmedThemeOrientation = this.normalizeText(value.themeOrientation);
     const trimmedSummary = this.normalizeText(value.summary);
-    const payload: NewMovieProfile = {
-      id: null,
-      profileCode:    value.code,
-      movieName:      trimmedName,
-      movieType:      value.type,
+    const payload: IMovieProfile = {
+      id: this.movieProfile.id,
+      profileCode: value.code,
+      movieName: trimmedName,
+      movieType: value.type,
       classification: value.category,
-      genre:          value.genre ?? null,
+      genre: value.genre ?? null,
       productionYear: value.productionYear,
-      startDate:      this.formatNullableDate(value.startDate),
-      endDate:        this.formatNullableDate(value.endDate),
-      status:         value.status,
+      startDate: this.formatNullableDate(value.startDate),
+      endDate: this.formatNullableDate(value.endDate),
+      status: value.status,
       themeOrientation: trimmedThemeOrientation,
-      summary:        trimmedSummary,
-      ekipMembers:    this.buildEkipPayload(),
+      summary: trimmedSummary,
+      ekipMembers: this.buildEkipPayload(),
     };
 
-    this.movieProfileService.create(payload).pipe(
-      catchError(() => {
-        this.errorMessage = 'Có lỗi xảy ra khi tạo hồ sơ phim. Vui lòng thử lại.';
-        return of(null);
-      })
-    ).subscribe({
+    this.movieProfileService.update(payload).subscribe({
       next: () => {
-        if (!this.isSaving) {
-          return;
-        }
         this.isSaving = false;
-        //this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Tạo hồ sơ phim thành công.' });
-        this.resetForm();
-        this.onCreated.emit();
+        this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Cập nhật hồ sơ phim thành công.' });
+        this.onUpdated.emit();
       },
       error: () => {
         this.isSaving = false;
-        this.errorMessage = 'Có lỗi xảy ra khi tạo hồ sơ phim. Vui lòng thử lại.';
+        this.errorMessage = 'Có lỗi xảy ra khi cập nhật hồ sơ phim. Vui lòng thử lại.';
       },
     });
   }
 
   cancel(): void {
-    this.form.reset({
-        productionYear: new Date().getFullYear(),
-        status: 'PENDING'
-    });
-    this.ekipMembers.clear();
-    this.errorMessage = null;
+    this.resetForm();
     this.onCancel.emit();
   }
 
   resetForm(): void {
     this.form.reset({
       productionYear: new Date().getFullYear(),
-      status: 'PENDING'
+      status: 'PENDING',
     });
     this.ekipMembers.clear();
     this.errorMessage = null;
-    this.generateCode(new Date().getFullYear());
   }
 
   isInvalid(field: string): boolean {
@@ -165,23 +151,6 @@ export default class MovieProfileCreateComponent implements OnInit {
 
   isDateRangeInvalid(): boolean {
     return !!(this.form.errors?.['invalidDateRange'] && (this.form.touched || this.form.dirty));
-  }
-
-  get ekipMembers(): FormArray {
-    return this.form.get('ekipMembers') as FormArray;
-  }
-
-  addEkipMember(member?: IProductionEkip): void {
-    this.ekipMembers.push(this.fb.group({
-      ekipName: [member?.ekipName ?? null, [Validators.required, this.noWhitespaceValidator()]],
-      role: [member?.role ?? null, [Validators.required]],
-    }));
-    this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã thêm thành viên ekip.' });
-  }
-
-  removeEkipMember(index: number): void {
-    this.ekipMembers.removeAt(index);
-    this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã xoá thành viên ekip.' });
   }
 
   private formatDate(date: Date | string): string {
@@ -209,18 +178,6 @@ export default class MovieProfileCreateComponent implements OnInit {
     }
     const normalized = value.trim();
     return normalized.length > 0 ? normalized : null;
-  }
-
-  private buildEkipPayload(): IProductionEkip[] {
-    const payload: IProductionEkip[] = [];
-    this.ekipMembers.controls.forEach(control => {
-      const ekipName = this.normalizeText(control.get('ekipName')?.value);
-      const role = control.get('role')?.value as string | null;
-      if (ekipName && role) {
-        payload.push({ ekipName, role });
-      }
-    });
-    return payload;
   }
 
   private noWhitespaceValidator(): ValidatorFn {
@@ -274,4 +231,73 @@ export default class MovieProfileCreateComponent implements OnInit {
     return Number.isNaN(parsed.getTime()) ? null : parsed;
   }
 
+  private patchFormForEdit(): void {
+    if (!this.movieProfile) {
+      return;
+    }
+    this.form.patchValue({
+      code: this.movieProfile.profileCode ?? null,
+      name: this.movieProfile.movieName ?? null,
+      type: this.movieProfile.movieType ?? null,
+      category: this.movieProfile.classification ?? null,
+      genre: this.movieProfile.genre ?? null,
+      productionYear: this.movieProfile.productionYear ?? new Date().getFullYear(),
+      startDate: this.movieProfile.startDate ? this.toDate(this.movieProfile.startDate) : null,
+      endDate: this.movieProfile.endDate ? this.toDate(this.movieProfile.endDate) : null,
+      status: this.movieProfile.status ?? 'PENDING',
+      themeOrientation: this.movieProfile.themeOrientation ?? null,
+      summary: this.movieProfile.summary ?? null,
+    });
+
+    if (this.movieProfile.id) {
+      this.loadEkipMembers(this.movieProfile.id);
+    }
+  }
+
+  get ekipMembers(): FormArray {
+    return this.form.get('ekipMembers') as FormArray;
+  }
+
+  addEkipMember(): void {
+    this.ekipMembers.push(this.fb.group({
+      id: [null],
+      ekipName: [null, [Validators.required, this.noWhitespaceValidator()]],
+      role: [null, [Validators.required]],
+    }));
+    this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã thêm thành viên ekip.' });
+  }
+
+  removeEkipMember(index: number): void {
+    this.ekipMembers.removeAt(index);
+    this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã xoá thành viên ekip.' });
+  }
+
+  private addEkipMemberSilent(member: IProductionEkip): void {
+    this.ekipMembers.push(this.fb.group({
+      id: [member.id ?? null],
+      ekipName: [member.ekipName ?? null, [Validators.required, this.noWhitespaceValidator()]],
+      role: [member.role ?? null, [Validators.required]],
+    }));
+  }
+
+  private loadEkipMembers(movieProfileId: number): void {
+    this.productionEkipService.query(movieProfileId).pipe(catchError(() => of([]))).subscribe(items => {
+      this.ekipMembers.clear();
+      (items ?? []).forEach(item => this.addEkipMemberSilent(item));
+      this.cd.detectChanges();
+    });
+  }
+
+  private buildEkipPayload(): IProductionEkip[] {
+    const payload: IProductionEkip[] = [];
+    this.ekipMembers.controls.forEach(control => {
+      const ekipName = this.normalizeText(control.get('ekipName')?.value);
+      const role = control.get('role')?.value as string | null;
+      const id = control.get('id')?.value as number | null | undefined;
+      if (ekipName && role) {
+        payload.push({ id: id ?? null, ekipName, role });
+      }
+    });
+    return payload;
+  }
 }

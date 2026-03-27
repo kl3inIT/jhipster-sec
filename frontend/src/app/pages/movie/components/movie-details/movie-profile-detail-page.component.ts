@@ -7,7 +7,14 @@ import { IMovieProfile } from '../movie-list/movie-profile.model';
 import { IProductionEkip } from '../movie-list/production-ekip.model';
 import { MovieProfileService } from '../movie-list/services/movie-profile.service';
 import { ProductionEkipService } from '../movie-list/services/production-ekip.service';
-import MovieProfileDetailComponent from '../movie-details/movie-profile-detail.component';
+import MovieProfileDetailComponent from './movie-detail/movie-profile-detail.component';
+import {
+  CLASSIFICATION_OPTIONS,
+  GENRE_OPTIONS,
+  MOVIE_TYPE_OPTIONS,
+  PRODUCTION_ROLE_OPTIONS,
+  STATUS_OPTIONS,
+} from '../../constants/movie-enums.constants';
 
 
 
@@ -27,6 +34,11 @@ export default class MovieProfileDetailPageComponent implements OnInit {
 
   profile: IMovieProfile | null = null;
   productionEkips: IProductionEkip[] = [];
+  statusOptions = [...STATUS_OPTIONS];
+  typeOptions = [...MOVIE_TYPE_OPTIONS];
+  categoryOptions = [...CLASSIFICATION_OPTIONS];
+  genreOptions = [...GENRE_OPTIONS];
+  productionRoleOptions = [...PRODUCTION_ROLE_OPTIONS];
   isLoading = true;
   loadError = false;
 
