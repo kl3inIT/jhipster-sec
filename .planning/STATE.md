@@ -4,8 +4,8 @@ milestone: v1.0
 milestone_name: milestone
 status: ready_for_next_phase
 stopped_at: Phase 08.3 execution completed; next up is Phase 9 planning
-last_updated: "2026-03-27T16:45:00.000Z"
-last_activity: 2026-03-27
+last_updated: "2026-03-27T17:16:05.273Z"
+last_activity: 2026-03-28
 progress:
   total_phases: 9
   completed_phases: 7
@@ -95,6 +95,7 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 - Plan or execute Phase 9 - enterprise UX and performance hardening.
+- Cache current-user permission checks to remove repeated `jhi_authority` and `sec_permission` lookups during secured reads while preserving request-time refresh semantics.
 
 ### Blockers/Concerns
 
