@@ -55,11 +55,10 @@ class MenuPermissionResourceIT {
                 get(ENTITY_API_URL)
                     .param("appName", APP_NAME)
                     .with(
-                        user("menu-user")
-                            .authorities(
-                                new SimpleGrantedAuthority(AuthoritiesConstants.ADMIN),
-                                new SimpleGrantedAuthority(AuthoritiesConstants.USER)
-                            )
+                        user("menu-user").authorities(
+                            new SimpleGrantedAuthority(AuthoritiesConstants.ADMIN),
+                            new SimpleGrantedAuthority(AuthoritiesConstants.USER)
+                        )
                     )
             )
             .andExpect(status().isOk())

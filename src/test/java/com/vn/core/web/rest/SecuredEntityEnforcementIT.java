@@ -96,7 +96,11 @@ class SecuredEntityEnforcementIT {
         );
 
         restMockMvc
-            .perform(get(ORGANIZATION_API_URL + "?sort=id,asc").with(user("proof-owner").authorities(new SimpleGrantedAuthority("ROLE_PROOF_NONE"))))
+            .perform(
+                get(ORGANIZATION_API_URL + "?sort=id,asc").with(
+                    user("proof-owner").authorities(new SimpleGrantedAuthority("ROLE_PROOF_NONE"))
+                )
+            )
             .andExpect(status().isForbidden());
 
         restMockMvc
@@ -111,7 +115,11 @@ class SecuredEntityEnforcementIT {
         grantReadableOrganizationGraph("ROLE_PROOF_NONE");
 
         restMockMvc
-            .perform(get(ORGANIZATION_API_URL + "?sort=id,asc").with(user("proof-owner").authorities(new SimpleGrantedAuthority("ROLE_PROOF_NONE"))))
+            .perform(
+                get(ORGANIZATION_API_URL + "?sort=id,asc").with(
+                    user("proof-owner").authorities(new SimpleGrantedAuthority("ROLE_PROOF_NONE"))
+                )
+            )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1))
             .andExpect(jsonPath("$[0].code").value("ORG-OWNED"));
@@ -145,11 +153,12 @@ class SecuredEntityEnforcementIT {
 
         restMockMvc
             .perform(
-                get(ORGANIZATION_API_URL + "?sort=id,asc")
-                    .with(
-                        user("proof-owner")
-                            .authorities(new SimpleGrantedAuthority("ROLE_PROOF_READER"), new SimpleGrantedAuthority("ROLE_PROOF_NONE"))
+                get(ORGANIZATION_API_URL + "?sort=id,asc").with(
+                    user("proof-owner").authorities(
+                        new SimpleGrantedAuthority("ROLE_PROOF_READER"),
+                        new SimpleGrantedAuthority("ROLE_PROOF_NONE")
                     )
+                )
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1))
@@ -193,7 +202,9 @@ class SecuredEntityEnforcementIT {
         Map<String, Object> payload = Map.of("name", "Owned Org Updated");
 
         restMockMvc
-            .perform(put(ORGANIZATION_API_URL + "/{id}", 100).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
+            .perform(
+                put(ORGANIZATION_API_URL + "/{id}", 100).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload))
+            )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(100))
             .andExpect(jsonPath("$.code").value("ORG-OWNED"))
@@ -215,7 +226,9 @@ class SecuredEntityEnforcementIT {
         Map<String, Object> payload = Map.of("name", "Owned Org Updated", "budget", 999999.00);
 
         restMockMvc
-            .perform(put(ORGANIZATION_API_URL + "/{id}", 100).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
+            .perform(
+                put(ORGANIZATION_API_URL + "/{id}", 100).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload))
+            )
             .andExpect(status().isForbidden());
     }
 
