@@ -77,14 +77,42 @@ class MenuPermissionResourceIT {
     }
 
     @Test
+    void getMenuPermissions_keepsCurrentUserResultsIsolatedByAppName() throws Exception {
+        createMenuPermission(AuthoritiesConstants.ADMIN, APP_NAME, "entities.organization", "ALLOW");
+        createMenuPermission(AuthoritiesConstants.ADMIN, APP_NAME, "security.users", "ALLOW");
+        createMenuPermission(AuthoritiesConstants.ADMIN, "other-admin-app", "ops.dashboard", "ALLOW");
+
+        MvcResult result = restMockMvc
+            .perform(
+                get(ENTITY_API_URL + "?appName=jhipster-security-platform").with(
+                    user("menu-user").authorities(new SimpleGrantedAuthority(AuthoritiesConstants.ADMIN))
+                )
+            )
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andReturn();
+
+        JsonNode body = objectMapper.readTree(result.getResponse().getContentAsString(StandardCharsets.UTF_8));
+        List<String> allowedMenuIds = arrayValues(body.path("allowedMenuIds"));
+
+        assertThat(body.path("appName").asText()).isEqualTo(APP_NAME);
+        assertThat(allowedMenuIds).containsExactly("entities.organization", "security.users");
+        assertThat(allowedMenuIds).doesNotContain("ops.dashboard");
+    }
+
+    @Test
     void getMenuPermissions_whenUnauthenticated_returnsUnauthorized() throws Exception {
         restMockMvc.perform(get(ENTITY_API_URL).param("appName", APP_NAME)).andExpect(status().isUnauthorized());
     }
 
     private void createMenuPermission(String role, String menuId, String effect) throws Exception {
+        createMenuPermission(role, APP_NAME, menuId, effect);
+    }
+
+    private void createMenuPermission(String role, String appName, String menuId, String effect) throws Exception {
         SecMenuPermissionDTO dto = new SecMenuPermissionDTO();
         dto.setRole(role);
-        dto.setAppName(APP_NAME);
+        dto.setAppName(appName);
         dto.setMenuId(menuId);
         dto.setEffect(effect);
 
