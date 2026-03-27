@@ -19,6 +19,8 @@ logging:
     tech.jhipster: DEBUG
     org.hibernate.SQL: DEBUG
     com.vn.core: DEBUG
+    javax.management.remote: WARN
+    javax.management.remote.rmi: WARN
 
 spring:
   devtools:
