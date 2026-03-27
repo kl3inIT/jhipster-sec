@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
  * Default implementation of {@link AttributePermissionEvaluator}.
  *
  * <p>Attribute-level permissions default to restrictive: if no permission records exist
- * for the given attribute, access is denied. The permission matrix stores only GRANT records,
- * so an empty result means no grant was given for this attribute.
- * When records exist, DENY-wins semantics apply.
+ * for the given attribute or its entity wildcard target, access is denied. Matching
+ * ALLOW records union across authorities; DENY records do not override another
+ * authority's ALLOW.
  */
 @Component
 public class AttributePermissionEvaluatorImpl implements AttributePermissionEvaluator {
@@ -44,23 +44,24 @@ public class AttributePermissionEvaluatorImpl implements AttributePermissionEval
     private boolean checkAttributePermission(Class<?> entityClass, String attribute, String action) {
         Collection<String> authorities = mergedSecurityService.getCurrentUserAuthorityNames();
         if (authorities.isEmpty()) {
-            LOG.debug("No authorities for current user — denying attribute {} {} on {}", action, attribute, entityClass.getSimpleName());
+            LOG.debug("No authorities for current user - denying attribute {} {} on {}", action, attribute, entityClass.getSimpleName());
             return false;
         }
-        String target =
-            entityClass.getSimpleName().toUpperCase(Locale.ROOT) + "." + attribute.toUpperCase(Locale.ROOT);
-        List<SecPermission> perms = secPermissionRepository.findByRolesAndTarget(authorities, TargetType.ATTRIBUTE, target, action);
-        // No GRANT record = denied. The permission matrix stores only GRANT records,
-        // so empty results means no grant was given for this attribute.
+
+        String entityTarget = entityClass.getSimpleName().toUpperCase(Locale.ROOT);
+        String specificTarget = entityTarget + "." + attribute.toUpperCase(Locale.ROOT);
+        String wildcardTarget = entityTarget + ".*";
+        List<String> targets = List.of(specificTarget, wildcardTarget);
+        List<SecPermission> perms = secPermissionRepository.findByRolesAndTargets(authorities, TargetType.ATTRIBUTE, targets, action);
         if (perms.isEmpty()) {
+            LOG.debug("No attribute permission rows found for targets={} action={} - access denied", targets, action);
             return false;
         }
-        // DENY-wins when rules exist
-        boolean hasDeny = perms.stream().anyMatch(p -> "DENY".equals(p.getEffect()));
-        if (hasDeny) {
-            LOG.debug("DENY attribute permission found for target={} action={}", target, action);
-            return false;
+
+        boolean allowed = perms.stream().anyMatch(p -> "ALLOW".equals(p.getEffect()));
+        if (!allowed) {
+            LOG.debug("No ALLOW attribute permission found for targets={} action={} - access denied", targets, action);
         }
-        return perms.stream().anyMatch(p -> "ALLOW".equals(p.getEffect()));
+        return allowed;
     }
 }

@@ -43,7 +43,7 @@ class CurrentUserMenuPermissionServiceTest {
     }
 
     @Test
-    void getAllowedMenuIds_returnsAlphabetizedAllowUnionAcrossAuthorities() {
+    void allowsMenuWhenAnyAuthorityAllowsIt() {
         when(mergedSecurityService.getCurrentUserAuthorityNames()).thenReturn(List.of("ROLE_ADMIN", "ROLE_USER"));
         when(secMenuPermissionRepository.findAllByAppNameAndRoleIn(APP_NAME, List.of("ROLE_ADMIN", "ROLE_USER"))).thenReturn(
             List.of(
@@ -60,7 +60,7 @@ class CurrentUserMenuPermissionServiceTest {
     }
 
     @Test
-    void getAllowedMenuIds_excludesDeniedMenuIdsEvenWhenAnotherAuthorityAllowsThem() {
+    void allowsMenuWhenAnyAuthorityAllowsIt_evenIfAnotherAuthorityDeniesTheSameMenu() {
         when(mergedSecurityService.getCurrentUserAuthorityNames()).thenReturn(List.of("ROLE_ADMIN", "ROLE_MANAGER"));
         when(secMenuPermissionRepository.findAllByAppNameAndRoleIn(APP_NAME, List.of("ROLE_ADMIN", "ROLE_MANAGER"))).thenReturn(
             List.of(
@@ -72,7 +72,7 @@ class CurrentUserMenuPermissionServiceTest {
 
         List<String> allowedMenuIds = currentUserMenuPermissionService.getAllowedMenuIds(APP_NAME);
 
-        assertThat(allowedMenuIds).containsExactly("security.roles");
+        assertThat(allowedMenuIds).containsExactly("entities.organization", "security.roles");
     }
 
     private SecMenuPermission permission(String role, String menuId, String effect) {

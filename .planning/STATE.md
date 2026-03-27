@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: "Phase 08 shipped — PR #5"
-stopped_at: Completed 08-04-PLAN.md
-last_updated: "2026-03-26T09:57:10.1391433+07:00"
-last_activity: 2026-03-26
+status: unknown
+stopped_at: Completed 08.1-03-PLAN.md; next up is Phase 9 planning
+last_updated: "2026-03-27T08:05:15.439Z"
+last_activity: 2026-03-27
 progress:
-  total_phases: 6
-  completed_phases: 4
-  total_plans: 18
-  completed_plans: 18
+  total_phases: 7
+  completed_phases: 5
+  total_plans: 21
+  completed_plans: 21
 ---
 
 # Project State
@@ -20,20 +20,20 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
-**Current focus:** Phase 09 — enterprise-ux-and-performance-hardening
+**Current focus:** Phase 9 - Enterprise UX And Performance Hardening
 
 ## Current Position
 
-Phase: 09 (enterprise-ux-and-performance-hardening) — NOT STARTED
-Plan: Not started
+Phase: 08.1 (jmix-style-datamanager-core-alignment) - COMPLETE
+Plan: 3 of 3
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed this milestone: 6
-- Average duration: 8.3 min
-- Total execution time: 0.8 hours
+- Total plans completed this milestone: 7
+- Average duration: 12.1 min
+- Total execution time: 1.4 hours
 
 **By Phase:**
 
@@ -42,14 +42,15 @@ Plan: Not started
 | 6 - Frontend Parity Foundation | 6 | 50 min | 8.3 min |
 | 7 - Enterprise Navigation Shell | 0 | - | - |
 | 8 - User Management Delivery | 0 | - | - |
+| 8.1 - Jmix-Style DataManager Core Alignment | 3 | 60 min | 20.0 min |
 | 9 - Enterprise UX And Performance Hardening | 0 | - | - |
 | 10 - Frontend Reliability And Regression Coverage | 0 | - | - |
 
 **Recent Trend:**
 
-- Phase 6 completed with green `frontend` production build and focused Angular regression coverage
-- Standalone i18n, alerting, admin route foundations, and translated shell surfaces are now live in `frontend/`
-- Next actionable work: plan Phase 09
+- Phase 08.1 completed with verified `DataManager` / `UnconstrainedDataManager` layering and union-of-`ALLOW` resource semantics.
+- Brownfield safety coverage is green for `AccountResourceIT`, `UserResourceIT`, `SecuredEntityEnforcementIT`, and `MenuPermissionResourceIT`.
+- The next actionable work is Phase 9 planning.
 
 | Phase 07 P05 | 4 | 2 tasks | 19 files |
 | Phase 07.1-menu-management P01 | 25 | 2 tasks | 10 files |
@@ -59,113 +60,40 @@ Plan: Not started
 | Phase 08 P02 | 10 | 2 tasks | 14 files |
 | Phase 08 P03 | 10 min | 2 tasks | 12 files |
 | Phase 08 P04 | 5 min | 2 tasks | 2 files |
+| Phase 08.1 P01 | 14 min | 2 tasks | 8 files |
+| Phase 08.1 P02 | 11 min | 2 tasks | 9 files |
+| Phase 08.1 P03 | 35 min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
 ### Roadmap Evolution
 
-- Phase 07.1 inserted after Phase 7: Menu Management (INSERTED) — admin CRUD for SecMenuDefinition and role-based SecMenuPermission assignment
+- Phase 07.1 inserted after Phase 7: Menu Management (INSERTED) - admin CRUD for `SecMenuDefinition` and role-based `SecMenuPermission` assignment.
+- Phase 08.1 inserted after Phase 8: Jmix-Style DataManager Core Alignment (URGENT) - aligned the internal data-access architecture with a Jmix-style `DataManager` / `UnconstrainedDataManager` split while preserving the `SecureDataManager` facade and brownfield contract.
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- Phase 1: Preserve the current auth, account, admin-user, and authority behavior while bridging it into the merged security runtime.
-- Phase 3: Enforce protected business data through a central secure data pipeline with YAML/code-defined fetch plans only.
-- Phase 5: Build the new client as a standalone `frontend/` Angular app using `aef-main` as the structure reference.
-- [Phase 01-identity-and-authority-baseline]: Unactivated user login returns 500 (UserNotActivatedException propagates through controller) - locked as baseline per D-13
-- [Phase 01-identity-and-authority-baseline]: integrationTest Gradle task required explicit testClassesDirs + classpath for Gradle 9 NO-SOURCE fix
-- [Phase 01-identity-and-authority-baseline]: JHipsterSecurityContextBridge uses @Component (not @Primary) so Phase 2 can provide @Primary override without modifying Phase 1 code
-- [Phase 01-identity-and-authority-baseline]: SecurityContextBridge interface exposes Collection<String> raw authority names only - no typed AuthorityDescriptor per D-01/D-07
-- [Phase 02-security-metadata-management]: SecPermission uses String authorityName FK (not @ManyToOne) to stay decoupled from Authority lifecycle and compatible with SecurityContextBridge Collection<String>
-- [Phase 02-security-metadata-management]: RoleType enum placed in com.vn.core.domain (not security.domain) to avoid ArchUnit layer ambiguity
-- [Phase 02-security-metadata-management]: SecPermission and SecRowPolicy have no @Cache annotation - admin-managed entities where stale cache would cause incorrect security decisions
-- [Phase 02-security-metadata-management]: String types for enum fields in DTOs: keeps REST contract decoupled from entity enum changes; controllers convert String to enum at the service boundary
-- [Phase 02-security-metadata-management]: MergedSecurityContextBridge is @Primary and filters phantom JWT authorities via authorityRepository.findAllById - Phase 3 programs against MergedSecurityService interface, not the bridge directly
-- [Phase 03-secure-enforcement-core]: Protected entity access must go through `SecureDataManager`, with `UnconstrainedDataManager` as the explicit trusted bypass path and `loadByQuery` with parameters as the standard secured query entry point
-- [Phase 03-secure-enforcement-core]: Row policies execute as DB-level constraints; supported runtime forms are `SPECIFICATION` plus controlled JPQL `WHERE` fragments with built-in security-context tokens only, and unsafe runtime application fails closed with security-style access denial
-- [Phase 03-secure-enforcement-core]: The secured entity catalog is code-defined and allowlisted, may derive metadata from the JPA metamodel/entity scanner, and may use optional YAML only for labels/grouping/display hints - never to create new security targets
-- [Phase 03-01]: AttributeAccessContext uses String action (not AttributeOp) to keep the field open-coded for downstream plans that map from String REST payloads
-- [Phase 03-01]: RowLevelAccessContext uses List<Predicate> (not Specification<T>) to match plan spec and decouple row context from JPA Specification composition
-- [Phase 03-01]: CrudEntityConstraint injects RolePermissionService.isEntityOpPermitted() as the single permission lookup point in the access pipeline
-- [Phase 03-02]: AttributePermissionEvaluatorImpl uses permissive-default: empty permission list returns true (no rules = allowed) while entity-level evaluator uses DENY-default
-- [Phase 03-02]: RowLevelPolicyProviderDbImpl is fail-closed: JAVA policyType and any unparseable SPECIFICATION/JPQL expression throw AccessDeniedException
-- [Phase 03-02]: YamlFetchPlanRepository keyed as entityClassName.toLowerCase()#planName matching plan spec
-- [Phase 03-02]: DefaultSecuredEntityCatalog returns empty list - Phase 4 provides @Primary override with real entity registrations
-- [Phase 03-03]: SecureEntitySerializerImpl uses @Component (not @Service) per plan spec, consistent with phase 3 pattern
-- [Phase 03-03]: SecureMergeServiceImpl skips id silently (not AccessDeniedException) - identity immutability is structural, not a permission violation
-- [Phase 03-04]: SecureDataManagerImpl uses @SuppressWarnings(unchecked) for generic JPA repository casts - unavoidable due to type erasure in RepositoryRegistry generic signatures
-- [Phase 03-04]: JPQL-to-Specification conversion deferred to Phase 4 - Phase 3 logs a warning and applies only row spec when JPQL is provided
-- [Phase 03-05]: RowLevelSpecificationBuilder uses lambda no-op spec instead of Specification.where(null) - Java 25 added ambiguous overload and null-check enforcement
-- [Phase 04-04]: `TechnicalStructureTest` ignores `com.vn.core.security.catalog.SecuredEntity` so proof entity opt-in annotations do not violate the domain-layer ArchUnit rule
-- [Phase 04-04]: `LiquibaseConfiguration` must honor `LiquibaseProperties.changeLog` so tests can use a dedicated `test-master.xml` overlay for proof security fixtures
-- [Phase 05-01]: Attribute enumeration uses EntityManager.getMetamodel() sorted alphabetically - avoids reflection on entity class
-- [Phase 05-01]: authorityName filter uses null/blank check - empty string treated as no-filter to prevent accidental empty-result queries
-- [Phase 05]: Angular 21 uses vitest (not Karma) via @angular/build:unit-test; test commands use ng test --watch=false without --browsers flag
-- [Phase 05]: ErrorHandlerInterceptor simplified to console.warn; NotificationInterceptor simplified - EventManager/AlertService not yet wired
-- [Phase 05]: Capability payloads derive from SecuredEntityCatalog plus JPA metamodel enumeration. - Keeps organization, department, and employee gating aligned with the secured entity allowlist and backend attribute names.
-- [Phase 05]: Frontend entity screens will reuse one cached capability response via shareReplay(1). - List, detail, and update screens can gate from one authenticated capability fetch instead of refetching per component.
-- [Phase 05]: Matrix UI payloads stay on the locked GRANT contract while the backend normalizes to runtime ALLOW and canonical stored targets. - This fixes end-to-end permission enforcement without changing the frontend matrix model from D-23 and D-24.
-- [Phase 05]: Protected-entity actions stay hidden until the shared capability response loads. - List, detail, and update screens should not briefly expose actions before permission state is known.
-- [Phase 05]: Create and edit routes redirect to /accessdenied before rendering forms when capability denies access. - Route-level gating must happen before form controls or sensitive inputs appear on screen.
-- [Phase 05]: Use (ngModelChange) not (onChange) for PrimeNG p-checkbox with binary mode and ngModel binding
-- [Phase 05-standalone-frontend-delivery]: Navigate to /login explicitly in logout() to skip two 401 round-trips caused by navigating to guarded home route
-- [Phase 05-standalone-frontend-delivery]: Root-scoped services holding per-user caches must subscribe to AccountService.getAuthenticationState() and reset cache on each emission
-- [Phase 05-standalone-frontend-delivery]: AttributePermissionEvaluatorImpl uses deny-default (empty perms = false) because permission matrix stores only GRANT records; empty result means no GRANT was given
-- [Phase 05-standalone-frontend-delivery]: canViewField() uses capabilityLoaded() gate for optimistic display before capability resolves, then applies fieldVisibility map
-- [Phase 05]: sessionStorage as warm-start layer beneath in-memory shareReplay for entity capability cache
-- [Milestone v1.1]: `angapp/` is the canonical donor for in-scope JHipster support files, translations, and user-management flows that must be migrated into `frontend/`
-- [Milestone v1.1]: Menu visibility and route protection should move to backend-driven navigation and permission data rather than a hardcoded client menu model
-- [Milestone v1.1]: Enterprise admin usability requires a structural shell and layout upgrade, not isolated page tweaks
-- [Milestone v1.1]: Frontend work is PrimeNG-first; use official `primeng.org` components and current examples whenever a suitable component exists, and allow custom UI only for layout composition or gaps where PrimeNG has no suitable component
-- [Phase 06-frontend-parity-foundation]: Translation assets ship as static `frontend/public/i18n/en.json` and `frontend/public/i18n/vi.json` bundles; the old JHipster namespace merge build step stays retired
-- [Phase 06-frontend-parity-foundation]: Stored locale in `StateStorageService` overrides the default `vi`; `account.langKey` is only a fallback when no locale has been stored
-- [Phase 06-frontend-parity-foundation]: `frontend/src/app.routes.ts` is the authoritative root route tree and `frontend/src/app/app.routes.ts` now re-exports it for compatibility
-- [Phase 06-frontend-parity-foundation]: Menu root items must track stable ids, not translated labels, to keep language switching change-detection safe
-- [Phase 07]: All Phase 7 Wave 0 spec files now exist; Playwright shell tests use page.route() mocking for deterministic navigation and capability assertions
-- [Phase 07.1-menu-management]: Hand-mapping in controllers (no MapStruct) follows the SecRoleAdminResource pattern
-- [Phase 07.1-menu-management]: Cascade delete is explicit in the controller: deleteByAppNameAndMenuId then deleteById inside @Transactional
-- [Phase 07.1-menu-management]: Sync endpoint is insert-only (no update); identity is appName+menuId matching the unique constraint
-- [Phase 07.1-02]: MenuDefinitionDialogComponent uses signal input()/output() instead of @Input/@Output decorators per CLAUDE.md mandate for new components
-- [Phase 07.1-02]: TranslatePipe imported (not TranslateModule) for menu-definition components - consistent with existing standalone component pattern in layout and entity screens
-- [Phase 07.1-03]: AdminMenuPermissionService.query() returns plain body following SecPermissionService pattern for internal consumption
-- [Phase 07.1-03]: p-tabpanel is the correct PrimeNG v20+ selector (not p-tab-panel); corrected from plan spec
-- [Phase 07.1-03]: standalone: true removed from PermissionMatrixComponent per CLAUDE.md Angular v20+ default
-- [Phase 08]: UserRepository extends JpaSpecificationExecutor for Specification-based admin user browse queries
-- [Phase 08]: buildManagedUserQuery uses cb.coalesce for nullable firstName/lastName to prevent null comparison failures
-- [Phase 08]: UserManagementService.query accepts SearchWithPagination for combined search and pagination
-- [Phase 08]: Authority labels resolve from i18n keys with raw authority code as fallback
-- [Phase 08]: Create and edit reuse one split-page component so the detail and edit surfaces stay structurally aligned — Keeps detail and edit on the same mental model while leaving role assignment visible in both flows.
-- [Phase 08]: The first authority-save proof uses deterministic Playwright API mocks to verify a persisted grant changes downstream admin route access — This proves the workflow through the real frontend routes without requiring a dedicated backend seed environment for every smoke run.
-- [Phase 08]: UserManagementFormService owns trim and default mapping so create and edit flows serialize one consistent IUser payload — Prevents route-specific form drift and keeps POST or PUT payloads aligned with the preserved admin-user contract.
-- [Phase 08]: User-route-access coverage should assert /admin/users directly against the effective authority set, not just a generic hidden-leaf case — This keeps the regression pinned to the exact admin surface Phase 8 introduced.
-- [Phase 08]: The user-management smoke proves both grant-then-allow and revoke-then-deny against the same mocked admin flow — It closes UMGT-03 with positive and negative route outcomes instead of a single saved-payload assertion.
-- [Phase 08]: Blank user browse queries use a lambda no-op Specification instead of Specification.where(null) for Java 25 compatibility — Spring Data's Java 25 overload set makes Specification.where(null) ambiguous in this project, so the no-op lambda is the stable empty-query pattern.
+- `SecureDataManager` remains the stable application-facing facade while `DataManager` becomes the secure-default internal layer with explicit `unconstrained()` bypass.
+- Resource permissions now use default-deny plus union-of-`ALLOW` semantics across entity, attribute, menu, and capability surfaces.
+- Proof-entity integration coverage now seeds explicit attribute `ALLOW` rows in-test so verified HTTP behavior matches the current deny-default attribute model.
+- Verification for this repository must run under Java 25 and use Gradle's `integrationTest` task for `*IT` suites because the `test` task excludes integration classes by design.
 
 ### Pending Todos
 
-- Plan and execute Phase 7 - Enterprise Navigation Shell.
+- Plan Phase 9 - Enterprise UX And Performance Hardening.
 
 ### Blockers/Concerns
 
-- No open milestone blockers yet.
-- Frontend production build still exceeds the configured initial bundle budget warning threshold (886.96 kB vs 500 kB warning).
+- No open milestone blockers.
+- Frontend production build still exceeds the configured initial bundle budget warning threshold.
 - Planning debt remains on validation metadata for phases 1, 3, and 4; product verification and the milestone audit both passed.
-
-### Quick Tasks Completed
-
-| # | Description | Date | Commit | Directory |
-|---|-------------|------|--------|-----------|
-| 260325-lae | Rename SecNavigationGrant to SecMenuPermission, rename fields authorityName to role and nodeId to menuId, and add SecMenuDefinition table for menu metadata | 2026-03-25 | 6a99ffc | [260325-lae-rename-secnavigationgrant-to-secmenuperm](./quick/260325-lae-rename-secnavigationgrant-to-secmenuperm/) |
-| 260324-xae | Fix @SecuredEntity catalog and N+1 capability loading | 2026-03-24 | a223896 | [260324-xae-fix-securedentity-catalog-and-n-1-capabi](.planning/quick/260324-xae-fix-securedentity-catalog-and-n-1-capabi/) |
-| 260325-0ze | append Angular/TypeScript agent instructions to CLAUDE.md and AGENTS.md | 2026-03-24 | c012a5d | [260325-0ze-append-angular-typescript-agent-instruct](.planning/quick/260325-0ze-append-angular-typescript-agent-instruct/) |
-| 260325-lae | Rename SecNavigationGrant to SecMenuPermission, add SecMenuDefinition, update frontend | 2026-03-25 | d877771 | [260325-lae-rename-secnavigationgrant-to-secmenuperm](.planning/quick/260325-lae-rename-secnavigationgrant-to-secmenuperm/) |
-| 260326-dmh | fix missing entity.list.actions translation and explain admin menu permission union behavior | 2026-03-26 | 48d25c8 | [260326-dmh-fix-missing-entity-list-actions-translat](./quick/260326-dmh-fix-missing-entity-list-actions-translat/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-26 - Completed quick task 260326-dmh: fix missing entity.list.actions translation and explain admin menu permission union behavior
-Last session: 2026-03-25T16:49:20.884Z
-Stopped at: Completed 08-04-PLAN.md
+Last activity: 2026-03-27
+Last session: 2026-03-26T13:07:16.398Z
+Stopped at: Completed 08.1-03-PLAN.md; next up is Phase 9 planning
 Resume file: None

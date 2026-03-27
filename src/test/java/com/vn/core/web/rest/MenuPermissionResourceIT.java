@@ -1,15 +1,17 @@
 package com.vn.core.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.core.IntegrationTest;
-import com.vn.core.service.security.CurrentUserMenuPermissionService;
+import com.vn.core.security.AuthoritiesConstants;
+import com.vn.core.service.dto.security.SecMenuPermissionDTO;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,20 +20,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Integration tests for the {@link MenuPermissionResource} REST controller.
  */
 @IntegrationTest
 @AutoConfigureMockMvc
+@Transactional
 class MenuPermissionResourceIT {
 
     private static final String APP_NAME = "jhipster-security-platform";
     private static final String ENTITY_API_URL = "/api/security/menu-permissions";
+    private static final String ADMIN_ENTITY_API_URL = "/api/admin/sec/menu-permissions";
 
     @Autowired
     private MockMvc restMockMvc;
@@ -39,33 +43,65 @@ class MenuPermissionResourceIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockitoBean
-    private CurrentUserMenuPermissionService currentUserMenuPermissionService;
-
     @Test
-    @WithMockUser(username = "menu-user", authorities = "ROLE_ADMIN")
-    void getMenuPermissions_returnsAppNameAndAllowedMenuIds() throws Exception {
-        when(currentUserMenuPermissionService.getAllowedMenuIds(APP_NAME)).thenReturn(List.of("entities.department", "security.users"));
+    void getMenuPermissions_returnsUnionOfAllowAndOmitsMenusWithoutAllow() throws Exception {
+        createMenuPermission(AuthoritiesConstants.ADMIN, "security.users", "ALLOW");
+        createMenuPermission(AuthoritiesConstants.USER, "security.users", "DENY");
+        createMenuPermission(AuthoritiesConstants.USER, "entities.department", "DENY");
+        createMenuPermission(AuthoritiesConstants.ADMIN, "entities.organization", "ALLOW");
 
         MvcResult result = restMockMvc
-            .perform(get(ENTITY_API_URL).param("appName", APP_NAME))
+            .perform(
+                get(ENTITY_API_URL)
+                    .param("appName", APP_NAME)
+                    .with(
+                        user("menu-user").authorities(
+                            new SimpleGrantedAuthority(AuthoritiesConstants.ADMIN),
+                            new SimpleGrantedAuthority(AuthoritiesConstants.USER)
+                        )
+                    )
+            )
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andReturn();
 
         JsonNode body = objectMapper.readTree(result.getResponse().getContentAsString(StandardCharsets.UTF_8));
+        List<String> allowedMenuIds = arrayValues(body.path("allowedMenuIds"));
 
         assertThat(body.path("appName").asText()).isEqualTo(APP_NAME);
         assertThat(body.path("allowedMenuIds").isArray()).isTrue();
         assertThat(body.path("allowedMenuIds").size()).isEqualTo(2);
-        assertThat(body.path("allowedMenuIds").get(0).asText()).isEqualTo("entities.department");
-        assertThat(body.path("allowedMenuIds").get(1).asText()).isEqualTo("security.users");
+        assertThat(allowedMenuIds).containsExactly("entities.organization", "security.users");
+        assertThat(allowedMenuIds).doesNotContain("entities.department");
         assertThat(fieldNames(body)).containsExactlyInAnyOrder("appName", "allowedMenuIds");
     }
 
     @Test
     void getMenuPermissions_whenUnauthenticated_returnsUnauthorized() throws Exception {
         restMockMvc.perform(get(ENTITY_API_URL).param("appName", APP_NAME)).andExpect(status().isUnauthorized());
+    }
+
+    private void createMenuPermission(String role, String menuId, String effect) throws Exception {
+        SecMenuPermissionDTO dto = new SecMenuPermissionDTO();
+        dto.setRole(role);
+        dto.setAppName(APP_NAME);
+        dto.setMenuId(menuId);
+        dto.setEffect(effect);
+
+        restMockMvc
+            .perform(
+                post(ADMIN_ENTITY_API_URL)
+                    .with(user("admin").authorities(new SimpleGrantedAuthority(AuthoritiesConstants.ADMIN)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(dto))
+            )
+            .andExpect(status().isCreated());
+    }
+
+    private List<String> arrayValues(JsonNode arrayNode) {
+        List<String> values = new ArrayList<>();
+        arrayNode.elements().forEachRemaining(node -> values.add(node.asText()));
+        return values;
     }
 
     private List<String> fieldNames(JsonNode body) {
