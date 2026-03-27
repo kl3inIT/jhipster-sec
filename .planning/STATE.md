@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 08.2-03-PLAN.md
-last_updated: "2026-03-27T09:25:36.554Z"
+stopped_at: Completed 08.2-02-PLAN.md
+last_updated: "2026-03-27T09:26:20.046Z"
 last_activity: 2026-03-27
 progress:
   total_phases: 8
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 08.2 (multi-app-menu-roles-and-jmix-style-json-entity-controllers) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ Plan: 3 of 4
 | Phase 08.1 P02 | 11 min | 2 tasks | 9 files |
 | Phase 08.1 P03 | 35 min | 2 tasks | 4 files |
 | Phase 08.2 P03 | 23 min | 2 tasks | 12 files |
+| Phase 08.2 P02 | 16 min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,8 @@ Recent decisions affecting current work:
 - [Phase 08.2]: Keep nonblank JPQL explicitly denied and treat blank-JPQL parameters as the only supported JSON filter contract.
 - [Phase 08.2]: Keep SecuredEntityQueryVM at the web boundary and adapt it in controllers so the service layer stays ArchUnit-compliant.
 - [Phase 08.2]: Serialize raw JSON responses explicitly in controllers because this Spring Boot 4 / Jackson stack does not safely round-trip com.fasterxml tree nodes through HTTP converters.
+- [Phase 08.2]: Menu permission matrix menu state now keys grants and pending changes by appName::menuId to avoid cross-app collisions.
+- [Phase 08.2]: The permission matrix now renders its menu tree from SecMenuDefinition rows for the selected app instead of the static APP_NAVIGATION_TREE registry.
 
 ### Pending Todos
 
@@ -101,6 +104,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last activity: 2026-03-27
-Last session: 2026-03-27T09:25:36.548Z
-Stopped at: Completed 08.2-03-PLAN.md
+Last session: 2026-03-27T09:26:20.042Z
+Stopped at: Completed 08.2-02-PLAN.md
 Resume file: None
