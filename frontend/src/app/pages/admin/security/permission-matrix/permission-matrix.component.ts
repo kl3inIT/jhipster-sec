@@ -11,6 +11,7 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TabsModule } from 'primeng/tabs';
 import { ToastModule } from 'primeng/toast';
@@ -81,6 +82,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
     CheckboxModule,
     ConfirmDialogModule,
     ProgressSpinnerModule,
+    SelectModule,
     TableModule,
     TabsModule,
     ToastModule,
@@ -389,10 +391,6 @@ export default class PermissionMatrixComponent implements OnInit {
 
   currentMenuAppHasDefinitions(): boolean {
     return this.menuDefinitions.length > 0;
-  }
-
-  currentMenuAppHasNoApps(): boolean {
-    return this.availableMenuApps.length === 0;
   }
 
   currentMenuAppLabel(appName: string): string {

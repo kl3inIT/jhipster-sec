@@ -29,23 +29,79 @@ const CATALOG_ENTRIES: ISecCatalogEntry[] = [
   },
 ];
 
-const MENU_DEFINITIONS = [
+const MENU_DEFINITIONS_BY_APP = {
+  'jhipster-security-platform': [
+    {
+      id: 1,
+      menuId: 'platform-root',
+      appName: 'jhipster-security-platform',
+      menuName: 'platform-root',
+      label: 'Platform Root',
+      ordering: 0,
+    },
+    {
+      id: 2,
+      menuId: 'shared-menu',
+      appName: 'jhipster-security-platform',
+      menuName: 'shared-menu',
+      label: 'Platform Shared Menu',
+      parentMenuId: 'platform-root',
+      ordering: 0,
+    },
+    {
+      id: 3,
+      menuId: 'platform-reports',
+      appName: 'jhipster-security-platform',
+      menuName: 'platform-reports',
+      label: 'Platform Reports',
+      parentMenuId: 'platform-root',
+      ordering: 1,
+    },
+  ],
+  'sales-console': [
+    {
+      id: 4,
+      menuId: 'sales-root',
+      appName: 'sales-console',
+      menuName: 'sales-root',
+      label: 'Sales Root',
+      ordering: 0,
+    },
+    {
+      id: 5,
+      menuId: 'shared-menu',
+      appName: 'sales-console',
+      menuName: 'shared-menu',
+      label: 'Sales Shared Menu',
+      parentMenuId: 'sales-root',
+      ordering: 0,
+    },
+    {
+      id: 6,
+      menuId: 'sales-reports',
+      appName: 'sales-console',
+      menuName: 'sales-reports',
+      label: 'Sales Reports',
+      parentMenuId: 'sales-root',
+      ordering: 1,
+    },
+  ],
+} as const;
+
+const MULTI_APP_MENU_PERMISSIONS = [
   {
-    id: 1,
-    menuId: 'admin',
+    id: 11,
+    role: 'ROLE_PROOF_NONE',
     appName: 'jhipster-security-platform',
-    menuName: 'admin',
-    label: 'Admin',
-    ordering: 0,
+    menuId: 'shared-menu',
+    effect: 'ALLOW',
   },
   {
-    id: 2,
-    menuId: 'organizations',
-    appName: 'jhipster-security-platform',
-    menuName: 'organizations',
-    label: 'Organizations',
-    parentMenuId: 'admin',
-    ordering: 0,
+    id: 22,
+    role: 'ROLE_PROOF_NONE',
+    appName: 'sales-console',
+    menuId: 'shared-menu',
+    effect: 'ALLOW',
   },
 ];
 
@@ -90,7 +146,11 @@ describe('PermissionMatrixComponent', () => {
       delete: vi.fn().mockReturnValue(of(new HttpResponse({ status: 204 }))),
     };
     menuDefinitionService = {
-      query: vi.fn().mockReturnValue(of(new HttpResponse({ body: MENU_DEFINITIONS }))),
+      query: vi
+        .fn()
+        .mockImplementation((appName: keyof typeof MENU_DEFINITIONS_BY_APP) =>
+          of(new HttpResponse({ body: MENU_DEFINITIONS_BY_APP[appName] ?? [] })),
+        ),
     };
 
     TestBed.configureTestingModule({
@@ -129,6 +189,12 @@ describe('PermissionMatrixComponent', () => {
     TestBed.inject(TranslateService).setTranslation('en', {
       security: {
         permissionMatrix: {
+          menu: {
+            appLabel: 'Application',
+            emptyDefinitions: 'No menu definitions found for {{ appName }}.',
+            noApps: 'No applications available.',
+            node: 'Navigation Node',
+          },
           entity: {
             emptySelection: 'Select an entity above',
           },
@@ -374,6 +440,79 @@ describe('PermissionMatrixComponent', () => {
       isWildcard: false,
     });
     expect(component.isWildcardEffectivelyGranted('organization', 'VIEW')).toBe(true);
+  });
+
+  it('loadsMenuPermissionsAcrossApps', () => {
+    menuPermissionService.query.mockReturnValue(of(MULTI_APP_MENU_PERMISSIONS));
+
+    const fixture = createFixture();
+    const component = fixture.componentInstance;
+
+    expect(menuPermissionService.query).toHaveBeenCalledWith('ROLE_PROOF_NONE');
+    expect(component.availableMenuApps).toEqual(['jhipster-security-platform', 'sales-console']);
+    expect(component.selectedMenuApp).toBe('jhipster-security-platform');
+    expect(component.menuGranted.get('jhipster-security-platform::shared-menu')).toBe(11);
+    expect(component.menuGranted.get('sales-console::shared-menu')).toBe(22);
+    expect(menuDefinitionService.query).toHaveBeenCalledWith('jhipster-security-platform');
+  });
+
+  it('switchingSelectedMenuAppRebuildsTheTreeFromBackendDefinitions', () => {
+    menuPermissionService.query.mockReturnValue(of(MULTI_APP_MENU_PERMISSIONS));
+
+    const fixture = createFixture();
+    const component = fixture.componentInstance;
+
+    expect(component.menuTreeNodes[0]?.key).toBe('jhipster-security-platform::platform-root');
+
+    component.onSelectedMenuAppChange('sales-console');
+    fixture.detectChanges();
+
+    expect(menuDefinitionService.query).toHaveBeenLastCalledWith('sales-console');
+    expect(component.menuTreeNodes[0]?.key).toBe('sales-console::sales-root');
+    expect(component.menuTreeNodes[0]?.children?.map((child) => child.key)).toEqual([
+      'sales-console::shared-menu',
+      'sales-console::sales-reports',
+    ]);
+  });
+
+  it('savingMenuGrantUsesTheSelectedAppName', () => {
+    menuPermissionService.query.mockReturnValue(of(MULTI_APP_MENU_PERMISSIONS));
+
+    const fixture = createFixture();
+    const component = fixture.componentInstance;
+
+    component.onSelectedMenuAppChange('sales-console');
+    component.onMenuSelectionKeysChange({
+      'sales-console::shared-menu': { checked: true },
+      'sales-console::sales-reports': { checked: true },
+    });
+    component.flushChanges();
+
+    expect(menuPermissionService.create).toHaveBeenCalledWith({
+      role: 'ROLE_PROOF_NONE',
+      appName: 'sales-console',
+      menuId: 'sales-reports',
+      effect: 'ALLOW',
+    });
+    expect(component.menuGranted.get('sales-console::sales-reports')).toBe(456);
+    expect(component.menuPendingChanges.has('sales-console::sales-reports')).toBe(false);
+  });
+
+  it('uncheckedGrantDeletesOnlyTheSelectedAppsPermissionId', () => {
+    menuPermissionService.query.mockReturnValue(of(MULTI_APP_MENU_PERMISSIONS));
+
+    const fixture = createFixture();
+    const component = fixture.componentInstance;
+
+    component.onSelectedMenuAppChange('sales-console');
+    component.onMenuSelectionKeysChange({});
+    component.flushChanges();
+
+    expect(menuPermissionService.delete).toHaveBeenCalledTimes(1);
+    expect(menuPermissionService.delete).toHaveBeenCalledWith(22);
+    expect(menuPermissionService.delete).not.toHaveBeenCalledWith(11);
+    expect(component.menuGranted.has('jhipster-security-platform::shared-menu')).toBe(true);
+    expect(component.menuGranted.has('sales-console::shared-menu')).toBe(false);
   });
 
   it('does not call the API when roleName is missing from the route', () => {

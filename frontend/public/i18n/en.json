@@ -625,6 +625,9 @@
         "menu": "Menu Access"
       },
       "menu": {
+        "appLabel": "Application",
+        "emptyDefinitions": "No menu definitions found for {{ appName }}.",
+        "noApps": "No applications available.",
         "node": "Navigation Node"
       },
       "entity": {
