@@ -26,7 +26,7 @@ This roadmap builds on the shipped security platform by first closing the missin
 - [x] **Phase 7: Enterprise Navigation Shell** - Replace hardcoded navigation with backend-driven menu and permission-aware route control inside a Jmix-style shell. (completed 2026-03-25)
 - [x] **Phase 8: User Management Delivery** - Deliver the full frontend admin user-management surface, including role assignment. (completed 2026-03-25)
 - [x] **Phase 08.1: Jmix-Style DataManager Core Alignment** - Align the internal security data-access core with a Jmix-style `DataManager` / `UnconstrainedDataManager` split while preserving the current `SecureDataManager` boundary. (completed 2026-03-26)
-- [ ] **Phase 08.2: Multi-App Menu Roles and Jmix-Style JSON Entity Controllers** - Extend app-scoped menu authorization to multi-app role assignment and move secured entity endpoints to raw JSON with preserved `loadByQuery` and explicit `PATCH`.
+- [x] **Phase 08.2: Multi-App Menu Roles and Jmix-Style JSON Entity Controllers** - Extend app-scoped menu authorization to multi-app role assignment and move secured entity endpoints to raw JSON with preserved `loadByQuery` and explicit `PATCH`. (completed 2026-03-27)
 - [ ] **Phase 9: Enterprise UX And Performance Hardening** - Improve consistency, responsiveness, data-fetch efficiency, and route-level loading costs.
 - [ ] **Phase 10: Frontend Reliability And Regression Coverage** - Lock the milestone down with targeted frontend tests across user management, routing, and core UI infrastructure.
 
@@ -141,7 +141,7 @@ Plans:
 4. `loadByQuery` is restored and verified end to end as a first-class secured capability, not just a leftover internal method.
 5. PATCH accepts raw JSON request bodies, updates only provided fields, preserves omitted fields, and continues to enforce CRUD, row-level, attribute-level, and fetch-plan security on protected entities.
 6. Brownfield auth/account/admin/mail flows and backend-driven navigation do not regress, and any intentional API contract changes are documented before implementation handoff.
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 ### Phase 9: Enterprise UX And Performance Hardening
 **Goal**: The richer enterprise frontend stays consistent, responsive, and efficient under realistic admin usage.
@@ -175,6 +175,6 @@ Plans:
 | 07.1 | Menu Management | Complete | MENU-01, MENU-02, MENU-03, MENU-04, MENU-05 | 2026-03-25 |
 | 8 | User Management Delivery | Complete | UMGT-01, UMGT-02, UMGT-03 | 2026-03-25 |
 | 08.1 | Jmix-Style DataManager Core Alignment | Complete | Cross-cutting security architecture alignment | 2026-03-26 |
-| 08.2 | Multi-App Menu Roles and Jmix-Style JSON Entity Controllers | 3/4 | In Progress|  |
+| 08.2 | Multi-App Menu Roles and Jmix-Style JSON Entity Controllers | 4/4 | Complete    | 2026-03-27 |
 | 9 | Enterprise UX And Performance Hardening | Planned | UI-05, PERF-01, PERF-02, PERF-03 | - |
 | 10 | Frontend Reliability And Regression Coverage | Planned | TEST-01, TEST-02, TEST-03 | - |

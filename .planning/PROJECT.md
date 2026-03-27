@@ -33,10 +33,13 @@ The repository now includes:
 
 **Phase 8 complete** — Full frontend admin user management now ships with browse, detail, create, edit, activation, deletion, inline authority assignment, and verified grant/revoke access outcomes. 10/10 must-haves verified; the remaining backend integration rerun is environment-blocked on local Docker availability, not product behavior.
 
+**Phase 08.2 complete** — Secured entity endpoints now expose explicit raw-JSON `PATCH` support, secured `/query` stays first-class, role-centric menu assignment can create the first grant in a new app, and the brownfield backend safety sweep is green under Java 25.
+
 The next phase of `v1.1` now starts from this context:
 
-- Phase 9 now starts from a stronger admin baseline: user-management parity is in place and route-level access outcomes are covered by focused regression tests.
+- Phase 9 now starts from a stronger admin baseline: user-management parity is in place, secured query and PATCH contracts are explicit, and route-level access outcomes are covered by focused regression tests.
 - The current `frontend/` menu is already backend-driven, so the remaining work shifts toward enterprise consistency, responsiveness, and performance hardening.
+- Role-based menu assignment no longer depends on pre-existing grants in an app; the permission matrix can discover assignable apps from the menu-definition catalog and seed first grants cleanly.
 - The next milestone pressure is no longer feature parity for user management; it is UX polish, bundle efficiency, and broader frontend reliability coverage.
 
 ## Requirements
@@ -122,4 +125,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-25 after Phase 8 completion*
+*Last updated: 2026-03-27 after Phase 08.2 completion*
