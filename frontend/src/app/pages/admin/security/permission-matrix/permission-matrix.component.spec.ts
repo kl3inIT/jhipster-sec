@@ -118,6 +118,7 @@ describe('PermissionMatrixComponent', () => {
   };
   let menuDefinitionService: {
     query: ReturnType<typeof vi.fn>;
+    queryAll: ReturnType<typeof vi.fn>;
   };
 
   function createFixture(): ComponentFixture<PermissionMatrixComponent> {
@@ -150,6 +151,11 @@ describe('PermissionMatrixComponent', () => {
         .fn()
         .mockImplementation((appName: keyof typeof MENU_DEFINITIONS_BY_APP) =>
           of(new HttpResponse({ body: MENU_DEFINITIONS_BY_APP[appName] ?? [] })),
+        ),
+      queryAll: vi
+        .fn()
+        .mockReturnValue(
+          of(new HttpResponse({ body: Object.values(MENU_DEFINITIONS_BY_APP).flat() })),
         ),
     };
 
@@ -449,6 +455,7 @@ describe('PermissionMatrixComponent', () => {
     const component = fixture.componentInstance;
 
     expect(menuPermissionService.query).toHaveBeenCalledWith('ROLE_PROOF_NONE');
+    expect(menuDefinitionService.queryAll).toHaveBeenCalled();
     expect(component.availableMenuApps).toEqual(['jhipster-security-platform', 'sales-console']);
     expect(component.selectedMenuApp).toBe('jhipster-security-platform');
     expect(component.menuGranted.get('jhipster-security-platform::shared-menu')).toBe(11);
@@ -496,6 +503,38 @@ describe('PermissionMatrixComponent', () => {
     });
     expect(component.menuGranted.get('sales-console::sales-reports')).toBe(456);
     expect(component.menuPendingChanges.has('sales-console::sales-reports')).toBe(false);
+  });
+
+  it('loadsSelectableAppsFromMenuDefinitionsEvenWithoutExistingGrants', () => {
+    menuPermissionService.query.mockReturnValue(
+      of([
+        {
+          id: 11,
+          role: 'ROLE_PROOF_NONE',
+          appName: 'jhipster-security-platform',
+          menuId: 'shared-menu',
+          effect: 'ALLOW',
+        },
+      ]),
+    );
+
+    const fixture = createFixture();
+    const component = fixture.componentInstance;
+
+    expect(component.availableMenuApps).toEqual(['jhipster-security-platform', 'sales-console']);
+    component.onSelectedMenuAppChange('sales-console');
+    component.onMenuSelectionKeysChange({
+      'sales-console::sales-reports': { checked: true },
+    });
+    component.flushChanges();
+
+    expect(menuPermissionService.create).toHaveBeenCalledWith({
+      role: 'ROLE_PROOF_NONE',
+      appName: 'sales-console',
+      menuId: 'sales-reports',
+      effect: 'ALLOW',
+    });
+    expect(component.menuGranted.get('sales-console::sales-reports')).toBe(456);
   });
 
   it('uncheckedGrantDeletesOnlyTheSelectedAppsPermissionId', () => {

@@ -182,15 +182,21 @@ export default class PermissionMatrixComponent implements OnInit {
 
   private loadMenuPermissions(): void {
     this.menuLoading = true;
-    this.menuPermissionService.query(this.roleName).subscribe({
-      next: (permissions) => {
+    forkJoin({
+      permissions: this.menuPermissionService.query(this.roleName),
+      definitions: this.menuDefinitionService.queryAll().pipe(
+        map(response => response.body ?? []),
+        catchError(() => of([])),
+      ),
+    }).subscribe({
+      next: ({ permissions, definitions }) => {
         this.menuGranted.clear();
         permissions.forEach((p) => {
           if (p.id !== undefined) {
             this.menuGranted.set(this.menuPermissionKey(p.appName, p.menuId), p.id);
           }
         });
-        this.availableMenuApps = this.resolveAvailableMenuApps(permissions);
+        this.availableMenuApps = this.resolveAvailableMenuApps(permissions, definitions);
         const nextSelectedApp = this.availableMenuApps.includes(this.selectedMenuApp)
           ? this.selectedMenuApp
           : (this.availableMenuApps[0] ?? this.defaultMenuApp);
@@ -365,12 +371,24 @@ export default class PermissionMatrixComponent implements OnInit {
     return leaves;
   }
 
-  private resolveAvailableMenuApps(permissions: ISecMenuPermissionAdmin[]): string[] {
+  private resolveAvailableMenuApps(
+    permissions: ISecMenuPermissionAdmin[],
+    definitions: ISecMenuDefinition[],
+  ): string[] {
     const apps = Array.from(
-      new Set(
-        permissions.map((permission) => permission.appName).filter((appName) => appName?.trim()),
-      ),
-    );
+      new Set([
+        ...permissions.map(permission => permission.appName).filter(appName => appName?.trim()),
+        ...definitions.map(definition => definition.appName).filter(appName => appName?.trim()),
+      ]),
+    ).sort((left, right) => {
+      if (left === this.defaultMenuApp) {
+        return -1;
+      }
+      if (right === this.defaultMenuApp) {
+        return 1;
+      }
+      return left.localeCompare(right);
+    });
     return apps.length > 0 ? apps : [this.defaultMenuApp];
   }
 
