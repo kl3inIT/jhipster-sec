@@ -16,8 +16,9 @@ import { TabsModule } from 'primeng/tabs';
 import { ToastModule } from 'primeng/toast';
 import { TreeTableModule } from 'primeng/treetable';
 
-import { APP_NAVIGATION_TREE } from 'app/layout/navigation/navigation-registry';
 import { handleHttpError } from 'app/shared/error/http-error.utils';
+import { ISecMenuDefinition } from '../menu-definitions/sec-menu-definition.model';
+import { SecMenuDefinitionService } from '../menu-definitions/service/sec-menu-definition.service';
 import { ISecMenuPermissionAdmin } from '../shared/sec-menu-permission-admin.model';
 import { ISecCatalogEntry } from '../shared/sec-catalog.model';
 import { ISecPermission } from '../shared/sec-permission.model';
@@ -56,7 +57,6 @@ type FlushResult = FlushSuccessResult | FlushErrorResult;
 
 interface MenuFlushSuccessResult {
   key: string;
-  menuId: string;
   checked: boolean;
   success: true;
   permissionId?: number;
@@ -64,7 +64,6 @@ interface MenuFlushSuccessResult {
 
 interface MenuFlushErrorResult {
   key: string;
-  menuId: string;
   checked: boolean;
   success: false;
   error: unknown;
@@ -92,11 +91,13 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
   templateUrl: './permission-matrix.component.html',
 })
 export default class PermissionMatrixComponent implements OnInit {
+  private readonly defaultMenuApp = 'jhipster-security-platform';
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly catalogService = inject(SecCatalogService);
   private readonly permissionService = inject(SecPermissionService);
   private readonly menuPermissionService = inject(AdminMenuPermissionService);
+  private readonly menuDefinitionService = inject(SecMenuDefinitionService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
   private readonly translateService = inject(TranslateService);
@@ -113,10 +114,13 @@ export default class PermissionMatrixComponent implements OnInit {
   saving = false;
 
   // Menu access tab state
+  availableMenuApps: string[] = [];
+  selectedMenuApp = this.defaultMenuApp;
+  menuDefinitions: ISecMenuDefinition[] = [];
   menuTreeNodes: TreeNode[] = [];
   menuSelectionKeys: Record<string, { checked?: boolean; partialChecked?: boolean }> = {};
-  menuGranted = new Map<string, number>(); // menuId -> permission id
-  menuPendingChanges = new Map<string, boolean>(); // menuId -> checked state
+  menuGranted = new Map<string, number>(); // appName::menuId -> permission id
+  menuPendingChanges = new Map<string, boolean>(); // appName::menuId -> checked state
   menuLoading = true;
   activeTabValue: string = '0'; // track active tab
 
@@ -179,72 +183,227 @@ export default class PermissionMatrixComponent implements OnInit {
     this.menuPermissionService.query(this.roleName).subscribe({
       next: (permissions) => {
         this.menuGranted.clear();
-        permissions.forEach(p => {
+        permissions.forEach((p) => {
           if (p.id !== undefined) {
-            this.menuGranted.set(p.menuId, p.id);
+            this.menuGranted.set(this.menuPermissionKey(p.appName, p.menuId), p.id);
           }
         });
-        this.buildMenuTree();
-        this.menuLoading = false;
-        this.cdr.detectChanges();
+        this.availableMenuApps = this.resolveAvailableMenuApps(permissions);
+        const nextSelectedApp = this.availableMenuApps.includes(this.selectedMenuApp)
+          ? this.selectedMenuApp
+          : (this.availableMenuApps[0] ?? this.defaultMenuApp);
+        this.loadMenuDefinitions(nextSelectedApp);
       },
       error: (err) => {
-        handleHttpError(this.messageService, this.translateService, err, 'feedback.security.menuAccess.loadFailed');
+        handleHttpError(
+          this.messageService,
+          this.translateService,
+          err,
+          'feedback.security.menuAccess.loadFailed',
+        );
         this.menuLoading = false;
+        this.menuDefinitions = [];
+        this.menuTreeNodes = [];
+        this.menuSelectionKeys = {};
         this.cdr.detectChanges();
       },
     });
   }
 
+  loadMenuDefinitions(appName: string): void {
+    this.selectedMenuApp = appName;
+    this.menuLoading = true;
+    this.menuDefinitionService
+      .query(appName)
+      .pipe(
+        finalize(() => {
+          this.menuLoading = false;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          this.menuDefinitions = response.body ?? [];
+          this.buildMenuTree();
+        },
+        error: (err) => {
+          this.menuDefinitions = [];
+          this.menuTreeNodes = [];
+          this.menuSelectionKeys = {};
+          handleHttpError(
+            this.messageService,
+            this.translateService,
+            err,
+            'feedback.security.menuAccess.loadFailed',
+          );
+        },
+      });
+  }
+
+  onSelectedMenuAppChange(appName: string | null | undefined): void {
+    if (!appName || appName === this.selectedMenuApp) {
+      return;
+    }
+    this.loadMenuDefinitions(appName);
+  }
+
   private buildMenuTree(): void {
-    this.menuTreeNodes = APP_NAVIGATION_TREE.map(section => ({
-      key: section.id,
-      label: this.translateService.instant(section.labelKey),
-      expanded: true,
-      children: section.children.map(leaf => ({
-        key: leaf.id,
-        label: this.translateService.instant(leaf.labelKey),
-      })),
-    }));
-    const keys: Record<string, { checked?: boolean; partialChecked?: boolean }> = {};
-    for (const section of this.menuTreeNodes) {
-      const leaves = section.children ?? [];
-      let checkedCount = 0;
-      for (const leaf of leaves) {
-        if (this.isMenuEffectivelyGranted(leaf.key!)) {
-          keys[leaf.key!] = { checked: true, partialChecked: false };
-          checkedCount++;
-        }
-      }
-      if (checkedCount > 0 && checkedCount < leaves.length) {
-        keys[section.key!] = { partialChecked: true };
-      } else if (checkedCount === leaves.length && leaves.length > 0) {
-        keys[section.key!] = { checked: true, partialChecked: false };
+    const nodeMap = new Map<string, TreeNode>();
+    for (const definition of this.menuDefinitions) {
+      nodeMap.set(definition.menuId, {
+        key: this.menuPermissionKey(definition.appName, definition.menuId),
+        label: this.translateService.instant(definition.label),
+        data: definition,
+        expanded: true,
+        children: [],
+      });
+    }
+
+    const roots: TreeNode[] = [];
+    for (const definition of this.menuDefinitions) {
+      const node = nodeMap.get(definition.menuId)!;
+      if (definition.parentMenuId && nodeMap.has(definition.parentMenuId)) {
+        nodeMap.get(definition.parentMenuId)!.children!.push(node);
+      } else {
+        roots.push(node);
       }
     }
-    this.menuSelectionKeys = keys;
-  }
 
-  private isMenuEffectivelyGranted(menuId: string): boolean {
-    const pending = this.menuPendingChanges.get(menuId);
-    return pending ?? this.menuGranted.has(menuId);
-  }
-
-  onMenuSelectionKeysChange(newKeys: Record<string, { checked?: boolean; partialChecked?: boolean }>): void {
-    for (const section of this.menuTreeNodes) {
-      for (const leaf of section.children ?? []) {
-        const menuId = leaf.key!;
-        const isNowChecked = !!newKeys[menuId]?.checked;
-        const wasGranted = this.menuGranted.has(menuId);
-        if (isNowChecked === wasGranted) {
-          this.menuPendingChanges.delete(menuId);
-        } else {
-          this.menuPendingChanges.set(menuId, isNowChecked);
+    const sortNodes = (nodes: TreeNode[]): void => {
+      nodes.sort((left, right) => {
+        const leftOrdering = (left.data as ISecMenuDefinition).ordering ?? 0;
+        const rightOrdering = (right.data as ISecMenuDefinition).ordering ?? 0;
+        return leftOrdering - rightOrdering;
+      });
+      nodes.forEach((node) => {
+        if (node.children?.length) {
+          sortNodes(node.children);
         }
+      });
+    };
+
+    sortNodes(roots);
+    this.menuTreeNodes = roots;
+    this.menuSelectionKeys = this.buildMenuSelectionKeys(roots);
+  }
+
+  private buildMenuSelectionKeys(
+    nodes: TreeNode[],
+  ): Record<string, { checked?: boolean; partialChecked?: boolean }> {
+    const selectionKeys: Record<string, { checked?: boolean; partialChecked?: boolean }> = {};
+
+    const visit = (node: TreeNode): boolean => {
+      const children = node.children ?? [];
+      if (children.length === 0) {
+        if (this.isMenuEffectivelyGranted(node.key!)) {
+          selectionKeys[node.key!] = { checked: true, partialChecked: false };
+          return true;
+        }
+        return false;
+      }
+
+      let checkedChildren = 0;
+      let partiallyChecked = false;
+      for (const child of children) {
+        if (visit(child)) {
+          checkedChildren++;
+        }
+        partiallyChecked = partiallyChecked || !!selectionKeys[child.key!]?.partialChecked;
+      }
+
+      if (partiallyChecked || (checkedChildren > 0 && checkedChildren < children.length)) {
+        selectionKeys[node.key!] = { partialChecked: true };
+        return false;
+      }
+
+      if (checkedChildren === children.length && children.length > 0) {
+        selectionKeys[node.key!] = { checked: true, partialChecked: false };
+        return true;
+      }
+
+      return false;
+    };
+
+    nodes.forEach(visit);
+    return selectionKeys;
+  }
+
+  private isMenuEffectivelyGranted(menuKey: string): boolean {
+    const pending = this.menuPendingChanges.get(menuKey);
+    return pending ?? this.menuGranted.has(menuKey);
+  }
+
+  onMenuSelectionKeysChange(
+    newKeys: Record<string, { checked?: boolean; partialChecked?: boolean }>,
+  ): void {
+    for (const leaf of this.collectLeafNodes(this.menuTreeNodes)) {
+      const menuKey = leaf.key!;
+      const isNowChecked = !!newKeys[menuKey]?.checked;
+      const wasGranted = this.menuGranted.has(menuKey);
+      if (isNowChecked === wasGranted) {
+        this.menuPendingChanges.delete(menuKey);
+      } else {
+        this.menuPendingChanges.set(menuKey, isNowChecked);
       }
     }
     this.menuSelectionKeys = newKeys;
     this.cdr.detectChanges();
+  }
+
+  private collectLeafNodes(nodes: TreeNode[]): TreeNode[] {
+    const leaves: TreeNode[] = [];
+    const visit = (node: TreeNode): void => {
+      if (!node.children?.length) {
+        leaves.push(node);
+        return;
+      }
+      node.children.forEach(visit);
+    };
+    nodes.forEach(visit);
+    return leaves;
+  }
+
+  private resolveAvailableMenuApps(permissions: ISecMenuPermissionAdmin[]): string[] {
+    const apps = Array.from(
+      new Set(
+        permissions.map((permission) => permission.appName).filter((appName) => appName?.trim()),
+      ),
+    );
+    return apps.length > 0 ? apps : [this.defaultMenuApp];
+  }
+
+  private menuPermissionKey(appName: string, menuId: string): string {
+    return `${appName}::${menuId}`;
+  }
+
+  private parseMenuPermissionKey(menuKey: string): { appName: string; menuId: string } {
+    const separatorIndex = menuKey.indexOf('::');
+    if (separatorIndex < 0) {
+      return { appName: this.selectedMenuApp, menuId: menuKey };
+    }
+    return {
+      appName: menuKey.slice(0, separatorIndex),
+      menuId: menuKey.slice(separatorIndex + 2),
+    };
+  }
+
+  currentMenuAppHasDefinitions(): boolean {
+    return this.menuDefinitions.length > 0;
+  }
+
+  currentMenuAppHasNoApps(): boolean {
+    return this.availableMenuApps.length === 0;
+  }
+
+  currentMenuAppLabel(appName: string): string {
+    return appName;
+  }
+
+  menuAppOptions(): Array<{ label: string; value: string }> {
+    return this.availableMenuApps.map((appName) => ({
+      label: this.currentMenuAppLabel(appName),
+      value: appName,
+    }));
   }
 
   onEntitySelect(entry: ISecCatalogEntry): void {
@@ -385,38 +544,49 @@ export default class PermissionMatrixComponent implements OnInit {
       );
     });
 
-    const menuResults$ = Array.from(this.menuPendingChanges.entries()).map(([menuId, checked]) => {
+    const menuResults$ = Array.from(this.menuPendingChanges.entries()).map(([menuKey, checked]) => {
+      const { appName, menuId } = this.parseMenuPermissionKey(menuKey);
       if (checked) {
         const permission: ISecMenuPermissionAdmin = {
           role: this.roleName,
-          appName: 'jhipster-security-platform',
+          appName,
           menuId,
           effect: 'ALLOW',
         };
         return this.menuPermissionService.create(permission).pipe(
-          map(response => ({
-            key: `menu:${menuId}`,
-            menuId,
+          map((response) => ({
+            key: menuKey,
             checked: true,
             success: true as const,
             permissionId: response.body?.id,
           })),
-          catchError(error => of({
-            key: `menu:${menuId}`,
-            menuId,
-            checked: true,
-            success: false as const,
-            error,
-          })),
+          catchError((error) =>
+            of({
+              key: menuKey,
+              checked: true,
+              success: false as const,
+              error,
+            }),
+          ),
         );
       }
-      const permissionId = this.menuGranted.get(menuId);
+      const permissionId = this.menuGranted.get(menuKey);
       if (permissionId === undefined) {
-        return of({ key: `menu:${menuId}`, menuId, checked: false, success: true as const, permissionId: undefined });
+        return of({
+          key: menuKey,
+          checked: false,
+          success: true as const,
+          permissionId: undefined,
+        });
       }
       return this.menuPermissionService.delete(permissionId).pipe(
-        map(() => ({ key: `menu:${menuId}`, menuId, checked: false, success: true as const, permissionId: undefined })),
-        catchError(error => of({ key: `menu:${menuId}`, menuId, checked: false, success: false as const, error })),
+        map(() => ({
+          key: menuKey,
+          checked: false,
+          success: true as const,
+          permissionId: undefined,
+        })),
+        catchError((error) => of({ key: menuKey, checked: false, success: false as const, error })),
       );
     });
 
@@ -433,21 +603,19 @@ export default class PermissionMatrixComponent implements OnInit {
       .subscribe({
         next: (results) => {
           results.forEach((result) => {
-            if ('menuId' in result) {
-              // Menu result
+            if (!('change' in result)) {
               const menuResult = result as MenuFlushResult;
               if (!menuResult.success) {
                 this.showSaveError(menuResult.error);
                 return;
               }
               if (menuResult.checked && menuResult.permissionId !== undefined) {
-                this.menuGranted.set(menuResult.menuId, menuResult.permissionId);
+                this.menuGranted.set(menuResult.key, menuResult.permissionId);
               } else if (!menuResult.checked) {
-                this.menuGranted.delete(menuResult.menuId);
+                this.menuGranted.delete(menuResult.key);
               }
-              this.menuPendingChanges.delete(menuResult.menuId);
+              this.menuPendingChanges.delete(menuResult.key);
             } else {
-              // Entity permission result
               const entityResult = result as FlushResult;
               if (!entityResult.success) {
                 this.showSaveError(entityResult.error);

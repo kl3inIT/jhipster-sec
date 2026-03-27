@@ -6,6 +6,7 @@ import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { NEVER, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
+import { SecMenuDefinitionService } from '../menu-definitions/service/sec-menu-definition.service';
 import { AdminMenuPermissionService } from '../shared/service/admin-menu-permission.service';
 import { ISecCatalogEntry } from '../shared/sec-catalog.model';
 import { ISecPermission } from '../shared/sec-permission.model';
@@ -28,6 +29,26 @@ const CATALOG_ENTRIES: ISecCatalogEntry[] = [
   },
 ];
 
+const MENU_DEFINITIONS = [
+  {
+    id: 1,
+    menuId: 'admin',
+    appName: 'jhipster-security-platform',
+    menuName: 'admin',
+    label: 'Admin',
+    ordering: 0,
+  },
+  {
+    id: 2,
+    menuId: 'organizations',
+    appName: 'jhipster-security-platform',
+    menuName: 'organizations',
+    label: 'Organizations',
+    parentMenuId: 'admin',
+    ordering: 0,
+  },
+];
+
 describe('PermissionMatrixComponent', () => {
   let permissionService: {
     query: ReturnType<typeof vi.fn>;
@@ -38,6 +59,9 @@ describe('PermissionMatrixComponent', () => {
     query: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;
     delete: ReturnType<typeof vi.fn>;
+  };
+  let menuDefinitionService: {
+    query: ReturnType<typeof vi.fn>;
   };
 
   function createFixture(): ComponentFixture<PermissionMatrixComponent> {
@@ -65,6 +89,9 @@ describe('PermissionMatrixComponent', () => {
       create: vi.fn().mockReturnValue(of(new HttpResponse({ body: { id: 456 } }))),
       delete: vi.fn().mockReturnValue(of(new HttpResponse({ status: 204 }))),
     };
+    menuDefinitionService = {
+      query: vi.fn().mockReturnValue(of(new HttpResponse({ body: MENU_DEFINITIONS }))),
+    };
 
     TestBed.configureTestingModule({
       imports: [PermissionMatrixComponent],
@@ -91,6 +118,10 @@ describe('PermissionMatrixComponent', () => {
         {
           provide: AdminMenuPermissionService,
           useValue: menuPermissionService,
+        },
+        {
+          provide: SecMenuDefinitionService,
+          useValue: menuDefinitionService,
         },
       ],
     });
@@ -358,6 +389,7 @@ describe('PermissionMatrixComponent', () => {
         { provide: SecCatalogService, useValue: { query: () => of([]) } },
         { provide: SecPermissionService, useValue: permissionService },
         { provide: AdminMenuPermissionService, useValue: menuPermissionService },
+        { provide: SecMenuDefinitionService, useValue: menuDefinitionService },
       ],
     });
 
