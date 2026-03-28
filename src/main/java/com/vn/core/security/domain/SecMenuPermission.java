@@ -15,6 +15,8 @@ import jakarta.validation.constraints.Pattern;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * An app-scoped menu permission linking a role to a frontend-owned menu node id.
@@ -28,6 +30,7 @@ import java.util.Objects;
         @Index(name = "idx_sec_menu_permission_app_menu", columnList = "app_name, menu_id"),
     }
 )
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SecMenuPermission implements Serializable {
 
     @Serial

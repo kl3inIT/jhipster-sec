@@ -12,6 +12,8 @@ import jakarta.persistence.UniqueConstraint;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Backend-managed menu node metadata for a frontend app.
@@ -22,6 +24,7 @@ import java.util.Objects;
     uniqueConstraints = @UniqueConstraint(name = "ux_sec_menu_definition_app_menu", columnNames = { "app_name", "menu_id" }),
     indexes = { @Index(name = "idx_sec_menu_definition_app_parent", columnList = "app_name, parent_menu_id") }
 )
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SecMenuDefinition implements Serializable {
 
     @Serial

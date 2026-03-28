@@ -3,7 +3,6 @@ package com.vn.core.security.bridge;
 import com.vn.core.domain.Authority;
 import com.vn.core.repository.AuthorityRepository;
 import com.vn.core.security.AcceptsGrantedAuthorities;
-import com.vn.core.security.permission.RequestPermissionSnapshot;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -30,11 +29,9 @@ import org.springframework.stereotype.Component;
 public class MergedSecurityContextBridge implements SecurityContextBridge {
 
     private final AuthorityRepository authorityRepository;
-    private final RequestPermissionSnapshot requestPermissionSnapshot;
 
-    public MergedSecurityContextBridge(AuthorityRepository authorityRepository, RequestPermissionSnapshot requestPermissionSnapshot) {
+    public MergedSecurityContextBridge(AuthorityRepository authorityRepository) {
         this.authorityRepository = authorityRepository;
-        this.requestPermissionSnapshot = requestPermissionSnapshot;
     }
 
     @Override
@@ -48,11 +45,6 @@ public class MergedSecurityContextBridge implements SecurityContextBridge {
 
     @Override
     public Collection<String> getCurrentUserAuthorities() {
-        // Use request-scoped snapshot when available to avoid repeated DB queries per request.
-        if (RequestPermissionSnapshot.isRequestScopeActive()) {
-            return requestPermissionSnapshot.getAuthorities();
-        }
-        // Fallback for non-web contexts (tests, batch, scheduled tasks).
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
             return List.of();
