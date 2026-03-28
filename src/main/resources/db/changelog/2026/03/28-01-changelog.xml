@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-5.0.xsd"
+  objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+  <changeSet id="1774683579893-1" author="dong">
+    <createTable tableName="topic_orientation">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="pk_topic_orientation"/>
+      </column>
+      <column name="code" type="VARCHAR(20)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="movie_profile_id" type="BIGINT"/>
+      <column name="proposer" type="VARCHAR(255)"/>
+      <column name="submit_date" type="DATE"/>
+      <column name="status" type="VARCHAR(255)"/>
+      <column name="title" type="VARCHAR(255)"/>
+    </createTable>
+  </changeSet>
+  <changeSet id="1774683579893-2" author="dong">
+    <addUniqueConstraint columnNames="code" constraintName="uc_topic_orientation_code" tableName="topic_orientation"/>
+  </changeSet>
+  <changeSet id="1774683579893-3" author="dong">
+    <addForeignKeyConstraint baseColumnNames="movie_profile_id" baseTableName="topic_orientation"
+                             constraintName="FK_TOPIC_ORIENTATION_ON_MOVIE_PROFILE" referencedColumnNames="id"
+                             referencedTableName="movie_profile"/>
+  </changeSet>
+</databaseChangeLog>

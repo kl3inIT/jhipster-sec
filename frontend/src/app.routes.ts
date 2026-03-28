@@ -27,6 +27,7 @@ export const appRoutes: Routes = [
         },
         title: 'pageTitle.home',
       },
+      
       {
         path: 'accessdenied',
         loadComponent: () => import('./app/pages/error/access-denied.component'),
@@ -52,6 +53,13 @@ export const appRoutes: Routes = [
         loadChildren: () => import('./app/pages/movie/movie.routes'),
         // canActivate: [UserRouteAccessService],
       },
+
+      {
+        path: 'entities/topic',
+        loadChildren: () => import('./app/pages/topic/topic.routes'),
+        // canActivate: [UserRouteAccessService],
+      },
+  
       {
         path: 'admin',
         loadChildren: () => import('./app/pages/admin/admin.routes'),

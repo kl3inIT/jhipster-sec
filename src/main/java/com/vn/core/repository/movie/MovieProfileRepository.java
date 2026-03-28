@@ -1,6 +1,6 @@
-package com.vn.core.repository;
+package com.vn.core.repository.movie;
 
-import com.vn.core.domain.movie.ProductionEkip;
+import com.vn.core.domain.movie.MovieProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -10,4 +10,4 @@ import org.springframework.stereotype.Repository;
  * Application services must continue using SecureDataManager instead of this repository.
  */
 @Repository
-public interface ProductionEkipRepository extends JpaRepository<ProductionEkip, Long>, JpaSpecificationExecutor<ProductionEkip> {}
+public interface MovieProfileRepository extends JpaRepository<MovieProfile, Long>, JpaSpecificationExecutor<MovieProfile> {}
