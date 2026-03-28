@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260328000100-1" author="codex">
+        <sql>
+            DELETE FROM sec_permission sp
+            USING (
+                SELECT id
+                FROM (
+                    SELECT
+                        id,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY authority_name, target_type, target, action
+                            ORDER BY CASE WHEN effect = 'ALLOW' THEN 0 ELSE 1 END, id
+                        ) AS duplicate_rank
+                    FROM sec_permission
+                ) ranked_permissions
+                WHERE duplicate_rank &gt; 1
+            ) duplicates
+            WHERE sp.id = duplicates.id;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260328000100-2" author="codex">
+        <addUniqueConstraint
+            tableName="sec_permission"
+            columnNames="authority_name, target_type, target, action"
+            constraintName="ux_sec_permission_auth_type_target_action"/>
+    </changeSet>
+
+</databaseChangeLog>
