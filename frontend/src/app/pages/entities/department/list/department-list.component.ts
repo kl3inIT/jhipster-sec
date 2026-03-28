@@ -59,7 +59,7 @@ export default class DepartmentListComponent implements OnInit, OnDestroy, After
   subscription: Subscription | null = null;
   departments = signal<IDepartment[]>([]);
   capability = signal<ISecuredEntityCapability | null>(null);
-  loading = signal(false);
+  loading = signal(true);
 
   sortState = sortStateSignal({});
   itemsPerPage = ITEMS_PER_PAGE;

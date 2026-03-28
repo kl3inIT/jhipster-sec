@@ -61,7 +61,7 @@ export default class EmployeeListComponent implements OnInit, OnDestroy, AfterVi
   subscription: Subscription | null = null;
   employees = signal<IEmployee[]>([]);
   capability = signal<ISecuredEntityCapability | null>(null);
-  loading = signal(false);
+  loading = signal(true);
 
   sortState = sortStateSignal({});
   itemsPerPage = ITEMS_PER_PAGE;

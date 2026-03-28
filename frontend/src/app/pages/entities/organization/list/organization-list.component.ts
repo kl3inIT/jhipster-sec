@@ -61,7 +61,7 @@ export default class OrganizationListComponent implements OnInit, OnDestroy, Aft
   subscription: Subscription | null = null;
   organizations = signal<IOrganization[]>([]);
   capability = signal<ISecuredEntityCapability | null>(null);
-  loading = signal(false);
+  loading = signal(true);
 
   sortState = sortStateSignal({});
   itemsPerPage = ITEMS_PER_PAGE;
