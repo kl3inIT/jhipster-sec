@@ -183,7 +183,7 @@ export class AppLayout {
     this.drawerCloseTimer = setTimeout(() => {
       this.layoutService.closeMenu();
       this.drawerCloseTimer = null;
-    }, 480);
+    }, 120);
   }
 
   private clearDrawerCloseTimer(): void {
