@@ -38,14 +38,14 @@ describe('appRoutes', () => {
     expect(userManagementRoutes[2]?.data?.['navigationNodeId']).toBe('security.users');
     expect(securityRoutes[0]?.data?.['navigationNodeId']).toBe('security.roles');
     expect(securityRoutes[1]?.data?.['navigationNodeId']).toBe('security.roles');
-    expect(securityRoutes[2]?.data?.['navigationNodeId']).toBe('security.row-policies');
+    expect(securityRoutes[2]?.data?.['navigationNodeId']).toBe('security.menu-definitions');
   });
 
   it('uses translation keys for security route titles', () => {
     expect(securityRoutes.map(route => route.title)).toEqual([
       'pageTitle.securityRoles',
       'pageTitle.permissionMatrix',
-      'pageTitle.rowPolicies',
+      'pageTitle.menuDefinitions',
     ]);
   });
 });

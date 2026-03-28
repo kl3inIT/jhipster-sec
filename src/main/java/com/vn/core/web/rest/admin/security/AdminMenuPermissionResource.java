@@ -2,6 +2,7 @@ package com.vn.core.web.rest.admin.security;
 
 import com.vn.core.repository.AuthorityRepository;
 import com.vn.core.security.AuthoritiesConstants;
+import com.vn.core.security.domain.MenuAppName;
 import com.vn.core.security.domain.SecMenuPermission;
 import com.vn.core.security.repository.SecMenuPermissionRepository;
 import com.vn.core.service.dto.security.SecMenuPermissionDTO;
@@ -60,7 +61,7 @@ public class AdminMenuPermissionResource {
         String effect = (dto.getEffect() == null || dto.getEffect().isBlank()) ? "ALLOW" : dto.getEffect();
         SecMenuPermission entity = new SecMenuPermission()
             .role(dto.getRole())
-            .appName(dto.getAppName())
+            .appName(parseAppName(dto.getAppName()))
             .menuId(dto.getMenuId())
             .effect(effect);
         entity = secMenuPermissionRepository.save(entity);
@@ -78,11 +79,15 @@ public class AdminMenuPermissionResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of permissions.
      */
     @GetMapping("")
-    public ResponseEntity<List<SecMenuPermissionDTO>> getMenuPermissions(@RequestParam String role, @RequestParam(required = false) String appName) {
+    public ResponseEntity<List<SecMenuPermissionDTO>> getMenuPermissions(
+        @RequestParam String role,
+        @RequestParam(required = false) String appName
+    ) {
         LOG.debug("REST request to get SecMenuPermissions for role={} with optional appName filter={}", role, appName);
-        List<SecMenuPermission> permissions = appName == null || appName.isBlank()
-            ? secMenuPermissionRepository.findAllByRoleOrderByAppNameAscMenuIdAsc(role)
-            : secMenuPermissionRepository.findAllByRoleAndAppNameOrderByMenuIdAsc(role, appName);
+        List<SecMenuPermission> permissions =
+            appName == null || appName.isBlank()
+                ? secMenuPermissionRepository.findAllByRoleOrderByAppNameAscMenuIdAsc(role)
+                : secMenuPermissionRepository.findAllByRoleAndAppNameOrderByMenuIdAsc(role, parseAppName(appName));
         List<SecMenuPermissionDTO> dtos = permissions.stream().map(this::toDto).toList();
         return ResponseEntity.ok(dtos);
     }
@@ -106,9 +111,15 @@ public class AdminMenuPermissionResource {
         SecMenuPermissionDTO dto = new SecMenuPermissionDTO();
         dto.setId(entity.getId());
         dto.setRole(entity.getRole());
-        dto.setAppName(entity.getAppName());
+        dto.setAppName(entity.getAppName().getValue());
         dto.setMenuId(entity.getMenuId());
         dto.setEffect(entity.getEffect());
         return dto;
+    }
+
+    private MenuAppName parseAppName(String appName) {
+        return MenuAppName.fromValue(appName).orElseThrow(() ->
+            new BadRequestAlertException("Invalid menu app name", ENTITY_NAME, "appNameInvalid")
+        );
     }
 }

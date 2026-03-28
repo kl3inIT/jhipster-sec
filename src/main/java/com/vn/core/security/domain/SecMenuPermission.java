@@ -2,6 +2,8 @@ package com.vn.core.security.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,8 +41,9 @@ public class SecMenuPermission implements Serializable {
     @Column(name = "role", nullable = false, length = 50)
     private String role;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "app_name", nullable = false, length = 100)
-    private String appName;
+    private MenuAppName appName;
 
     @Column(name = "menu_id", nullable = false, length = 150)
     private String menuId;
@@ -75,15 +78,15 @@ public class SecMenuPermission implements Serializable {
         return this;
     }
 
-    public String getAppName() {
+    public MenuAppName getAppName() {
         return appName;
     }
 
-    public void setAppName(String appName) {
+    public void setAppName(MenuAppName appName) {
         this.appName = appName;
     }
 
-    public SecMenuPermission appName(String appName) {
+    public SecMenuPermission appName(MenuAppName appName) {
         this.setAppName(appName);
         return this;
     }

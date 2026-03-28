@@ -1,5 +1,6 @@
 package com.vn.core.security.repository;
 
+import com.vn.core.security.domain.MenuAppName;
 import com.vn.core.security.domain.SecMenuPermission;
 import java.util.Collection;
 import java.util.List;
@@ -11,15 +12,15 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface SecMenuPermissionRepository extends JpaRepository<SecMenuPermission, Long> {
-    List<SecMenuPermission> findAllByAppNameAndRoleIn(String appName, Collection<String> roles);
+    List<SecMenuPermission> findAllByAppNameAndRoleIn(MenuAppName appName, Collection<String> roles);
 
-    List<SecMenuPermission> findAllByAppName(String appName);
+    List<SecMenuPermission> findAllByAppName(MenuAppName appName);
 
     List<SecMenuPermission> findAllByRoleOrderByAppNameAscMenuIdAsc(String role);
 
-    List<SecMenuPermission> findAllByRoleAndAppNameOrderByMenuIdAsc(String role, String appName);
+    List<SecMenuPermission> findAllByRoleAndAppNameOrderByMenuIdAsc(String role, MenuAppName appName);
 
     List<SecMenuPermission> findAllByRole(String role);
 
-    void deleteByAppNameAndMenuId(String appName, String menuId);
+    void deleteByAppNameAndMenuId(MenuAppName appName, String menuId);
 }

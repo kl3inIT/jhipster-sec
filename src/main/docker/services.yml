@@ -5,3 +5,7 @@ services:
     extends:
       file: ./postgresql.yml
       service: postgresql
+  mailpit:
+    extends:
+      file: ./mailpit.yml
+      service: mailpit

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260327000100-1" author="codex">
+        <preConditions onFail="HALT">
+            <tableExists tableName="sec_menu_permission"/>
+            <columnExists tableName="sec_menu_permission" columnName="app_name"/>
+            <sqlCheck expectedResult="0">
+                select count(*)
+                from sec_menu_permission
+                where app_name not in (
+                    'jhipster-security-platform',
+                    'sales-console',
+                    'movie app',
+                    'JHIPSTER_SECURITY_PLATFORM',
+                    'SALES_CONSOLE',
+                    'MOVIE_APP'
+                )
+            </sqlCheck>
+        </preConditions>
+
+        <update tableName="sec_menu_permission">
+            <column name="app_name" value="JHIPSTER_SECURITY_PLATFORM"/>
+            <where>app_name = 'jhipster-security-platform'</where>
+        </update>
+
+        <update tableName="sec_menu_permission">
+            <column name="app_name" value="SALES_CONSOLE"/>
+            <where>app_name = 'sales-console'</where>
+        </update>
+
+        <update tableName="sec_menu_permission">
+            <column name="app_name" value="MOVIE_APP"/>
+            <where>app_name = 'movie app'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="20260327000100-2" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_permission"/>
+            <columnExists tableName="sec_menu_permission" columnName="app_name"/>
+            <sqlCheck expectedResult="0">
+                select count(*)
+                from information_schema.table_constraints
+                where table_name = 'sec_menu_permission'
+                  and constraint_name = 'ck_sec_menu_permission_app_name_enum'
+            </sqlCheck>
+        </preConditions>
+
+        <sql dbms="postgresql">
+            alter table sec_menu_permission
+            add constraint ck_sec_menu_permission_app_name_enum
+            check (app_name in ('JHIPSTER_SECURITY_PLATFORM', 'SALES_CONSOLE', 'MOVIE_APP'))
+        </sql>
+
+        <rollback>
+            <sql>alter table sec_menu_permission drop constraint if exists ck_sec_menu_permission_app_name_enum</sql>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

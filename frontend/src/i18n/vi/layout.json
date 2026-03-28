@@ -22,7 +22,6 @@
         "main": "Quản trị bảo mật",
         "roles": "Vai trò bảo mật",
         "permissions": "Ma trận quyền",
-        "rowPolicies": "Chính sách hàng",
         "menuDefinitions": "Định nghĩa menu"
       },
       "entities": {

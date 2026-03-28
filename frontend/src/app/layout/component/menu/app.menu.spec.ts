@@ -96,7 +96,7 @@ describe('AppMenu', () => {
           security: {
             main: 'Security Admin',
             roles: 'Security roles',
-            rowPolicies: 'Row policies',
+            menuDefinitions: 'Menu definitions',
           },
         },
       },
@@ -123,7 +123,7 @@ describe('AppMenu', () => {
           security: {
             main: 'Quan tri bao mat',
             roles: 'Vai tro bao mat',
-            rowPolicies: 'Chinh sach hang',
+            menuDefinitions: 'Dinh nghia menu',
           },
         },
       },

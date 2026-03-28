@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.core.IntegrationTest;
 import com.vn.core.security.AuthoritiesConstants;
+import com.vn.core.security.domain.MenuAppName;
 import com.vn.core.security.domain.SecMenuPermission;
 import com.vn.core.security.repository.SecMenuPermissionRepository;
 import com.vn.core.service.dto.security.SecMenuPermissionDTO;
@@ -39,8 +40,8 @@ class AdminMenuPermissionResourceIT {
     private static final String ENTITY_API_URL = "/api/admin/sec/menu-permissions";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
-    private static final String DEFAULT_APP = "jhipster-security-platform";
-    private static final String OTHER_APP = "other-app";
+    private static final MenuAppName DEFAULT_APP = MenuAppName.JHIPSTER_SECURITY_PLATFORM;
+    private static final MenuAppName OTHER_APP = MenuAppName.SALES_CONSOLE;
     private static final String DEFAULT_ROLE = AuthoritiesConstants.ADMIN;
     private static final String OTHER_ROLE = AuthoritiesConstants.USER;
     private static final String DEFAULT_MENU_ID = "test-menu-perm";
@@ -56,7 +57,7 @@ class AdminMenuPermissionResourceIT {
 
     @Test
     void createMenuPermission_returns201() throws Exception {
-        SecMenuPermissionDTO dto = createDto(DEFAULT_ROLE, DEFAULT_APP, DEFAULT_MENU_ID, "ALLOW");
+        SecMenuPermissionDTO dto = createDto(DEFAULT_ROLE, DEFAULT_APP.getValue(), DEFAULT_MENU_ID, "ALLOW");
 
         String response = restMockMvc
             .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dto)))
@@ -73,17 +74,28 @@ class AdminMenuPermissionResourceIT {
 
         SecMenuPermission persisted = secMenuPermissionRepository.findById(created.getId()).orElseThrow();
         assertThat(persisted.getRole()).isEqualTo(DEFAULT_ROLE);
+        assertThat(persisted.getAppName()).isEqualTo(DEFAULT_APP);
         assertThat(persisted.getEffect()).isEqualTo("ALLOW");
     }
 
     @Test
     void createMenuPermission_roleNotFound_returns400() throws Exception {
-        SecMenuPermissionDTO dto = createDto("ROLE_DOES_NOT_EXIST", DEFAULT_APP, DEFAULT_MENU_ID, "ALLOW");
+        SecMenuPermissionDTO dto = createDto("ROLE_DOES_NOT_EXIST", DEFAULT_APP.getValue(), DEFAULT_MENU_ID, "ALLOW");
 
         restMockMvc
             .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dto)))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.message").value("error.roleNotFound"));
+    }
+
+    @Test
+    void createMenuPermission_invalidAppName_returns400() throws Exception {
+        SecMenuPermissionDTO dto = createDto(DEFAULT_ROLE, "other-app", DEFAULT_MENU_ID, "ALLOW");
+
+        restMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(dto)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").value("error.appNameInvalid"));
     }
 
     @Test
@@ -104,7 +116,7 @@ class AdminMenuPermissionResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$", hasSize(2)))
             .andExpect(jsonPath("$[*].role").value(everyItem(is(DEFAULT_ROLE))))
-            .andExpect(jsonPath("$[*].appName").value(containsInAnyOrder(DEFAULT_APP, OTHER_APP)))
+            .andExpect(jsonPath("$[*].appName").value(containsInAnyOrder(DEFAULT_APP.getValue(), OTHER_APP.getValue())))
             .andExpect(jsonPath("$[*].menuId").value(containsInAnyOrder("menu-admin-1", "menu-other-1")));
     }
 
@@ -121,12 +133,12 @@ class AdminMenuPermissionResourceIT {
         );
 
         restMockMvc
-            .perform(get(ENTITY_API_URL).param("role", DEFAULT_ROLE).param("appName", OTHER_APP))
+            .perform(get(ENTITY_API_URL).param("role", DEFAULT_ROLE).param("appName", OTHER_APP.getValue()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$", hasSize(2)))
             .andExpect(jsonPath("$[*].role").value(everyItem(is(DEFAULT_ROLE))))
-            .andExpect(jsonPath("$[*].appName").value(everyItem(is(OTHER_APP))))
+            .andExpect(jsonPath("$[*].appName").value(everyItem(is(OTHER_APP.getValue()))))
             .andExpect(jsonPath("$[*].menuId").value(contains("menu-other-1", "menu-other-2")));
     }
 
@@ -144,7 +156,7 @@ class AdminMenuPermissionResourceIT {
     @Test
     @WithMockUser(authorities = AuthoritiesConstants.USER)
     void nonAdmin_returns403() throws Exception {
-        restMockMvc.perform(get(ENTITY_API_URL + "?role=" + DEFAULT_ROLE)).andExpect(status().isForbidden());
+        restMockMvc.perform(get(ENTITY_API_URL).param("role", DEFAULT_ROLE)).andExpect(status().isForbidden());
     }
 
     private static SecMenuPermissionDTO createDto(String role, String appName, String menuId, String effect) {

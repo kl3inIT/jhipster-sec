@@ -1,0 +1,36 @@
+<div class="flex justify-content-center align-items-center min-h-screen surface-ground px-3 py-5">
+  <p-card styleClass="w-full max-w-lg shadow-3">
+    <ng-template pTemplate="header">
+      <div class="p-4 pb-0">
+        <h1 class="m-0 text-2xl font-semibold">{{ 'activate.title' | translate }}</h1>
+      </div>
+    </ng-template>
+
+    <div class="p-4 pt-0 flex flex-column gap-3">
+      @if (success()) {
+        <p-message severity="success" [closable]="false" styleClass="w-full">
+          <span [innerHTML]="'activate.messages.success' | translate"></span>
+          <a routerLink="/login" class="font-medium no-underline hover:underline text-primary">
+            {{ 'global.messages.info.authenticated.link' | translate }}
+          </a>
+          .
+        </p-message>
+      }
+
+      @if (error()) {
+        <p-message severity="error" [closable]="false" styleClass="w-full">
+          <span [innerHTML]="'activate.messages.error' | translate"></span>
+        </p-message>
+      }
+
+      <div
+        class="pt-3 border-top-1 surface-border flex justify-content-between align-items-center flex-wrap gap-2 text-sm"
+      >
+        <span class="text-color-secondary">{{ 'login.title' | translate }}</span>
+        <a routerLink="/login" class="font-medium no-underline hover:underline text-primary">
+          {{ 'login.form.button' | translate }}
+        </a>
+      </div>
+    </div>
+  </p-card>
+</div>

@@ -6,10 +6,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.core.security.catalog.SecuredEntityCatalog;
 import com.vn.core.security.catalog.SecuredEntityEntry;
 import com.vn.core.security.fetch.FetchPlan;
@@ -17,17 +17,14 @@ import com.vn.core.security.fetch.FetchPlanBuilder;
 import com.vn.core.security.fetch.FetchPlanResolver;
 import com.vn.core.security.merge.SecureMergeService;
 import com.vn.core.security.permission.EntityOp;
-import com.vn.core.security.row.RowLevelSpecificationBuilder;
 import com.vn.core.security.serialize.SecureEntitySerializer;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,16 +34,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import org.springframework.security.access.AccessDeniedException;
 
 /**
- * Unit tests for {@link SecureDataManagerImpl} verifying the facade keeps row-policy,
- * fetch-plan, and serialization responsibilities while delegating secured mechanics
- * through {@link DataManager} and its explicit unconstrained bypass.
+ * Unit tests for {@link SecureDataManagerImpl} in the post-row-policy secured-data flow.
  */
 @ExtendWith(MockitoExtension.class)
 class SecureDataManagerImplTest {
@@ -61,9 +52,6 @@ class SecureDataManagerImplTest {
     private SecuredEntityCatalog catalog;
 
     @Mock
-    private RowLevelSpecificationBuilder rowLevelSpecificationBuilder;
-
-    @Mock
     private FetchPlanResolver fetchPlanResolver;
 
     @Mock
@@ -74,6 +62,9 @@ class SecureDataManagerImplTest {
 
     @Mock
     private SecureQuerySpecificationFactory secureQuerySpecificationFactory;
+
+    @Mock
+    private ObjectMapper objectMapper;
 
     @InjectMocks
     private SecureDataManagerImpl secureDataManager;
@@ -114,173 +105,49 @@ class SecureDataManagerImplTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void testLoadListDelegatesReadPageThroughDataManager() {
+    void loadList_serializesEntitiesFromLegacyWrapper() {
         when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
-
-        Specification<TestEntity> rowSpec = (root, query, cb) -> cb.conjunction();
-        when(rowLevelSpecificationBuilder.build(TestEntity.class, EntityOp.READ)).thenReturn(rowSpec);
 
         TestEntity entity = new TestEntity(1L);
         Pageable pageable = PageRequest.of(0, 10);
-        Page<TestEntity> page = new PageImpl<>(List.of(entity), pageable, 1);
-        when(dataManager.loadPage(eq(TestEntity.class), any(Specification.class), eq(pageable), eq(EntityOp.READ))).thenReturn((Page) page);
+        when(dataManager.loadPage(TestEntity.class, null, pageable, EntityOp.READ)).thenReturn(
+            new PageImpl<>(List.of(entity), pageable, 1)
+        );
         when(fetchPlanResolver.resolve(TestEntity.class, "base")).thenReturn(testFetchPlan);
         when(secureEntitySerializer.serialize(entity, testFetchPlan)).thenReturn(Map.of("id", 1L));
 
         Page<Map<String, Object>> result = secureDataManager.loadList("TEST_ENTITY", "base", pageable);
 
         assertThat(result.getContent()).containsExactly(Map.of("id", 1L));
-
-        InOrder order = inOrder(rowLevelSpecificationBuilder, dataManager, fetchPlanResolver, secureEntitySerializer);
-        order.verify(rowLevelSpecificationBuilder).build(TestEntity.class, EntityOp.READ);
-        order.verify(dataManager).loadPage(eq(TestEntity.class), any(Specification.class), eq(pageable), eq(EntityOp.READ));
-        order.verify(fetchPlanResolver).resolve(TestEntity.class, "base");
-        order.verify(secureEntitySerializer).serialize(entity, testFetchPlan);
+        verify(dataManager).loadPage(TestEntity.class, null, pageable, EntityOp.READ);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void testLoadByQueryEnforcesReadOrder() {
+    void loadByQuery_withFiltersDelegatesReadPageAndSerializes() {
         when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
 
-        Specification<TestEntity> rowSpec = (root, query, cb) -> cb.conjunction();
-        when(rowLevelSpecificationBuilder.build(TestEntity.class, EntityOp.READ)).thenReturn(rowSpec);
-        when(secureQuerySpecificationFactory.build(TestEntity.class, Map.of())).thenReturn((root, query, cb) -> null);
-
-        TestEntity entity = new TestEntity(1L);
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<TestEntity> page = new PageImpl<>(List.of(entity), pageable, 1);
-        when(dataManager.loadPage(eq(TestEntity.class), any(Specification.class), eq(pageable), eq(EntityOp.READ))).thenReturn((Page) page);
-        when(fetchPlanResolver.resolve(TestEntity.class, "base")).thenReturn(testFetchPlan);
-        when(secureEntitySerializer.serialize(entity, testFetchPlan)).thenReturn(Map.of("id", 1L));
-
-        Page<Map<String, Object>> result = secureDataManager.loadByQuery(SecuredLoadQuery.of("TEST_ENTITY", "base", pageable));
-
-        assertThat(result.getContent()).containsExactly(Map.of("id", 1L));
-
-        InOrder order = inOrder(rowLevelSpecificationBuilder, dataManager, fetchPlanResolver, secureEntitySerializer);
-        order.verify(rowLevelSpecificationBuilder).build(TestEntity.class, EntityOp.READ);
-        verify(secureQuerySpecificationFactory).build(TestEntity.class, Map.of());
-        order.verify(dataManager).loadPage(eq(TestEntity.class), any(Specification.class), eq(pageable), eq(EntityOp.READ));
-        order.verify(fetchPlanResolver).resolve(TestEntity.class, "base");
-        order.verify(secureEntitySerializer).serialize(entity, testFetchPlan);
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    void testLoadByQueryBlankJpqlDelegatesThroughDataManagerLoadPage() {
-        when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
-
-        Specification<TestEntity> rowSpec = (root, query, cb) -> cb.conjunction();
-        when(rowLevelSpecificationBuilder.build(TestEntity.class, EntityOp.READ)).thenReturn(rowSpec);
-
-        Map<String, Object> filters = Map.of("ownerLogin", "proof-owner");
-        Specification<TestEntity> filterSpec = (root, query, cb) -> cb.equal(root.get("ownerLogin"), "proof-owner");
+        Map<String, Object> filters = Map.of("id", 1L);
+        Specification<TestEntity> filterSpec = (root, query, cb) -> cb.equal(root.get("id"), 1L);
         when(secureQuerySpecificationFactory.build(TestEntity.class, filters)).thenReturn(filterSpec);
 
         TestEntity entity = new TestEntity(1L);
         Pageable pageable = PageRequest.of(0, 10);
-        Page<TestEntity> page = new PageImpl<>(List.of(entity), pageable, 1);
-        when(dataManager.loadPage(eq(TestEntity.class), any(Specification.class), eq(pageable), eq(EntityOp.READ))).thenReturn((Page) page);
+        when(dataManager.loadPage(eq(TestEntity.class), eq(filterSpec), eq(pageable), eq(EntityOp.READ))).thenReturn(
+            new PageImpl<>(List.of(entity), pageable, 1)
+        );
         when(fetchPlanResolver.resolve(TestEntity.class, "base")).thenReturn(testFetchPlan);
         when(secureEntitySerializer.serialize(entity, testFetchPlan)).thenReturn(Map.of("id", 1L));
 
-        SecuredLoadQuery query = new SecuredLoadQuery("TEST_ENTITY", "   ", filters, pageable, pageable.getSort(), "base");
-
-        Page<Map<String, Object>> result = secureDataManager.loadByQuery(query);
+        Page<Map<String, Object>> result = secureDataManager.loadByQuery(
+            new SecuredLoadQuery("TEST_ENTITY", null, filters, pageable, pageable.getSort(), "base")
+        );
 
         assertThat(result.getContent()).containsExactly(Map.of("id", 1L));
         verify(secureQuerySpecificationFactory).build(TestEntity.class, filters);
-        verify(dataManager).loadPage(eq(TestEntity.class), any(Specification.class), eq(pageable), eq(EntityOp.READ));
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void testLoadByQueryCombinesRowLevelAndFilterSpecifications() {
-        when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
-
-        AtomicBoolean rowInvoked = new AtomicBoolean(false);
-        Predicate rowPredicate = mock(Predicate.class);
-        Specification<TestEntity> rowSpec = (root, query, cb) -> {
-            rowInvoked.set(true);
-            return rowPredicate;
-        };
-        when(rowLevelSpecificationBuilder.build(TestEntity.class, EntityOp.READ)).thenReturn(rowSpec);
-
-        Map<String, Object> filters = Map.of("ownerLogin", "proof-owner");
-        AtomicBoolean filterInvoked = new AtomicBoolean(false);
-        Predicate filterPredicate = mock(Predicate.class);
-        Specification<TestEntity> filterSpec = (root, query, cb) -> {
-            filterInvoked.set(true);
-            return filterPredicate;
-        };
-        when(secureQuerySpecificationFactory.build(TestEntity.class, filters)).thenReturn(filterSpec);
-
-        TestEntity entity = new TestEntity(1L);
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<TestEntity> page = new PageImpl<>(List.of(entity), pageable, 1);
-        when(dataManager.loadPage(eq(TestEntity.class), any(Specification.class), eq(pageable), eq(EntityOp.READ))).thenReturn((Page) page);
-        when(fetchPlanResolver.resolve(TestEntity.class, "base")).thenReturn(testFetchPlan);
-        when(secureEntitySerializer.serialize(entity, testFetchPlan)).thenReturn(Map.of("id", 1L));
-
-        secureDataManager.loadByQuery(new SecuredLoadQuery("TEST_ENTITY", null, filters, pageable, pageable.getSort(), "base"));
-
-        ArgumentCaptor<Specification<TestEntity>> specCaptor = ArgumentCaptor.forClass(Specification.class);
-        verify(dataManager).loadPage(eq(TestEntity.class), specCaptor.capture(), eq(pageable), eq(EntityOp.READ));
-
-        CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class);
-        CriteriaQuery<?> criteriaQuery = mock(CriteriaQuery.class);
-        Root<TestEntity> root = mock(Root.class);
-        Predicate combinedPredicate = mock(Predicate.class);
-        when(criteriaBuilder.and(rowPredicate, filterPredicate)).thenReturn(combinedPredicate);
-
-        assertThat(specCaptor.getValue().toPredicate(root, criteriaQuery, criteriaBuilder)).isSameAs(combinedPredicate);
-        assertThat(rowInvoked).isTrue();
-        assertThat(filterInvoked).isTrue();
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    void testLoadOneReturnsSerializedEntity() {
-        when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
-
-        Specification<TestEntity> rowSpec = (root, query, cb) -> cb.conjunction();
-        when(rowLevelSpecificationBuilder.build(TestEntity.class, EntityOp.READ)).thenReturn(rowSpec);
-
-        TestEntity entity = new TestEntity(1L);
-        when(dataManager.loadOne(eq(TestEntity.class), any(Specification.class), eq(EntityOp.READ))).thenReturn(Optional.of(entity));
-        when(fetchPlanResolver.resolve(TestEntity.class, "base")).thenReturn(testFetchPlan);
-        when(secureEntitySerializer.serialize(entity, testFetchPlan)).thenReturn(Map.of("id", 1L));
-
-        Optional<Map<String, Object>> result = secureDataManager.loadOne("TEST_ENTITY", 1L, "base");
-
-        assertThat(result).contains(Map.of("id", 1L));
-
-        InOrder order = inOrder(rowLevelSpecificationBuilder, dataManager, fetchPlanResolver, secureEntitySerializer);
-        order.verify(rowLevelSpecificationBuilder).build(TestEntity.class, EntityOp.READ);
-        order.verify(dataManager).loadOne(eq(TestEntity.class), any(Specification.class), eq(EntityOp.READ));
-        order.verify(fetchPlanResolver).resolve(TestEntity.class, "base");
-        order.verify(secureEntitySerializer).serialize(entity, testFetchPlan);
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    void testLoadOneReturnsEmptyWhenRowIsFilteredOut() {
-        when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
-
-        Specification<TestEntity> rowSpec = (root, query, cb) -> cb.conjunction();
-        when(rowLevelSpecificationBuilder.build(TestEntity.class, EntityOp.READ)).thenReturn(rowSpec);
-        when(dataManager.loadOne(eq(TestEntity.class), any(Specification.class), eq(EntityOp.READ))).thenReturn(Optional.empty());
-
-        assertThat(secureDataManager.loadOne("TEST_ENTITY", 99L, "base")).isEmpty();
-        verify(fetchPlanResolver, never()).resolve(any(), any());
-        verify(secureEntitySerializer, never()).serialize(any(), any());
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    void testLoadByQueryUnsupportedJpqlFailsClosed() {
+    void loadByQuery_withUnsupportedJpqlFailsClosed() {
         SecuredEntityEntry jpqlEntry = SecuredEntityEntry.builder()
             .entityClass(TestEntity.class)
             .code("TEST_ENTITY")
@@ -289,9 +156,6 @@ class SecureDataManagerImplTest {
             .jpqlAllowed(true)
             .build();
         when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(jpqlEntry));
-
-        Specification<TestEntity> rowSpec = (root, query, cb) -> cb.conjunction();
-        when(rowLevelSpecificationBuilder.build(TestEntity.class, EntityOp.READ)).thenReturn(rowSpec);
 
         SecuredLoadQuery query = new SecuredLoadQuery(
             "TEST_ENTITY",
@@ -308,34 +172,35 @@ class SecureDataManagerImplTest {
     }
 
     @Test
-    void testLoadByQueryDeniedCrudThrows() {
+    void loadOne_returnsSerializedEntityFromLegacyWrapper() {
         when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
-        when(rowLevelSpecificationBuilder.build(TestEntity.class, EntityOp.READ)).thenReturn((root, query, cb) -> cb.conjunction());
-        when(secureQuerySpecificationFactory.build(TestEntity.class, Map.of())).thenReturn((root, query, cb) -> null);
-        when(dataManager.loadPage(eq(TestEntity.class), any(Specification.class), any(Pageable.class), eq(EntityOp.READ))).thenThrow(
-            new AccessDeniedException("READ denied on TestEntity")
-        );
 
-        Pageable pageable = PageRequest.of(0, 10);
+        TestEntity entity = new TestEntity(1L);
+        when(dataManager.loadOne(eq(TestEntity.class), any(Specification.class), eq(EntityOp.READ))).thenReturn(Optional.of(entity));
+        when(fetchPlanResolver.resolve(TestEntity.class, "base")).thenReturn(testFetchPlan);
+        when(secureEntitySerializer.serialize(entity, testFetchPlan)).thenReturn(Map.of("id", 1L));
 
-        assertThatThrownBy(() -> secureDataManager.loadByQuery(SecuredLoadQuery.of("TEST_ENTITY", "base", pageable))).isInstanceOf(
-            AccessDeniedException.class
-        );
+        Optional<Map<String, Object>> result = secureDataManager.loadOne("TEST_ENTITY", 1L, "base");
+
+        assertThat(result).contains(Map.of("id", 1L));
     }
 
     @Test
-    void testSaveCreateUsesUnconstrainedCreateAndSave() {
+    void saveCreate_usesTypedMergeAndSerialization() {
         when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
         when(dataManager.unconstrained()).thenReturn(unconstrainedDataManager);
 
-        TestEntity entity = new TestEntity();
-        TestEntity saved = new TestEntity(1L);
-        when(unconstrainedDataManager.create(TestEntity.class)).thenReturn(entity);
-        when(unconstrainedDataManager.save(entity)).thenReturn(saved);
-        when(fetchPlanResolver.resolve(TestEntity.class, "base")).thenReturn(testFetchPlan);
-        when(secureEntitySerializer.serialize(saved, testFetchPlan)).thenReturn(Map.of("id", 1L));
+        TestEntity managedEntity = new TestEntity();
+        TestEntity payloadEntity = new TestEntity();
+        TestEntity savedEntity = new TestEntity(1L);
+        Map<String, Object> attributes = Map.of("id", 1L);
 
-        Map<String, Object> attributes = Map.of("name", "test");
+        when(objectMapper.convertValue(attributes, TestEntity.class)).thenReturn(payloadEntity);
+        when(unconstrainedDataManager.create(TestEntity.class)).thenReturn(managedEntity);
+        when(unconstrainedDataManager.save(managedEntity)).thenReturn(savedEntity);
+        when(fetchPlanResolver.resolve(TestEntity.class, "base")).thenReturn(testFetchPlan);
+        when(secureEntitySerializer.serialize(savedEntity, testFetchPlan)).thenReturn(Map.of("id", 1L));
+
         Map<String, Object> result = secureDataManager.save("TEST_ENTITY", null, attributes, "base");
 
         assertThat(result).isEqualTo(Map.of("id", 1L));
@@ -344,79 +209,56 @@ class SecureDataManagerImplTest {
         order.verify(dataManager).checkCrud(TestEntity.class, EntityOp.CREATE);
         order.verify(dataManager).unconstrained();
         order.verify(unconstrainedDataManager).create(TestEntity.class);
-        order.verify(secureMergeService).mergeForUpdate(entity, attributes);
-        order.verify(unconstrainedDataManager).save(entity);
+        order.verify(secureMergeService).mergeForUpdate(managedEntity, payloadEntity, attributes.keySet());
+        order.verify(unconstrainedDataManager).save(managedEntity);
         order.verify(fetchPlanResolver).resolve(TestEntity.class, "base");
-        order.verify(secureEntitySerializer).serialize(saved, testFetchPlan);
+        order.verify(secureEntitySerializer).serialize(savedEntity, testFetchPlan);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void testSaveUpdateUsesDataManagerLookupAndUnconstrainedSave() {
+    void saveUpdate_loadsByIdAndUsesTypedMerge() {
         when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
         when(dataManager.unconstrained()).thenReturn(unconstrainedDataManager);
 
-        Specification<TestEntity> rowSpec = (root, query, cb) -> cb.conjunction();
-        when(rowLevelSpecificationBuilder.build(TestEntity.class, EntityOp.UPDATE)).thenReturn(rowSpec);
+        TestEntity managedEntity = new TestEntity(1L);
+        TestEntity payloadEntity = new TestEntity(1L);
+        TestEntity savedEntity = new TestEntity(1L);
+        Map<String, Object> attributes = Map.of("id", 1L);
 
-        TestEntity entity = new TestEntity(1L);
-        TestEntity saved = new TestEntity(1L);
-        when(dataManager.loadOne(eq(TestEntity.class), any(Specification.class), eq(EntityOp.UPDATE))).thenReturn(Optional.of(entity));
-        when(unconstrainedDataManager.save(entity)).thenReturn(saved);
+        when(objectMapper.convertValue(attributes, TestEntity.class)).thenReturn(payloadEntity);
+        when(dataManager.loadOne(eq(TestEntity.class), any(Specification.class), eq(EntityOp.UPDATE))).thenReturn(
+            Optional.of(managedEntity)
+        );
+        when(unconstrainedDataManager.save(managedEntity)).thenReturn(savedEntity);
         when(fetchPlanResolver.resolve(TestEntity.class, "base")).thenReturn(testFetchPlan);
-        when(secureEntitySerializer.serialize(saved, testFetchPlan)).thenReturn(Map.of("id", 1L));
+        when(secureEntitySerializer.serialize(savedEntity, testFetchPlan)).thenReturn(Map.of("id", 1L));
 
-        Map<String, Object> attributes = Map.of("name", "updated");
         Map<String, Object> result = secureDataManager.save("TEST_ENTITY", 1L, attributes, "base");
 
         assertThat(result).isEqualTo(Map.of("id", 1L));
-
-        InOrder order = inOrder(rowLevelSpecificationBuilder, dataManager, secureMergeService, unconstrainedDataManager, fetchPlanResolver, secureEntitySerializer);
-        order.verify(rowLevelSpecificationBuilder).build(TestEntity.class, EntityOp.UPDATE);
-        order.verify(dataManager).loadOne(eq(TestEntity.class), any(Specification.class), eq(EntityOp.UPDATE));
-        order.verify(dataManager).unconstrained();
-        order.verify(secureMergeService).mergeForUpdate(entity, attributes);
-        order.verify(unconstrainedDataManager).save(entity);
-        order.verify(fetchPlanResolver).resolve(TestEntity.class, "base");
-        order.verify(secureEntitySerializer).serialize(saved, testFetchPlan);
+        verify(secureMergeService).mergeForUpdate(managedEntity, payloadEntity, attributes.keySet());
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    void testDeleteEnforcesDeleteOrder() {
+    void delete_loadsByIdAndDeletesThroughUnconstrainedManager() {
         when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
         when(dataManager.unconstrained()).thenReturn(unconstrainedDataManager);
 
-        Specification<TestEntity> rowSpec = (root, query, cb) -> cb.conjunction();
-        when(rowLevelSpecificationBuilder.build(TestEntity.class, EntityOp.DELETE)).thenReturn(rowSpec);
-
-        TestEntity entity = new TestEntity(1L);
-        when(dataManager.loadOne(eq(TestEntity.class), any(Specification.class), eq(EntityOp.DELETE))).thenReturn(Optional.of(entity));
+        TestEntity managedEntity = new TestEntity(1L);
+        when(dataManager.loadOne(eq(TestEntity.class), any(Specification.class), eq(EntityOp.DELETE))).thenReturn(
+            Optional.of(managedEntity)
+        );
 
         secureDataManager.delete("TEST_ENTITY", 1L);
 
-        InOrder order = inOrder(rowLevelSpecificationBuilder, dataManager, unconstrainedDataManager);
-        order.verify(rowLevelSpecificationBuilder).build(TestEntity.class, EntityOp.DELETE);
-        order.verify(dataManager).loadOne(eq(TestEntity.class), any(Specification.class), eq(EntityOp.DELETE));
-        order.verify(dataManager).unconstrained();
-        order.verify(unconstrainedDataManager).delete(entity);
+        verify(unconstrainedDataManager).delete(managedEntity);
     }
 
     @Test
-    void testUnknownEntityCodeThrows() {
-        when(catalog.findByCode("UNKNOWN")).thenReturn(Optional.empty());
-
-        Pageable pageable = PageRequest.of(0, 10);
-
-        assertThatThrownBy(() -> secureDataManager.loadByQuery(SecuredLoadQuery.of("UNKNOWN", "base", pageable))).isInstanceOf(
-            IllegalArgumentException.class
-        );
-    }
-
-    @Test
-    void testDeleteUnknownEntityCodeThrows() {
+    void unknownEntityCodeThrows() {
         when(catalog.findByCode("UNKNOWN")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> secureDataManager.delete("UNKNOWN", 1L)).isInstanceOf(IllegalArgumentException.class);
+        verify(fetchPlanResolver, never()).resolve(any(), any());
     }
 }
