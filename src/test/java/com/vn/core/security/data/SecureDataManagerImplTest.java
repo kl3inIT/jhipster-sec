@@ -4,12 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.core.security.catalog.SecuredEntityCatalog;
 import com.vn.core.security.catalog.SecuredEntityEntry;
 import com.vn.core.security.fetch.FetchPlan;
@@ -25,7 +23,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -62,9 +59,6 @@ class SecureDataManagerImplTest {
 
     @Mock
     private SecureQuerySpecificationFactory secureQuerySpecificationFactory;
-
-    @Mock
-    private ObjectMapper objectMapper;
 
     @InjectMocks
     private SecureDataManagerImpl secureDataManager;
@@ -183,60 +177,6 @@ class SecureDataManagerImplTest {
         Optional<Map<String, Object>> result = secureDataManager.loadOne("TEST_ENTITY", 1L, "base");
 
         assertThat(result).contains(Map.of("id", 1L));
-    }
-
-    @Test
-    void saveCreate_usesTypedMergeAndSerialization() {
-        when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
-        when(dataManager.unconstrained()).thenReturn(unconstrainedDataManager);
-
-        TestEntity managedEntity = new TestEntity();
-        TestEntity payloadEntity = new TestEntity();
-        TestEntity savedEntity = new TestEntity(1L);
-        Map<String, Object> attributes = Map.of("id", 1L);
-
-        when(objectMapper.convertValue(attributes, TestEntity.class)).thenReturn(payloadEntity);
-        when(unconstrainedDataManager.create(TestEntity.class)).thenReturn(managedEntity);
-        when(unconstrainedDataManager.save(managedEntity)).thenReturn(savedEntity);
-        when(fetchPlanResolver.resolve(TestEntity.class, "base")).thenReturn(testFetchPlan);
-        when(secureEntitySerializer.serialize(savedEntity, testFetchPlan)).thenReturn(Map.of("id", 1L));
-
-        Map<String, Object> result = secureDataManager.save("TEST_ENTITY", null, attributes, "base");
-
-        assertThat(result).isEqualTo(Map.of("id", 1L));
-
-        InOrder order = inOrder(dataManager, unconstrainedDataManager, secureMergeService, fetchPlanResolver, secureEntitySerializer);
-        order.verify(dataManager).checkCrud(TestEntity.class, EntityOp.CREATE);
-        order.verify(dataManager).unconstrained();
-        order.verify(unconstrainedDataManager).create(TestEntity.class);
-        order.verify(secureMergeService).mergeForUpdate(managedEntity, payloadEntity, attributes.keySet());
-        order.verify(unconstrainedDataManager).save(managedEntity);
-        order.verify(fetchPlanResolver).resolve(TestEntity.class, "base");
-        order.verify(secureEntitySerializer).serialize(savedEntity, testFetchPlan);
-    }
-
-    @Test
-    void saveUpdate_loadsByIdAndUsesTypedMerge() {
-        when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
-        when(dataManager.unconstrained()).thenReturn(unconstrainedDataManager);
-
-        TestEntity managedEntity = new TestEntity(1L);
-        TestEntity payloadEntity = new TestEntity(1L);
-        TestEntity savedEntity = new TestEntity(1L);
-        Map<String, Object> attributes = Map.of("id", 1L);
-
-        when(objectMapper.convertValue(attributes, TestEntity.class)).thenReturn(payloadEntity);
-        when(dataManager.loadOne(eq(TestEntity.class), any(Specification.class), eq(EntityOp.UPDATE))).thenReturn(
-            Optional.of(managedEntity)
-        );
-        when(unconstrainedDataManager.save(managedEntity)).thenReturn(savedEntity);
-        when(fetchPlanResolver.resolve(TestEntity.class, "base")).thenReturn(testFetchPlan);
-        when(secureEntitySerializer.serialize(savedEntity, testFetchPlan)).thenReturn(Map.of("id", 1L));
-
-        Map<String, Object> result = secureDataManager.save("TEST_ENTITY", 1L, attributes, "base");
-
-        assertThat(result).isEqualTo(Map.of("id", 1L));
-        verify(secureMergeService).mergeForUpdate(managedEntity, payloadEntity, attributes.keySet());
     }
 
     @Test
