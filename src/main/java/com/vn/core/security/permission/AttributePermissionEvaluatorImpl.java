@@ -25,10 +25,16 @@ public class AttributePermissionEvaluatorImpl implements AttributePermissionEval
 
     private final SecPermissionRepository secPermissionRepository;
     private final MergedSecurityService mergedSecurityService;
+    private final RequestPermissionSnapshot requestPermissionSnapshot;
 
-    public AttributePermissionEvaluatorImpl(SecPermissionRepository secPermissionRepository, MergedSecurityService mergedSecurityService) {
+    public AttributePermissionEvaluatorImpl(
+        SecPermissionRepository secPermissionRepository,
+        MergedSecurityService mergedSecurityService,
+        RequestPermissionSnapshot requestPermissionSnapshot
+    ) {
         this.secPermissionRepository = secPermissionRepository;
         this.mergedSecurityService = mergedSecurityService;
+        this.requestPermissionSnapshot = requestPermissionSnapshot;
     }
 
     @Override
@@ -42,14 +48,25 @@ public class AttributePermissionEvaluatorImpl implements AttributePermissionEval
     }
 
     private boolean checkAttributePermission(Class<?> entityClass, String attribute, String action) {
+        String entityTarget = entityClass.getSimpleName().toUpperCase(Locale.ROOT);
+        String specificTarget = entityTarget + "." + attribute.toUpperCase(Locale.ROOT);
+
+        // Use request-scoped snapshot when available: matrix lookup replaces per-attribute DB query.
+        if (RequestPermissionSnapshot.isRequestScopeActive()) {
+            boolean permitted = requestPermissionSnapshot.getMatrix().isAttributePermitted(specificTarget, action);
+            if (!permitted) {
+                LOG.debug("Snapshot: no ALLOW for attribute {} {} on {} - access denied", action, attribute, entityClass.getSimpleName());
+            }
+            return permitted;
+        }
+
+        // Fallback for non-web contexts.
         Collection<String> authorities = mergedSecurityService.getCurrentUserAuthorityNames();
         if (authorities.isEmpty()) {
             LOG.debug("No authorities for current user - denying attribute {} {} on {}", action, attribute, entityClass.getSimpleName());
             return false;
         }
 
-        String entityTarget = entityClass.getSimpleName().toUpperCase(Locale.ROOT);
-        String specificTarget = entityTarget + "." + attribute.toUpperCase(Locale.ROOT);
         String wildcardTarget = entityTarget + ".*";
         List<String> targets = List.of(specificTarget, wildcardTarget);
         List<SecPermission> perms = secPermissionRepository.findByRolesAndTargets(authorities, TargetType.ATTRIBUTE, targets, action);
