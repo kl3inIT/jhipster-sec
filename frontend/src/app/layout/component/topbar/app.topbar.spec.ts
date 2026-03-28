@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { firstValueFrom, of } from 'rxjs';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
@@ -9,6 +10,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { AuthServerProvider } from 'app/core/auth/auth-jwt.service';
 import { StateStorageService } from 'app/core/auth/state-storage.service';
 import { LayoutService } from 'app/layout/service/layout.service';
+import { AppConfigurator } from './app.configurator';
 import { AppTopbar } from './app.topbar';
 
 describe('AppTopbar', () => {
@@ -55,9 +57,27 @@ describe('AppTopbar', () => {
       layout: {
         topbar: {
           toggleMenu: 'Toggle menu',
-          toggleTheme: 'Toggle theme',
+          openSettings: 'Open settings',
           login: 'Sign in',
           logout: 'Sign out',
+        },
+        settings: {
+          title: 'Settings',
+          subtitle: 'Language and theme controls',
+          language: 'Language',
+          preset: 'Preset',
+          primary: 'Primary',
+          surface: 'Surface',
+          appearance: {
+            label: 'Appearance',
+            light: 'Light',
+            dark: 'Dark',
+          },
+          menuMode: {
+            label: 'Menu mode',
+            static: 'Static',
+            overlay: 'Overlay',
+          },
         },
         language: {
           en: 'English',
@@ -69,9 +89,27 @@ describe('AppTopbar', () => {
       layout: {
         topbar: {
           toggleMenu: 'Mo menu',
-          toggleTheme: 'Doi giao dien',
+          openSettings: 'Mo cai dat',
           login: 'Dang nhap',
           logout: 'Dang xuat',
+        },
+        settings: {
+          title: 'Cai dat',
+          subtitle: 'Ngon ngu va giao dien',
+          language: 'Ngon ngu',
+          preset: 'Preset',
+          primary: 'Mau chinh',
+          surface: 'Nen',
+          appearance: {
+            label: 'Giao dien',
+            light: 'Sang',
+            dark: 'Toi',
+          },
+          menuMode: {
+            label: 'Che do menu',
+            static: 'Static',
+            overlay: 'Overlay',
+          },
         },
         language: {
           en: 'English',
@@ -81,38 +119,39 @@ describe('AppTopbar', () => {
     });
   });
 
-  it('stores and applies the selected language', async () => {
+  it('stores and applies the selected language from the settings panel', async () => {
     const fixture = TestBed.createComponent(AppTopbar);
-    const component = fixture.componentInstance;
     await firstValueFrom(translateService.use('en'));
     fixture.detectChanges();
 
-    component.changeLanguage('vi');
+    fixture.componentInstance.settingsOpen.set(true);
+    fixture.detectChanges();
+
+    const configurator = fixture.debugElement.query(By.directive(AppConfigurator)).componentInstance as AppConfigurator;
+    configurator.changeLanguage('vi');
     fixture.detectChanges();
 
     expect(storeLocaleCalls).toEqual(['vi']);
-    expect(component.activeLanguage()).toBe('vi');
+    expect(configurator.activeLanguage()).toBe('vi');
     expect(translateService.currentLang).toBe('vi');
   });
 
-  it('renders translated language controls and updates pressed state', async () => {
+  it('renders the settings trigger and toggles the panel content', async () => {
     const fixture = TestBed.createComponent(AppTopbar);
     await firstValueFrom(translateService.use('en'));
     fixture.detectChanges();
 
     const nativeElement = fixture.nativeElement as HTMLElement;
-    expect(nativeElement.textContent).toContain('English');
-    expect(nativeElement.textContent).toContain('Vietnamese');
+    const settingsButton = nativeElement.querySelector('button[aria-label="Open settings"]') as HTMLButtonElement;
 
-    const languageButtons = nativeElement.querySelectorAll('button[aria-pressed]');
-    expect(languageButtons[0]?.getAttribute('aria-pressed')).toBe('false');
-    expect(languageButtons[1]?.getAttribute('aria-pressed')).toBe('true');
+    expect(settingsButton).not.toBeNull();
+    expect(nativeElement.textContent).not.toContain('Settings');
 
-    const component = fixture.componentInstance;
-    component.changeLanguage('vi');
+    settingsButton.click();
     fixture.detectChanges();
 
-    expect(languageButtons[0]?.getAttribute('aria-pressed')).toBe('true');
-    expect(languageButtons[1]?.getAttribute('aria-pressed')).toBe('false');
+    expect(nativeElement.textContent).toContain('Settings');
+    expect(nativeElement.textContent).toContain('English');
+    expect(nativeElement.textContent).toContain('Vietnamese');
   });
 });

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260328000100-1" author="codex">
+        <comment>Bootstrap the shell navigation tree so admin users have a manageable baseline menu.</comment>
+        <sql>
+            INSERT INTO sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            SELECT 'home', 'jhipster-security-platform', 'Home', 'global.menu.home', NULL, NULL, '/', 'pi pi-home', 10
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_definition WHERE app_name = 'jhipster-security-platform' AND menu_id = 'home'
+            );
+
+            INSERT INTO sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            SELECT 'home.dashboard', 'jhipster-security-platform', 'Home Dashboard', 'global.menu.home', NULL, 'home', '/', 'pi pi-home', 10
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_definition WHERE app_name = 'jhipster-security-platform' AND menu_id = 'home.dashboard'
+            );
+
+            INSERT INTO sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            SELECT 'entities', 'jhipster-security-platform', 'Entities', 'global.menu.entities.main', NULL, NULL, '/entities/organization', 'pi pi-building', 20
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_definition WHERE app_name = 'jhipster-security-platform' AND menu_id = 'entities'
+            );
+
+            INSERT INTO sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            SELECT 'entities.organization', 'jhipster-security-platform', 'Organizations', 'global.menu.entities.organization', NULL, 'entities', '/entities/organization', 'pi pi-building', 10
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_definition WHERE app_name = 'jhipster-security-platform' AND menu_id = 'entities.organization'
+            );
+
+            INSERT INTO sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            SELECT 'entities.department', 'jhipster-security-platform', 'Departments', 'global.menu.entities.department', NULL, 'entities', '/entities/department', 'pi pi-sitemap', 20
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_definition WHERE app_name = 'jhipster-security-platform' AND menu_id = 'entities.department'
+            );
+
+            INSERT INTO sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            SELECT 'entities.employee', 'jhipster-security-platform', 'Employees', 'layout.menu.entities.employee', NULL, 'entities', '/entities/employee', 'pi pi-users', 30
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_definition WHERE app_name = 'jhipster-security-platform' AND menu_id = 'entities.employee'
+            );
+
+            INSERT INTO sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            SELECT 'security', 'jhipster-security-platform', 'Security', 'layout.menu.security.main', NULL, NULL, '/admin/users', 'pi pi-shield', 30
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_definition WHERE app_name = 'jhipster-security-platform' AND menu_id = 'security'
+            );
+
+            INSERT INTO sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            SELECT 'security.users', 'jhipster-security-platform', 'User Management', 'global.menu.admin.userManagement', NULL, 'security', '/admin/users', 'pi pi-users', 10
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_definition WHERE app_name = 'jhipster-security-platform' AND menu_id = 'security.users'
+            );
+
+            INSERT INTO sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            SELECT 'security.roles', 'jhipster-security-platform', 'Roles', 'layout.menu.security.roles', NULL, 'security', '/admin/security/roles', 'pi pi-shield', 20
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_definition WHERE app_name = 'jhipster-security-platform' AND menu_id = 'security.roles'
+            );
+
+            INSERT INTO sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            SELECT 'security.row-policies', 'jhipster-security-platform', 'Row Policies', 'layout.menu.security.rowPolicies', NULL, 'security', '/admin/security/row-policies', 'pi pi-filter', 30
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_definition WHERE app_name = 'jhipster-security-platform' AND menu_id = 'security.row-policies'
+            );
+
+            INSERT INTO sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            SELECT 'security.menu-definitions', 'jhipster-security-platform', 'Menu Definitions', 'layout.menu.security.menuDefinitions', NULL, 'security', '/admin/security/menu-definitions', 'pi pi-list', 40
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_definition WHERE app_name = 'jhipster-security-platform' AND menu_id = 'security.menu-definitions'
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260328000100-2" author="codex">
+        <comment>Grant the shipped shell leaves to ROLE_ADMIN so the baseline admin account can navigate the platform.</comment>
+        <sql>
+            INSERT INTO sec_menu_permission (role, app_name, menu_id, effect)
+            SELECT 'ROLE_ADMIN', 'jhipster-security-platform', 'home.dashboard', 'ALLOW'
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_permission
+                WHERE role = 'ROLE_ADMIN' AND app_name = 'jhipster-security-platform' AND menu_id = 'home.dashboard'
+            );
+
+            INSERT INTO sec_menu_permission (role, app_name, menu_id, effect)
+            SELECT 'ROLE_ADMIN', 'jhipster-security-platform', 'entities.organization', 'ALLOW'
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_permission
+                WHERE role = 'ROLE_ADMIN' AND app_name = 'jhipster-security-platform' AND menu_id = 'entities.organization'
+            );
+
+            INSERT INTO sec_menu_permission (role, app_name, menu_id, effect)
+            SELECT 'ROLE_ADMIN', 'jhipster-security-platform', 'entities.department', 'ALLOW'
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_permission
+                WHERE role = 'ROLE_ADMIN' AND app_name = 'jhipster-security-platform' AND menu_id = 'entities.department'
+            );
+
+            INSERT INTO sec_menu_permission (role, app_name, menu_id, effect)
+            SELECT 'ROLE_ADMIN', 'jhipster-security-platform', 'entities.employee', 'ALLOW'
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_permission
+                WHERE role = 'ROLE_ADMIN' AND app_name = 'jhipster-security-platform' AND menu_id = 'entities.employee'
+            );
+
+            INSERT INTO sec_menu_permission (role, app_name, menu_id, effect)
+            SELECT 'ROLE_ADMIN', 'jhipster-security-platform', 'security.users', 'ALLOW'
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_permission
+                WHERE role = 'ROLE_ADMIN' AND app_name = 'jhipster-security-platform' AND menu_id = 'security.users'
+            );
+
+            INSERT INTO sec_menu_permission (role, app_name, menu_id, effect)
+            SELECT 'ROLE_ADMIN', 'jhipster-security-platform', 'security.roles', 'ALLOW'
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_permission
+                WHERE role = 'ROLE_ADMIN' AND app_name = 'jhipster-security-platform' AND menu_id = 'security.roles'
+            );
+
+            INSERT INTO sec_menu_permission (role, app_name, menu_id, effect)
+            SELECT 'ROLE_ADMIN', 'jhipster-security-platform', 'security.row-policies', 'ALLOW'
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_permission
+                WHERE role = 'ROLE_ADMIN' AND app_name = 'jhipster-security-platform' AND menu_id = 'security.row-policies'
+            );
+
+            INSERT INTO sec_menu_permission (role, app_name, menu_id, effect)
+            SELECT 'ROLE_ADMIN', 'jhipster-security-platform', 'security.menu-definitions', 'ALLOW'
+            WHERE NOT EXISTS (
+                SELECT 1 FROM sec_menu_permission
+                WHERE role = 'ROLE_ADMIN' AND app_name = 'jhipster-security-platform' AND menu_id = 'security.menu-definitions'
+            );
+        </sql>
+    </changeSet>
+</databaseChangeLog>

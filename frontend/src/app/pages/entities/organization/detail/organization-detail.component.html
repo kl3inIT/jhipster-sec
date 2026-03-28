@@ -15,7 +15,8 @@
       <button
         type="button"
         pButton
-        class="p-button-outlined"
+        severity="secondary"
+        [outlined]="true"
         icon="pi pi-arrow-left"
         [label]="'entity.action.back' | translate"
         (click)="back()"
@@ -24,6 +25,7 @@
         <button
           type="button"
           pButton
+          [outlined]="true"
           icon="pi pi-pencil"
           [label]="'entity.action.edit' | translate"
           (click)="openOrganizationDialog()"
@@ -44,7 +46,7 @@
         <button
           type="button"
           pButton
-          class="p-button-secondary"
+          severity="secondary"
           icon="pi pi-user-plus"
           [label]="'angappApp.employee.home.createLabel' | translate"
           (click)="openCreateEmployeeDialog()"
@@ -213,7 +215,7 @@
                   <button
                     type="button"
                     pButton
-                    class="p-button-outlined"
+                    [outlined]="true"
                     icon="pi pi-pencil"
                     [label]="'entity.action.edit' | translate"
                     (click)="openEditDepartmentDialog(department)"
@@ -224,7 +226,7 @@
                   <button
                     type="button"
                     pButton
-                    class="p-button-secondary"
+                    severity="secondary"
                     icon="pi pi-user-plus"
                     [label]="'angappApp.employee.home.createLabel' | translate"
                     (click)="openCreateEmployeeDialog()"

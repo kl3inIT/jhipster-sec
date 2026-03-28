@@ -9,14 +9,25 @@ import { filter } from 'rxjs/operators';
   selector: '[app-menuitem]',
   imports: [CommonModule, RouterModule, RippleModule],
   template: `
-    @if (root() && isVisible()) {
+    @if (root() && isVisible() && !compact()) {
       <div class="layout-menuitem-root-text">{{ item().label }}</div>
     }
     @if ((!hasRouterLink() || hasChildren()) && isVisible()) {
-      <a [attr.href]="item().url" (click)="itemClick($event)" [ngClass]="item().class" [attr.target]="item().target" tabindex="0" pRipple>
+      <a
+        [attr.href]="item().url"
+        (click)="itemClick($event)"
+        [ngClass]="item().class"
+        [attr.target]="item().target"
+        [attr.title]="compact() ? item().label : null"
+        [attr.aria-label]="compact() ? item().label : null"
+        tabindex="0"
+        pRipple
+      >
         <i [ngClass]="item().icon" class="layout-menuitem-icon"></i>
-        <span class="layout-menuitem-text">{{ item().label }}</span>
-        @if (hasChildren()) {
+        @if (!compact() || root()) {
+          <span class="layout-menuitem-text" [class.layout-menuitem-text-compact]="compact()">{{ item().label }}</span>
+        }
+        @if (hasChildren() && !compact()) {
           <i class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
         }
       </a>
@@ -36,20 +47,24 @@ import { filter } from 'rxjs/operators';
         [state]="item().state"
         [queryParams]="item().queryParams"
         [attr.target]="item().target"
+        [attr.title]="compact() ? item().label : null"
+        [attr.aria-label]="compact() ? item().label : null"
         tabindex="0"
         pRipple
       >
         <i [ngClass]="item().icon" class="layout-menuitem-icon"></i>
-        <span class="layout-menuitem-text">{{ item().label }}</span>
-        @if (hasChildren()) {
+        @if (!compact() || root()) {
+          <span class="layout-menuitem-text" [class.layout-menuitem-text-compact]="compact()">{{ item().label }}</span>
+        }
+        @if (hasChildren() && !compact()) {
           <i class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
         }
       </a>
     }
-    @if (hasChildren() && isVisible() && (root() || isActive())) {
+    @if (!compact() && hasChildren() && isVisible() && (root() || isActive())) {
       <ul [class.layout-root-submenulist]="root()">
         @for (child of item().items; track child?.label) {
-          <li app-menuitem [item]="child" [parentPath]="fullPath()" [root]="false" [class]="child['badgeClass']"></li>
+          <li app-menuitem [item]="child" [parentPath]="fullPath()" [root]="false" [compact]="compact()" [class]="child['badgeClass']"></li>
         }
       </ul>
     }
@@ -84,6 +99,7 @@ export class AppMenuitem {
   item = input<any>(null);
   root = input<boolean>(false);
   parentPath = input<string | null>(null);
+  compact = input(false);
 
   isVisible = computed(() => this.item()?.visible !== false);
   hasChildren = computed(() => this.item()?.items && this.item()?.items.length > 0);
@@ -153,6 +169,13 @@ export class AppMenuitem {
 
   itemClick(event: Event) {
     const item = this.item();
+    const config = this.layoutService.layoutConfig();
+    const state = this.layoutService.layoutState();
+    const shouldOpenCompactSubmenu =
+      this.compact() &&
+      this.root() &&
+      this.layoutService.isDesktop() &&
+      (config.menuMode === 'overlay' || (config.menuMode === 'static' && state.staticMenuDesktopInactive));
 
     if (item?.disabled) {
       event.preventDefault();
@@ -164,7 +187,24 @@ export class AppMenuitem {
     }
 
     if (this.hasChildren()) {
-      if (this.isActive()) {
+      if (shouldOpenCompactSubmenu) {
+        event.preventDefault();
+        const currentTarget = event.currentTarget as HTMLElement | null;
+        const itemCount = this.item()?.items?.length ?? 0;
+        const estimatedPopoverHeight = Math.min(56 + itemCount * 52, 360);
+        const rawTop = currentTarget ? currentTarget.getBoundingClientRect().top - 8 : 84;
+        const clampedTop = Math.max(16, Math.min(rawTop, window.innerHeight - estimatedPopoverHeight - 16));
+        const nextPath = this.fullPath();
+        const shouldCloseCurrent = state.overlayMenuActive && state.activePath === nextPath;
+
+        this.layoutService.layoutState.update(val => ({
+          ...val,
+          overlayMenuActive: !shouldCloseCurrent,
+          activePath: nextPath,
+          menuHoverActive: true,
+          compactMenuPopoverTop: shouldCloseCurrent ? null : clampedTop,
+        }));
+      } else if (this.isActive()) {
         this.layoutService.layoutState.update(val => ({
           ...val,
           activePath: this.parentPath(),
@@ -183,6 +223,7 @@ export class AppMenuitem {
         staticMenuMobileActive: false,
         mobileMenuActive: false,
         menuHoverActive: false,
+        compactMenuPopoverTop: null,
       }));
     }
   }
