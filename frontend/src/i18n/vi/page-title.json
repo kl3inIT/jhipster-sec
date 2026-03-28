@@ -7,7 +7,6 @@
     "error": "Lỗi không mong muốn",
     "securityRoles": "Vai trò bảo mật",
     "permissionMatrix": "Ma trận quyền",
-    "rowPolicies": "Chính sách hàng",
     "menuDefinitions": "Định nghĩa menu"
   }
 }

@@ -2,7 +2,7 @@
 
 **Defined:** 2026-03-25
 **Milestone:** v1.1 Enterprise Admin Experience
-**Core Value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, row-level, and attribute-level access decisions.
+**Core Value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, authority, and attribute-level access decisions.
 
 ## Milestone v1.1 Requirements
 
@@ -28,6 +28,14 @@
 - [x] **I18N-01**: Required JHipster support files from `angapp/` for in-scope frontend features are migrated into `frontend/` instead of being reimplemented incompletely.
 - [x] **I18N-02**: Migrated admin, user-management, and shared shell flows can render translated UI strings and preserve language-aware behavior using copied JHipster translation assets.
 
+### Phase 08.3 Security Realignment
+
+- [ ] **PH83-01**: The standalone `frontend/` app provides a user registration flow that reuses the preserved backend `/api/register` contract and activation behavior safely.
+- [ ] **PH83-02**: Current-user authorities refresh from database state without forcing logout or login, and the frontend refreshes permission-dependent caches accordingly.
+- [ ] **PH83-03**: Secured entity data flow operates on real typed entities internally and no longer uses `String`, `Map<String, Object>`, or `JsonNode` as the core security representation.
+- [ ] **PH83-04**: JSON-based secured controllers validate request bodies, unknown fields, invalid references, and query shapes explicitly and fail closed.
+- [ ] **PH83-05**: Row policy is removed completely from schema, backend runtime, admin APIs, frontend UI, and tests, with no surviving dependency on row-policy code paths.
+
 ### Performance And Scalability
 
 - [ ] **PERF-01**: The frontend minimizes redundant API calls for auth, menu, capability, and user-management data through shared state or safe caching.
@@ -45,10 +53,9 @@
 ### Deferred Platform Expansion
 
 - **MIG-01**: Migrate additional `angapp` business domains beyond user management once the new shell and parity infrastructure are proven.
-- **SEC-05**: Expand row-policy authoring beyond the currently supported subset when concrete policy-authoring use cases appear.
 - **DATA-06**: Introduce fetch-plan authoring UI only if runtime administration truly needs it.
 - **API-01**: Remove remaining boundary DTOs only where public contracts and validation remain stable.
-- **ADMIN-01**: Migrate legacy ops/admin utilities such as health, metrics, logs, configuration, and docs only if operational users need them in `frontend/`.
+- **ADMIN-01**: Migrate legacy ops or admin utilities such as health, metrics, logs, configuration, and docs only if operational users need them in `frontend/`.
 
 ## Out of Scope
 
@@ -58,7 +65,7 @@ Explicitly excluded from this milestone.
 |---------|--------|
 | Literal full `angapp` clone | This milestone copies required support files and in-scope flows into `frontend/`, not every legacy page wholesale |
 | Database-backed fetch-plan metadata | Project constraints still require fetch plans to live only in YAML or code |
-| Unsupported row-policy designer variants | The platform still has no validated use case for broadening beyond the supported policy subset |
+| New row-policy replacement model | Phase 08.3 retires row policy entirely; any future replacement needs separate product definition |
 | Arbitrary runtime page-layout builder | The milestone needs stable backend-driven navigation and user-management parity before higher-order UI composition |
 
 ## Traceability
@@ -76,6 +83,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UMGT-01 | Phase 8 | Complete |
 | UMGT-02 | Phase 8 | Complete |
 | UMGT-03 | Phase 8 | Complete |
+| PH83-01 | Phase 08.3 | Pending |
+| PH83-02 | Phase 08.3 | Pending |
+| PH83-03 | Phase 08.3 | Pending |
+| PH83-04 | Phase 08.3 | Pending |
+| PH83-05 | Phase 08.3 | Pending |
 | UI-05 | Phase 9 | Pending |
 | PERF-01 | Phase 9 | Pending |
 | PERF-02 | Phase 9 | Pending |
@@ -85,10 +97,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-03 | Phase 10 | Pending |
 
 **Coverage:**
-- Milestone requirements: 16 total
-- Mapped to phases: 16
+- Milestone requirements: 21 total
+- Mapped to phases: 21
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-25*
-*Last updated: 2026-03-25 after Phase 8 completion*
+*Last updated: 2026-03-27 after Phase 08.3 insertion and planning*

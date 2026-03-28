@@ -1,9 +1,8 @@
 package com.vn.core.domain;
 
 /**
- * Defines whether an authority acts as a resource-level role or a row-level role.
+ * Defines the supported authority types.
  */
 public enum RoleType {
     RESOURCE,
-    ROW_LEVEL,
 }

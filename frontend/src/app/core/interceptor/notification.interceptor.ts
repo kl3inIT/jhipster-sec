@@ -56,9 +56,6 @@ export class NotificationInterceptor implements HttpInterceptor {
       'jhipstersec.secPermission.created': 'security.alert.secPermission.created',
       'jhipstersec.secPermission.updated': 'security.alert.secPermission.updated',
       'jhipstersec.secPermission.deleted': 'security.alert.secPermission.deleted',
-      'jhipstersec.secRowPolicy.created': 'security.alert.secRowPolicy.created',
-      'jhipstersec.secRowPolicy.updated': 'security.alert.secRowPolicy.updated',
-      'jhipstersec.secRowPolicy.deleted': 'security.alert.secRowPolicy.deleted',
     };
 
     return mapping[key] ?? key;

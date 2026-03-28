@@ -15,8 +15,7 @@ describe('AccessDeniedComponent', () => {
   };
 
   beforeEach(async () => {
-    navigationService = {
-      resolveFallbackRoute: vi.fn(() => of('/admin/security/row-policies')),
+    navigationService = {resolveFallbackRoute: vi.fn(() => of('/admin/security/roles')),
     };
 
     await TestBed.configureTestingModule({
@@ -55,7 +54,7 @@ describe('AccessDeniedComponent', () => {
       layout: {
         menu: {
           security: {
-            rowPolicies: 'Row policies',
+            roles: 'Security roles',
           },
         },
       },
@@ -82,11 +81,11 @@ describe('AccessDeniedComponent', () => {
     fixture.detectChanges();
 
     expect(navigationService.resolveFallbackRoute).toHaveBeenCalledWith('security');
-    expect(fixture.componentInstance.fallbackRoute()).toBe('/admin/security/row-policies');
+    expect(fixture.componentInstance.fallbackRoute()).toBe('/admin/security/roles');
 
     const nativeElement = fixture.nativeElement as HTMLElement;
     expect(nativeElement.textContent).toContain('User management');
-    expect(nativeElement.textContent).toContain('Go to Row policies');
+    expect(nativeElement.textContent).toContain('Go to Security roles');
   });
 
   it('falls back to history state when no current navigation is available', () => {

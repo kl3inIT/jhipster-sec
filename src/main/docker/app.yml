@@ -11,6 +11,9 @@ services:
       - SPRING_DATASOURCE_USERNAME=jhipster-sec
       - SPRING_DATASOURCE_PASSWORD=
       - SPRING_LIQUIBASE_URL=jdbc:postgresql://postgresql:5432/jhipster-sec
+      - SPRING_MAIL_HOST=mailpit
+      - SPRING_MAIL_PORT=1025
+      - JHIPSTER_MAIL_BASE_URL=http://localhost:4200
     ports:
       - 127.0.0.1:8080:8080
     healthcheck:
@@ -25,7 +28,13 @@ services:
     depends_on:
       postgresql:
         condition: service_healthy
+      mailpit:
+        condition: service_healthy
   postgresql:
     extends:
       file: ./postgresql.yml
       service: postgresql
+  mailpit:
+    extends:
+      file: ./mailpit.yml
+      service: mailpit
