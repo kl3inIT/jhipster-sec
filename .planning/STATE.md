@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: ready_for_next_phase
-stopped_at: Phase 08.3 execution completed; next up is Phase 9 planning
-last_updated: "2026-03-28T10:51:44.6312114+07:00"
-last_activity: 2026-03-28
+stopped_at: Completed 09-01-PLAN.md - Backend Permission Caching
+last_updated: "2026-03-28T07:45:53.343Z"
+last_activity: "2026-03-28 - Completed quick task 260328-f1a: fix duplicate register text on login page"
 progress:
   total_phases: 9
   completed_phases: 7
   total_plans: 30
-  completed_plans: 30
+  completed_plans: 31
 ---
 
 # Project State
@@ -70,6 +70,7 @@ Next: Phase 9 (enterprise-ux-and-performance-hardening)
 | Phase 08.2 P03 | 23 min | 2 tasks | 12 files |
 | Phase 08.2 P02 | 16 min | 2 tasks | 6 files |
 | Phase 08.2 P04 | 9 min | 2 tasks | 9 files |
+| Phase 09 P01 | 7 | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -91,6 +92,7 @@ Recent decisions affecting current work:
 - Phase 08.3 will refresh current-user authorities from database state at request time rather than trusting the authority snapshot captured at login.
 - Phase 08.3 will move secured entity internals toward typed entity-native flows and keep JSON parsing or serialization confined to explicit edge adapters.
 - Phase 08.3 will remove row policy completely instead of expanding or preserving it as a long-term platform feature.
+- [Phase 09]: Request-local permission snapshot (D-01/D-02): caches authority validation and PermissionMatrix per HTTP request, destroyed at request end, with graceful non-web fallback via isRequestScopeActive() guard
 
 ### Pending Todos
 
@@ -115,6 +117,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last activity: 2026-03-28 - Completed quick task 260328-f1a: fix duplicate register text on login page
-Last session: 2026-03-27T22:26:55.0533207+07:00
-Stopped at: Phase 08.3 execution completed; next up is Phase 9 planning
+Last session: 2026-03-28T07:45:53.284Z
+Stopped at: Completed 09-01-PLAN.md - Backend Permission Caching
 Resume file: None
