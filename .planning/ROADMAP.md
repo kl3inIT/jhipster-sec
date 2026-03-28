@@ -180,7 +180,10 @@ Plans:
 2. Redundant calls for auth, menu, capability, and user-management data are removed or cached safely.
 3. Initial load and route transitions improve through lazy loading, code splitting, and leaner route-level bundles.
 4. Larger enterprise screens remain responsive under realistic data volume through efficient rendering and state updates.
-**Plans:** Pending phase planning
+**Plans:** 2 plans
+Plans:
+- [ ] 09-01-PLAN.md — Backend permission caching with request-scoped snapshot bean (PERF-01, PERF-02)
+- [ ] 09-02-PLAN.md — Frontend entity list hardening: pagination signals, skeleton loaders, responsive columns (PERF-03, UI-05)
 
 ### Phase 10: Frontend Reliability And Regression Coverage
 **Goal**: The migrated enterprise admin experience is protected by focused frontend regression coverage.
