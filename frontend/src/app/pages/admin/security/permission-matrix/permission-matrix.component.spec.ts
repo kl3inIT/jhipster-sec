@@ -253,6 +253,35 @@ describe('PermissionMatrixComponent', () => {
     expect(component.isGranted('organization', 'DELETE')).toBe(false);
   });
 
+  it('loads explicit attribute grants from the permissions response', () => {
+    permissionService.query.mockReturnValue(
+      of<ISecPermission[]>([
+        {
+          id: 30,
+          authorityName: 'ROLE_PROOF_NONE',
+          targetType: 'ATTRIBUTE',
+          target: 'department.costCenter',
+          action: 'VIEW',
+          effect: 'GRANT',
+        },
+        {
+          id: 31,
+          authorityName: 'ROLE_PROOF_NONE',
+          targetType: 'ATTRIBUTE',
+          target: 'organization.name',
+          action: 'VIEW',
+          effect: 'GRANT',
+        },
+      ]),
+    );
+
+    const fixture = createFixture();
+    const component = fixture.componentInstance;
+
+    expect(component.isGranted('department.costCenter', 'VIEW')).toBe(true);
+    expect(component.isGranted('organization.name', 'VIEW')).toBe(true);
+  });
+
   it('onEntitySelect sets the selected entity and attribute rows', () => {
     const fixture = createFixture();
     const component = fixture.componentInstance;
@@ -446,6 +475,34 @@ describe('PermissionMatrixComponent', () => {
       isWildcard: false,
     });
     expect(component.isWildcardEffectivelyGranted('organization', 'VIEW')).toBe(true);
+  });
+
+  it('treats child attribute rows as checked when a wildcard grant is already stored', () => {
+    permissionService.query.mockReturnValue(
+      of<ISecPermission[]>([
+        {
+          id: 99,
+          authorityName: 'ROLE_PROOF_NONE',
+          targetType: 'ATTRIBUTE',
+          target: 'organization.*',
+          action: 'EDIT',
+          effect: 'GRANT',
+        },
+      ]),
+    );
+
+    const fixture = createFixture();
+    const component = fixture.componentInstance;
+
+    component.onEntitySelect(CATALOG_ENTRIES[0]);
+
+    expect(component.isEffectivelyGranted('organization.name', 'EDIT')).toBe(false);
+    expect(
+      component.isAttributeEffectivelyGranted('organization.name', 'EDIT', 'organization'),
+    ).toBe(true);
+    expect(
+      component.isAttributeEffectivelyGranted('organization.budget', 'EDIT', 'organization'),
+    ).toBe(true);
   });
 
   it('loadsMenuPermissionsAcrossApps', () => {
