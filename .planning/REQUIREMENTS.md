@@ -30,11 +30,11 @@
 
 ### Phase 08.3 Security Realignment
 
-- [ ] **PH83-01**: The standalone `frontend/` app provides a user registration flow that reuses the preserved backend `/api/register` contract and activation behavior safely.
-- [ ] **PH83-02**: Current-user authorities refresh from database state without forcing logout or login, and the frontend refreshes permission-dependent caches accordingly.
-- [ ] **PH83-03**: Secured entity data flow operates on real typed entities internally and no longer uses `String`, `Map<String, Object>`, or `JsonNode` as the core security representation.
-- [ ] **PH83-04**: JSON-based secured controllers validate request bodies, unknown fields, invalid references, and query shapes explicitly and fail closed.
-- [ ] **PH83-05**: Row policy is removed completely from schema, backend runtime, admin APIs, frontend UI, and tests, with no surviving dependency on row-policy code paths.
+- [x] **PH83-01**: The standalone `frontend/` app provides a user registration flow that reuses the preserved backend `/api/register` contract and activation behavior safely.
+- [x] **PH83-02**: Current-user authorities refresh from database state without forcing logout or login, and the frontend refreshes permission-dependent caches accordingly.
+- [x] **PH83-03**: Secured entity data flow operates on real typed entities internally and no longer uses `String`, `Map<String, Object>`, or `JsonNode` as the core security representation.
+- [x] **PH83-04**: JSON-based secured controllers validate request bodies, unknown fields, invalid references, and query shapes explicitly and fail closed.
+- [x] **PH83-05**: Row policy is removed completely from schema, backend runtime, admin APIs, frontend UI, and tests, with no surviving dependency on row-policy code paths.
 
 ### Performance And Scalability
 
@@ -83,11 +83,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UMGT-01 | Phase 8 | Complete |
 | UMGT-02 | Phase 8 | Complete |
 | UMGT-03 | Phase 8 | Complete |
-| PH83-01 | Phase 08.3 | Pending |
-| PH83-02 | Phase 08.3 | Pending |
-| PH83-03 | Phase 08.3 | Pending |
-| PH83-04 | Phase 08.3 | Pending |
-| PH83-05 | Phase 08.3 | Pending |
+| PH83-01 | Phase 08.3 | Complete |
+| PH83-02 | Phase 08.3 | Complete |
+| PH83-03 | Phase 08.3 | Complete |
+| PH83-04 | Phase 08.3 | Complete |
+| PH83-05 | Phase 08.3 | Complete |
 | UI-05 | Phase 9 | Pending |
 | PERF-01 | Phase 9 | Pending |
 | PERF-02 | Phase 9 | Pending |
@@ -103,4 +103,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-25*
-*Last updated: 2026-03-27 after Phase 08.3 insertion and planning*
+*Last updated: 2026-03-28 after Phase 08.3 completion*

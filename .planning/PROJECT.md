@@ -2,7 +2,7 @@
 
 ## What This Is
 
-This is a brownfield JHipster security-platform migration that already shipped a standalone Angular frontend and merged security runtime in `v1.0`. `v1.1` now combines the enterprise-admin milestone with a security-core realignment phase: finish missing self-registration, remove stale permission snapshots, move secured entity handling toward typed entities, harden JSON validation, retire row policy, and only then continue with UX, performance, and regression hardening.
+This is a brownfield JHipster security-platform migration that already shipped a standalone Angular frontend and merged security runtime in `v1.0`. `v1.1` carried a security-core realignment in Phase 08.3, then continues with enterprise UX, performance, and regression hardening in Phases 9 and 10.
 
 ## Core Value
 
@@ -10,7 +10,7 @@ Security rules must be enforced correctly in the data access layer so frontend a
 
 ## Current Milestone: v1.1 Enterprise Admin Experience
 
-**Goal:** Deliver an enterprise-grade frontend administration milestone without weakening the platform's security guarantees, while using Phase 08.3 to repair the remaining auth and secured-data foundations before Phase 9.
+**Goal:** Deliver an enterprise-grade frontend administration milestone without weakening the platform's security guarantees, now that Phase 08.3 has already repaired the remaining auth and secured-data foundations that Phase 9 depends on.
 
 **Target features:**
 - Full admin user-management flows in `frontend/`, including create, update, delete, activate, deactivate, and role assignment.
@@ -28,7 +28,7 @@ The repository now includes:
 
 - The original Spring Boot or JHipster auth, account, admin-user, mail, and authority flows preserved without regression.
 - Merged security metadata administration for roles, permissions, menus, and secured entities.
-- A secure data-access layer centered on `SecureDataManager`, with CRUD, attribute-level, and YAML or code-defined fetch-plan enforcement, plus legacy row-policy paths that are now scheduled for removal in Phase 08.3.
+- A secure data-access layer centered on `SecureDataManager`, with CRUD, attribute-level, request-time authority refresh, and YAML or code-defined fetch-plan enforcement after the Phase 08.3 cleanup.
 - Proof-domain entities and APIs for Organization, Department, and Employee that verify allow or deny behavior end to end.
 - A standalone Angular frontend under `frontend/` for login, route protection, security administration, and protected-entity screens.
 
@@ -38,16 +38,14 @@ The repository now includes:
 
 **Phase 08.2 complete** - Secured entity endpoints now expose explicit raw-JSON `PATCH` support, secured `/query` stays first-class, role-centric menu assignment can create the first grant in a new app, and the brownfield backend safety sweep is green under Java 25.
 
-**Phase 08.3 planned** - Frontend registration is still missing, authorities are still effectively frozen until re-authentication, secured entity internals still lean on map or string carriers, JSON validation still has fail-open gaps, and row policy is still present despite being incomplete. Phase 08.3 is the explicit repair phase for those issues.
+**Phase 08.3 complete** - The standalone frontend now has registration parity, current-user authorities refresh from database state without re-authentication, secured entity internals operate through typed entity mutations behind explicit JSON adapters, validation is fail-closed, and row policy is fully retired.
 
 The next part of `v1.1` now starts from this context:
 
-- The backend register endpoint already exists and is integration-tested, so the remaining gap is frontend parity and brownfield-safe confirmation of the preserved contract.
-- JWT currently carries an authority snapshot from login time, and current-user menu or capability caches in `frontend/` also assume permissions are stable for the whole session.
-- `DataManager` and `UnconstrainedDataManager` already exist internally, but the secured entity pipeline still uses map or string carriers around controller, service, merge, and serialization seams.
-- JSON-based secured controllers are an accepted direction, but they still need explicit validation, unknown-field rejection, and invalid-reference handling rather than incidental parser behavior.
-- Row policy is no longer a target capability. It is a cleanup target.
-- Phase 9 should not start until the registration, authority-refresh, typed-entity, validation, and row-policy work is complete.
+- The backend and standalone frontend now share the preserved registration contract end to end.
+- Current-user menu and capability state can refresh without forcing logout or login, so Phase 9 can focus on responsiveness and redundant work reduction instead of stale-auth repair.
+- The secured entity pipeline now uses typed entity mutations internally with explicit JSON parsing and serialization edges.
+- Validation hardening and row-policy retirement are complete, so the remaining milestone work is UX, performance, and regression coverage.
 
 ## Requirements
 
@@ -55,18 +53,15 @@ The next part of `v1.1` now starts from this context:
 
 - AUTH-01 through AUTH-03 shipped in `v1.0`, covering standalone frontend login plus preserved backend account and admin-user behavior.
 - SEC-01 through SEC-04 shipped in `v1.0`, covering merged security metadata CRUD and authority-bridge integration.
-- DATA-01 through DATA-05 shipped in `v1.0`, covering secured reads, secured writes, attribute permissions, fetch-plan enforcement, and the legacy row-policy path now scheduled for retirement in Phase 08.3.
+- DATA-01 through DATA-05 shipped in `v1.0`, covering secured reads, secured writes, attribute permissions, and fetch-plan enforcement.
 - ENT-01 through ENT-03 shipped in `v1.0`, covering proof entities, backend allow or deny coverage, and frontend capability-driven screens.
 - UI-01 through UI-03 shipped in `v1.0`, covering the standalone Angular app, security-management UI, and route or error or auth handling.
 - UMGT-01 through UMGT-03 validated in Phase 8: User Management Delivery, covering browse or search, full admin CRUD, inline authority assignment, and downstream access effects from saved authority changes.
+- PH83-01 through PH83-05 validated in Phase 08.3, covering standalone registration, live-authority refresh, typed secured flow, explicit JSON validation, and complete row-policy retirement.
 
 ### Active
 
-- [x] ROUTE-01 through ROUTE-03: Load menu and permission context from backend data and enforce access before route render. Validated in Phase 7: Enterprise Navigation Shell.
-- [x] UI-04: Adopt a Jmix-style enterprise shell. Validated in Phase 7: Enterprise Navigation Shell.
-- [ ] PH83-01 through PH83-05: Close registration, live-authority refresh, typed-entity secured flow, explicit JSON validation, and row-policy retirement in Phase 08.3.
 - [ ] UI-05: Improve consistency, responsiveness, and master-detail workflows.
-- [ ] I18N-01 through I18N-02: Copy the required `angapp/` support files and translation assets for in-scope frontend features.
 - [ ] PERF-01 through PERF-03 and TEST-01 through TEST-03: Optimize frontend loading or data access and add reliable automated coverage for the new admin experience.
 
 ### Out of Scope
@@ -116,9 +111,9 @@ Current context shaping `v1.1`:
 | Remove DTOs incrementally rather than project-wide on day one | Existing JHipster user or account APIs still benefit from contract-protecting boundary models | Confirmed in `v1.0` |
 | Use `angapp` as the canonical donor for user-management, registration, i18n, and shared support files | The standalone frontend still has migration gaps in account-facing flows | Active in `v1.1` |
 | Replace hardcoded frontend menus with backend-driven navigation contracts | Enterprise role-based navigation must scale with backend-managed permissions | Validated in Phase 7 |
-| Refresh current-user authorities from database state at request time instead of trusting the login-time snapshot in JWT or frontend caches | Permission changes must take effect without forcing logout or login | Planned in Phase 08.3 |
-| Move secured entity internals toward typed entity-native flow and keep JSON parsing or serialization in explicit edge adapters | Map or string carriers are now the main source of drift and validation gaps in the secured entity path | Planned in Phase 08.3 |
-| Retire row policy completely instead of expanding it further | The current implementation is incomplete, broadens complexity, and is now blocking the simpler security model the project actually needs | Planned in Phase 08.3 |
+| Refresh current-user authorities from database state at request time instead of trusting the login-time snapshot in JWT or frontend caches | Permission changes must take effect without forcing logout or login | Validated in Phase 08.3 |
+| Move secured entity internals toward typed entity-native flow and keep JSON parsing or serialization in explicit edge adapters | Map or string carriers were the main source of drift and validation gaps in the secured entity path | Validated in Phase 08.3 |
+| Retire row policy completely instead of expanding it further | The current implementation was incomplete, broadened complexity, and blocked the simpler security model the project actually needs | Completed in Phase 08.3 |
 
 ## Evolution
 
@@ -138,4 +133,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-27 after Phase 08.3 insertion and planning*
+*Last updated: 2026-03-28 after Phase 08.3 completion and Phase 9 handoff*

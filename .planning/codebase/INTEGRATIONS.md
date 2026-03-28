@@ -63,7 +63,7 @@
 - Custom username/email + password login backed by the local `User` and `Authority` tables - authentication is implemented in `src/main/java/com/vn/core/security/DomainUserDetailsService.java`, token issuance in `src/main/java/com/vn/core/web/rest/AuthenticateController.java`, token validation in `src/main/java/com/vn/core/config/SecurityJwtConfiguration.java`, and request enforcement in `src/main/java/com/vn/core/config/SecurityConfiguration.java`.
   - Implementation: Spring Security authenticates against PostgreSQL, issues HMAC-signed JWTs, and the Angular client stores and sends the token through `frontend/src/app/core/auth/auth-jwt.service.ts`, `frontend/src/app/core/interceptor/auth.interceptor.ts`, and `frontend/src/app/core/interceptor/auth-expired.interceptor.ts`
 - Current-user merged authority resolution - runtime permission checks validate JWT authority names against persisted authority rows in `src/main/java/com/vn/core/security/bridge/MergedSecurityContextBridge.java`.
-  - Implementation: permission, row-policy, menu-permission, and secure-data services resolve access from DB-backed security repositories under `src/main/java/com/vn/core/security/repository/**`
+  - Implementation: permission, menu-permission, and secure-data services resolve access from DB-backed security repositories under `src/main/java/com/vn/core/security/repository/**`
 - External identity provider - not detected; there is no Keycloak, LDAP, external OIDC client, or SSO connector wired in `src/main/java/com/vn/core/**` or `frontend/src/**`.
 
 ## Monitoring & Observability

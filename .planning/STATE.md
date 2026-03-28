@@ -95,7 +95,7 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 - Plan or execute Phase 9 - enterprise UX and performance hardening.
-- Cache current-user permission checks to remove repeated `jhi_authority` and `sec_permission` lookups during secured reads while preserving request-time refresh semantics.
+- Cache current-user permission checks to remove repeated `jhi_authority` and `sec_permission` lookups during secured reads while preserving request-time refresh semantics; routed to Phase 9 planning as a `PERF-01` candidate.
 
 ### Blockers/Concerns
 

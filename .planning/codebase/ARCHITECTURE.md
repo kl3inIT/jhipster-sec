@@ -38,16 +38,16 @@
 - Used by: `src/main/java/com/vn/core/web/rest/**` and security/config beans.
 
 **Security Enforcement Core:**
-- Purpose: Enforce entity CRUD permissions, attribute permissions, row-level policies, fetch-plan-driven reads, secure merge behavior, and authority-aware menu visibility.
+- Purpose: Enforce entity CRUD permissions, attribute permissions, fetch-plan-driven reads, secure merge behavior, explicit secured-JSON validation, and authority-aware menu visibility.
 - Location: `src/main/java/com/vn/core/security/`
-- Contains: access constraints in `src/main/java/com/vn/core/security/access/`, security-context bridges in `src/main/java/com/vn/core/security/bridge/`, entity catalog classes in `src/main/java/com/vn/core/security/catalog/`, data managers in `src/main/java/com/vn/core/security/data/`, fetch-plan types in `src/main/java/com/vn/core/security/fetch/`, merge logic in `src/main/java/com/vn/core/security/merge/`, permission evaluators in `src/main/java/com/vn/core/security/permission/`, metadata repositories in `src/main/java/com/vn/core/security/repository/`, row policy providers in `src/main/java/com/vn/core/security/row/`, and serializers in `src/main/java/com/vn/core/security/serialize/`.
+- Contains: access constraints in `src/main/java/com/vn/core/security/access/`, security-context bridges in `src/main/java/com/vn/core/security/bridge/`, entity catalog classes in `src/main/java/com/vn/core/security/catalog/`, data managers in `src/main/java/com/vn/core/security/data/`, fetch-plan types in `src/main/java/com/vn/core/security/fetch/`, merge logic in `src/main/java/com/vn/core/security/merge/`, permission evaluators in `src/main/java/com/vn/core/security/permission/`, metadata repositories in `src/main/java/com/vn/core/security/repository/`, serializers in `src/main/java/com/vn/core/security/serialize/`, and secured-JSON adapters or validators in `src/main/java/com/vn/core/security/web/`.
 - Depends on: JPA metamodel access, Spring Security context, business repositories, and security metadata tables.
 - Used by: `OrganizationService`, `DepartmentService`, `EmployeeService`, `SecuredEntityCapabilityService`, menu-permission services, and any future secured entity feature.
 
 **Persistence Layer:**
 - Purpose: Persist both base business entities and security metadata, backed by Liquibase-managed PostgreSQL schema.
 - Location: `src/main/java/com/vn/core/domain/`, `src/main/java/com/vn/core/repository/`, `src/main/java/com/vn/core/security/domain/`, `src/main/java/com/vn/core/security/repository/`, `src/main/resources/config/liquibase/`
-- Contains: business entities such as `User`, `Authority`, `Organization`, `Department`, `Employee`; business repositories such as `UserRepository`, `OrganizationRepository`, `DepartmentRepository`, `EmployeeRepository`; security metadata entities such as `SecPermission`, `SecRowPolicy`, `SecMenuDefinition`, `SecMenuPermission`; Liquibase changelogs in `src/main/resources/config/liquibase/changelog/*.xml`.
+- Contains: business entities such as `User`, `Authority`, `Organization`, `Department`, `Employee`; business repositories such as `UserRepository`, `OrganizationRepository`, `DepartmentRepository`, `EmployeeRepository`; security metadata entities such as `SecPermission`, `SecMenuDefinition`, `SecMenuPermission`; Liquibase changelogs in `src/main/resources/config/liquibase/changelog/*.xml`, including the row-policy drop cleanup.
 - Depends on: Spring Data JPA, Hibernate, Liquibase.
 - Used by: Services and the security/data subsystem.
 
@@ -80,8 +80,8 @@
 
 1. The standalone frontend calls entity APIs from feature services such as `frontend/src/app/pages/entities/organization/service/organization.service.ts`.
 2. Backend resources such as `src/main/java/com/vn/core/web/rest/OrganizationResource.java`, `src/main/java/com/vn/core/web/rest/DepartmentResource.java`, and `src/main/java/com/vn/core/web/rest/EmployeeResource.java` accept pageable parameters or raw JSON request bodies and delegate to their application services.
-3. Entity services such as `src/main/java/com/vn/core/service/OrganizationService.java` convert JSON into attribute maps and call `src/main/java/com/vn/core/security/data/SecureDataManager.java`.
-4. `src/main/java/com/vn/core/security/data/SecureDataManagerImpl.java` resolves the secured entity through `src/main/java/com/vn/core/security/catalog/MetamodelSecuredEntityCatalog.java`, checks CRUD access through `src/main/java/com/vn/core/security/data/DataManagerImpl.java`, composes row-policy specifications through `src/main/java/com/vn/core/security/row/RowLevelSpecificationBuilder.java`, resolves fetch plans through `src/main/java/com/vn/core/security/fetch/YamlFetchPlanRepository.java`, enforces write-side attribute permissions through `src/main/java/com/vn/core/security/merge/SecureMergeServiceImpl.java`, and strips denied read-side attributes through `src/main/java/com/vn/core/security/serialize/SecureEntitySerializerImpl.java`.
+3. Entity services such as `src/main/java/com/vn/core/service/OrganizationService.java` delegate typed entity mutations and secure query requests to `src/main/java/com/vn/core/security/data/SecureDataManager.java`.
+4. `src/main/java/com/vn/core/security/data/SecureDataManagerImpl.java` resolves the secured entity through `src/main/java/com/vn/core/security/catalog/MetamodelSecuredEntityCatalog.java`, checks CRUD access through `src/main/java/com/vn/core/security/data/DataManagerImpl.java`, builds typed query specifications through `src/main/java/com/vn/core/security/data/SecureQuerySpecificationFactory.java`, resolves fetch plans through `src/main/java/com/vn/core/security/fetch/YamlFetchPlanRepository.java`, enforces write-side attribute permissions through `src/main/java/com/vn/core/security/merge/SecureMergeServiceImpl.java`, and strips denied read-side attributes through `src/main/java/com/vn/core/security/serialize/SecureEntitySerializerImpl.java`.
 5. Low-level repository resolution is generic: `src/main/java/com/vn/core/security/repository/RepositoriesRegistryImpl.java` discovers the matching Spring Data repository for each secured entity class.
 6. The resource returns JSON payloads shaped by fetch plans from `src/main/resources/fetch-plans.yml`, so the frontend sees only the allowed attributes for the active user.
 
@@ -99,7 +99,7 @@
 2. Admin controllers in `src/main/java/com/vn/core/web/rest/admin/security/**` validate admin access with `@PreAuthorize("hasAuthority(...)")`.
 3. DTOs in `src/main/java/com/vn/core/service/dto/security/` and mappers in `src/main/java/com/vn/core/service/mapper/security/` shape the request and response contracts.
 4. `src/main/java/com/vn/core/service/security/SecPermissionUiContractService.java` translates UI-friendly entity and attribute targets to stored permission targets and back again.
-5. Security metadata repositories under `src/main/java/com/vn/core/security/repository/` persist the role, permission, row-policy, menu-definition, and menu-permission tables added by `src/main/resources/config/liquibase/changelog/20260321000200_create_sec_permission.xml`, `src/main/resources/config/liquibase/changelog/20260321000300_create_sec_row_policy.xml`, `src/main/resources/config/liquibase/changelog/20260325000100_create_sec_navigation_grant.xml`, `src/main/resources/config/liquibase/changelog/20260325000200_rename_nav_grant_add_menu_def.xml`, and `src/main/resources/config/liquibase/changelog/20260325000300_repair_sec_menu_permission_schema.xml`.
+5. Security metadata repositories under `src/main/java/com/vn/core/security/repository/` persist the role, permission, menu-definition, and menu-permission tables managed by `src/main/resources/config/liquibase/changelog/20260321000200_create_sec_permission.xml`, `src/main/resources/config/liquibase/changelog/20260325000100_create_sec_navigation_grant.xml`, `src/main/resources/config/liquibase/changelog/20260325000200_rename_nav_grant_add_menu_def.xml`, `src/main/resources/config/liquibase/changelog/20260325000300_repair_sec_menu_permission_schema.xml`, `src/main/resources/config/liquibase/changelog/20260327000100_convert_sec_menu_permission_app_name_to_enum.xml`, and the cleanup in `src/main/resources/config/liquibase/changelog/20260327000200_drop_sec_row_policy.xml`.
 
 **Authentication and Session State:**
 - Backend HTTP state is stateless JWT, configured by `src/main/java/com/vn/core/config/SecurityConfiguration.java` and `src/main/java/com/vn/core/config/SecurityJwtConfiguration.java`.
@@ -126,7 +126,7 @@
 
 **Security Metadata Domain:**
 - Purpose: Persist user-manageable security rules that drive runtime enforcement and frontend admin tooling.
-- Examples: `src/main/java/com/vn/core/security/domain/SecPermission.java`, `src/main/java/com/vn/core/security/domain/SecRowPolicy.java`, `src/main/java/com/vn/core/security/domain/SecMenuDefinition.java`, `src/main/java/com/vn/core/security/domain/SecMenuPermission.java`, `src/main/java/com/vn/core/security/repository/SecPermissionRepository.java`
+- Examples: `src/main/java/com/vn/core/security/domain/SecPermission.java`, `src/main/java/com/vn/core/security/domain/SecMenuDefinition.java`, `src/main/java/com/vn/core/security/domain/SecMenuPermission.java`, `src/main/java/com/vn/core/security/repository/SecPermissionRepository.java`
 - Pattern: Keep security metadata separate from business entities and access it through dedicated admin endpoints and service helpers.
 
 **UI Capability and Navigation Contracts:**
@@ -179,7 +179,7 @@
 - `src/main/java/com/vn/core/web/rest/errors/ExceptionTranslator.java` converts backend exceptions and validation failures into structured problem responses.
 - `src/main/java/com/vn/core/config/SecurityConfiguration.java` handles authentication and authorization failures with `BearerTokenAuthenticationEntryPoint` and `BearerTokenAccessDeniedHandler`.
 - `src/main/java/com/vn/core/security/merge/SecureMergeServiceImpl.java` throws `AccessDeniedException` when callers attempt to edit attributes without `EDIT` permission.
-- `src/main/java/com/vn/core/security/row/RowLevelPolicyProviderDbImpl.java` rejects unsupported or malformed row policies instead of silently bypassing them.
+- `src/main/java/com/vn/core/security/web/SecuredEntityPayloadValidator.java` rejects malformed, unknown-field, or unsafe secured-entity payloads before they reach the data pipeline.
 - `src/main/java/com/vn/core/security/serialize/SecureEntitySerializerImpl.java` drops denied attributes from read responses while preserving `id` when requested by the fetch plan.
 - `frontend/src/app.config.ts` maps navigation-time HTTP failures to `/login`, `/accessdenied`, `/404`, or `/error`.
 - `frontend/src/app/core/interceptor/index.ts` registers auth, auth-expired, error-handler, and notification interceptors for runtime HTTP behavior.
