@@ -153,11 +153,10 @@ public class SecureDataManagerImpl implements SecureDataManager {
             throw new IllegalArgumentException("Typed entity mutation is required");
         }
 
-        UnconstrainedDataManager unconstrainedDataManager = dataManager.unconstrained();
         E entity;
         if (id == null) {
             dataManager.checkCrud(entityClass, EntityOp.CREATE);
-            entity = unconstrainedDataManager.create(entityClass);
+            entity = dataManager.unconstrained().create(entityClass);
         } else {
             Specification<E> idSpec = (root, query, cb) -> cb.equal(root.get("id"), id);
             entity = dataManager
@@ -166,7 +165,7 @@ public class SecureDataManagerImpl implements SecureDataManager {
         }
 
         secureMergeService.mergeForUpdate(entity, mutation.entity(), mutation.changedAttributes());
-        return unconstrainedDataManager.save(entity);
+        return dataManager.unconstrained().save(entity);
     }
 
     private SecuredEntityEntry resolveEntry(String entityCode) {

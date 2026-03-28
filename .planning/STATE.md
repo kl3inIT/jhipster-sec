@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: ready_for_next_phase
 stopped_at: Phase 08.3 execution completed; next up is Phase 9 planning
-last_updated: "2026-03-27T17:16:05.273Z"
+last_updated: "2026-03-28T10:51:44.6312114+07:00"
 last_activity: 2026-03-28
 progress:
   total_phases: 9
@@ -109,10 +109,12 @@ Recent decisions affecting current work:
 |---|-------------|------|--------|-----------|
 | 260327-shg | Jmix-style 3-layer organization workbench with nested reference CRUD for security/performance testing | 2026-03-27 | pending | [260327-shg-task-l-m-m-t-m-n-v-i-t-nh-t-3-l-p-v-d-s-](./quick/260327-shg-task-l-m-m-t-m-n-v-i-t-nh-t-3-l-p-v-d-s-/) |
 | 260327-usx | Convert menu permission appName from String to enum with schema migration | 2026-03-27 | pending | [260327-usx-ch-qu-n-l-quy-n-c-a-menu-i-c-i-appname-t](./quick/260327-usx-ch-qu-n-l-quy-n-c-a-menu-i-c-i-appname-t/) |
+| 260328-d4b | configure local mail catcher for dev registration | 2026-03-28 | pending | [260328-d4b-configure-local-mail-catcher-for-dev-reg](./quick/260328-d4b-configure-local-mail-catcher-for-dev-reg/) |
+| 260328-f1a | fix duplicate register text on login page | 2026-03-28 | pending | [260328-f1a-fix-duplicate-register-text-on-login-pag](./quick/260328-f1a-fix-duplicate-register-text-on-login-pag/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-27
+Last activity: 2026-03-28 - Completed quick task 260328-f1a: fix duplicate register text on login page
 Last session: 2026-03-27T22:26:55.0533207+07:00
 Stopped at: Phase 08.3 execution completed; next up is Phase 9 planning
 Resume file: None
