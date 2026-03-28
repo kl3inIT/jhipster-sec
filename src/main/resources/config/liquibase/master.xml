@@ -14,7 +14,6 @@
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260321000100_add_authority_type_columns.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260321000200_create_sec_permission.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20260321000300_create_sec_row_policy.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260321000400_seed_security_roles.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260321000500_create_proof_organization.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260321000600_create_proof_department.xml" relativeToChangelogFile="false"/>
@@ -22,6 +21,8 @@
     <include file="config/liquibase/changelog/20260325000100_create_sec_navigation_grant.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260325000200_rename_nav_grant_add_menu_def.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260325000300_repair_sec_menu_permission_schema.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260327000100_convert_sec_menu_permission_app_name_to_enum.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260327000200_drop_sec_row_policy.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->

@@ -106,16 +106,6 @@ export const APP_NAVIGATION_TREE: readonly AppNavigationSection[] = [
         deniedMode: 'route',
       },
       {
-        id: 'security.row-policies',
-        sectionId: 'security',
-        labelKey: 'layout.menu.security.rowPolicies',
-        icon: 'pi pi-filter',
-        routerLink: ['/admin/security/row-policies'],
-        routePrefix: '/admin/security/row-policies',
-        breadcrumbKey: 'layout.menu.security.rowPolicies',
-        deniedMode: 'route',
-      },
-      {
         id: 'security.menu-definitions',
         sectionId: 'security',
         labelKey: 'layout.menu.security.menuDefinitions',

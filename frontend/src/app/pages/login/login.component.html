@@ -14,7 +14,9 @@
 
       <form (ngSubmit)="login()" [formGroup]="loginForm" class="flex flex-column gap-3">
         <div class="flex flex-column gap-2">
-          <label for="username" class="font-medium">{{ 'global.form.username.label' | translate }}</label>
+          <label for="username" class="font-medium">{{
+            'global.form.username.label' | translate
+          }}</label>
           <input
             type="text"
             pInputText
@@ -43,11 +45,28 @@
 
         <div class="flex align-items-center gap-2">
           <p-checkbox formControlName="rememberMe" [binary]="true" inputId="rememberMe" />
-          <label for="rememberMe" class="cursor-pointer">{{ 'login.form.rememberme' | translate }}</label>
+          <label for="rememberMe" class="cursor-pointer">{{
+            'login.form.rememberme' | translate
+          }}</label>
         </div>
 
-        <p-button type="submit" [label]="'login.form.button' | translate" icon="pi pi-sign-in" [loading]="false" styleClass="w-full" />
+        <p-button
+          type="submit"
+          [label]="'login.form.button' | translate"
+          icon="pi pi-sign-in"
+          [loading]="false"
+          styleClass="w-full"
+        />
       </form>
+
+      <div
+        class="pt-3 mt-3 border-top-1 surface-border flex justify-content-between align-items-center flex-wrap gap-2 text-sm"
+      >
+        <span class="text-color-secondary">{{ 'global.messages.info.register.noaccount' | translate }}</span>
+        <a routerLink="/register" class="font-medium no-underline hover:underline text-primary">
+          {{ 'global.messages.info.register.link' | translate }}
+        </a>
+      </div>
     </div>
   </p-card>
 </div>

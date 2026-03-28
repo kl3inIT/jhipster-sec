@@ -21,12 +21,6 @@
         "loadFailed": "Không thể tải danh sách vai trò bảo mật.",
         "deleteFailed": "Không thể xóa vai trò bảo mật."
       },
-      "rowPolicies": {
-        "deleted": "Chính sách hàng \"{{ param }}\" đã bị xóa.",
-        "loadFailed": "Không thể tải danh sách chính sách hàng.",
-        "deleteFailed": "Không thể xóa chính sách hàng.",
-        "saveFailed": "Không thể lưu chính sách hàng. Hãy kiểm tra biểu thức và thử lại."
-      },
       "permissionMatrix": {
         "loadFailed": "Không thể tải ma trận quyền. Vui lòng thử lại.",
         "saveFailed": "Không thể lưu các thay đổi quyền. Vui lòng thử lại."
@@ -45,13 +39,16 @@
     },
     "entities": {
       "organizations": {
-        "deleted": "Đã xóa tổ chức thành công."
+        "deleted": "Đã xóa tổ chức thành công.",
+        "saved": "Đã lưu tổ chức thành công."
       },
       "departments": {
-        "deleted": "Đã xóa phòng ban thành công."
+        "deleted": "Đã xóa phòng ban thành công.",
+        "saved": "Đã lưu phòng ban thành công."
       },
       "employees": {
-        "deleted": "Đã xóa nhân viên thành công."
+        "deleted": "Đã xóa nhân viên thành công.",
+        "saved": "Đã lưu nhân viên thành công."
       }
     }
   }

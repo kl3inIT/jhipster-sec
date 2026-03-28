@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.core.IntegrationTest;
 import com.vn.core.security.AuthoritiesConstants;
+import com.vn.core.security.domain.MenuAppName;
 import com.vn.core.security.domain.SecMenuDefinition;
 import com.vn.core.security.domain.SecMenuPermission;
 import com.vn.core.security.repository.SecMenuDefinitionRepository;
@@ -41,7 +42,7 @@ class SecMenuDefinitionAdminResourceIT {
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
     private static final String SYNC_URL = ENTITY_API_URL + "/sync";
 
-    private static final String DEFAULT_APP = "jhipster-security-platform";
+    private static final String DEFAULT_APP = MenuAppName.JHIPSTER_SECURITY_PLATFORM.getValue();
     private static final String DEFAULT_MENU_ID = "test-menu-home";
     private static final String DEFAULT_MENU_NAME = "Home Menu";
     private static final String DEFAULT_LABEL = "Home";
@@ -106,6 +107,22 @@ class SecMenuDefinitionAdminResourceIT {
     }
 
     @Test
+    void getAllMenuDefinitions_withoutAppFilter_returnsDefinitionsAcrossApps() throws Exception {
+        secMenuDefinitionRepository.saveAndFlush(createEntity(DEFAULT_MENU_ID, DEFAULT_APP));
+        secMenuDefinitionRepository.saveAndFlush(createEntity("sales-home", "sales-console"));
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.length()").value(2))
+            .andExpect(jsonPath("$.[*].appName").value(hasItem(DEFAULT_APP)))
+            .andExpect(jsonPath("$.[*].appName").value(hasItem("sales-console")))
+            .andExpect(jsonPath("$.[*].menuId").value(hasItem(DEFAULT_MENU_ID)))
+            .andExpect(jsonPath("$.[*].menuId").value(hasItem("sales-home")));
+    }
+
+    @Test
     void getMenuDefinition_notFound_returns404() throws Exception {
         restMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
@@ -143,7 +160,11 @@ class SecMenuDefinitionAdminResourceIT {
     void deleteMenuDefinition_cascadesPermissions() throws Exception {
         SecMenuDefinition saved = secMenuDefinitionRepository.saveAndFlush(createEntity(DEFAULT_MENU_ID, DEFAULT_APP));
         SecMenuPermission perm = secMenuPermissionRepository.saveAndFlush(
-            new SecMenuPermission().role(AuthoritiesConstants.ADMIN).appName(DEFAULT_APP).menuId(DEFAULT_MENU_ID).effect("ALLOW")
+            new SecMenuPermission()
+                .role(AuthoritiesConstants.ADMIN)
+                .appName(MenuAppName.JHIPSTER_SECURITY_PLATFORM)
+                .menuId(DEFAULT_MENU_ID)
+                .effect("ALLOW")
         );
 
         restMockMvc.perform(delete(ENTITY_API_URL_ID, saved.getId())).andExpect(status().isNoContent());

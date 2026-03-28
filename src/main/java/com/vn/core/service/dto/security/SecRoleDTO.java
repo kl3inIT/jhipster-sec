@@ -25,6 +25,7 @@ public class SecRoleDTO implements Serializable {
     private String displayName;
 
     @NotNull
+    @Pattern(regexp = "RESOURCE")
     private String type;
 
     public SecRoleDTO() {

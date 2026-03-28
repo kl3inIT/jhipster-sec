@@ -2,6 +2,7 @@ package com.vn.core.security.bridge;
 
 import com.vn.core.domain.Authority;
 import com.vn.core.repository.AuthorityRepository;
+import com.vn.core.security.AcceptsGrantedAuthorities;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 /**
@@ -47,7 +49,7 @@ public class MergedSecurityContextBridge implements SecurityContextBridge {
         if (auth == null) {
             return List.of();
         }
-        Set<String> jwtAuthorities = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+        Set<String> jwtAuthorities = resolveAuthorities(auth).stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
         // D-16: validate against jhi_authority table; drop phantom names not backed by a DB row
         Set<String> validNames = authorityRepository
             .findAllById(jwtAuthorities)
@@ -63,10 +65,20 @@ public class MergedSecurityContextBridge implements SecurityContextBridge {
         return (
             auth != null &&
             auth.isAuthenticated() &&
-            auth
-                .getAuthorities()
+            resolveAuthorities(auth)
                 .stream()
                 .noneMatch(a -> "ROLE_ANONYMOUS".equals(a.getAuthority()))
         );
+    }
+
+    private Collection<? extends GrantedAuthority> resolveAuthorities(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof AcceptsGrantedAuthorities acceptsGrantedAuthorities) {
+            return acceptsGrantedAuthorities.getGrantedAuthorities();
+        }
+        if (principal instanceof UserDetails userDetails) {
+            return userDetails.getAuthorities();
+        }
+        return authentication.getAuthorities();
     }
 }

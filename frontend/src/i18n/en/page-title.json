@@ -7,7 +7,6 @@
     "error": "Unexpected error",
     "securityRoles": "Security roles",
     "permissionMatrix": "Permission matrix",
-    "rowPolicies": "Row policies",
     "menuDefinitions": "Menu definitions"
   }
 }

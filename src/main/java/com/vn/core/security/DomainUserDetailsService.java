@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.core.ClaimAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,17 +56,44 @@ public class DomainUserDetailsService implements UserDetailsService {
         return UserWithId.fromUser(user);
     }
 
-    public static class UserWithId extends org.springframework.security.core.userdetails.User {
+    public static class UserWithId
+        extends org.springframework.security.core.userdetails.User
+        implements AcceptsGrantedAuthorities, ClaimAccessor
+    {
 
         private final Long id;
+        private final Map<String, Object> claims;
+        private Collection<GrantedAuthority> grantedAuthorities;
 
         public UserWithId(String login, String password, Collection<? extends GrantedAuthority> authorities, Long id) {
-            super(login, password, authorities);
+            super(login, password, List.copyOf(authorities));
             this.id = id;
+            this.claims = id == null ? Map.of() : Map.of(SecurityUtils.USER_ID_CLAIM, id);
+            this.grantedAuthorities = List.copyOf(authorities);
         }
 
         public Long getId() {
             return id;
+        }
+
+        @Override
+        public Collection<GrantedAuthority> getAuthorities() {
+            return grantedAuthorities;
+        }
+
+        @Override
+        public Map<String, Object> getClaims() {
+            return claims;
+        }
+
+        @Override
+        public Collection<? extends GrantedAuthority> getGrantedAuthorities() {
+            return grantedAuthorities;
+        }
+
+        @Override
+        public void setGrantedAuthorities(Collection<? extends GrantedAuthority> grantedAuthorities) {
+            this.grantedAuthorities = List.copyOf(grantedAuthorities);
         }
 
         @Override

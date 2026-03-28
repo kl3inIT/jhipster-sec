@@ -15,6 +15,10 @@ export class SecMenuDefinitionService {
     return this.http.get<ISecMenuDefinition[]>(this.resourceUrl, { observe: 'response', params });
   }
 
+  queryAll(): Observable<HttpResponse<ISecMenuDefinition[]>> {
+    return this.http.get<ISecMenuDefinition[]>(this.resourceUrl, { observe: 'response' });
+  }
+
   find(id: number): Observable<HttpResponse<ISecMenuDefinition>> {
     return this.http.get<ISecMenuDefinition>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }

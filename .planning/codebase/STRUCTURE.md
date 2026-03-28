@@ -1,174 +1,302 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-03-21
+**Analysis Date:** 2026-03-27
 
 ## Directory Layout
 
 ```text
 [project-root]/
-|-- .planning/codebase/                 # Generated codebase maps for GSD commands
-|-- buildSrc/                           # Local Gradle convention plugins used by the root build
-|-- gradle/                             # Gradle shared scripts applied by `build.gradle`
-|-- src/main/java/com/vn/core/          # Root application runtime code
-|   |-- aop/logging/                    # Dev-profile logging aspect
-|   |-- config/                         # Spring Boot and infrastructure configuration
-|   |-- domain/                         # JPA entities and auditing base classes
-|   |-- management/                     # Operational/security metrics helpers
-|   |-- repository/                     # Spring Data repositories
-|   |-- security/                       # Security services, claims, and auditor bridge
-|   |-- service/                        # Transactional business services, DTOs, mappers
-|   `-- web/rest/                       # REST controllers, error contracts, view models
-|-- src/main/resources/                 # Application configuration, Liquibase, i18n, templates
-|-- src/main/docker/                    # Compose files and container packaging assets
-|-- src/test/java/com/vn/core/          # Architecture, integration, and unit tests
-|-- aef-main/                           # Separate adjacent application tree, not wired into root Gradle build
-|-- angapp/                             # Separate adjacent application tree, not wired into root Gradle build
-`-- jhipter-angular/                    # Separate adjacent application tree, not wired into root Gradle build
+├── src/                           # Active Spring Boot backend source, resources, and tests
+├── frontend/                      # Active standalone Angular application
+├── angapp/                        # Legacy integrated JHipster app kept for migration/reference
+├── aef-main/                      # UI reference workspace snapshot
+├── jhipter-angular/               # Separate sample split backend/frontend workspace
+├── buildSrc/                      # Shared Gradle convention plugins and build logic
+├── gradle/                        # Root Gradle helper scripts and version catalogs
+└── .planning/                     # GSD planning artifacts, research, and generated codebase docs
 ```
 
 ## Directory Purposes
 
 **`src/main/java/com/vn/core/`:**
-- Purpose: Hold all root application runtime code.
-- Contains: Entry points, layered packages, and no client-side source tree.
-- Key files: `src/main/java/com/vn/core/JhipsterSecApp.java`, `src/main/java/com/vn/core/ApplicationWebXml.java`
+- Purpose: Hold all active backend runtime code for the deployable Spring Boot service.
+- Contains: Bootstrapping classes, config, management, repositories, domain entities, security subsystem, services, REST resources, and AOP helpers.
+- Key files: `src/main/java/com/vn/core/JhipsterSecApp.java`, `src/main/java/com/vn/core/ApplicationWebXml.java`, `src/main/java/com/vn/core/config/SecurityConfiguration.java`, `src/main/java/com/vn/core/security/data/SecureDataManagerImpl.java`
 
-**`src/main/java/com/vn/core/config/`:**
-- Purpose: Place framework wiring and cross-cutting infrastructure.
-- Contains: Spring `@Configuration` classes, typed properties, web and security setup.
-- Key files: `src/main/java/com/vn/core/config/SecurityConfiguration.java`, `src/main/java/com/vn/core/config/SecurityJwtConfiguration.java`, `src/main/java/com/vn/core/config/LiquibaseConfiguration.java`, `src/main/java/com/vn/core/config/CacheConfiguration.java`
-
-**`src/main/java/com/vn/core/web/rest/`:**
-- Purpose: Place HTTP-facing controllers and API-specific request/response helpers.
-- Contains: `*Resource` and controller classes, `errors/` for problem details, `vm/` for request models.
-- Key files: `src/main/java/com/vn/core/web/rest/AccountResource.java`, `src/main/java/com/vn/core/web/rest/AuthenticateController.java`, `src/main/java/com/vn/core/web/rest/UserResource.java`
-
-**`src/main/java/com/vn/core/service/`:**
-- Purpose: Place business workflows and transaction boundaries.
-- Contains: `*Service` classes, DTOs under `dto/`, mappers under `mapper/`, service-specific exceptions.
-- Key files: `src/main/java/com/vn/core/service/UserService.java`, `src/main/java/com/vn/core/service/MailService.java`, `src/main/java/com/vn/core/service/dto/AdminUserDTO.java`, `src/main/java/com/vn/core/service/mapper/UserMapper.java`
-
-**`src/main/java/com/vn/core/repository/`:**
-- Purpose: Place Spring Data JPA access to persisted aggregates.
-- Contains: Repository interfaces only.
-- Key files: `src/main/java/com/vn/core/repository/UserRepository.java`, `src/main/java/com/vn/core/repository/AuthorityRepository.java`
-
-**`src/main/java/com/vn/core/domain/`:**
-- Purpose: Place JPA entities that map to Liquibase-managed tables.
-- Contains: Entities and shared auditing superclass.
-- Key files: `src/main/java/com/vn/core/domain/User.java`, `src/main/java/com/vn/core/domain/Authority.java`, `src/main/java/com/vn/core/domain/AbstractAuditingEntity.java`
-
-**`src/main/java/com/vn/core/security/`:**
-- Purpose: Place authentication, claim, authority, and auditing helpers that are not generic framework config.
-- Contains: `UserDetailsService`, security utilities, authority constants, auditing support, plus the secure data-access contracts and implementations under `security/data/`.
-- Key files: `src/main/java/com/vn/core/security/DomainUserDetailsService.java`, `src/main/java/com/vn/core/security/SecurityUtils.java`, `src/main/java/com/vn/core/security/SpringSecurityAuditorAware.java`, `src/main/java/com/vn/core/security/data/SecureDataManager.java`, `src/main/java/com/vn/core/security/data/DataManager.java`, `src/main/java/com/vn/core/security/data/UnconstrainedDataManager.java`
-
-**`src/main/resources/config/`:**
-- Purpose: Store runtime configuration overlays and Liquibase migration definitions.
-- Contains: `application*.yml`, `liquibase/`, TLS sample assets.
-- Key files: `src/main/resources/config/application.yml`, `src/main/resources/config/application-dev.yml`, `src/main/resources/config/application-prod.yml`, `src/main/resources/config/liquibase/master.xml`
-
-**`src/main/docker/`:**
-- Purpose: Store deployment and local dependency orchestration assets.
-- Contains: Compose files for app, PostgreSQL, monitoring, Sonar, and Jib entrypoint files.
-- Key files: `src/main/docker/app.yml`, `src/main/docker/services.yml`, `src/main/docker/postgresql.yml`, `src/main/docker/jib/entrypoint.sh`
+**`src/main/resources/`:**
+- Purpose: Hold backend configuration, database migrations, fetch plans, mail templates, and message bundles.
+- Contains: `config/application*.yml`, `config/liquibase/**`, `fetch-plans.yml`, `templates/mail/*.html`, `i18n/*.properties`, `logback-spring.xml`.
+- Key files: `src/main/resources/config/liquibase/master.xml`, `src/main/resources/fetch-plans.yml`, `src/main/resources/config/application.yml`
 
 **`src/test/java/com/vn/core/`:**
-- Purpose: Mirror production packages for tests and architectural checks.
-- Contains: Integration tests, unit tests, test utilities, ArchUnit rules, test configuration.
-- Key files: `src/test/java/com/vn/core/TechnicalStructureTest.java`, `src/test/java/com/vn/core/IntegrationTest.java`, `src/test/java/com/vn/core/web/rest/UserResourceIT.java`
+- Purpose: Hold backend integration, unit, and architecture tests for the active backend.
+- Contains: REST integration tests, security enforcement tests, mapper tests, and `TechnicalStructureTest`.
+- Key files: `src/test/java/com/vn/core/TechnicalStructureTest.java`, `src/test/java/com/vn/core/web/rest/SecuredEntityEnforcementIT.java`, `src/test/java/com/vn/core/web/rest/MenuPermissionResourceIT.java`
+
+**`frontend/src/`:**
+- Purpose: Hold the active standalone Angular app.
+- Contains: bootstrap files, route configuration, feature pages, shell layout, auth/core services, shared UI, app config, and translation source files.
+- Key files: `frontend/src/main.ts`, `frontend/src/app/app.ts`, `frontend/src/app.routes.ts`, `frontend/src/app.config.ts`, `frontend/src/app/layout/navigation/navigation-registry.ts`
+
+**`frontend/public/`:**
+- Purpose: Hold static assets served by the standalone Angular app.
+- Contains: merged translation payloads, favicon, and any browser-served assets.
+- Key files: `frontend/public/i18n/en.json`, `frontend/public/i18n/vi.json`, `frontend/public/favicon.ico`
+
+**`angapp/`:**
+- Purpose: Preserve the older integrated JHipster backend plus Angular webapp that the current migration is absorbing.
+- Contains: a separate Spring Boot app in `angapp/src/main/java/com/mycompany/myapp/**`, a generated Angular app in `angapp/src/main/webapp/app/**`, its own Gradle build, and its own `package.json`.
+- Key files: `angapp/build.gradle`, `angapp/src/main/java/com/mycompany/myapp/AngappApp.java`, `angapp/src/main/webapp/app/app.routes.ts`
+
+**`aef-main/aef-main/`:**
+- Purpose: Provide UI/design reference material for the standalone frontend shell.
+- Contains: a separate Angular workspace with its own `angular.json`, `package.json`, `src/`, and `public/`.
+- Key files: `aef-main/aef-main/angular.json`, `aef-main/aef-main/src/`
+
+**`jhipter-angular/`:**
+- Purpose: Hold an additional sample/reference split application with separate backend and frontend folders.
+- Contains: `jhipter-angular/backend/` and `jhipter-angular/frontend/`, each with their own manifests and source trees.
+- Key files: `jhipter-angular/backend/pom.xml`, `jhipter-angular/frontend/angular.json`
 
 **`buildSrc/`:**
-- Purpose: Hold local Gradle plugins shared by the root project.
-- Contains: Convention plugins for code quality and Docker image packaging.
-- Key files: `buildSrc/src/main/groovy/jhipster.code-quality-conventions.gradle`, `buildSrc/src/main/groovy/jhipster.docker-conventions.gradle`
+- Purpose: Centralize Gradle convention plugins and shared build configuration for the active backend.
+- Contains: version catalogs and Groovy convention scripts.
+- Key files: `buildSrc/build.gradle`, `buildSrc/src/main/groovy/jhipster.docker-conventions.gradle`, `buildSrc/src/main/groovy/jhipster.code-quality-conventions.gradle`
 
-**`aef-main/`, `angapp/`, `jhipter-angular/`:**
-- Purpose: Adjacent application trees present in the repository workspace.
-- Contains: Separate source and build files outside the root service package.
-- Key files: Not part of the root app module defined by `settings.gradle`; do not place new root-service code here unless the task explicitly targets one of these trees.
+**`gradle/`:**
+- Purpose: Hold root Gradle helper scripts consumed by `build.gradle`.
+- Contains: profile, Spring Boot, and Liquibase scripts plus the wrapper metadata.
+- Key files: `gradle/spring-boot.gradle`, `gradle/liquibase.gradle`, `gradle/wrapper/gradle-wrapper.properties`
+
+**`.planning/`:**
+- Purpose: Hold project planning state, phase artifacts, research, and generated codebase docs for GSD workflows.
+- Contains: `PROJECT.md`, `STATE.md`, roadmap data, phase folders, quick-task records, and `.planning/codebase/*.md`.
+- Key files: `.planning/PROJECT.md`, `.planning/STATE.md`, `.planning/codebase/`
 
 ## Key File Locations
 
 **Entry Points:**
-- `src/main/java/com/vn/core/JhipsterSecApp.java`: Root Spring Boot startup class.
-- `src/main/java/com/vn/core/ApplicationWebXml.java`: WAR deployment bootstrap.
-- `src/main/java/com/vn/core/web/rest/AuthenticateController.java`: JWT login and authentication-check endpoint.
+- `src/main/java/com/vn/core/JhipsterSecApp.java`: Active backend application entry.
+- `src/main/java/com/vn/core/ApplicationWebXml.java`: WAR/servlet deployment entry.
+- `src/main/java/com/vn/core/web/rest/`: Active backend API surface.
+- `frontend/src/main.ts`: Active standalone frontend bootstrap.
+- `frontend/src/app/app.ts`: Frontend root component that initializes identity and language state.
+- `frontend/src/app.routes.ts`: Top-level lazy route graph for the standalone frontend.
+- `angapp/src/main/java/com/mycompany/myapp/AngappApp.java`: Legacy reference app entry, not the active root backend.
 
 **Configuration:**
-- `build.gradle`: Root Gradle build for the active service.
-- `settings.gradle`: Declares the single root project `jhipster-sec`.
-- `src/main/resources/config/application.yml`: Base Spring Boot and JHipster runtime config.
-- `src/main/java/com/vn/core/config/SecurityConfiguration.java`: URL authorization and resource-server setup.
-- `src/main/java/com/vn/core/config/LiquibaseConfiguration.java`: Migration bootstrap.
+- `build.gradle`: Active backend build, plugins, dependencies, and Java version.
+- `settings.gradle`: Root module definition for the active backend.
+- `src/main/resources/config/application.yml`: Shared backend runtime config.
+- `src/main/resources/config/application-dev.yml`: Backend development overrides.
+- `src/main/resources/config/application-prod.yml`: Backend production overrides.
+- `src/main/resources/fetch-plans.yml`: Source of truth for secure fetch-plan definitions.
+- `src/main/resources/config/liquibase/master.xml`: Schema migration include list.
+- `frontend/angular.json`: Frontend build and dev-server configuration.
+- `frontend/proxy.conf.json`: Frontend proxy rules for local backend calls.
+- `frontend/src/environments/environment.ts`: Frontend production environment constants.
+- `frontend/scripts/merge-i18n.cjs`: Frontend translation merge script.
 
 **Core Logic:**
-- `src/main/java/com/vn/core/service/UserService.java`: User lifecycle and account business rules.
-- `src/main/java/com/vn/core/security/DomainUserDetailsService.java`: Persistence-backed authentication lookup.
-- `src/main/java/com/vn/core/repository/UserRepository.java`: User persistence queries and cacheable authority fetches.
-- `src/main/java/com/vn/core/web/rest/AccountResource.java`: Self-service account API.
+- `src/main/java/com/vn/core/security/data/`: Secure data orchestration and query execution.
+- `src/main/java/com/vn/core/security/access/`: CRUD and access-constraint application.
+- `src/main/java/com/vn/core/security/fetch/`: Fetch-plan parsing and resolution.
+- `src/main/java/com/vn/core/security/row/`: Row-policy loading and specification building.
+- `src/main/java/com/vn/core/security/serialize/`: Read-side secure serialization.
+- `src/main/java/com/vn/core/security/merge/`: Write-side secure merge enforcement.
+- `src/main/java/com/vn/core/service/security/`: API-facing security capability and menu-permission services.
+- `frontend/src/app/core/`: Frontend auth, HTTP interceptors, request helpers, and core utilities.
+- `frontend/src/app/layout/`: Shell layout, sidebar/topbar, breadcrumbs, and navigation filtering.
+- `frontend/src/app/pages/admin/security/`: Frontend security-admin screens.
+- `frontend/src/app/pages/entities/`: Frontend secured entity screens.
 
 **Testing:**
-- `src/test/java/com/vn/core/TechnicalStructureTest.java`: Enforces package layer rules.
-- `src/test/java/com/vn/core/IntegrationTest.java`: Base integration-test annotation setup.
-- `src/test/java/com/vn/core/web/rest/`: REST integration tests mirrored to controller packages.
+- `src/test/java/com/vn/core/`: Backend tests for the active root application.
+- `src/test/resources/`: Backend test config, test mail templates, and fetch-plan fixtures.
+- `frontend/src/**/*.spec.ts`: Frontend unit tests colocated with the active Angular app.
+- `frontend/playwright.config.ts`: Frontend end-to-end test configuration.
+- `angapp/src/test/java/` and `angapp/src/main/webapp/**/*.spec.ts`: Legacy reference tests, not the active frontend test suite.
+
+## Module Boundaries
+
+**Active Production Backend Boundary:**
+- Put active backend runtime code only under `src/main/java/com/vn/core/**` and active backend tests only under `src/test/java/com/vn/core/**`.
+- Do not add new production backend features to `angapp/src/main/java/**` unless the task explicitly targets the legacy reference app.
+
+**Business Domain vs Security Metadata Boundary:**
+- Keep user and proof/business entities in `src/main/java/com/vn/core/domain/` and their repositories in `src/main/java/com/vn/core/repository/`.
+- Keep permission, row-policy, menu-definition, and menu-permission entities in `src/main/java/com/vn/core/security/domain/` and their repositories in `src/main/java/com/vn/core/security/repository/`.
+
+**REST vs Service vs Enforcement Boundary:**
+- Keep HTTP request parsing, pagination headers, and status handling in `src/main/java/com/vn/core/web/rest/**`.
+- Keep API-oriented orchestration in `src/main/java/com/vn/core/service/**`.
+- Keep reusable enforcement machinery in `src/main/java/com/vn/core/security/**`.
+- Follow the layer contract enforced by `src/test/java/com/vn/core/TechnicalStructureTest.java`.
+
+**Frontend Shell vs Feature Boundary:**
+- Keep global app providers, auth, and interceptors in `frontend/src/app/core/**`.
+- Keep shell navigation, breadcrumbs, and layout chrome in `frontend/src/app/layout/**`.
+- Keep routed feature UI in `frontend/src/app/pages/**`.
+- Keep reusable but non-shell UI helpers in `frontend/src/app/shared/**`.
+
+**Active Frontend vs Reference Frontends Boundary:**
+- Put active standalone UI work in `frontend/src/**`.
+- Treat `angapp/src/main/webapp/app/**`, `aef-main/aef-main/src/**`, and `jhipter-angular/frontend/src/**` as reference material unless the task explicitly says to update them.
+
+**Translation Source Boundary:**
+- Edit translation source files in `frontend/src/i18n/**`.
+- Treat `frontend/public/i18n/*.json` and `frontend/src/app/config/i18n-hash.generated.ts` as generated outputs of `frontend/scripts/merge-i18n.cjs`.
+
+## Important Packages and Apps
+
+**Active Backend App:**
+- Package root: `src/main/java/com/vn/core/`
+- Major packages: `config`, `management`, `repository`, `domain`, `service`, `security`, `web/rest`, `aop/logging`
+- Use this tree for all deployable backend work.
+
+**Active Standalone Frontend App:**
+- App root: `frontend/src/app/`
+- Major areas: `core`, `layout`, `pages`, `shared`, `config`
+- Use this tree for all deployable frontend work.
+
+**Legacy Reference App:**
+- Roots: `angapp/src/main/java/com/mycompany/myapp/` and `angapp/src/main/webapp/app/`
+- Use this tree to compare behavior and migration parity, not as the default destination for new production code.
+
+**UI Reference Workspace:**
+- Root: `aef-main/aef-main/`
+- Use this workspace as a layout/styling reference for the standalone frontend shell when a task explicitly calls for it.
+
+**Additional Split-App Reference:**
+- Roots: `jhipter-angular/backend/` and `jhipter-angular/frontend/`
+- Use this workspace only when a task explicitly asks for that sample/reference stack.
+
+## Where Major Concerns Live
+
+**Authentication and Account Flows:**
+- Backend: `src/main/java/com/vn/core/web/rest/AuthenticateController.java`, `src/main/java/com/vn/core/web/rest/AccountResource.java`, `src/main/java/com/vn/core/security/DomainUserDetailsService.java`
+- Frontend: `frontend/src/app/core/auth/`, `frontend/src/app/pages/login/login.component.ts`
+
+**Classic User and Authority Admin:**
+- Backend: `src/main/java/com/vn/core/web/rest/UserResource.java`, `src/main/java/com/vn/core/web/rest/AuthorityResource.java`, `src/main/java/com/vn/core/service/UserService.java`
+- Frontend: `frontend/src/app/pages/admin/user-management/`
+
+**Secured Entity Enforcement:**
+- Backend orchestration: `src/main/java/com/vn/core/security/data/`, `src/main/java/com/vn/core/security/access/`, `src/main/java/com/vn/core/security/row/`, `src/main/java/com/vn/core/security/merge/`, `src/main/java/com/vn/core/security/serialize/`
+- Backend entity APIs: `src/main/java/com/vn/core/web/rest/OrganizationResource.java`, `src/main/java/com/vn/core/web/rest/DepartmentResource.java`, `src/main/java/com/vn/core/web/rest/EmployeeResource.java`
+- Frontend consumers: `frontend/src/app/pages/entities/`, `frontend/src/app/pages/entities/shared/service/secured-entity-capability.service.ts`
+
+**Security Metadata Administration:**
+- Backend: `src/main/java/com/vn/core/web/rest/admin/security/`, `src/main/java/com/vn/core/service/security/`, `src/main/java/com/vn/core/service/dto/security/`, `src/main/java/com/vn/core/service/mapper/security/`, `src/main/java/com/vn/core/security/domain/`, `src/main/java/com/vn/core/security/repository/`
+- Frontend: `frontend/src/app/pages/admin/security/`
+
+**Menu and Navigation Permissions:**
+- Backend: `src/main/java/com/vn/core/web/rest/MenuPermissionResource.java`, `src/main/java/com/vn/core/service/security/CurrentUserMenuPermissionService.java`
+- Frontend: `frontend/src/app/layout/navigation/`
+
+**Fetch Plans:**
+- Definition: `src/main/resources/fetch-plans.yml`
+- Runtime parsing/resolution: `src/main/java/com/vn/core/security/fetch/`
+- Entity references: `src/main/java/com/vn/core/service/OrganizationService.java`, `src/main/java/com/vn/core/service/DepartmentService.java`, `src/main/java/com/vn/core/service/EmployeeService.java`
+
+**Database Schema and Seed Data:**
+- Master changelog: `src/main/resources/config/liquibase/master.xml`
+- Incremental changelogs: `src/main/resources/config/liquibase/changelog/*.xml`
+- CSV seed data: `src/main/resources/config/liquibase/data/*.csv`
+
+**Operations and Local Runtime:**
+- Backend/docker manifests: `src/main/docker/*.yml`
+- Gradle conventions: `buildSrc/src/main/groovy/*.gradle`
+- Root npm automation: `package.json`
+- Frontend dev/build/test automation: `frontend/package.json`
+
+**Localization:**
+- Backend bundles: `src/main/resources/i18n/*.properties`
+- Frontend source translations: `frontend/src/i18n/**`
+- Frontend merged translation assets: `frontend/public/i18n/*.json`
 
 ## Naming Conventions
 
 **Files:**
-- `*Resource.java`: REST endpoints, for example `src/main/java/com/vn/core/web/rest/UserResource.java`.
-- `*Controller.java`: Specialized controller naming for authentication, for example `src/main/java/com/vn/core/web/rest/AuthenticateController.java`.
-- `*Service.java`: Transactional workflows, for example `src/main/java/com/vn/core/service/UserService.java`.
-- `*Repository.java`: Spring Data repositories, for example `src/main/java/com/vn/core/repository/UserRepository.java`.
-- `*DTO.java`: Service-layer transport objects, for example `src/main/java/com/vn/core/service/dto/UserDTO.java`.
-- `*VM.java`: Request/response view models tied to web APIs, for example `src/main/java/com/vn/core/web/rest/vm/LoginVM.java`.
-- `*Configuration.java`: Infrastructure wiring, for example `src/main/java/com/vn/core/config/CacheConfiguration.java`.
-- `*IT.java`, `*Test.java`, `*Tests.java`: Integration and unit test files, for example `src/test/java/com/vn/core/web/rest/AccountResourceIT.java`.
+- Backend REST controllers use `*Resource.java`, for example `src/main/java/com/vn/core/web/rest/OrganizationResource.java`.
+- Backend services use `*Service.java`, for example `src/main/java/com/vn/core/service/OrganizationService.java`.
+- Backend repositories use `*Repository.java`, for example `src/main/java/com/vn/core/security/repository/SecPermissionRepository.java`.
+- Backend DTOs and mappers use `*DTO.java` and `*Mapper.java`, for example `src/main/java/com/vn/core/service/dto/security/SecRoleDTO.java` and `src/main/java/com/vn/core/service/mapper/security/SecPermissionMapper.java`.
+- Frontend route files use `*.routes.ts`, frontend services use `*.service.ts`, frontend models use `*.model.ts`, and routed screens use `*.component.ts`.
 
 **Directories:**
-- Package directories mirror Java packages exactly under `src/main/java/com/vn/core/` and `src/test/java/com/vn/core/`.
-- Subdirectories reflect technical layers rather than feature slices at the root level: `config`, `web`, `service`, `repository`, `domain`, `security`.
-- Web-layer specializations live beneath the layer directory instead of beside it, for example `src/main/java/com/vn/core/web/rest/errors/` and `src/main/java/com/vn/core/web/rest/vm/`.
+- Backend directories follow technical layers, for example `src/main/java/com/vn/core/config/`, `src/main/java/com/vn/core/service/`, `src/main/java/com/vn/core/security/`, `src/main/java/com/vn/core/web/rest/`.
+- Frontend feature directories group screens by area and feature, for example `frontend/src/app/pages/entities/organization/` and `frontend/src/app/pages/admin/security/roles/`.
+- Frontend shell-specific code stays under `frontend/src/app/layout/`, not under feature folders.
 
 ## Where to Add New Code
 
-**New Feature:**
-- Primary code: start with a domain entity in `src/main/java/com/vn/core/domain/`, a repository in `src/main/java/com/vn/core/repository/`, a service in `src/main/java/com/vn/core/service/`, and a REST endpoint in `src/main/java/com/vn/core/web/rest/` if the feature is externally reachable.
-- Tests: mirror the package under `src/test/java/com/vn/core/`, and add migration coverage or integration coverage where the feature changes persistence behavior.
+**New Backend Secured Entity Feature:**
+- Primary code: `src/main/java/com/vn/core/domain/`, `src/main/java/com/vn/core/repository/`, `src/main/java/com/vn/core/service/`, `src/main/java/com/vn/core/web/rest/`
+- Security integration: mark the entity in `src/main/java/com/vn/core/domain/` with `@SecuredEntity`, add plan definitions to `src/main/resources/fetch-plans.yml`, and extend runtime enforcement only if the generic `src/main/java/com/vn/core/security/**` pipeline is insufficient
+- Tests: `src/test/java/com/vn/core/web/rest/` plus focused service/security tests under `src/test/java/com/vn/core/`
 
-**New Component/Module:**
-- Implementation: place cross-cutting framework wiring in `src/main/java/com/vn/core/config/`; place authentication helpers in `src/main/java/com/vn/core/security/`; place API-specific contracts in `src/main/java/com/vn/core/web/rest/errors/` or `src/main/java/com/vn/core/web/rest/vm/`.
+**New Security Metadata Capability or Admin Tool:**
+- Implementation: `src/main/java/com/vn/core/service/security/`
+- DTOs and mappers: `src/main/java/com/vn/core/service/dto/security/` and `src/main/java/com/vn/core/service/mapper/security/`
+- Persistence: `src/main/java/com/vn/core/security/domain/` and `src/main/java/com/vn/core/security/repository/`
+- REST endpoints: `src/main/java/com/vn/core/web/rest/admin/security/`
+- Frontend screens: `frontend/src/app/pages/admin/security/`
 
-**Utilities:**
-- Shared helpers: keep domain-agnostic runtime helpers close to the layer that owns them rather than creating a broad `utils` package. Use `src/main/java/com/vn/core/security/` for security helpers, `src/main/java/com/vn/core/config/` for constants and properties, and `src/test/java/com/vn/core/web/rest/TestUtil.java` style placement for test-only utilities.
+**New Frontend Routed Feature:**
+- Implementation: `frontend/src/app/pages/<area>/<feature>/`
+- Route registration: `frontend/src/app/pages/<area>/<area>.routes.ts` and, if top-level, `frontend/src/app.routes.ts`
+- Menu visibility: `frontend/src/app/layout/navigation/navigation-registry.ts` when the feature needs shell navigation
+- Tests: colocated `frontend/src/app/pages/<area>/<feature>/**/*.spec.ts`
+
+**Shared Frontend Utilities:**
+- Cross-app auth/request/config helpers: `frontend/src/app/core/`
+- Shell-only utilities: `frontend/src/app/layout/`
+- Generic reusable UI and directives: `frontend/src/app/shared/`
+
+**Reference or Migration-Only Changes:**
+- Legacy behavior references: `angapp/`
+- UI references: `aef-main/aef-main/`
+- Extra sample stack: `jhipter-angular/`
+- Use these only when the task explicitly targets them; otherwise keep implementation work in `src/` or `frontend/`.
 
 ## Special Directories
 
-**`build/`:**
-- Purpose: Generated compilation outputs and packaged artifacts.
-- Generated: Yes
-- Committed: No
+**`src/main/resources/config/liquibase/changelog/`:**
+- Purpose: Ordered schema evolution files for the active backend.
+- Generated: No
+- Committed: Yes
 
-**`.planning/codebase/`:**
-- Purpose: Generated analysis documents consumed by other GSD commands.
-- Generated: Yes
-- Committed: Typically yes, as workflow artifacts
-
-**`buildSrc/`:**
-- Purpose: Versioned local Gradle plugin logic for the root build.
+**`src/main/resources/config/tls/`:**
+- Purpose: TLS material location for backend runtime configuration.
 - Generated: No
 - Committed: Yes
 
 **`src/main/docker/`:**
-- Purpose: Versioned deployment and local services definitions.
+- Purpose: Local service stacks and operational compose definitions for the active backend environment.
 - Generated: No
 - Committed: Yes
 
-**Root client directory:**
-- Purpose: Not applicable in the active root service.
-- Generated: Not detected
-- Committed: Not detected
+**`frontend/src/i18n/`:**
+- Purpose: Source-of-truth translation fragments for the standalone frontend.
+- Generated: No
+- Committed: Yes
+
+**`frontend/public/i18n/`:**
+- Purpose: Merged translation payloads served by the frontend runtime.
+- Generated: Yes, by `frontend/scripts/merge-i18n.cjs`
+- Committed: Yes
+
+**`angapp/`:**
+- Purpose: Legacy application tree kept in-repo for migration parity and behavior reference.
+- Generated: No
+- Committed: Yes
+
+**`.planning/codebase/`:**
+- Purpose: Generated codebase map documents used by later planning and execution commands.
+- Generated: Yes
+- Committed: Yes
 
 ---
 
-*Structure analysis: 2026-03-21*
+*Structure analysis: 2026-03-27*

@@ -40,7 +40,10 @@
     }
     @if (hasPendingChanges) {
       <span class="text-sm text-orange-500" aria-live="polite">
-        {{ 'security.permissionMatrix.unsavedChanges' | translate: { count: pendingChanges.size + menuPendingChanges.size } }}
+        {{
+          'security.permissionMatrix.unsavedChanges'
+            | translate: { count: pendingChanges.size + menuPendingChanges.size }
+        }}
       </span>
     }
   </div>
@@ -58,16 +61,26 @@
       <p-tabpanels>
         <p-tabpanel value="0">
           <div class="p-4">
-            <h2 class="mb-4 text-base font-semibold">{{ 'security.permissionMatrix.entity.heading' | translate }}</h2>
+            <h2 class="mb-4 text-base font-semibold">
+              {{ 'security.permissionMatrix.entity.heading' | translate }}
+            </h2>
 
             <p-table [value]="catalogEntries" dataKey="code" [scrollable]="true">
               <ng-template pTemplate="header">
                 <tr>
                   <th>{{ 'security.permissionMatrix.entity.name' | translate }}</th>
-                  <th class="text-center" style="width: 80px">{{ 'security.permissionMatrix.entity.create' | translate }}</th>
-                  <th class="text-center" style="width: 80px">{{ 'security.permissionMatrix.entity.read' | translate }}</th>
-                  <th class="text-center" style="width: 80px">{{ 'security.permissionMatrix.entity.update' | translate }}</th>
-                  <th class="text-center" style="width: 80px">{{ 'security.permissionMatrix.entity.delete' | translate }}</th>
+                  <th class="text-center" style="width: 80px">
+                    {{ 'security.permissionMatrix.entity.create' | translate }}
+                  </th>
+                  <th class="text-center" style="width: 80px">
+                    {{ 'security.permissionMatrix.entity.read' | translate }}
+                  </th>
+                  <th class="text-center" style="width: 80px">
+                    {{ 'security.permissionMatrix.entity.update' | translate }}
+                  </th>
+                  <th class="text-center" style="width: 80px">
+                    {{ 'security.permissionMatrix.entity.delete' | translate }}
+                  </th>
                 </tr>
               </ng-template>
 
@@ -148,27 +161,44 @@
           </div>
 
           @if (!selectedEntity) {
-            <p class="p-4 text-color-secondary">{{ 'security.permissionMatrix.entity.emptySelection' | translate }}</p>
+            <p class="p-4 text-color-secondary">
+              {{ 'security.permissionMatrix.entity.emptySelection' | translate }}
+            </p>
           } @else if (selectedEntity.attributes.length === 0) {
-            <p class="p-4 text-color-secondary">{{ 'security.permissionMatrix.attribute.none' | translate }}</p>
+            <p class="p-4 text-color-secondary">
+              {{ 'security.permissionMatrix.attribute.none' | translate }}
+            </p>
           } @else {
             <div class="p-4">
               <h2 class="mb-4 text-base font-semibold">
-                {{ 'security.permissionMatrix.attribute.heading' | translate: { entity: selectedEntity!.displayName } }}
+                {{
+                  'security.permissionMatrix.attribute.heading'
+                    | translate: { entity: selectedEntity!.displayName }
+                }}
               </h2>
 
               <p-table [value]="selectedEntityAttributeRows" [scrollable]="true">
                 <ng-template pTemplate="header">
                   <tr>
                     <th>{{ 'security.permissionMatrix.attribute.name' | translate }}</th>
-                    <th class="text-center" style="width: 80px">{{ 'security.permissionMatrix.attribute.view' | translate }}</th>
-                    <th class="text-center" style="width: 80px">{{ 'security.permissionMatrix.attribute.modify' | translate }}</th>
+                    <th class="text-center" style="width: 80px">
+                      {{ 'security.permissionMatrix.attribute.view' | translate }}
+                    </th>
+                    <th class="text-center" style="width: 80px">
+                      {{ 'security.permissionMatrix.attribute.modify' | translate }}
+                    </th>
                   </tr>
                 </ng-template>
 
                 <ng-template pTemplate="body" let-row>
                   <tr>
-                    <td>{{ row.isWildcard ? ('security.permissionMatrix.attribute.wildcard' | translate) : row.label }}</td>
+                    <td>
+                      {{
+                        row.isWildcard
+                          ? ('security.permissionMatrix.attribute.wildcard' | translate)
+                          : row.label
+                      }}
+                    </td>
                     <td class="text-center">
                       <span
                         class="inline-flex items-center rounded-sm"
@@ -185,7 +215,9 @@
                             (!row.isWildcard &&
                               isWildcardEffectivelyGranted(selectedEntity!.code, 'VIEW'))
                           "
-                          (ngModelChange)="togglePermission('ATTRIBUTE', row.target, 'VIEW', $event)"
+                          (ngModelChange)="
+                            togglePermission('ATTRIBUTE', row.target, 'VIEW', $event)
+                          "
                         />
                       </span>
                     </td>
@@ -205,7 +237,9 @@
                             (!row.isWildcard &&
                               isWildcardEffectivelyGranted(selectedEntity!.code, 'EDIT'))
                           "
-                          (ngModelChange)="togglePermission('ATTRIBUTE', row.target, 'EDIT', $event)"
+                          (ngModelChange)="
+                            togglePermission('ATTRIBUTE', row.target, 'EDIT', $event)
+                          "
                         />
                       </span>
                     </td>
@@ -218,6 +252,40 @@
 
         <p-tabpanel value="1">
           <div class="p-4">
+            <div class="mb-4 max-w-sm">
+              <label for="menuAppSelect" class="mb-2 block text-sm font-semibold">
+                {{ 'security.permissionMatrix.menu.appLabel' | translate }}
+              </label>
+
+              @if (menuAppOptions().length > 0) {
+                <p-select
+                  inputId="menuAppSelect"
+                  [ngModel]="selectedMenuApp"
+                  [ngModelOptions]="{ standalone: true }"
+                  [options]="menuAppOptions()"
+                  optionLabel="label"
+                  optionValue="value"
+                  [emptyMessage]="'security.permissionMatrix.menu.noApps' | translate"
+                  [disabled]="saving || menuLoading"
+                  class="w-full"
+                  (ngModelChange)="onSelectedMenuAppChange($event)"
+                />
+              } @else {
+                <p class="text-color-secondary">
+                  {{ 'security.permissionMatrix.menu.noApps' | translate }}
+                </p>
+              }
+            </div>
+
+            @if (!menuLoading && !currentMenuAppHasDefinitions()) {
+              <p class="mb-4 text-color-secondary">
+                {{
+                  'security.permissionMatrix.menu.emptyDefinitions'
+                    | translate: { appName: selectedMenuApp }
+                }}
+              </p>
+            }
+
             <p-treetable
               [value]="menuTreeNodes"
               selectionMode="checkbox"
@@ -229,7 +297,7 @@
             >
               <ng-template #header>
                 <tr>
-                  <th>Navigation Node</th>
+                  <th>{{ 'security.permissionMatrix.menu.node' | translate }}</th>
                 </tr>
               </ng-template>
               <ng-template #body let-rowNode let-rowData="rowData">

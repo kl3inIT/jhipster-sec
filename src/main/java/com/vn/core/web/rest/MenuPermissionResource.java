@@ -1,7 +1,9 @@
 package com.vn.core.web.rest;
 
+import com.vn.core.security.domain.MenuAppName;
 import com.vn.core.service.dto.security.MenuPermissionResponseDTO;
 import com.vn.core.service.security.CurrentUserMenuPermissionService;
+import com.vn.core.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MenuPermissionResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(MenuPermissionResource.class);
+    private static final String ENTITY_NAME = "menuPermission";
 
     private final CurrentUserMenuPermissionService currentUserMenuPermissionService;
 
@@ -36,9 +39,16 @@ public class MenuPermissionResource {
     @GetMapping("/menu-permissions")
     public ResponseEntity<MenuPermissionResponseDTO> getMenuPermissions(@RequestParam("appName") String appName) {
         LOG.debug("REST request to get current-user menu permissions for app {}", appName);
+        MenuAppName menuAppName = parseAppName(appName);
         MenuPermissionResponseDTO response = new MenuPermissionResponseDTO();
-        response.setAppName(appName);
-        response.setAllowedMenuIds(currentUserMenuPermissionService.getAllowedMenuIds(appName));
+        response.setAppName(menuAppName.getValue());
+        response.setAllowedMenuIds(currentUserMenuPermissionService.getAllowedMenuIds(menuAppName));
         return ResponseEntity.ok(response);
+    }
+
+    private MenuAppName parseAppName(String appName) {
+        return MenuAppName.fromValue(appName).orElseThrow(() ->
+            new BadRequestAlertException("Invalid menu app name", ENTITY_NAME, "appNameInvalid")
+        );
     }
 }

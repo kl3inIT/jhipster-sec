@@ -1,6 +1,7 @@
 package com.vn.core.security.merge;
 
 import com.vn.core.security.permission.AttributePermissionEvaluator;
+import java.util.Collection;
 import java.util.Map;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.security.access.AccessDeniedException;
@@ -43,6 +44,29 @@ public class SecureMergeServiceImpl implements SecureMergeService {
             }
 
             wrapper.setPropertyValue(attr, entry.getValue());
+        }
+    }
+
+    @Override
+    public void mergeForUpdate(Object entity, Object sourceEntity, Collection<String> changedAttributes) {
+        if (sourceEntity == null || changedAttributes == null) {
+            return;
+        }
+
+        Class<?> entityClass = entity.getClass();
+        BeanWrapperImpl targetWrapper = new BeanWrapperImpl(entity);
+        BeanWrapperImpl sourceWrapper = new BeanWrapperImpl(sourceEntity);
+
+        for (String attr : changedAttributes) {
+            if ("id".equals(attr)) {
+                continue;
+            }
+
+            if (!attributePermissionEvaluator.canEdit(entityClass, attr)) {
+                throw new AccessDeniedException("No EDIT permission for " + entityClass.getSimpleName() + "." + attr);
+            }
+
+            targetWrapper.setPropertyValue(attr, sourceWrapper.getPropertyValue(attr));
         }
     }
 }

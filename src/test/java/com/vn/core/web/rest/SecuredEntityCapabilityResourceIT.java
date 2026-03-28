@@ -2,17 +2,30 @@ package com.vn.core.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.core.IntegrationTest;
+import com.vn.core.config.Constants;
+import com.vn.core.domain.Authority;
+import com.vn.core.domain.User;
+import com.vn.core.repository.AuthorityRepository;
+import com.vn.core.repository.UserRepository;
+import com.vn.core.service.UserService;
+import com.vn.core.service.dto.AdminUserDTO;
+import com.vn.core.web.rest.vm.LoginVM;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -33,6 +46,18 @@ class SecuredEntityCapabilityResourceIT {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AuthorityRepository authorityRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Test
     @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
@@ -69,9 +94,34 @@ class SecuredEntityCapabilityResourceIT {
         assertThat(organization.path("canDelete").asBoolean()).isFalse();
     }
 
+    @Test
+    void sameTokenReflectsUpdatedAuthorities() throws Exception {
+        User user = saveActivatedUser("capability-refresh", "capability-refresh@example.com", "password", "ROLE_PROOF_READER");
+        String token = authenticate(user.getLogin(), "password");
+
+        JsonNode readerOrganization = getCapability("organization", token);
+        assertThat(readerOrganization.path("canRead").asBoolean()).isTrue();
+        assertThat(readerOrganization.path("canUpdate").asBoolean()).isFalse();
+
+        updateAuthorities(user.getId(), user.getLogin(), "ROLE_PROOF_EDITOR");
+
+        JsonNode editorOrganization = getCapability("organization", token);
+        assertThat(editorOrganization.path("canRead").asBoolean()).isTrue();
+        assertThat(editorOrganization.path("canUpdate").asBoolean()).isTrue();
+        assertThat(attribute(editorOrganization, "budget").path("canEdit").asBoolean()).isFalse();
+    }
+
     private JsonNode getCapability(String code) throws Exception {
+        return getCapability(code, null);
+    }
+
+    private JsonNode getCapability(String code, String token) throws Exception {
+        var requestBuilder = get(ENTITY_CAPABILITIES_API_URL);
+        if (token != null) {
+            requestBuilder.header(HttpHeaders.AUTHORIZATION, bearerToken(token));
+        }
         MvcResult result = restMockMvc
-            .perform(get(ENTITY_CAPABILITIES_API_URL))
+            .perform(requestBuilder)
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andReturn();
@@ -103,5 +153,49 @@ class SecuredEntityCapabilityResourceIT {
             }
         }
         throw new AssertionError("Missing attribute " + name + " in capability " + capability.path("code").asText());
+    }
+
+    private User saveActivatedUser(String login, String email, String rawPassword, String... authorityNames) {
+        User user = new User();
+        user.setLogin(login);
+        user.setEmail(email);
+        user.setActivated(true);
+        user.setLangKey(Constants.DEFAULT_LANGUAGE);
+        user.setPassword(passwordEncoder.encode(rawPassword));
+        user.setAuthorities(resolveAuthorities(authorityNames));
+        return userRepository.saveAndFlush(user);
+    }
+
+    private Set<Authority> resolveAuthorities(String... authorityNames) {
+        Set<Authority> authorities = new HashSet<>();
+        for (String authorityName : authorityNames) {
+            authorities.add(authorityRepository.findById(authorityName).orElseThrow());
+        }
+        return authorities;
+    }
+
+    private void updateAuthorities(Long userId, String login, String... authorityNames) {
+        AdminUserDTO updatedUser = new AdminUserDTO(userRepository.findOneWithAuthoritiesByLogin(login).orElseThrow());
+        updatedUser.setId(userId);
+        updatedUser.setAuthorities(Set.of(authorityNames));
+        userService.updateUser(updatedUser);
+    }
+
+    private String authenticate(String username, String password) throws Exception {
+        LoginVM loginVM = new LoginVM();
+        loginVM.setUsername(username);
+        loginVM.setPassword(password);
+
+        MvcResult result = restMockMvc
+            .perform(post("/api/authenticate").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsBytes(loginVM)))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andReturn();
+
+        return objectMapper.readTree(result.getResponse().getContentAsString(StandardCharsets.UTF_8)).path("id_token").asText();
+    }
+
+    private String bearerToken(String token) {
+        return "Bearer " + token;
     }
 }

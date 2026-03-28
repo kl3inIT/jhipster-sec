@@ -1,6 +1,7 @@
 package com.vn.core.service.security;
 
 import com.vn.core.security.MergedSecurityService;
+import com.vn.core.security.domain.MenuAppName;
 import com.vn.core.security.domain.SecMenuPermission;
 import com.vn.core.security.repository.SecMenuPermissionRepository;
 import java.util.Collection;
@@ -25,7 +26,7 @@ public class CurrentUserMenuPermissionService {
         this.secMenuPermissionRepository = secMenuPermissionRepository;
     }
 
-    public List<String> getAllowedMenuIds(String appName) {
+    public List<String> getAllowedMenuIds(MenuAppName appName) {
         Collection<String> authorityNames = mergedSecurityService.getCurrentUserAuthorityNames();
         if (authorityNames.isEmpty()) {
             return List.of();

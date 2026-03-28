@@ -100,7 +100,20 @@
         "question": "Are you sure you want to delete this organization? This action cannot be undone."
       },
       "detail": {
-        "title": "Organization"
+        "title": "Organization",
+        "workbench": {
+          "subtitle": "Inspect and change the root organization together with its departments and employees from one secured workspace.",
+          "loading": "Loading organization workbench...",
+          "departmentCountLabel": "Departments in this organization",
+          "employeeCountLabel": "Employees in this organization",
+          "departmentsHelp": "Select a department to inspect its record and manage child employees without leaving the page.",
+          "employeeSectionHelp": "This selected department stays editable from the same workbench flow.",
+          "employeeCrudHelp": "Create, update, and delete employee records here, then reload the secured root graph.",
+          "departmentEmployeeCount": "{{ count }} employee(s)",
+          "emptyDepartments": "No departments are linked to this organization yet.",
+          "emptyEmployees": "No employees are linked to the selected department yet.",
+          "selectDepartment": "Select a department on the left to open its employee workspace."
+        }
       },
       "id": "ID",
       "code": "Code",
@@ -192,7 +205,8 @@
   "feedback": {
     "toast": {
       "deleted": "Deleted",
-      "success": "Success"
+      "success": "Success",
+      "saved": "Saved"
     },
     "httpError": {
       "accessDenied": {
@@ -209,12 +223,6 @@
         "deleted": "Role \"{{ param }}\" has been deleted.",
         "loadFailed": "Failed to load roles.",
         "deleteFailed": "Failed to delete role."
-      },
-      "rowPolicies": {
-        "deleted": "Row policy \"{{ param }}\" has been deleted.",
-        "loadFailed": "Failed to load row policies.",
-        "deleteFailed": "Failed to delete row policy.",
-        "saveFailed": "Could not save the row policy. Check the expression and try again."
       },
       "permissionMatrix": {
         "loadFailed": "Could not load the permission matrix. Please try again.",
@@ -234,13 +242,16 @@
     },
     "entities": {
       "organizations": {
-        "deleted": "Organization deleted successfully."
+        "deleted": "Organization deleted successfully.",
+        "saved": "Organization saved successfully."
       },
       "departments": {
-        "deleted": "Department deleted successfully."
+        "deleted": "Department deleted successfully.",
+        "saved": "Department saved successfully."
       },
       "employees": {
-        "deleted": "Employee deleted successfully."
+        "deleted": "Employee deleted successfully.",
+        "saved": "Employee saved successfully."
       }
     }
   },
@@ -376,7 +387,6 @@
         "main": "Security Admin",
         "roles": "Security roles",
         "permissions": "Permission matrix",
-        "rowPolicies": "Row policies",
         "menuDefinitions": "Menu definitions"
       },
       "entities": {
@@ -410,7 +420,6 @@
     "error": "Unexpected error",
     "securityRoles": "Security roles",
     "permissionMatrix": "Permission matrix",
-    "rowPolicies": "Row policies",
     "menuDefinitions": "Menu definitions"
   },
   "password": {
@@ -485,8 +494,7 @@
         "message": "Create the first security role using the New Role button."
       },
       "type": {
-        "resource": "Resource",
-        "rowLevel": "Row Level"
+        "resource": "Resource"
       },
       "dialog": {
         "createTitle": "New Role",
@@ -498,7 +506,7 @@
         "displayNamePlaceholder": "Human-readable label",
         "type": "Type",
         "typePlaceholder": "Select type",
-        "typeRequired": "Type is required. Choose RESOURCE or ROW_LEVEL."
+        "typeRequired": "Type is required."
       },
       "confirmDelete": {
         "title": "Delete Role",
@@ -507,60 +515,6 @@
       "confirmSave": {
         "title": "Save Role",
         "message": "Do you want to save this role?"
-      }
-    },
-    "rowPolicies": {
-      "title": "Row Policies",
-      "subtitle": "Row-level restrictions filter which rows a principal can access, distinct from resource and attribute permissions.",
-      "new": "New Row Policy",
-      "columns": {
-        "code": "Code",
-        "entity": "Entity",
-        "operation": "Operation",
-        "policyType": "Policy Type",
-        "expression": "Expression",
-        "actions": "Actions"
-      },
-      "empty": {
-        "title": "No row policies defined",
-        "message": "Create the first row policy using the New Row Policy button."
-      },
-      "operation": {
-        "read": "Read",
-        "update": "Update",
-        "delete": "Delete"
-      },
-      "policyType": {
-        "specification": "Specification",
-        "jpql": "JPQL"
-      },
-      "dialog": {
-        "createTitle": "New Row Policy",
-        "editTitle": "Edit Row Policy",
-        "code": "Code",
-        "codePlaceholder": "Unique policy code",
-        "codeRequired": "Code is required (max 100 characters).",
-        "entity": "Entity",
-        "entityPlaceholder": "Select entity",
-        "entityRequired": "Entity is required.",
-        "entityEmpty": "No entities available",
-        "operation": "Operation",
-        "operationPlaceholder": "Select operation",
-        "operationRequired": "Operation is required.",
-        "policyType": "Policy Type",
-        "policyTypePlaceholder": "Select policy type",
-        "policyTypeRequired": "Policy type is required.",
-        "expression": "Expression",
-        "expressionPlaceholder": "Enter SPECIFICATION or JPQL expression",
-        "expressionRequired": "Expression is required (max 1000 characters)."
-      },
-      "confirmDelete": {
-        "title": "Delete Row Policy",
-        "message": "Are you sure you want to delete this row policy? This action cannot be undone."
-      },
-      "confirmSave": {
-        "title": "Save Row Policy",
-        "message": "Do you want to save this row policy?"
       }
     },
     "menuDefinitions": {
@@ -661,11 +615,6 @@
         "created": "A security permission is created with identifier {{ param }}",
         "updated": "A security permission is updated with identifier {{ param }}",
         "deleted": "A security permission is deleted with identifier {{ param }}"
-      },
-      "secRowPolicy": {
-        "created": "A row policy is created with identifier {{ param }}",
-        "updated": "A row policy is updated with identifier {{ param }}",
-        "deleted": "A row policy is deleted with identifier {{ param }}"
       }
     }
   },

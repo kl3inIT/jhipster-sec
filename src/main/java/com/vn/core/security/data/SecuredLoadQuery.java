@@ -15,6 +15,11 @@ public record SecuredLoadQuery(
     Sort sort,
     String fetchPlanCode
 ) {
+    public SecuredLoadQuery {
+        parameters = parameters == null ? Map.of() : parameters;
+        sort = sort == null && pageable != null ? pageable.getSort() : sort;
+    }
+
     /**
      * Convenience factory for simple paginated catalog reads.
      */

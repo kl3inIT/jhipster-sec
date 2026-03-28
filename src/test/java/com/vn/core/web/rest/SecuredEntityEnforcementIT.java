@@ -1,17 +1,24 @@
 package com.vn.core.web.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.core.IntegrationTest;
+import com.vn.core.domain.Authority;
+import com.vn.core.domain.RoleType;
+import com.vn.core.repository.AuthorityRepository;
 import com.vn.core.security.AuthoritiesConstants;
+import jakarta.persistence.EntityManager;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +27,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * Integration tests proving allow and deny behavior for the secured entities.
@@ -41,17 +50,25 @@ class SecuredEntityEnforcementIT {
     @Autowired
     private ObjectMapper om;
 
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private AuthorityRepository authorityRepository;
+
     @Test
     @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
-    void getOrganizations_returnsOwnedRowsOnly() throws Exception {
+    void getOrganizations_returnsReadableRowsAndOmitsDeniedFields() throws Exception {
         grantReadableOrganizationGraph("ROLE_PROOF_READER");
 
         restMockMvc
             .perform(get(ORGANIZATION_API_URL + "?sort=id,asc"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$.length()").value(2))
             .andExpect(jsonPath("$[0].id").value(100))
             .andExpect(jsonPath("$[0].code").value("ORG-OWNED"))
+            .andExpect(jsonPath("$[1].id").value(101))
+            .andExpect(jsonPath("$[1].code").value("ORG-OTHER"))
             .andExpect(jsonPath("$[0].budget").doesNotExist());
     }
 
@@ -72,6 +89,31 @@ class SecuredEntityEnforcementIT {
             .andExpect(jsonPath("$.departments[0].employees[0].id").value(300))
             .andExpect(jsonPath("$.departments[0].employees[0].firstName").value("Alice"))
             .andExpect(jsonPath("$.departments[0].employees[0].salary").doesNotExist());
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
+    void queryOrganizations_returnsFilteredRowsAndOmitsDeniedFields() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_READER");
+
+        Map<String, Object> payload = Map.of(
+            "fetchPlanCode",
+            "organization-list",
+            "page",
+            0,
+            "size",
+            20,
+            "filters",
+            Map.of("ownerLogin", "proof-owner")
+        );
+
+        restMockMvc
+            .perform(post(ORGANIZATION_API_URL + "/query").contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].id").value(100))
+            .andExpect(jsonPath("$[0].code").value("ORG-OWNED"))
+            .andExpect(jsonPath("$[0].budget").doesNotExist());
     }
 
     @Test
@@ -121,12 +163,12 @@ class SecuredEntityEnforcementIT {
                 )
             )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$.length()").value(2))
             .andExpect(jsonPath("$[0].code").value("ORG-OWNED"));
     }
 
     @Test
-    void getOrganizations_unionOfAllowAcrossAuthorities_returnsOwnedRow() throws Exception {
+    void getOrganizations_unionOfAllowAcrossAuthorities_returnsReadableRows() throws Exception {
         Map<String, Object> denyPermissionPayload = Map.of(
             "authorityName",
             "ROLE_PROOF_NONE",
@@ -161,15 +203,22 @@ class SecuredEntityEnforcementIT {
                 )
             )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$.length()").value(2))
             .andExpect(jsonPath("$[0].id").value(100))
             .andExpect(jsonPath("$[0].code").value("ORG-OWNED"));
     }
 
     @Test
     @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
-    void getOrganization_outsideRowPolicy_returnsNotFound() throws Exception {
-        restMockMvc.perform(get(ORGANIZATION_API_URL + "/{id}", 101)).andExpect(status().isNotFound());
+    void getOrganization_withReadPermission_canAccessAnotherUsersRow() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_READER");
+
+        restMockMvc
+            .perform(get(ORGANIZATION_API_URL + "/{id}", 101))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(101))
+            .andExpect(jsonPath("$.code").value("ORG-OTHER"))
+            .andExpect(jsonPath("$.budget").doesNotExist());
     }
 
     @Test
@@ -189,7 +238,7 @@ class SecuredEntityEnforcementIT {
         restMockMvc
             .perform(get(ORGANIZATION_API_URL + "?sort=id,asc"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(2))
+            .andExpect(jsonPath("$.length()").value(3))
             .andExpect(jsonPath("$.[*].code").value(hasItem("ORG-NEW")));
     }
 
@@ -234,8 +283,48 @@ class SecuredEntityEnforcementIT {
 
     @Test
     @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_EDITOR")
-    void deleteOrganization_outsideRowPolicy_returnsForbidden() throws Exception {
-        restMockMvc.perform(delete(ORGANIZATION_API_URL + "/{id}", 101)).andExpect(status().isForbidden());
+    void patchOrganization_withAllowedFields_preservesOmittedFields() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_EDITOR");
+        grantEditableOrganizationFields("ROLE_PROOF_EDITOR");
+
+        Map<String, Object> payload = Map.of("name", "Owned Org Patched");
+
+        restMockMvc
+            .perform(
+                patch(ORGANIZATION_API_URL + "/{id}", 100).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload))
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(100))
+            .andExpect(jsonPath("$.code").value("ORG-OWNED"))
+            .andExpect(jsonPath("$.name").value("Owned Org Patched"));
+
+        restMockMvc
+            .perform(get(ORGANIZATION_API_URL + "/{id}", 100))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(100))
+            .andExpect(jsonPath("$.code").value("ORG-OWNED"))
+            .andExpect(jsonPath("$.name").value("Owned Org Patched"));
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_EDITOR")
+    void patchOrganization_withDeniedBudgetEdit_returnsForbidden() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_EDITOR");
+        grantEditableOrganizationFields("ROLE_PROOF_EDITOR");
+
+        Map<String, Object> payload = Map.of("budget", 999999.00);
+
+        restMockMvc
+            .perform(
+                patch(ORGANIZATION_API_URL + "/{id}", 100).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload))
+            )
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
+    void deleteOrganization_withoutDeletePermission_returnsForbidden() throws Exception {
+        restMockMvc.perform(delete(ORGANIZATION_API_URL + "/{id}", 100)).andExpect(status().isForbidden());
     }
 
     @Test
@@ -256,6 +345,223 @@ class SecuredEntityEnforcementIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(300)));
     }
 
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_DEPARTMENT_WORKBENCH")
+    void departmentCrudFlow_isReflectedInNestedOrganizationDetailResponse() throws Exception {
+        String authorityName = "ROLE_PROOF_DEPARTMENT_WORKBENCH";
+        grantEntityPermission(authorityName, "organization", "READ");
+        grantEntityPermission(authorityName, "department", "READ");
+        grantEntityPermission(authorityName, "employee", "READ");
+        grantReadableOrganizationGraph(authorityName);
+        grantDepartmentCrudForWorkbench(authorityName);
+
+        Map<String, Object> createPayload = Map.of(
+            "code",
+            "DEPT-WB",
+            "name",
+            "Workbench Department",
+            "costCenter",
+            "OPS",
+            "organization",
+            Map.of("id", 100, "name", "Owned Org")
+        );
+
+        String createResponse = restMockMvc
+            .perform(post(DEPARTMENT_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(createPayload)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.code").value("DEPT-WB"))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        long createdDepartmentId = om.readTree(createResponse).path("id").asLong();
+        assertThat(createdDepartmentId).isPositive();
+
+        JsonNode organizationAfterCreate = getOrganizationDetail(100);
+        JsonNode createdDepartment = findDepartment(organizationAfterCreate, createdDepartmentId);
+        assertThat(createdDepartment).isNotNull();
+        assertThat(createdDepartment.path("code").asText()).isEqualTo("DEPT-WB");
+        assertThat(createdDepartment.path("name").asText()).isEqualTo("Workbench Department");
+        assertThat(createdDepartment.path("costCenter").asText()).isEqualTo("OPS");
+
+        restMockMvc.perform(delete(DEPARTMENT_API_URL + "/{id}", createdDepartmentId)).andExpect(status().isNoContent());
+        restMockMvc.perform(get(DEPARTMENT_API_URL + "/{id}", createdDepartmentId)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_EMPLOYEE_WORKBENCH")
+    void employeeCrudFlow_isReflectedInNestedOrganizationDetailResponse() throws Exception {
+        String authorityName = "ROLE_PROOF_EMPLOYEE_WORKBENCH";
+        grantEntityPermission(authorityName, "organization", "READ");
+        grantEntityPermission(authorityName, "department", "READ");
+        grantEntityPermission(authorityName, "employee", "READ");
+        grantReadableOrganizationGraph(authorityName);
+        grantDepartmentCrudForWorkbench(authorityName);
+        grantEmployeeCrudForWorkbench(authorityName);
+
+        Map<String, Object> createPayload = Map.of(
+            "employeeNumber",
+            "EMP-WB",
+            "firstName",
+            "Eve",
+            "lastName",
+            "Builder",
+            "email",
+            "eve@example.com",
+            "department",
+            Map.of("id", 200, "name", "Owned Department")
+        );
+
+        String createResponse = restMockMvc
+            .perform(post(EMPLOYEE_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(createPayload)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.employeeNumber").value("EMP-WB"))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        long createdEmployeeId = om.readTree(createResponse).path("id").asLong();
+        assertThat(createdEmployeeId).isPositive();
+
+        JsonNode organizationAfterCreate = getOrganizationDetail(100);
+        JsonNode createdEmployee = findEmployee(organizationAfterCreate, createdEmployeeId);
+        assertThat(createdEmployee).isNotNull();
+        assertThat(createdEmployee.path("email").asText()).isEqualTo("eve@example.com");
+        assertThat(createdEmployee.has("salary")).isFalse();
+
+        Map<String, Object> updatePayload = Map.of(
+            "lastName",
+            "Updated",
+            "email",
+            "eve.updated@example.com",
+            "department",
+            Map.of("id", 200, "name", "Owned Department")
+        );
+
+        restMockMvc
+            .perform(
+                put(EMPLOYEE_API_URL + "/{id}", createdEmployeeId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsBytes(updatePayload))
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.lastName").value("Updated"))
+            .andExpect(jsonPath("$.email").value("eve.updated@example.com"));
+
+        JsonNode organizationAfterUpdate = getOrganizationDetail(100);
+        JsonNode updatedEmployee = findEmployee(organizationAfterUpdate, createdEmployeeId);
+        assertThat(updatedEmployee).isNotNull();
+        assertThat(updatedEmployee.path("lastName").asText()).isEqualTo("Updated");
+        assertThat(updatedEmployee.path("email").asText()).isEqualTo("eve.updated@example.com");
+        assertThat(updatedEmployee.has("salary")).isFalse();
+
+        restMockMvc.perform(delete(EMPLOYEE_API_URL + "/{id}", createdEmployeeId)).andExpect(status().isNoContent());
+        restMockMvc.perform(get(EMPLOYEE_API_URL + "/{id}", createdEmployeeId)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_EDITOR")
+    void createOrganization_withUnknownField_returnsBadRequest() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_EDITOR");
+        grantEditableOrganizationFields("ROLE_PROOF_EDITOR");
+
+        Map<String, Object> payload = Map.of(
+            "code",
+            "ORG-INVALID",
+            "name",
+            "Invalid Org",
+            "ownerLogin",
+            "proof-owner",
+            "unexpectedField",
+            "nope"
+        );
+
+        restMockMvc
+            .perform(post(ORGANIZATION_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_DEPARTMENT_WORKBENCH")
+    void createDepartment_withNonObjectPayload_returnsBadRequest() throws Exception {
+        String authorityName = "ROLE_PROOF_DEPARTMENT_WORKBENCH";
+        grantEntityPermission(authorityName, "organization", "READ");
+        grantReadableOrganizationGraph(authorityName);
+        grantDepartmentCrudForWorkbench(authorityName);
+
+        restMockMvc
+            .perform(post(DEPARTMENT_API_URL).contentType(MediaType.APPLICATION_JSON).content("[]"))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_DEPARTMENT_WORKBENCH")
+    void createDepartment_withMissingOrganizationId_returnsBadRequest() throws Exception {
+        String authorityName = "ROLE_PROOF_DEPARTMENT_WORKBENCH";
+        grantEntityPermission(authorityName, "organization", "READ");
+        grantReadableOrganizationGraph(authorityName);
+        grantDepartmentCrudForWorkbench(authorityName);
+
+        Map<String, Object> payload = Map.of(
+            "code",
+            "DEPT-INVALID",
+            "name",
+            "Invalid Department",
+            "costCenter",
+            "OPS",
+            "organization",
+            Map.of("name", "Owned Org")
+        );
+
+        restMockMvc
+            .perform(post(DEPARTMENT_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
+    void queryOrganizations_withNegativePage_returnsBadRequest() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_READER");
+
+        Map<String, Object> payload = Map.of(
+            "fetchPlanCode",
+            "organization-list",
+            "page",
+            -1,
+            "size",
+            20,
+            "filters",
+            Map.of("ownerLogin", "proof-owner")
+        );
+
+        restMockMvc
+            .perform(post(ORGANIZATION_API_URL + "/query").contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
+    void queryOrganizations_withUnsafeNestedFilter_returnsBadRequest() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_READER");
+
+        Map<String, Object> payload = Map.of(
+            "fetchPlanCode",
+            "organization-list",
+            "page",
+            0,
+            "size",
+            20,
+            "filters",
+            Map.of("ownerLogin", Map.of("eq", "proof-owner"))
+        );
+
+        restMockMvc
+            .perform(post(ORGANIZATION_API_URL + "/query").contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(payload)))
+            .andExpect(status().isBadRequest());
+    }
+
     private void grantReadableOrganizationGraph(String authorityName) throws Exception {
         grantAttributePermission(authorityName, "organization.code", "VIEW");
         grantAttributePermission(authorityName, "organization.name", "VIEW");
@@ -271,13 +577,60 @@ class SecuredEntityEnforcementIT {
         grantAttributePermission(authorityName, "employee.email", "VIEW");
     }
 
+    private void grantDepartmentCrudForWorkbench(String authorityName) throws Exception {
+        grantEntityPermission(authorityName, "department", "CREATE");
+        grantEntityPermission(authorityName, "department", "UPDATE");
+        grantEntityPermission(authorityName, "department", "DELETE");
+        grantAttributePermission(authorityName, "department.code", "EDIT");
+        grantAttributePermission(authorityName, "department.name", "EDIT");
+        grantAttributePermission(authorityName, "department.costCenter", "EDIT");
+        grantAttributePermission(authorityName, "department.organization", "EDIT");
+    }
+
+    private void grantEmployeeCrudForWorkbench(String authorityName) throws Exception {
+        grantEntityPermission(authorityName, "employee", "CREATE");
+        grantEntityPermission(authorityName, "employee", "UPDATE");
+        grantEntityPermission(authorityName, "employee", "DELETE");
+        grantAttributePermission(authorityName, "employee.employeeNumber", "EDIT");
+        grantAttributePermission(authorityName, "employee.firstName", "EDIT");
+        grantAttributePermission(authorityName, "employee.lastName", "EDIT");
+        grantAttributePermission(authorityName, "employee.email", "EDIT");
+        grantAttributePermission(authorityName, "employee.department", "EDIT");
+    }
+
     private void grantEditableOrganizationFields(String authorityName) throws Exception {
         grantAttributePermission(authorityName, "organization.code", "EDIT");
         grantAttributePermission(authorityName, "organization.name", "EDIT");
         grantAttributePermission(authorityName, "organization.ownerLogin", "EDIT");
     }
 
+    private void grantEntityPermission(String authorityName, String target, String action) throws Exception {
+        ensureAuthorityExists(authorityName);
+        Map<String, Object> permissionPayload = Map.of(
+            "authorityName",
+            authorityName,
+            "targetType",
+            "ENTITY",
+            "target",
+            target,
+            "action",
+            action,
+            "effect",
+            "GRANT"
+        );
+
+        restMockMvc
+            .perform(
+                post(PERMISSION_ADMIN_API_URL)
+                    .with(user("admin").authorities(new SimpleGrantedAuthority(AuthoritiesConstants.ADMIN)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsBytes(permissionPayload))
+            )
+            .andExpect(status().isCreated());
+    }
+
     private void grantAttributePermission(String authorityName, String target, String action) throws Exception {
+        ensureAuthorityExists(authorityName);
         Map<String, Object> permissionPayload = Map.of(
             "authorityName",
             authorityName,
@@ -299,5 +652,50 @@ class SecuredEntityEnforcementIT {
                     .content(om.writeValueAsBytes(permissionPayload))
             )
             .andExpect(status().isCreated());
+    }
+
+    private void ensureAuthorityExists(String authorityName) {
+        if (authorityRepository.findById(authorityName).isPresent()) {
+            return;
+        }
+
+        Authority authority = new Authority().name(authorityName).displayName(authorityName).type(RoleType.RESOURCE);
+        authorityRepository.saveAndFlush(authority);
+    }
+
+    private JsonNode getOrganizationDetail(long organizationId) throws Exception {
+        if (TransactionSynchronizationManager.isActualTransactionActive()) {
+            entityManager.flush();
+            entityManager.clear();
+        }
+
+        String response = restMockMvc
+            .perform(get(ORGANIZATION_API_URL + "/{id}", organizationId))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        return om.readTree(response);
+    }
+
+    private JsonNode findDepartment(JsonNode organization, long departmentId) {
+        for (JsonNode department : organization.path("departments")) {
+            if (department.path("id").asLong() == departmentId) {
+                return department;
+            }
+        }
+        return null;
+    }
+
+    private JsonNode findEmployee(JsonNode organization, long employeeId) {
+        for (JsonNode department : organization.path("departments")) {
+            for (JsonNode employee : department.path("employees")) {
+                if (employee.path("id").asLong() == employeeId) {
+                    return employee;
+                }
+            }
+        }
+        return null;
     }
 }

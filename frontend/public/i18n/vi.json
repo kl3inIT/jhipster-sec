@@ -100,7 +100,20 @@
         "question": "Bạn có chắc muốn xóa tổ chức này không? Hành động này không thể hoàn tác."
       },
       "detail": {
-        "title": "Tổ chức"
+        "title": "Tổ chức",
+        "workbench": {
+          "subtitle": "Xem và thao tác trên tổ chức gốc cùng các phòng ban, nhân viên liên quan trong một workspace bảo mật duy nhất.",
+          "loading": "Đang tải workspace tổ chức...",
+          "departmentCountLabel": "Số phòng ban trong tổ chức",
+          "employeeCountLabel": "Số nhân viên trong tổ chức",
+          "departmentsHelp": "Chọn một phòng ban để xem bản ghi và quản lý nhân viên con ngay trên cùng màn hình.",
+          "employeeSectionHelp": "Phòng ban đang chọn vẫn có thể chỉnh sửa ngay trong cùng flow workbench.",
+          "employeeCrudHelp": "Tạo, cập nhật, xóa nhân viên tại đây rồi reload lại root graph đã được bảo mật.",
+          "departmentEmployeeCount": "{{ count }} nhân viên",
+          "emptyDepartments": "Tổ chức này chưa có phòng ban nào.",
+          "emptyEmployees": "Phòng ban đang chọn chưa có nhân viên nào.",
+          "selectDepartment": "Chọn một phòng ban ở cột bên trái để mở workspace nhân viên."
+        }
       },
       "id": "ID",
       "code": "Mã",
@@ -211,12 +224,6 @@
         "loadFailed": "Không thể tải danh sách vai trò bảo mật.",
         "deleteFailed": "Không thể xóa vai trò bảo mật."
       },
-      "rowPolicies": {
-        "deleted": "Chính sách hàng \"{{ param }}\" đã bị xóa.",
-        "loadFailed": "Không thể tải danh sách chính sách hàng.",
-        "deleteFailed": "Không thể xóa chính sách hàng.",
-        "saveFailed": "Không thể lưu chính sách hàng. Hãy kiểm tra biểu thức và thử lại."
-      },
       "permissionMatrix": {
         "loadFailed": "Không thể tải ma trận quyền. Vui lòng thử lại.",
         "saveFailed": "Không thể lưu các thay đổi quyền. Vui lòng thử lại."
@@ -235,13 +242,16 @@
     },
     "entities": {
       "organizations": {
-        "deleted": "Đã xóa tổ chức thành công."
+        "deleted": "Đã xóa tổ chức thành công.",
+        "saved": "Đã lưu tổ chức thành công."
       },
       "departments": {
-        "deleted": "Đã xóa phòng ban thành công."
+        "deleted": "Đã xóa phòng ban thành công.",
+        "saved": "Đã lưu phòng ban thành công."
       },
       "employees": {
-        "deleted": "Đã xóa nhân viên thành công."
+        "deleted": "Đã xóa nhân viên thành công.",
+        "saved": "Đã lưu nhân viên thành công."
       }
     }
   },
@@ -375,7 +385,6 @@
         "main": "Quản trị bảo mật",
         "roles": "Vai trò bảo mật",
         "permissions": "Ma trận quyền",
-        "rowPolicies": "Chính sách hàng",
         "menuDefinitions": "Định nghĩa menu"
       },
       "entities": {
@@ -409,7 +418,6 @@
     "error": "Lỗi không mong muốn",
     "securityRoles": "Vai trò bảo mật",
     "permissionMatrix": "Ma trận quyền",
-    "rowPolicies": "Chính sách hàng",
     "menuDefinitions": "Định nghĩa menu"
   },
   "password": {
@@ -484,8 +492,7 @@
         "message": "Hãy tạo vai trò bảo mật đầu tiên bằng nút Tạo vai trò."
       },
       "type": {
-        "resource": "Tài nguyên",
-        "rowLevel": "Cấp dòng"
+        "resource": "Tài nguyên"
       },
       "dialog": {
         "createTitle": "Tạo vai trò",
@@ -497,7 +504,7 @@
         "displayNamePlaceholder": "Nhãn dễ đọc",
         "type": "Loại",
         "typePlaceholder": "Chọn loại",
-        "typeRequired": "Loại là bắt buộc. Hãy chọn RESOURCE hoặc ROW_LEVEL."
+        "typeRequired": "Loại là bắt buộc."
       },
       "confirmDelete": {
         "title": "Xóa vai trò",
@@ -506,60 +513,6 @@
       "confirmSave": {
         "title": "Lưu vai trò",
         "message": "Bạn có muốn lưu vai trò này không?"
-      }
-    },
-    "rowPolicies": {
-      "title": "Chính sách hàng",
-      "subtitle": "Các ràng buộc mức dòng lọc những dòng mà principal có thể truy cập, tách biệt với quyền tài nguyên và quyền thuộc tính.",
-      "new": "Tạo chính sách hàng",
-      "columns": {
-        "code": "Mã",
-        "entity": "Thực thể",
-        "operation": "Thao tác",
-        "policyType": "Loại chính sách",
-        "expression": "Biểu thức",
-        "actions": "Thao tác"
-      },
-      "empty": {
-        "title": "Chưa có chính sách hàng nào",
-        "message": "Hãy tạo chính sách hàng đầu tiên bằng nút Tạo chính sách hàng."
-      },
-      "operation": {
-        "read": "Đọc",
-        "update": "Cập nhật",
-        "delete": "Xóa"
-      },
-      "policyType": {
-        "specification": "Specification",
-        "jpql": "JPQL"
-      },
-      "dialog": {
-        "createTitle": "Tạo chính sách hàng",
-        "editTitle": "Chỉnh sửa chính sách hàng",
-        "code": "Mã",
-        "codePlaceholder": "Mã chính sách duy nhất",
-        "codeRequired": "Mã là bắt buộc (tối đa 100 ký tự).",
-        "entity": "Thực thể",
-        "entityPlaceholder": "Chọn thực thể",
-        "entityRequired": "Thực thể là bắt buộc.",
-        "entityEmpty": "Không có thực thể khả dụng",
-        "operation": "Thao tác",
-        "operationPlaceholder": "Chọn thao tác",
-        "operationRequired": "Thao tác là bắt buộc.",
-        "policyType": "Loại chính sách",
-        "policyTypePlaceholder": "Chọn loại chính sách",
-        "policyTypeRequired": "Loại chính sách là bắt buộc.",
-        "expression": "Biểu thức",
-        "expressionPlaceholder": "Nhập biểu thức SPECIFICATION hoặc JPQL",
-        "expressionRequired": "Biểu thức là bắt buộc (tối đa 1000 ký tự)."
-      },
-      "confirmDelete": {
-        "title": "Xóa chính sách hàng",
-        "message": "Bạn có chắc muốn xóa chính sách hàng này không? Hành động này không thể hoàn tác."
-      },
-      "confirmSave": {
-        "title": "Lưu chính sách hàng",
-        "message": "Bạn có muốn lưu chính sách hàng này không?"
       }
     },
     "menuDefinitions": {
@@ -660,11 +613,6 @@
         "created": "Đã tạo quyền bảo mật mới với định danh {{ param }}",
         "updated": "Đã cập nhật quyền bảo mật với định danh {{ param }}",
         "deleted": "Đã xóa quyền bảo mật với định danh {{ param }}"
-      },
-      "secRowPolicy": {
-        "created": "Đã tạo chính sách hàng mới với định danh {{ param }}",
-        "updated": "Đã cập nhật chính sách hàng với định danh {{ param }}",
-        "deleted": "Đã xóa chính sách hàng với định danh {{ param }}"
       }
     }
   },

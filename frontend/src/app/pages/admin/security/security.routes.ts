@@ -32,18 +32,6 @@ const routes: Routes = [
     title: 'pageTitle.permissionMatrix',
   },
   {
-    path: 'row-policies',
-    loadComponent: () => import('./row-policies/list/row-policy-list.component'),
-    canActivate: [UserRouteAccessService],
-    data: {
-      ...securityRouteData,
-      navigationNodeId: 'security.row-policies',
-      breadcrumbKey: 'layout.menu.security.rowPolicies',
-      pageTitleKey: 'pageTitle.rowPolicies',
-    },
-    title: 'pageTitle.rowPolicies',
-  },
-  {
     path: 'menu-definitions',
     loadComponent: () => import('./menu-definitions/list/menu-definition-list.component'),
     canActivate: [UserRouteAccessService],

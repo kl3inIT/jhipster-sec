@@ -27,6 +27,8 @@ To start your application in the dev profile, run:
 
 For further instructions on how to develop with JHipster, have a look at [Using JHipster in development][].
 
+For local registration and password-reset flows, `src/main/docker/services.yml` now also starts a Mailpit mailbox. After `docker compose -f src/main/docker/services.yml up -d`, SMTP is available at `127.0.0.1:1025` and the web inbox is available at `http://127.0.0.1:8025`.
+
 ## Building for production
 
 ### Packaging as jar

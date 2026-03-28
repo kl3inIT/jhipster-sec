@@ -4,9 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.core.IntegrationTest;
 import com.vn.core.config.Constants;
+import com.vn.core.domain.Authority;
 import com.vn.core.domain.User;
 import com.vn.core.repository.AuthorityRepository;
 import com.vn.core.repository.UserRepository;
@@ -15,6 +17,7 @@ import com.vn.core.service.UserService;
 import com.vn.core.service.dto.AdminUserDTO;
 import com.vn.core.service.dto.PasswordChangeDTO;
 import com.vn.core.web.rest.vm.KeyAndPasswordVM;
+import com.vn.core.web.rest.vm.LoginVM;
 import com.vn.core.web.rest.vm.ManagedUserVM;
 import java.time.Instant;
 import java.util.*;
@@ -27,6 +30,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -119,6 +123,33 @@ class AccountResourceIT {
     @Test
     void testGetUnknownAccount() throws Exception {
         restAccountMockMvc.perform(get("/api/account").accept(MediaType.APPLICATION_PROBLEM_JSON)).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void sameTokenReflectsUpdatedAuthorities() throws Exception {
+        String login = "account-refresh";
+        String password = "password";
+        User user = saveActivatedUser(login, "account-refresh@example.com", password, AuthoritiesConstants.USER);
+
+        try {
+            String token = authenticate(login, password);
+
+            restAccountMockMvc
+                .perform(get("/api/account").header(HttpHeaders.AUTHORIZATION, bearerToken(token)).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.authorities").isArray())
+                .andExpect(jsonPath("$.authorities[0]").value(AuthoritiesConstants.USER));
+
+            updateAuthorities(user.getId(), login, AuthoritiesConstants.ADMIN);
+
+            restAccountMockMvc
+                .perform(get("/api/account").header(HttpHeaders.AUTHORIZATION, bearerToken(token)).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.authorities").isArray())
+                .andExpect(jsonPath("$.authorities[0]").value(AuthoritiesConstants.ADMIN));
+        } finally {
+            userService.deleteUser(login);
+        }
     }
 
     @Test
@@ -800,5 +831,52 @@ class AccountResourceIT {
                     .content(om.writeValueAsBytes(keyAndPassword))
             )
             .andExpect(status().isInternalServerError());
+    }
+
+    private User saveActivatedUser(String login, String email, String rawPassword, String... authorityNames) {
+        User user = new User();
+        user.setLogin(login);
+        user.setEmail(email);
+        user.setActivated(true);
+        user.setLangKey(Constants.DEFAULT_LANGUAGE);
+        user.setPassword(passwordEncoder.encode(rawPassword));
+        user.setAuthorities(resolveAuthorities(authorityNames));
+        return userRepository.saveAndFlush(user);
+    }
+
+    private Set<Authority> resolveAuthorities(String... authorityNames) {
+        Set<Authority> authorities = new HashSet<>();
+        for (String authorityName : authorityNames) {
+            authorities.add(authorityRepository.findById(authorityName).orElseThrow());
+        }
+        return authorities;
+    }
+
+    private void updateAuthorities(Long userId, String login, String... authorityNames) {
+        AdminUserDTO updatedUser = new AdminUserDTO(userRepository.findOneWithAuthoritiesByLogin(login).orElseThrow());
+        updatedUser.setId(userId);
+        updatedUser.setAuthorities(Set.of(authorityNames));
+        userService.updateUser(updatedUser);
+    }
+
+    private String authenticate(String username, String password) throws Exception {
+        LoginVM loginVM = new LoginVM();
+        loginVM.setUsername(username);
+        loginVM.setPassword(password);
+
+        String body = restAccountMockMvc
+            .perform(post("/api/authenticate").contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(loginVM)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id_token").isString())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        JsonNode jsonNode = om.readTree(body);
+        return jsonNode.path("id_token").asText();
+    }
+
+    private String bearerToken(String token) {
+        return "Bearer " + token;
     }
 }

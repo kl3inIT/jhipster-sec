@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface SecMenuDefinitionRepository extends JpaRepository<SecMenuDefinition, Long> {
-    List<SecMenuDefinition> findAllByAppName(String appName);
+    List<SecMenuDefinition> findAllByAppNameOrderByOrderingAscIdAsc(String appName);
+
+    List<SecMenuDefinition> findAllByOrderByAppNameAscOrderingAscIdAsc();
 
     Optional<SecMenuDefinition> findByAppNameAndMenuId(String appName, String menuId);
 }

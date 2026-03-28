@@ -2,7 +2,8 @@
   "feedback": {
     "toast": {
       "deleted": "Deleted",
-      "success": "Success"
+      "success": "Success",
+      "saved": "Saved"
     },
     "httpError": {
       "accessDenied": {
@@ -19,12 +20,6 @@
         "deleted": "Role \"{{ param }}\" has been deleted.",
         "loadFailed": "Failed to load roles.",
         "deleteFailed": "Failed to delete role."
-      },
-      "rowPolicies": {
-        "deleted": "Row policy \"{{ param }}\" has been deleted.",
-        "loadFailed": "Failed to load row policies.",
-        "deleteFailed": "Failed to delete row policy.",
-        "saveFailed": "Could not save the row policy. Check the expression and try again."
       },
       "permissionMatrix": {
         "loadFailed": "Could not load the permission matrix. Please try again.",
@@ -44,13 +39,16 @@
     },
     "entities": {
       "organizations": {
-        "deleted": "Organization deleted successfully."
+        "deleted": "Organization deleted successfully.",
+        "saved": "Organization saved successfully."
       },
       "departments": {
-        "deleted": "Department deleted successfully."
+        "deleted": "Department deleted successfully.",
+        "saved": "Department saved successfully."
       },
       "employees": {
-        "deleted": "Employee deleted successfully."
+        "deleted": "Employee deleted successfully.",
+        "saved": "Employee saved successfully."
       }
     }
   }

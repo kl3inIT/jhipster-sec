@@ -22,7 +22,6 @@
         "main": "Security Admin",
         "roles": "Security roles",
         "permissions": "Permission matrix",
-        "rowPolicies": "Row policies",
         "menuDefinitions": "Menu definitions"
       },
       "entities": {
