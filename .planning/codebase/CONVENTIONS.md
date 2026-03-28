@@ -116,7 +116,7 @@
 
 - Keep manual mapping where entity exposure is special-cased, especially `src/main/java/com/vn/core/service/mapper/UserMapper.java`.
 - Use `src/main/java/com/vn/core/service/mapper/EntityMapper.java` as the base contract for MapStruct mappers that support two-way conversion plus `partialUpdate`.
-- Security admin DTO mapping lives under `src/main/java/com/vn/core/service/mapper/security/`, for example `SecPermissionMapper.java` and `SecRowPolicyMapper.java`.
+- Security admin DTO mapping lives under `src/main/java/com/vn/core/service/mapper/security/`, currently centered on `SecPermissionMapper.java`.
 - When type translation is non-trivial, encode it directly in the mapper interface with explicit `@Mapping(...)` expressions, as in `src/main/java/com/vn/core/service/mapper/security/SecPermissionMapper.java`.
 - On the frontend, keep transport and form models close to the feature they serve: `frontend/src/app/pages/entities/organization/organization.model.ts`, `frontend/src/app/pages/entities/organization/service/organization.service.ts`, and `frontend/src/app/pages/admin/user-management/update/user-management-form.service.ts`.
 

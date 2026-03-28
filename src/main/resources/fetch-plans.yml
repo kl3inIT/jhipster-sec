@@ -33,6 +33,10 @@ fetch-plans:
       - id
       - code
       - name
+      - name: organization
+        properties:
+          - id
+          - name
       - costCenter
 
   - entity: com.vn.core.domain.Department
@@ -61,6 +65,10 @@ fetch-plans:
       - employeeNumber
       - firstName
       - lastName
+      - name: department
+        properties:
+          - id
+          - name
       - email
 
   - entity: com.vn.core.domain.Employee

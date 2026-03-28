@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_for_next_phase
-stopped_at: Phase 08.3 execution completed; next up is Phase 9 planning
-last_updated: "2026-03-28T10:51:44.6312114+07:00"
+status: "Phase 09 shipped — PR #12"
+stopped_at: Completed 09-03-PLAN.md
+last_updated: "2026-03-28T08:38:51.164Z"
 last_activity: 2026-03-28
 progress:
   total_phases: 9
-  completed_phases: 7
-  total_plans: 30
-  completed_plans: 30
+  completed_phases: 8
+  total_plans: 33
+  completed_plans: 33
 ---
 
 # Project State
@@ -20,12 +20,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-27)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, authority, and attribute-level access decisions.
-**Current focus:** Phase 9 — enterprise-ux-and-performance-hardening
+**Current focus:** Phase 10 — frontend-reliability-and-regression-coverage
 
 ## Current Position
 
-Phase: 08.3 (user-registration-live-permission-refresh-entity-native-serialization-validation-hardening-and-row-policy-removal) — COMPLETED
-Next: Phase 9 (enterprise-ux-and-performance-hardening)
+Phase: 10 (frontend-reliability-and-regression-coverage) — READY TO PLAN
+Next: Phase 10 (frontend-reliability-and-regression-coverage)
 
 ## Performance Metrics
 
@@ -46,7 +46,7 @@ Next: Phase 9 (enterprise-ux-and-performance-hardening)
 | 8.1 - Jmix-Style DataManager Core Alignment | 3 | 60 min | 20.0 min |
 | 8.2 - Multi-App Menu Roles and Jmix-Style JSON Entity Controllers | 0 | - | - |
 | 8.3 - Registration, Live Permission Refresh, Typed Entity Flow, Validation, And Row-Policy Removal | 0 | - | - |
-| 9 - Enterprise UX And Performance Hardening | 0 | - | - |
+| 9 - Enterprise UX And Performance Hardening | 3 | 31 min | 10.3 min |
 | 10 - Frontend Reliability And Regression Coverage | 0 | - | - |
 
 **Recent Trend:**
@@ -54,7 +54,7 @@ Next: Phase 9 (enterprise-ux-and-performance-hardening)
 - Phase 08.1 completed with verified `DataManager` / `UnconstrainedDataManager` layering and union-of-`ALLOW` resource semantics.
 - Phase 08.2 completed with explicit secure `PATCH`, per-app menu isolation proof, first-grant multi-app role assignment, and green backend or frontend verification.
 - Phase 08.3 completed with standalone registration, request-time authority refresh, typed secured entity flow, explicit validation hardening, and full row-policy retirement.
-- Phase 9 is now unblocked and becomes the next active milestone focus.
+- Phase 9 completed with request-scoped permission caching, signal-based entity lists, responsive columns, and first-render skeleton visibility fixes.
 
 | Phase 07 P05 | 4 | 2 tasks | 19 files |
 | Phase 07.1-menu-management P01 | 25 | 2 tasks | 10 files |
@@ -70,6 +70,9 @@ Next: Phase 9 (enterprise-ux-and-performance-hardening)
 | Phase 08.2 P03 | 23 min | 2 tasks | 12 files |
 | Phase 08.2 P02 | 16 min | 2 tasks | 6 files |
 | Phase 08.2 P04 | 9 min | 2 tasks | 9 files |
+| Phase 09 P01 | 7 min | 3 tasks | 7 files |
+| Phase 09 P02 | 22 min | 2 tasks | 8 files |
+| Phase 09 P03 | 2 min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -91,11 +94,15 @@ Recent decisions affecting current work:
 - Phase 08.3 will refresh current-user authorities from database state at request time rather than trusting the authority snapshot captured at login.
 - Phase 08.3 will move secured entity internals toward typed entity-native flows and keep JSON parsing or serialization confined to explicit edge adapters.
 - Phase 08.3 will remove row policy completely instead of expanding or preserving it as a long-term platform feature.
+- [Phase 09]: Request-local permission snapshot (D-01/D-02): caches authority validation and PermissionMatrix per HTTP request, destroyed at request end, with graceful non-web fallback via isRequestScopeActive() guard
+- [Phase 09]: Use fromEvent(window, resize) with debounceTime for responsive detection since @angular/cdk is not available
+- [Phase 09]: Skeleton loaders use tableValue computed signal switching between 5 skeletonRows and real data array for initial-fetch-only skeleton
+- [Phase 09]: Initialize entity list loading signals to true so first-render skeleton rows appear before data arrives.
+- [Phase 09]: Use an empty verification commit when a required task only performs build validation and introduces no tracked file changes.
 
 ### Pending Todos
 
-- Plan or execute Phase 9 - enterprise UX and performance hardening.
-- Cache current-user permission checks to remove repeated `jhi_authority` and `sec_permission` lookups during secured reads while preserving request-time refresh semantics.
+- Plan or execute Phase 10 - frontend reliability and regression coverage.
 
 ### Blockers/Concerns
 
@@ -114,7 +121,7 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last activity: 2026-03-28 - Completed quick task 260328-f1a: fix duplicate register text on login page
-Last session: 2026-03-27T22:26:55.0533207+07:00
-Stopped at: Phase 08.3 execution completed; next up is Phase 9 planning
+Last activity: 2026-03-28
+Last session: 2026-03-28T08:29:47.359Z
+Stopped at: Completed 09-03-PLAN.md
 Resume file: None

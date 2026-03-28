@@ -74,18 +74,6 @@ public interface SecureDataManager {
     Optional<Map<String, Object>> loadOne(String entityCode, Object id, String fetchPlanCode);
 
     /**
-     * Save (create or update) an entity from a payload map, enforcing attribute-level write guards.
-     *
-     * @param entityCode    logical code of the entity type
-     * @param id            entity id for updates; null for new records
-     * @param attributes    field values to apply
-     * @param fetchPlanCode fetch plan to use when serializing the saved entity for the response
-     * @return serialized entity after save
-     */
-    @Deprecated(since = "08.3-03")
-    <T> Map<String, Object> save(String entityCode, Object id, Map<String, Object> attributes, String fetchPlanCode);
-
-    /**
      * Delete an entity by code and id, after confirming delete permission.
      */
     @Deprecated(since = "08.3-03")
