@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Organization entity used to exercise secured CRUD and row-level rules.
@@ -16,6 +18,7 @@ import java.util.Set;
 @SecuredEntity
 @Entity
 @Table(name = "proof_organization")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Organization implements Serializable {
 
@@ -47,6 +50,7 @@ public class Organization implements Serializable {
     private BigDecimal budget;
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Department> departments = new HashSet<>();
 
     public Long getId() {

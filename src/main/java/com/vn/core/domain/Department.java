@@ -8,6 +8,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Department entity linked to an organization and its employees.
@@ -15,6 +17,7 @@ import java.util.Set;
 @SecuredEntity
 @Entity
 @Table(name = "proof_department")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Department implements Serializable {
 
@@ -47,6 +50,7 @@ public class Department implements Serializable {
     private Organization organization;
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Employee> employees = new HashSet<>();
 
     public Long getId() {
