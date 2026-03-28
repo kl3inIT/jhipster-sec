@@ -21,7 +21,7 @@
 ### Enterprise UI
 
 - [x] **UI-04**: Admin and secured-entity screens use an enterprise-style shell with Jmix-like master-detail patterns so lists and detail or edit workflows feel consistent.
-- [ ] **UI-05**: The frontend is more usable and responsive across desktop and narrower widths, with consistent actions, spacing, feedback, and loading states.
+- [x] **UI-05**: The frontend is more usable and responsive across desktop and narrower widths, with consistent actions, spacing, feedback, and loading states.
 
 ### Internationalization And Migration Parity
 
@@ -40,7 +40,7 @@
 
 - [ ] **PERF-01**: The frontend minimizes redundant API calls for auth, menu, capability, and user-management data through shared state or safe caching.
 - [ ] **PERF-02**: Initial load and route transitions improve through lazy loading, code splitting, and leaner route-level bundles.
-- [ ] **PERF-03**: Enterprise admin screens remain responsive under larger data sets through efficient rendering, pagination or filtering, and predictable state updates.
+- [x] **PERF-03**: Enterprise admin screens remain responsive under larger data sets through efficient rendering, pagination or filtering, and predictable state updates.
 
 ### Frontend Reliability
 
@@ -88,10 +88,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PH83-03 | Phase 08.3 | Complete |
 | PH83-04 | Phase 08.3 | Complete |
 | PH83-05 | Phase 08.3 | Complete |
-| UI-05 | Phase 9 | Pending |
+| UI-05 | Phase 9 | Complete |
 | PERF-01 | Phase 9 | Pending |
 | PERF-02 | Phase 9 | Pending |
-| PERF-03 | Phase 9 | Pending |
+| PERF-03 | Phase 9 | Complete |
 | TEST-01 | Phase 10 | Pending |
 | TEST-02 | Phase 10 | Pending |
 | TEST-03 | Phase 10 | Pending |
