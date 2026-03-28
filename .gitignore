@@ -156,3 +156,11 @@ jhipter-angular/
 angapp/
 aef-main/
 
+# Local Codex / planning / visual-debug artifacts
+.agent/
+.playwright-cli/
+.planning/quick/260328-a9k-seed-admin-shell-menu-bootstrap/
+.planning/quick/260328-prime-theme-prototype/
+__pycache__/
+*.pyc
+

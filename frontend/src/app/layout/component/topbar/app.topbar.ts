@@ -1,59 +1,59 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
+import { filter, fromEvent } from 'rxjs';
 import { LayoutService } from 'app/layout/service/layout.service';
 import { AccountService } from 'app/core/auth/account.service';
-import { StateStorageService } from 'app/core/auth/state-storage.service';
 import { AuthServerProvider } from 'app/core/auth/auth-jwt.service';
-import { LANGUAGE_DEFAULT, LANGUAGES } from 'app/config/language.constants';
+import { AppConfigurator } from './app.configurator';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [CommonModule, RouterModule, ButtonModule, TranslatePipe],
+  imports: [CommonModule, RouterModule, ButtonModule, TranslatePipe, AppConfigurator],
   templateUrl: './app.topbar.html',
 })
 export class AppTopbar {
-  readonly languages = LANGUAGES;
-  readonly activeLanguage = signal<string>(LANGUAGE_DEFAULT);
+  readonly settingsOpen = signal(false);
+  readonly settingsWrapper = viewChild<ElementRef<HTMLElement>>('settingsWrapper');
 
-  private readonly destroyRef = inject(DestroyRef);
   layoutService = inject(LayoutService);
   private readonly accountService = inject(AccountService);
-  private readonly stateStorageService = inject(StateStorageService);
   private readonly authServerProvider = inject(AuthServerProvider);
   private readonly router = inject(Router);
-  private readonly translateService = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly document = inject(DOCUMENT);
 
   constructor() {
-    this.activeLanguage.set(this.translateService.currentLang || this.stateStorageService.getLocale() || LANGUAGE_DEFAULT);
-    this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(({ lang }) => {
-      this.activeLanguage.set(lang);
-    });
+    fromEvent<MouseEvent>(this.document, 'click')
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        filter(() => this.settingsOpen()),
+      )
+      .subscribe(event => {
+        const target = event.target;
+        const wrapper = this.settingsWrapper()?.nativeElement;
+
+        if (target instanceof Node && wrapper && !wrapper.contains(target)) {
+          this.settingsOpen.set(false);
+        }
+      });
   }
 
   get currentAccount() {
     return this.accountService.trackCurrentAccount()();
   }
 
-  toggleDarkMode(): void {
-    this.layoutService.layoutConfig.update(state => ({
-      ...state,
-      darkTheme: !state.darkTheme,
-    }));
+  toggleSettings(event: MouseEvent): void {
+    event.stopPropagation();
+    this.settingsOpen.update(open => !open);
   }
 
   login(): void {
     this.router.navigate(['/login']);
-  }
-
-  changeLanguage(language: string): void {
-    this.stateStorageService.storeLocale(language);
-    this.translateService.use(language);
-    this.activeLanguage.set(language);
   }
 
   logout(): void {

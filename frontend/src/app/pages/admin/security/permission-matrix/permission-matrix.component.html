@@ -8,7 +8,8 @@
       type="button"
       [label]="'security.permissionMatrix.backToRoles' | translate"
       icon="pi pi-arrow-left"
-      class="p-button-text"
+      severity="secondary"
+      [outlined]="true"
       routerLink="/admin/security/roles"
     ></button>
     <h1 class="text-2xl font-semibold">
@@ -24,7 +25,7 @@
       icon="pi pi-save"
       [disabled]="!hasPendingChanges || saving"
       (click)="confirmSave()"
-      class="p-button-success"
+      severity="success"
     ></button>
     <button
       pButton
@@ -33,7 +34,8 @@
       icon="pi pi-times"
       [disabled]="!hasPendingChanges || saving"
       (click)="discardChanges()"
-      class="p-button-outlined p-button-secondary"
+      severity="secondary"
+      [outlined]="true"
     ></button>
     @if (saving) {
       <i class="pi pi-spin pi-spinner text-color-secondary"></i>
