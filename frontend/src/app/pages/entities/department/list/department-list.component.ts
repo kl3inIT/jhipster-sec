@@ -51,6 +51,10 @@ export default class DepartmentListComponent implements OnInit, OnDestroy {
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
   page = 1;
+  showOrganizationColumn = computed(() => this.canViewField('organization'));
+  showCostCenterColumn = computed(() =>
+    this.canViewField('costCenter') && this.departments().some((department) => department.costCenter !== undefined),
+  );
   capabilityLoaded = computed(() => this.capability() !== null);
   canCreate = computed(() => this.capability()?.canCreate ?? false);
   canRead = computed(() => this.capability()?.canRead ?? false);
@@ -219,6 +223,16 @@ export default class DepartmentListComponent implements OnInit, OnDestroy {
       },
       error: (err: unknown) => handleHttpError(this.messageService, this.translateService, err),
     });
+  }
+
+  canViewField(fieldName: string): boolean {
+    const capability = this.capability();
+    if (!capability) {
+      return true;
+    }
+
+    const attribute = capability.attributes.find((item) => item.name === fieldName);
+    return attribute?.canView !== false;
   }
 
   private storeWorkspaceContext(): void {

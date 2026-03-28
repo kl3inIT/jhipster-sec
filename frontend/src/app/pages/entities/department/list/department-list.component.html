@@ -53,8 +53,12 @@
             <th pSortableColumn="id" style="width: 6rem">{{ 'angappApp.department.id' | translate }} <p-sortIcon field="id" /></th>
             <th pSortableColumn="code">{{ 'angappApp.department.code' | translate }} <p-sortIcon field="code" /></th>
             <th pSortableColumn="name">{{ 'angappApp.department.name' | translate }} <p-sortIcon field="name" /></th>
-            <th>{{ 'angappApp.department.organization' | translate }}</th>
-            <th pSortableColumn="costCenter">{{ 'angappApp.department.costCenter' | translate }} <p-sortIcon field="costCenter" /></th>
+            @if (showOrganizationColumn()) {
+              <th>{{ 'angappApp.department.organization' | translate }}</th>
+            }
+            @if (showCostCenterColumn()) {
+              <th pSortableColumn="costCenter">{{ 'angappApp.department.costCenter' | translate }} <p-sortIcon field="costCenter" /></th>
+            }
             <th style="width: 10rem; text-align: center">{{ 'entity.list.actions' | translate }}</th>
           </tr>
         </ng-template>
@@ -67,8 +71,12 @@
             </td>
             <td>{{ row.code }}</td>
             <td>{{ row.name }}</td>
-            <td>{{ row.organization?.name }}</td>
-            <td>{{ row.costCenter }}</td>
+            @if (showOrganizationColumn()) {
+              <td>{{ row.organization?.name }}</td>
+            }
+            @if (showCostCenterColumn()) {
+              <td>{{ row.costCenter }}</td>
+            }
             <td style="text-align: center">
               @if (capabilityLoaded()) {
                 <div class="flex items-center justify-center gap-2">
@@ -111,7 +119,10 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td [attr.colspan]="6" class="text-center py-4">
+            <td
+              [attr.colspan]="4 + (showOrganizationColumn() ? 1 : 0) + (showCostCenterColumn() ? 1 : 0)"
+              class="text-center py-4"
+            >
               {{ 'angappApp.department.home.notFound' | translate }}
             </td>
           </tr>
