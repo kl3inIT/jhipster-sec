@@ -193,6 +193,27 @@ class SecPermissionAdminResourceIT {
     }
 
     @Test
+    void getPermissions_camelCaseAttributeRoundTripsWithOriginalCasing() throws Exception {
+        // Regression for storedToUiTargets() returning lowercase key instead of original camelCase.
+        // DEPARTMENT.COSTCENTER stored -> must come back as "department.costCenter" (not "department.costcenter")
+        // so the frontend Map lookup keyed by catalog-derived "department.costCenter" succeeds.
+        SecPermissionDTO created = createPermission(createMatrixPermissionDto("ATTRIBUTE", "department.costCenter", "VIEW"));
+
+        SecPermission persisted = secPermissionRepository.findById(created.getId()).orElseThrow();
+        assertThat(persisted.getTarget()).isEqualTo("DEPARTMENT.COSTCENTER");
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL + "?authorityName=" + MATRIX_AUTHORITY_NAME))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].target").value("department.costCenter"));
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL_ID, created.getId()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.target").value("department.costCenter"));
+    }
+
+    @Test
     void createPermission_matrixGrantReturnsExistingRowInsteadOfCreatingDuplicate() throws Exception {
         SecPermission existing = secPermissionRepository.saveAndFlush(
             new SecPermission()
