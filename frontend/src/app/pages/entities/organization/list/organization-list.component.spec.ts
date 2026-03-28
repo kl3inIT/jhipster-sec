@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { vi } from 'vitest';
+import { vi, beforeAll, afterAll } from 'vitest';
 
 import { SortService } from 'app/shared/sort/sort.service';
 import { IOrganization } from '../organization.model';
@@ -13,6 +13,13 @@ import { ISecuredEntityCapability } from '../../shared/secured-entity-capability
 import { WorkspaceContextService } from '../../shared/service/workspace-context.service';
 
 describe('OrganizationListComponent', () => {
+  beforeAll(() => {
+    Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 1280 });
+  });
+
+  afterAll(() => {
+    Object.defineProperty(window, 'innerWidth', { writable: true, configurable: true, value: 0 });
+  });
   const organization: IOrganization = {
     id: 1,
     code: 'ORG-001',

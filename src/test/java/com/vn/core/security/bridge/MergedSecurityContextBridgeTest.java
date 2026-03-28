@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.vn.core.domain.Authority;
 import com.vn.core.repository.AuthorityRepository;
+import com.vn.core.security.permission.RequestPermissionSnapshot;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -25,11 +26,16 @@ class MergedSecurityContextBridgeTest {
     @Mock
     private AuthorityRepository authorityRepository;
 
+    @Mock
+    private RequestPermissionSnapshot requestPermissionSnapshot;
+
     private MergedSecurityContextBridge bridge;
 
     @BeforeEach
     void setUp() {
-        bridge = new MergedSecurityContextBridge(authorityRepository);
+        // In unit tests there is no active request context, so isRequestScopeActive() returns false
+        // and the bridge falls back to direct authorityRepository queries — snapshot is not called.
+        bridge = new MergedSecurityContextBridge(authorityRepository, requestPermissionSnapshot);
     }
 
     @AfterEach

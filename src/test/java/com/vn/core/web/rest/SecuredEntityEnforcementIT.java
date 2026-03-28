@@ -330,19 +330,27 @@ class SecuredEntityEnforcementIT {
     @Test
     @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
     void getDepartments_withReadPermission_returnsOk() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_READER");
+
         restMockMvc
             .perform(get(DEPARTMENT_API_URL + "?sort=id,asc"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.[*].id").value(hasItem(200)));
+            .andExpect(jsonPath("$.[*].id").value(hasItem(200)))
+            .andExpect(jsonPath("$[0].organization.id").value(100))
+            .andExpect(jsonPath("$[0].organization.name").value("Owned Org"));
     }
 
     @Test
     @WithMockUser(username = "proof-owner", authorities = "ROLE_PROOF_READER")
     void getEmployees_withReadPermission_returnsOk() throws Exception {
+        grantReadableOrganizationGraph("ROLE_PROOF_READER");
+
         restMockMvc
             .perform(get(EMPLOYEE_API_URL + "?sort=id,asc"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.[*].id").value(hasItem(300)));
+            .andExpect(jsonPath("$.[*].id").value(hasItem(300)))
+            .andExpect(jsonPath("$[0].department.id").value(200))
+            .andExpect(jsonPath("$[0].department.name").value("Owned Department"));
     }
 
     @Test
@@ -570,11 +578,13 @@ class SecuredEntityEnforcementIT {
         grantAttributePermission(authorityName, "department.code", "VIEW");
         grantAttributePermission(authorityName, "department.name", "VIEW");
         grantAttributePermission(authorityName, "department.costCenter", "VIEW");
+        grantAttributePermission(authorityName, "department.organization", "VIEW");
         grantAttributePermission(authorityName, "department.employees", "VIEW");
         grantAttributePermission(authorityName, "employee.employeeNumber", "VIEW");
         grantAttributePermission(authorityName, "employee.firstName", "VIEW");
         grantAttributePermission(authorityName, "employee.lastName", "VIEW");
         grantAttributePermission(authorityName, "employee.email", "VIEW");
+        grantAttributePermission(authorityName, "employee.department", "VIEW");
     }
 
     private void grantDepartmentCrudForWorkbench(String authorityName) throws Exception {

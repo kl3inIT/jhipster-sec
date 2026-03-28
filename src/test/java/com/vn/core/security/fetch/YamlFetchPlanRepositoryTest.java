@@ -3,6 +3,8 @@ package com.vn.core.security.fetch;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vn.core.config.ApplicationProperties;
+import com.vn.core.domain.Department;
+import com.vn.core.domain.Employee;
 import com.vn.core.domain.Organization;
 import java.util.List;
 import java.util.Optional;
@@ -149,5 +151,23 @@ class YamlFetchPlanRepositoryTest {
         assertThat(employeesPlan.getProperties())
             .extracting(FetchPlanProperty::name)
             .contains("id", "employeeNumber", "firstName", "lastName", "email", "salary");
+    }
+
+    @Test
+    void testDepartmentAndEmployeeListPlansIncludeParentReferences() {
+        ApplicationProperties applicationProperties = new ApplicationProperties();
+        applicationProperties.getFetchPlans().setConfig("classpath:fetch-plans.yml");
+        YamlFetchPlanRepository proofRepository = new YamlFetchPlanRepository(applicationProperties, new DefaultResourceLoader());
+        proofRepository.init();
+
+        FetchPlan departmentList = proofRepository.findByEntityAndName(Department.class, "department-list").orElseThrow();
+        FetchPlan organizationPlan = departmentList.getProperty("organization").orElseThrow().fetchPlan();
+        assertThat(organizationPlan).isNotNull();
+        assertThat(organizationPlan.getProperties()).extracting(FetchPlanProperty::name).containsExactly("id", "name");
+
+        FetchPlan employeeList = proofRepository.findByEntityAndName(Employee.class, "employee-list").orElseThrow();
+        FetchPlan departmentPlan = employeeList.getProperty("department").orElseThrow().fetchPlan();
+        assertThat(departmentPlan).isNotNull();
+        assertThat(departmentPlan.getProperties()).extracting(FetchPlanProperty::name).containsExactly("id", "name");
     }
 }

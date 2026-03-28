@@ -101,7 +101,7 @@
 - `src/main/java/com/vn/core/security/data/`: Secure data orchestration and query execution.
 - `src/main/java/com/vn/core/security/access/`: CRUD and access-constraint application.
 - `src/main/java/com/vn/core/security/fetch/`: Fetch-plan parsing and resolution.
-- `src/main/java/com/vn/core/security/row/`: Row-policy loading and specification building.
+- `src/main/java/com/vn/core/security/web/`: Explicit JSON adapters and payload validation for secured entity endpoints.
 - `src/main/java/com/vn/core/security/serialize/`: Read-side secure serialization.
 - `src/main/java/com/vn/core/security/merge/`: Write-side secure merge enforcement.
 - `src/main/java/com/vn/core/service/security/`: API-facing security capability and menu-permission services.
@@ -125,7 +125,7 @@
 
 **Business Domain vs Security Metadata Boundary:**
 - Keep user and proof/business entities in `src/main/java/com/vn/core/domain/` and their repositories in `src/main/java/com/vn/core/repository/`.
-- Keep permission, row-policy, menu-definition, and menu-permission entities in `src/main/java/com/vn/core/security/domain/` and their repositories in `src/main/java/com/vn/core/security/repository/`.
+- Keep permission, menu-definition, and menu-permission entities in `src/main/java/com/vn/core/security/domain/` and their repositories in `src/main/java/com/vn/core/security/repository/`.
 
 **REST vs Service vs Enforcement Boundary:**
 - Keep HTTP request parsing, pagination headers, and status handling in `src/main/java/com/vn/core/web/rest/**`.
@@ -182,7 +182,7 @@
 - Frontend: `frontend/src/app/pages/admin/user-management/`
 
 **Secured Entity Enforcement:**
-- Backend orchestration: `src/main/java/com/vn/core/security/data/`, `src/main/java/com/vn/core/security/access/`, `src/main/java/com/vn/core/security/row/`, `src/main/java/com/vn/core/security/merge/`, `src/main/java/com/vn/core/security/serialize/`
+- Backend orchestration: `src/main/java/com/vn/core/security/data/`, `src/main/java/com/vn/core/security/access/`, `src/main/java/com/vn/core/security/merge/`, `src/main/java/com/vn/core/security/serialize/`, `src/main/java/com/vn/core/security/web/`
 - Backend entity APIs: `src/main/java/com/vn/core/web/rest/OrganizationResource.java`, `src/main/java/com/vn/core/web/rest/DepartmentResource.java`, `src/main/java/com/vn/core/web/rest/EmployeeResource.java`
 - Frontend consumers: `frontend/src/app/pages/entities/`, `frontend/src/app/pages/entities/shared/service/secured-entity-capability.service.ts`
 

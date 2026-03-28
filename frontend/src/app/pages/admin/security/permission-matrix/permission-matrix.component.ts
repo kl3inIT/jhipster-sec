@@ -442,6 +442,13 @@ export default class PermissionMatrixComponent implements OnInit {
     return this.isEffectivelyGranted(`${entityCode}.*`, action);
   }
 
+  isAttributeEffectivelyGranted(target: string, action: string, entityCode: string): boolean {
+    return (
+      this.isEffectivelyGranted(target, action) ||
+      this.isWildcardEffectivelyGranted(entityCode, action)
+    );
+  }
+
   isPendingChange(target: string, action: string): boolean {
     return this.pendingChanges.has(this.permissionKey(target, action));
   }
