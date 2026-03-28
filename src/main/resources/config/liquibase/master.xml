@@ -23,6 +23,7 @@
     <include file="config/liquibase/changelog/20260325000300_repair_sec_menu_permission_schema.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260327000100_convert_sec_menu_permission_app_name_to_enum.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260327000200_drop_sec_row_policy.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260328000100_dedupe_sec_permission_add_unique.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->

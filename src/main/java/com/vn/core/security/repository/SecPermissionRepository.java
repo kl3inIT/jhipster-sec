@@ -16,6 +16,13 @@ import org.springframework.stereotype.Repository;
 public interface SecPermissionRepository extends JpaRepository<SecPermission, Long> {
     List<SecPermission> findByAuthorityName(String authorityName);
 
+    List<SecPermission> findAllByAuthorityNameAndTargetTypeAndTargetAndActionOrderByIdAsc(
+        String authorityName,
+        TargetType targetType,
+        String target,
+        String action
+    );
+
     void deleteByAuthorityName(String authorityName);
 
     @Query(

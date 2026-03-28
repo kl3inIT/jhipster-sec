@@ -1,6 +1,5 @@
 package com.vn.core.security.data;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.core.security.catalog.SecuredEntityCatalog;
 import com.vn.core.security.catalog.SecuredEntityEntry;
 import com.vn.core.security.fetch.FetchPlan;
@@ -35,7 +34,6 @@ public class SecureDataManagerImpl implements SecureDataManager {
     private final SecureEntitySerializer secureEntitySerializer;
     private final SecureMergeService secureMergeService;
     private final SecureQuerySpecificationFactory secureQuerySpecificationFactory;
-    private final ObjectMapper objectMapper;
 
     public SecureDataManagerImpl(
         DataManager dataManager,
@@ -43,8 +41,7 @@ public class SecureDataManagerImpl implements SecureDataManager {
         FetchPlanResolver fetchPlanResolver,
         SecureEntitySerializer secureEntitySerializer,
         SecureMergeService secureMergeService,
-        SecureQuerySpecificationFactory secureQuerySpecificationFactory,
-        ObjectMapper objectMapper
+        SecureQuerySpecificationFactory secureQuerySpecificationFactory
     ) {
         this.dataManager = dataManager;
         this.catalog = catalog;
@@ -52,7 +49,6 @@ public class SecureDataManagerImpl implements SecureDataManager {
         this.secureEntitySerializer = secureEntitySerializer;
         this.secureMergeService = secureMergeService;
         this.secureQuerySpecificationFactory = secureQuerySpecificationFactory;
-        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -111,15 +107,6 @@ public class SecureDataManagerImpl implements SecureDataManager {
     public Optional<Map<String, Object>> loadOne(String entityCode, Object id, String fetchPlanCode) {
         Class<Object> entityClass = resolveEntityClass(entityCode);
         return loadOneInternal(entityClass, id).map(entity -> serialize(entity, fetchPlanCode));
-    }
-
-    @Override
-    public <T> Map<String, Object> save(String entityCode, Object id, Map<String, Object> attributes, String fetchPlanCode) {
-        Class<Object> entityClass = resolveEntityClass(entityCode);
-        Map<String, Object> attributeValues = attributes == null ? Map.of() : attributes;
-        Object typedEntity = objectMapper.convertValue(attributeValues, entityClass);
-        Object saved = saveInternal(entityClass, id, new EntityMutation<>(typedEntity, attributeValues.keySet()));
-        return serialize(saved, fetchPlanCode);
     }
 
     @Override

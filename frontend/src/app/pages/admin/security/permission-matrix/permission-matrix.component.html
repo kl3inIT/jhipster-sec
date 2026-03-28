@@ -211,7 +211,13 @@
                       >
                         <p-checkbox
                           [binary]="true"
-                          [ngModel]="isEffectivelyGranted(row.target, 'VIEW')"
+                          [ngModel]="
+                            isAttributeEffectivelyGranted(
+                              row.target,
+                              'VIEW',
+                              selectedEntity!.code
+                            )
+                          "
                           [disabled]="
                             saving ||
                             (!row.isWildcard &&
@@ -233,7 +239,13 @@
                       >
                         <p-checkbox
                           [binary]="true"
-                          [ngModel]="isEffectivelyGranted(row.target, 'EDIT')"
+                          [ngModel]="
+                            isAttributeEffectivelyGranted(
+                              row.target,
+                              'EDIT',
+                              selectedEntity!.code
+                            )
+                          "
                           [disabled]="
                             saving ||
                             (!row.isWildcard &&
