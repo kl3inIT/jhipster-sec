@@ -12,11 +12,14 @@ import jakarta.persistence.UniqueConstraint;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Backend-managed menu node metadata for a frontend app.
  */
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(
     name = "sec_menu_definition",
     uniqueConstraints = @UniqueConstraint(name = "ux_sec_menu_definition_app_menu", columnNames = { "app_name", "menu_id" }),
