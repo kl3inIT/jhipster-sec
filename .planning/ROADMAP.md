@@ -29,7 +29,7 @@ This roadmap builds on the shipped security platform by first closing the missin
 - [x] **Phase 08.1: Jmix-Style DataManager Core Alignment** - Align the internal security data-access core with a Jmix-style `DataManager` / `UnconstrainedDataManager` split while preserving the current `SecureDataManager` boundary. (completed 2026-03-26)
 - [x] **Phase 08.2: Multi-App Menu Roles and Jmix-Style JSON Entity Controllers** - Extend app-scoped menu authorization to multi-app role assignment and move secured entity endpoints to raw JSON with preserved `loadByQuery` and explicit `PATCH`. (completed 2026-03-27)
 - [x] **Phase 08.3: User Registration, Live Permission Refresh, Entity-Native Serialization, Validation Hardening, And Row Policy Removal** - Add frontend registration, make permissions refresh without re-login, move secured data flow toward typed entities, harden JSON validation, and retire row policy completely. (completed 2026-03-27)
-- [ ] **Phase 9: Enterprise UX And Performance Hardening** - Improve consistency, responsiveness, data-fetch efficiency, and route-level loading costs.
+- [x] **Phase 9: Enterprise UX And Performance Hardening** - Improve consistency, responsiveness, data-fetch efficiency, and route-level loading costs. (completed 2026-03-28)
 - [ ] **Phase 10: Frontend Reliability And Regression Coverage** - Lock the milestone down with targeted frontend tests across user management, routing, and core UI infrastructure.
 
 ## Phase Details
@@ -180,10 +180,11 @@ Plans:
 2. Redundant calls for auth, menu, capability, and user-management data are removed or cached safely.
 3. Initial load and route transitions improve through lazy loading, code splitting, and leaner route-level bundles.
 4. Larger enterprise screens remain responsive under realistic data volume through efficient rendering and state updates.
-**Plans:** 2 plans
+**Plans:** 3/3 plans complete
 Plans:
-- [ ] 09-01-PLAN.md — Backend permission caching with request-scoped snapshot bean (PERF-01, PERF-02)
-- [ ] 09-02-PLAN.md — Frontend entity list hardening: pagination signals, skeleton loaders, responsive columns (PERF-03, UI-05)
+- [x] 09-01-PLAN.md — Backend permission caching with request-scoped snapshot bean (PERF-01, PERF-02)
+- [x] 09-02-PLAN.md — Frontend entity list hardening: pagination signals, skeleton loaders, responsive columns (PERF-03, UI-05)
+- [x] 09-03-PLAN.md — First-paint skeleton loader fix for department, employee, and organization entity lists
 
 ### Phase 10: Frontend Reliability And Regression Coverage
 **Goal**: The migrated enterprise admin experience is protected by focused frontend regression coverage.
@@ -208,5 +209,5 @@ Plans:
 | 08.1 | Jmix-Style DataManager Core Alignment | Complete | Cross-cutting security architecture alignment | 2026-03-26 |
 | 08.2 | Multi-App Menu Roles and Jmix-Style JSON Entity Controllers | Complete | Cross-cutting menu authorization and secured-entity API alignment | 2026-03-27 |
 | 08.3 | Registration, Live Permission Refresh, Typed Entity Flow, Validation, And Row-Policy Removal | Complete | PH83-01, PH83-02, PH83-03, PH83-04, PH83-05 | 2026-03-27 |
-| 9 | Enterprise UX And Performance Hardening | Planned | UI-05, PERF-01, PERF-02, PERF-03 | - |
+| 9 | Enterprise UX And Performance Hardening | Complete | UI-05, PERF-01, PERF-02, PERF-03 | 2026-03-28 |
 | 10 | Frontend Reliability And Regression Coverage | Planned | TEST-01, TEST-02, TEST-03 | - |
