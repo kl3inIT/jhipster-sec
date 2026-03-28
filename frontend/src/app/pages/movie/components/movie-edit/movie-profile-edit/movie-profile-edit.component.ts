@@ -1,6 +1,7 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output, inject, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule, FormArray, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { catchError, of } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -20,6 +21,7 @@ import {
   PRODUCTION_ROLE_OPTIONS,
   STATUS_OPTIONS,
 } from '../../../constants/movie-enums.constants';
+import { getApiErrorMessage } from 'app/core/util/api-error.util';
 
 @Component({
   selector: 'app-movie-profile-edit',
@@ -117,17 +119,29 @@ export default class MovieProfileEditComponent implements OnInit, OnChanges {
       ekipMembers: this.buildEkipPayload(),
     };
 
-    this.movieProfileService.update(payload).subscribe({
-      next: () => {
-        this.isSaving = false;
-        this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Cập nhật hồ sơ phim thành công.' });
-        this.onUpdated.emit();
-      },
-      error: () => {
-        this.isSaving = false;
-        this.errorMessage = 'Có lỗi xảy ra khi cập nhật hồ sơ phim. Vui lòng thử lại.';
-      },
-    });
+    this.movieProfileService
+      .update(payload)
+      .pipe(
+        finalize(() => {
+          this.isSaving = false;
+          this.cd.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Cập nhật hồ sơ phim thành công.' });
+          this.onUpdated.emit();
+        },
+        error: (err: HttpErrorResponse) => {
+          this.errorMessage = getApiErrorMessage(err, 'Có lỗi xảy ra khi cập nhật hồ sơ phim. Vui lòng thử lại.');
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Không thể cập nhật',
+            detail: this.errorMessage,
+            life: 8000,
+          });
+        },
+      });
   }
 
   cancel(): void {

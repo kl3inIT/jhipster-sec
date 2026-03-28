@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Output, inject, OnInit } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { ChangeDetectorRef, Component, EventEmitter, Output, inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormArray, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { catchError, of } from 'rxjs';
+import { finalize } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -20,6 +20,7 @@ import {
   PRODUCTION_ROLE_OPTIONS,
   STATUS_OPTIONS,
 } from '../../constants/movie-enums.constants';
+import { getApiErrorMessage } from 'app/core/util/api-error.util';
 
 @Component({
   selector: 'app-movie-profile-create',
@@ -44,6 +45,7 @@ export default class MovieProfileCreateComponent implements OnInit {
   private readonly movieProfileService = inject(MovieProfileService);
   private readonly messageService = inject(MessageService);
   private readonly http = inject(HttpClient);
+  private readonly cd = inject(ChangeDetectorRef);
 
   isSaving = false;
   errorMessage: string | null = null;
@@ -117,26 +119,29 @@ export default class MovieProfileCreateComponent implements OnInit {
       ekipMembers:    this.buildEkipPayload(),
     };
 
-    this.movieProfileService.create(payload).pipe(
-      catchError(() => {
-        this.errorMessage = 'Có lỗi xảy ra khi tạo hồ sơ phim. Vui lòng thử lại.';
-        return of(null);
-      })
-    ).subscribe({
-      next: () => {
-        if (!this.isSaving) {
-          return;
-        }
-        this.isSaving = false;
-        //this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Tạo hồ sơ phim thành công.' });
-        this.resetForm();
-        this.onCreated.emit();
-      },
-      error: () => {
-        this.isSaving = false;
-        this.errorMessage = 'Có lỗi xảy ra khi tạo hồ sơ phim. Vui lòng thử lại.';
-      },
-    });
+    this.movieProfileService
+      .create(payload)
+      .pipe(
+        finalize(() => {
+          this.isSaving = false;
+          this.cd.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.resetForm();
+          this.onCreated.emit();
+        },
+        error: (err: HttpErrorResponse) => {
+          this.errorMessage = getApiErrorMessage(err, 'Có lỗi xảy ra khi tạo hồ sơ phim. Vui lòng thử lại.');
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Không thể tạo hồ sơ',
+            detail: this.errorMessage ?? undefined,
+            life: 8000,
+          });
+        },
+      });
   }
 
   cancel(): void {

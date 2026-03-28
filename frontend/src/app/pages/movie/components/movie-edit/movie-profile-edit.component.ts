@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -17,6 +18,7 @@ import {
   MOVIE_TYPE_OPTIONS,
   STATUS_OPTIONS,
 } from '../../constants/movie-enums.constants';
+import { getApiErrorMessage } from 'app/core/util/api-error.util';
 
 @Component({
   selector: 'app-movie-profile-edit',
@@ -120,9 +122,9 @@ export default class MovieProfileEditComponent implements OnInit {
           this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Cập nhật dự án thành công' });
           this.onUpdated.emit();
         },
-        error: (error) => {
-          this.errorMessage = error?.error?.message || 'Có lỗi xảy ra khi cập nhật';
-          this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: this.errorMessage ?? undefined });
+        error: (error: HttpErrorResponse) => {
+          this.errorMessage = getApiErrorMessage(error, 'Có lỗi xảy ra khi cập nhật');
+          this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: this.errorMessage ?? undefined, life: 8000 });
         },
       });
   }
