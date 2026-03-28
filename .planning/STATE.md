@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: ready_for_next_phase
-stopped_at: Completed 09-01-PLAN.md - Backend Permission Caching
-last_updated: "2026-03-28T07:45:53.343Z"
+stopped_at: Completed 09-01 and 09-02 - Backend Permission Caching + Frontend Entity List Hardening
+last_updated: "2026-03-28T07:49:53.647Z"
 last_activity: "2026-03-28 - Completed quick task 260328-f1a: fix duplicate register text on login page"
 progress:
   total_phases: 9
@@ -70,7 +70,8 @@ Next: Phase 9 (enterprise-ux-and-performance-hardening)
 | Phase 08.2 P03 | 23 min | 2 tasks | 12 files |
 | Phase 08.2 P02 | 16 min | 2 tasks | 6 files |
 | Phase 08.2 P04 | 9 min | 2 tasks | 9 files |
-| Phase 09 P01 | 7 | 3 tasks | 7 files |
+| Phase 09 P01 | 7 min | 3 tasks | 7 files |
+| Phase 09 P02 | 22 min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -93,6 +94,8 @@ Recent decisions affecting current work:
 - Phase 08.3 will move secured entity internals toward typed entity-native flows and keep JSON parsing or serialization confined to explicit edge adapters.
 - Phase 08.3 will remove row policy completely instead of expanding or preserving it as a long-term platform feature.
 - [Phase 09]: Request-local permission snapshot (D-01/D-02): caches authority validation and PermissionMatrix per HTTP request, destroyed at request end, with graceful non-web fallback via isRequestScopeActive() guard
+- [Phase 09]: Use fromEvent(window, resize) with debounceTime for responsive detection since @angular/cdk is not available
+- [Phase 09]: Skeleton loaders use tableValue computed signal switching between 5 skeletonRows and real data array for initial-fetch-only skeleton
 
 ### Pending Todos
 
@@ -117,6 +120,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last activity: 2026-03-28 - Completed quick task 260328-f1a: fix duplicate register text on login page
-Last session: 2026-03-28T07:45:53.284Z
-Stopped at: Completed 09-01-PLAN.md - Backend Permission Caching
+Last session: 2026-03-28T07:49:53.642Z
+Stopped at: Completed 09-01 and 09-02 - Backend Permission Caching + Frontend Entity List Hardening
 Resume file: None

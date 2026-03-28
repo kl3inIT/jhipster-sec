@@ -31,13 +31,13 @@
       </div>
     } @else {
       <p-table
-        [value]="departments()"
+        [value]="tableValue()"
         [lazy]="true"
         [paginator]="true"
         [rows]="itemsPerPage"
-        [totalRecords]="totalItems"
-        [first]="firstRow"
-        [loading]="loading()"
+        [totalRecords]="totalItems()"
+        [first]="firstRow()"
+        [loading]="loading() && departments().length > 0"
         [sortField]="sortState().predicate ?? 'id'"
         [sortOrder]="sortState().order === 'desc' ? -1 : 1"
         [tableStyle]="{ 'min-width': '100%' }"
@@ -50,7 +50,9 @@
       >
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="id" style="width: 6rem">{{ 'angappApp.department.id' | translate }} <p-sortIcon field="id" /></th>
+            @if (showIdColumn()) {
+              <th pSortableColumn="id" style="width: 6rem">{{ 'angappApp.department.id' | translate }} <p-sortIcon field="id" /></th>
+            }
             <th pSortableColumn="code">{{ 'angappApp.department.code' | translate }} <p-sortIcon field="code" /></th>
             <th pSortableColumn="name">{{ 'angappApp.department.name' | translate }} <p-sortIcon field="name" /></th>
             @if (showOrganizationColumn()) {
@@ -63,64 +65,83 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-row>
-          <tr>
-            <td>
-              <a [routerLink]="['/entities/department', row.id, 'view']" class="font-medium">{{
-                row.id
-              }}</a>
-            </td>
-            <td>{{ row.code }}</td>
-            <td>{{ row.name }}</td>
-            @if (showOrganizationColumn()) {
-              <td>{{ row.organization?.name }}</td>
-            }
-            @if (showCostCenterColumn()) {
-              <td>{{ row.costCenter }}</td>
-            }
-            <td style="text-align: center">
-              @if (capabilityLoaded()) {
-                <div class="flex items-center justify-center gap-2">
-                  @if (canRead()) {
-                    <button
-                      pButton
-                      type="button"
-                      class="p-button-text p-button-sm"
-                      icon="pi pi-eye"
-                      [attr.aria-label]="'entity.action.view' | translate"
-                      (click)="view(row)"
-                    ></button>
-                  }
-                  @if (canUpdate()) {
-                    <button
-                      pButton
-                      type="button"
-                      class="p-button-text p-button-sm"
-                      icon="pi pi-pencil"
-                      [attr.aria-label]="'entity.action.edit' | translate"
-                      (click)="edit(row)"
-                    ></button>
-                  }
-                  @if (canDelete()) {
-                    <button
-                      pButton
-                      type="button"
-                      class="p-button-text p-button-danger p-button-sm"
-                      icon="pi pi-trash"
-                      [attr.aria-label]="'entity.action.delete' | translate"
-                      (click)="confirmDelete(row)"
-                    ></button>
-                  }
-                </div>
-              } @else {
-                <i class="pi pi-spin pi-spinner text-gray-400"></i>
+          @if (loading() && departments().length === 0) {
+            <tr>
+              @if (showIdColumn()) {
+                <td><p-skeleton height="1.2rem" /></td>
               }
-            </td>
-          </tr>
+              <td><p-skeleton height="1.2rem" /></td>
+              <td><p-skeleton height="1.2rem" /></td>
+              @if (showOrganizationColumn()) {
+                <td><p-skeleton height="1.2rem" /></td>
+              }
+              @if (showCostCenterColumn()) {
+                <td><p-skeleton height="1.2rem" /></td>
+              }
+              <td><p-skeleton height="1.2rem" /></td>
+            </tr>
+          } @else {
+            <tr>
+              @if (showIdColumn()) {
+                <td>
+                  <a [routerLink]="['/entities/department', row.id, 'view']" class="font-medium">{{
+                    row.id
+                  }}</a>
+                </td>
+              }
+              <td>{{ row.code }}</td>
+              <td>{{ row.name }}</td>
+              @if (showOrganizationColumn()) {
+                <td>{{ row.organization?.name }}</td>
+              }
+              @if (showCostCenterColumn()) {
+                <td>{{ row.costCenter }}</td>
+              }
+              <td style="text-align: center">
+                @if (capabilityLoaded()) {
+                  <div [class]="isTablet() ? 'flex flex-column items-center gap-1' : 'flex items-center justify-center gap-2'">
+                    @if (canRead()) {
+                      <button
+                        pButton
+                        type="button"
+                        class="p-button-text p-button-sm"
+                        icon="pi pi-eye"
+                        [attr.aria-label]="'entity.action.view' | translate"
+                        (click)="view(row)"
+                      ></button>
+                    }
+                    @if (canUpdate()) {
+                      <button
+                        pButton
+                        type="button"
+                        class="p-button-text p-button-sm"
+                        icon="pi pi-pencil"
+                        [attr.aria-label]="'entity.action.edit' | translate"
+                        (click)="edit(row)"
+                      ></button>
+                    }
+                    @if (canDelete()) {
+                      <button
+                        pButton
+                        type="button"
+                        class="p-button-text p-button-danger p-button-sm"
+                        icon="pi pi-trash"
+                        [attr.aria-label]="'entity.action.delete' | translate"
+                        (click)="confirmDelete(row)"
+                      ></button>
+                    }
+                  </div>
+                } @else {
+                  <i class="pi pi-spin pi-spinner text-gray-400"></i>
+                }
+              </td>
+            </tr>
+          }
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
             <td
-              [attr.colspan]="4 + (showOrganizationColumn() ? 1 : 0) + (showCostCenterColumn() ? 1 : 0)"
+              [attr.colspan]="3 + (showIdColumn() ? 1 : 0) + (showOrganizationColumn() ? 1 : 0) + (showCostCenterColumn() ? 1 : 0)"
               class="text-center py-4"
             >
               {{ 'angappApp.department.home.notFound' | translate }}

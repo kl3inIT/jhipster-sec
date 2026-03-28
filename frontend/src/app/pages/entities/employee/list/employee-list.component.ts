@@ -1,15 +1,29 @@
-import { Component, NgZone, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  NgZone,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  inject,
+  signal,
+  computed,
+  DestroyRef,
+} from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription, combineLatest, finalize, tap } from 'rxjs';
+import { fromEvent, debounceTime, startWith } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CardModule } from 'primeng/card';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { Skeleton } from 'primeng/skeleton';
 
 import { SortService } from 'app/shared/sort/sort.service';
 import { SortState, sortStateSignal } from 'app/shared/sort/sort-state';
@@ -28,20 +42,22 @@ const DEFAULT_SORT_DATA = 'defaultSort';
 @Component({
   selector: 'app-employee-list',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     RouterModule,
+    DecimalPipe,
     TranslatePipe,
     CardModule,
     TableModule,
     ButtonModule,
     ConfirmDialogModule,
     ToastModule,
+    Skeleton,
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './employee-list.component.html',
 })
-export default class EmployeeListComponent implements OnInit, OnDestroy {
+export default class EmployeeListComponent implements OnInit, OnDestroy, AfterViewInit {
   subscription: Subscription | null = null;
   employees = signal<IEmployee[]>([]);
   capability = signal<ISecuredEntityCapability | null>(null);
@@ -49,10 +65,23 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
 
   sortState = sortStateSignal({});
   itemsPerPage = ITEMS_PER_PAGE;
-  totalItems = 0;
-  page = 1;
+  totalItems = signal(0);
+  page = signal(1);
+  firstRow = computed(() => (this.page() - 1) * this.itemsPerPage);
 
-  showSalaryColumn = computed(() => this.employees().some((e) => e.salary !== undefined));
+  readonly skeletonRows = Array(5).fill(null);
+  readonly tableValue = computed(() =>
+    this.loading() && this.employees().length === 0 ? this.skeletonRows : this.employees(),
+  );
+
+  private readonly destroyRef = inject(DestroyRef);
+  readonly isTablet = signal(typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
+
+  showIdColumn = computed(() => !this.isTablet());
+  showDepartmentColumn = computed(() => !this.isTablet());
+  showSalaryColumn = computed(
+    () => !this.isTablet() && this.employees().some((e) => e.salary !== undefined),
+  );
   capabilityLoaded = computed(() => this.capability() !== null);
   canCreate = computed(() => this.capability()?.canCreate ?? false);
   canRead = computed(() => this.capability()?.canRead ?? false);
@@ -89,6 +118,14 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  ngAfterViewInit(): void {
+    fromEvent(window, 'resize')
+      .pipe(debounceTime(150), startWith(null), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.isTablet.set(window.innerWidth < 1024);
+      });
+  }
+
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
   }
@@ -96,7 +133,7 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
   load(): void {
     if (this.showListDeniedState()) {
       this.employees.set([]);
-      this.totalItems = 0;
+      this.totalItems.set(0);
       this.loading.set(false);
       return;
     }
@@ -109,15 +146,11 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
   }
 
   navigateToWithComponentValues(event: SortState): void {
-    this.handleNavigation(this.page, event);
+    this.handleNavigation(this.page(), event);
   }
 
   navigateToPage(page: number): void {
     this.handleNavigation(page, this.sortState());
-  }
-
-  get firstRow(): number {
-    return (this.page - 1) * this.itemsPerPage;
   }
 
   onLazyLoad(event: TableLazyLoadEvent): void {
@@ -128,7 +161,7 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
     const sortOrder = event.sortOrder === 1 ? 'asc' : event.sortOrder === -1 ? 'desc' : undefined;
     const newSortState: SortState =
       sortField && sortOrder ? { predicate: sortField, order: sortOrder } : this.sortState();
-    if (page !== this.page) {
+    if (page !== this.page()) {
       this.navigateToPage(page);
     } else if (
       newSortState.predicate !== this.sortState().predicate ||
@@ -140,7 +173,7 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     const page = params.get(PAGE_HEADER);
-    this.page = +(page ?? 1);
+    this.page.set(+(page ?? 1));
     this.sortState.set(
       this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]),
     );
@@ -153,13 +186,12 @@ export default class EmployeeListComponent implements OnInit, OnDestroy {
   }
 
   protected fillComponentAttributesFromResponseHeader(headers: HttpHeaders): void {
-    this.totalItems = Number(headers.get(TOTAL_COUNT_RESPONSE_HEADER));
+    this.totalItems.set(Number(headers.get(TOTAL_COUNT_RESPONSE_HEADER)));
   }
 
   protected queryBackend(): Observable<EntityArrayResponseType> {
-    const { page } = this;
+    const pageToLoad = this.page();
     this.loading.set(true);
-    const pageToLoad: number = page;
     const queryObject: any = {
       page: pageToLoad - 1,
       size: this.itemsPerPage,
