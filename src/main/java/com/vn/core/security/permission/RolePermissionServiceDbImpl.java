@@ -22,23 +22,36 @@ public class RolePermissionServiceDbImpl implements RolePermissionService {
 
     private final SecPermissionRepository secPermissionRepository;
     private final MergedSecurityService mergedSecurityService;
+    private final RequestPermissionSnapshot requestPermissionSnapshot;
 
     public RolePermissionServiceDbImpl(
         SecPermissionRepository secPermissionRepository,
-        MergedSecurityService mergedSecurityService
+        MergedSecurityService mergedSecurityService,
+        RequestPermissionSnapshot requestPermissionSnapshot
     ) {
         this.secPermissionRepository = secPermissionRepository;
         this.mergedSecurityService = mergedSecurityService;
+        this.requestPermissionSnapshot = requestPermissionSnapshot;
     }
 
     @Override
     public boolean isEntityOpPermitted(Class<?> entityClass, EntityOp op) {
+        String target = entityClass.getSimpleName().toUpperCase(Locale.ROOT);
+        // Use request-scoped snapshot when available: single matrix lookup replaces per-entity DB query.
+        if (RequestPermissionSnapshot.isRequestScopeActive()) {
+            PermissionMatrix matrix = requestPermissionSnapshot.getMatrix();
+            boolean permitted = matrix.isEntityPermitted(target, op.name());
+            if (!permitted) {
+                LOG.debug("Snapshot: no ALLOW for entity op {} on {} - access denied", op, entityClass.getSimpleName());
+            }
+            return permitted;
+        }
+        // Fallback for non-web contexts.
         Collection<String> authorities = mergedSecurityService.getCurrentUserAuthorityNames();
         if (authorities.isEmpty()) {
             LOG.debug("No authorities for current user - denying entity op {} on {}", op, entityClass.getSimpleName());
             return false;
         }
-        String target = entityClass.getSimpleName().toUpperCase(Locale.ROOT);
         return hasPermission(authorities, TargetType.ENTITY, target, op.name());
     }
 

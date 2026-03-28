@@ -1,8 +1,9 @@
 ---
 phase: 9
 phase_name: enterprise-ux-and-performance-hardening
-status: draft
+status: approved
 created: 2026-03-28
+reviewed_at: 2026-03-28
 requirements: [UI-05, PERF-01, PERF-02, PERF-03]
 ---
 

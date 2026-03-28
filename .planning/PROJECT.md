@@ -40,6 +40,8 @@ The repository now includes:
 
 **Phase 08.3 complete** - The standalone frontend now has registration parity, current-user authorities refresh from database state without re-authentication, secured entity internals operate through typed entity mutations behind explicit JSON adapters, validation is fail-closed, and row policy is fully retired.
 
+**Phase 9 complete** - Backend N+1 permission query explosion eliminated via request-scoped `RequestPermissionSnapshot` caching (one authority query + one bulk permission query per HTTP request). Department, Employee, and Organization list components migrated to signal-based pagination with `OnPush` change detection, `p-skeleton` loaders for initial data fetch, and responsive column hiding below 1024px. Validated in Phase 9: UI-05, PERF-01, PERF-02, PERF-03.
+
 The next part of `v1.1` now starts from this context:
 
 - The backend and standalone frontend now share the preserved registration contract end to end.
@@ -58,11 +60,11 @@ The next part of `v1.1` now starts from this context:
 - UI-01 through UI-03 shipped in `v1.0`, covering the standalone Angular app, security-management UI, and route or error or auth handling.
 - UMGT-01 through UMGT-03 validated in Phase 8: User Management Delivery, covering browse or search, full admin CRUD, inline authority assignment, and downstream access effects from saved authority changes.
 - PH83-01 through PH83-05 validated in Phase 08.3, covering standalone registration, live-authority refresh, typed secured flow, explicit JSON validation, and complete row-policy retirement.
+- UI-05, PERF-01, PERF-02, PERF-03 validated in Phase 9, covering entity list signal migration, skeleton loaders, responsive columns, request-scoped permission caching, and lazy loading.
 
 ### Active
 
-- [ ] UI-05: Improve consistency, responsiveness, and master-detail workflows.
-- [ ] PERF-01 through PERF-03 and TEST-01 through TEST-03: Optimize frontend loading or data access and add reliable automated coverage for the new admin experience.
+- [ ] TEST-01 through TEST-03: Add reliable automated coverage for the new admin experience.
 
 ### Out of Scope
 
