@@ -1,37 +1,37 @@
-<form [formGroup]="form" (ngSubmit)="save()" class="space-y-4">
+<form [formGroup]="form" (ngSubmit)="save()" class="edit-form">
   @if (errorMessage) {
-    <div class="mb-4">
+    <div>
       <p-message severity="error" [text]="errorMessage"></p-message>
     </div>
   }
 
-  <div class="field">
-    <label for="code" class="font-bold block mb-2">Mã dự án</label>
-    <input
-      pInputText
-      id="code"
-      type="text"
-      formControlName="code"
-      [disabled]="true"
-      class="w-full"
-    />
-  </div>
-
-  <div class="field">
-    <label for="name" class="font-bold block mb-2">Tên dự án *</label>
-    <input
-      pInputText
-      id="name"
-      type="text"
-      formControlName="name"
-      class="w-full"
-      placeholder="Nhập tên dự án"
-    />
-  </div>
-
-  <div class="grid grid-cols-2 gap-4">
+  <div class="field-grid-2">
     <div class="field">
-      <label for="type" class="font-bold block mb-2">Loại phim *</label>
+      <label for="code">Mã dự án</label>
+      <input
+        pInputText
+        id="code"
+        type="text"
+        formControlName="code"
+        [disabled]="true"
+      />
+    </div>
+
+    <div class="field">
+      <label for="name">Tên dự án *</label>
+      <input
+        pInputText
+        id="name"
+        type="text"
+        formControlName="name"
+        placeholder="Nhập tên dự án"
+      />
+    </div>
+  </div>
+
+  <div class="field-grid-2">
+    <div class="field">
+      <label for="type">Loại phim *</label>
       <p-select
         id="type"
         formControlName="type"
@@ -39,12 +39,11 @@
         optionLabel="label"
         optionValue="value"
         placeholder="Chọn loại phim"
-        class="w-full"
       ></p-select>
     </div>
 
     <div class="field">
-      <label for="category" class="font-bold block mb-2">Phân loại *</label>
+      <label for="category">Phân loại *</label>
       <p-select
         id="category"
         formControlName="category"
@@ -52,96 +51,92 @@
         optionLabel="label"
         optionValue="value"
         placeholder="Chọn phân loại"
-        class="w-full"
       ></p-select>
     </div>
   </div>
 
-  <div class="field">
-    <label for="genre" class="font-bold block mb-2">Thể loại</label>
-    <p-select
-      id="genre"
-      formControlName="genre"
-      [options]="genreOptions"
-      optionLabel="label"
-      optionValue="value"
-      placeholder="Chọn thể loại"
-      class="w-full"
-    ></p-select>
-  </div>
-
-  <div class="grid grid-cols-3 gap-4">
+  <div class="field-grid-3">
     <div class="field">
-      <label for="productionYear" class="font-bold block mb-2">Năm sản xuất *</label>
+      <label for="genre">Thể loại</label>
+      <p-select
+        id="genre"
+        formControlName="genre"
+        [options]="genreOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Chọn thể loại"
+      ></p-select>
+    </div>
+
+    <div class="field">
+      <label for="productionYear">Năm sản xuất *</label>
       <input
         pInputText
         id="productionYear"
         type="number"
         formControlName="productionYear"
-        class="w-full"
-        placeholder="Năm sản xuất"
+        placeholder="Năm"
       />
     </div>
 
     <div class="field">
-      <label for="startDate" class="font-bold block mb-2">Ngày bắt đầu</label>
+      <label for="status">Trạng thái *</label>
+      <p-select
+        id="status"
+        formControlName="status"
+        [options]="statusOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Chọn trạng thái"
+      ></p-select>
+    </div>
+  </div>
+
+  <div class="field-grid-2">
+    <div class="field">
+      <label for="startDate">Ngày bắt đầu</label>
       <p-datepicker
         id="startDate"
         formControlName="startDate"
         [showIcon]="true"
         dateFormat="dd/mm/yy"
-        class="w-full"
       ></p-datepicker>
     </div>
 
     <div class="field">
-      <label for="endDate" class="font-bold block mb-2">Ngày kết thúc</label>
+      <label for="endDate">Ngày kết thúc</label>
       <p-datepicker
         id="endDate"
         formControlName="endDate"
         [showIcon]="true"
         dateFormat="dd/mm/yy"
-        class="w-full"
       ></p-datepicker>
     </div>
   </div>
 
   <div class="field">
-    <label for="status" class="font-bold block mb-2">Trạng thái *</label>
-    <p-select
-      id="status"
-      formControlName="status"
-      [options]="statusOptions"
-      optionLabel="label"
-      optionValue="value"
-      placeholder="Chọn trạng thái"
-      class="w-full"
-    ></p-select>
-  </div>
-
-  <div class="field">
-    <label for="summary" class="font-bold block mb-2">Tóm tắt</label>
+    <label for="summary">Tóm tắt</label>
     <textarea
       pInputTextarea
       id="summary"
       formControlName="summary"
-      class="w-full"
-      rows="4"
+      rows="2"
       placeholder="Nhập tóm tắt dự án"
     ></textarea>
   </div>
 
-  <div class="flex gap-2">
+  <div class="form-actions">
     <p-button
       type="submit"
       label="Cập nhật"
+      icon="pi pi-check"
       [loading]="isSaving"
       [disabled]="isSaving"
-      severity="success"
     ></p-button>
     <p-button
       type="button"
       label="Hủy"
+      icon="pi pi-times"
       severity="secondary"
       (onClick)="cancel()"
       [disabled]="isSaving"

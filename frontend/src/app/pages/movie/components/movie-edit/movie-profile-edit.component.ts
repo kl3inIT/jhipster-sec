@@ -31,6 +31,7 @@ import {
     TextareaModule,
   ],
   templateUrl: './movie-profile-edit.component.html',
+  styleUrls: ['./movie-profile-edit.component.scss'],
 })
 export default class MovieProfileEditComponent implements OnInit {
   @Input() profile: IMovieProfile | null = null;

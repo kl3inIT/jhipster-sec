@@ -34,6 +34,7 @@ import {
     TextareaModule,
   ],
   templateUrl: './movie-profile-create.component.html',
+  styleUrls: ['./movie-profile-create.component.scss'],
 })
 export default class MovieProfileCreateComponent implements OnInit {
   @Output() onCreated = new EventEmitter<void>();

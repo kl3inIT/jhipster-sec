@@ -1,110 +1,107 @@
 <form [formGroup]="form" (ngSubmit)="save()" class="create-form">
-
   <!-- Error banner -->
   @if (errorMessage) {
-  <p-message severity="error" [text]="errorMessage" styleClass="w-full mb-4" />
+    <p-message severity="error" [text]="errorMessage" styleClass="w-full mb-2"></p-message>
   }
 
   <div class="form-grid">
-    <!-- Tên phim -->
+    <!-- Row 1: Tên phim + Loại phim -->
     <div class="field">
       <label for="name" class="field-label required">Tên phim</label>
-      <input id="name" pInputText formControlName="name" placeholder="Nhập tên phim" class="w-full"
+      <input id="name" pInputText formControlName="name" placeholder="Nhập tên phim"
         [class.ng-invalid]="isInvalid('name')" [class.ng-dirty]="isInvalid('name')" />
       @if (isInvalid('name')) {
-      <small class="field-error">Tên phim là bắt buộc và không được chỉ chứa khoảng trắng.</small>
+        <small class="field-error">Tên phim là bắt buộc</small>
       }
     </div>
 
-    <!-- Loại phim -->
     <div class="field">
       <label for="type" class="field-label required">Loại phim</label>
       <p-select id="type" formControlName="type" [options]="typeOptions" optionLabel="label" optionValue="value"
-        placeholder="-- Chọn --" styleClass="w-full" [class.ng-invalid]="isInvalid('type')" />
+        placeholder="-- Chọn --" [class.ng-invalid]="isInvalid('type')" />
       @if (isInvalid('type')) {
-      <small class="field-error">Loại phim là bắt buộc.</small>
+        <small class="field-error">Loại phim là bắt buộc</small>
       }
     </div>
 
-    <!-- Phân loại -->
+    <!-- Row 2: Phân loại + Thể loại -->
     <div class="field">
       <label for="category" class="field-label required">Phân loại</label>
       <p-select id="category" formControlName="category" [options]="categoryOptions" optionLabel="label"
-        optionValue="value" placeholder="-- Chọn --" styleClass="w-full" [class.ng-invalid]="isInvalid('category')" />
+        optionValue="value" placeholder="-- Chọn --" [class.ng-invalid]="isInvalid('category')" />
       @if (isInvalid('category')) {
-      <small class="field-error">Phân loại là bắt buộc.</small>
+        <small class="field-error">Phân loại là bắt buộc</small>
       }
     </div>
 
-    <!-- Thể loại -->
     <div class="field">
       <label for="genre" class="field-label">Thể loại</label>
       <p-select id="genre" formControlName="genre" [options]="genreOptions" optionLabel="label" optionValue="value"
-        placeholder="-- Chọn --" styleClass="w-full" />
+        placeholder="-- Chọn --" />
     </div>
 
-    <!-- Năm sản xuất -->
+    <!-- Row 3: Năm sản xuất + Trạng thái -->
     <div class="field">
       <label for="productionYear" class="field-label required">Năm sản xuất</label>
       <input id="productionYear" pInputText type="number" formControlName="productionYear" placeholder="2026"
-        class="w-full" [class.ng-invalid]="isInvalid('productionYear')"
-        [class.ng-dirty]="isInvalid('productionYear')" />
+        [class.ng-invalid]="isInvalid('productionYear')" [class.ng-dirty]="isInvalid('productionYear')" />
       @if (isInvalid('productionYear')) {
-      <small class="field-error">Năm sản xuất là bắt buộc.</small>
+        <small class="field-error">Năm sản xuất là bắt buộc</small>
       }
     </div>
 
-    <!-- Trạng thái -->
     <div class="field">
       <label for="status" class="field-label">Trạng thái</label>
       <p-select id="status" formControlName="status" [options]="statusOptions" optionLabel="label" optionValue="value"
-        placeholder="Nháp" styleClass="w-full" [class.ng-invalid]="isInvalid('status')" />
+        placeholder="Nháp" />
     </div>
 
-    <!-- Ngày bắt đầu -->
+    <!-- Row 4: Ngày bắt đầu + Ngày kết thúc -->
     <div class="field">
       <label for="startDate" class="field-label">Ngày bắt đầu</label>
       <p-datepicker id="startDate" formControlName="startDate" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"
-        [showIcon]="true" styleClass="w-full" />
+        [showIcon]="true" />
     </div>
 
-    <!-- Ngày kết thúc -->
     <div class="field">
       <label for="endDate" class="field-label">Ngày kết thúc</label>
       <p-datepicker id="endDate" formControlName="endDate" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"
-        [showIcon]="true" styleClass="w-full" />
+        [showIcon]="true" />
       @if (isDateRangeInvalid()) {
-      <small class="field-error">Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.</small>
+        <small class="field-error">Ngày kết thúc phải >= ngày bắt đầu</small>
       }
     </div>
 
-    <!-- Định hướng đề tài -->
+    <!-- Row 5: Định hướng đề tài (full width) -->
     <div class="field field-full">
       <label for="themeOrientation" class="field-label">Định hướng đề tài</label>
-      <textarea id="themeOrientation" pTextarea formControlName="themeOrientation" rows="3" class="w-full"></textarea>
+      <textarea id="themeOrientation" pTextarea formControlName="themeOrientation" rows="2" placeholder="Nhập định hướng đề tài"></textarea>
     </div>
 
-    <!-- Tóm tắt nội dung -->
+    <!-- Row 6: Tóm tắt nội dung (full width) -->
     <div class="field field-full">
       <label for="summary" class="field-label">Tóm tắt nội dung</label>
-      <textarea id="summary" pTextarea formControlName="summary" rows="10" class="w-full"></textarea>
+      <textarea id="summary" pTextarea formControlName="summary" rows="3" placeholder="Nhập tóm tắt nội dung"></textarea>
     </div>
 
+    <!-- Row 7: Tổ ekip sản xuất (collapsible section) -->
     <div class="field field-full" formArrayName="ekipMembers">
-      <div class="flex align-items-center justify-content-between mb-2">
-        <label class="field-label m-0">Tổ ekip sản xuất</label>
-        <button pButton type="button" icon="pi pi-plus" label="Thêm thành viên" class="p-button-sm p-button-text"
+      <div class="ekip-header">
+        <label class="field-label">Tổ ekip sản xuất</label>
+        <button pButton type="button" icon="pi pi-plus" class="p-button-text p-button-sm"
           (click)="addEkipMember()"></button>
       </div>
 
-      @for (member of ekipMembers.controls; track $index) {
-      <div [formGroupName]="$index" class="ekip-row">
-        <input pInputText formControlName="ekipName" placeholder="Tên thành viên ekip" class="w-full" />
-        <p-select formControlName="role" [options]="productionRoleOptions" optionLabel="label" optionValue="value"
-          placeholder="Vai trò" styleClass="w-full" />
-        <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm"
-          (click)="removeEkipMember($index)"></button>
-      </div>
+      @if (ekipMembers.length > 0) {
+        @for (member of ekipMembers.controls; track $index) {
+          <div [formGroupName]="$index" class="ekip-row">
+            <input pInputText formControlName="ekipName" placeholder="Tên thành viên" />
+            <p-select formControlName="role" [options]="productionRoleOptions" optionLabel="label" optionValue="value"
+              placeholder="Vai trò" />
+            <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm"
+              (click)="removeEkipMember($index)"></button>
+          </div>
+        }
       }
     </div>
   </div>
@@ -113,76 +110,7 @@
   <div class="form-actions">
     <button pButton type="button" label="Hủy" class="p-button-outlined" icon="pi pi-times" (click)="cancel()"
       [disabled]="isSaving"></button>
-
-    <button
-      pButton
-      type="submit"
-      label="Lưu hồ sơ"
-      icon="pi pi-check"
-      [loading]="isSaving"
-      [disabled]="isSaving || form.invalid"
-      [class.save-disabled]="!isSaving && form.invalid"
-    ></button>
+    <button pButton type="submit" label="Lưu hồ sơ" icon="pi pi-check" [loading]="isSaving"
+      [disabled]="isSaving || form.invalid"></button>
   </div>
-
 </form>
-
-<style>
-  .create-form {
-    padding: 0.5rem 0;
-  }
-
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem 1.5rem;
-  }
-
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-  }
-
-  .field-full {
-    grid-column: 1 / -1;
-  }
-
-  .field-label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--text-color);
-  }
-
-  .field-label.required::after {
-    content: ' *';
-    color: var(--red-500);
-  }
-
-  .field-error {
-    color: var(--red-500);
-    font-size: 0.75rem;
-  }
-
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-    margin-top: 1.75rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--surface-border);
-  }
-
-  .save-disabled {
-    opacity: 0.45;
-    pointer-events: none;
-  }
-
-  .ekip-row {
-    display: grid;
-    grid-template-columns: 1fr 240px auto;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
-    align-items: center;
-  }
-</style>

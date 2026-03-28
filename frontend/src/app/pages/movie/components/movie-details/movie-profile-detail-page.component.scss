@@ -1,19 +1,69 @@
 .film-profile-page {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
   min-height: 100%;
-  background-color: var(--surface-card);
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--surface-50) 0%, var(--surface-card) 100%);
 }
 
 .detail-route .page-title {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.25rem;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--surface-border);
+}
+
+.detail-route .page-title h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-color);
 }
 
 .back-btn {
-  margin: 0 0 0.25rem -0.5rem;
-  padding-left: 0.25rem;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.back-btn :deep(.p-button-label) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.back-btn:hover {
+  background-color: var(--surface-ground);
+}
+
+@media (max-width: 768px) {
+  .film-profile-page {
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+
+  .detail-route .page-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .detail-route .page-title h1 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .film-profile-page {
+    gap: 1rem;
+    padding: 0.75rem;
+  }
+
+  .detail-route .page-title h1 {
+    font-size: 1.25rem;
+  }
 }
