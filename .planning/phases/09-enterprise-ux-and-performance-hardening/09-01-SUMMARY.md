@@ -46,7 +46,7 @@ patterns-established:
   - "Request-scoped snapshot: build once per request, answer all subsequent checks from in-memory matrix"
   - "Static isRequestScopeActive() guard on RequestContextHolder for safe non-web degradation"
 
-requirements-completed: [PERF-01]
+requirements-completed: [PERF-01, PERF-02]
 
 duration: 7min
 completed: 2026-03-28
