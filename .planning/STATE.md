@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: "Phase 09 shipped — PR #12"
-stopped_at: Completed 09-03-PLAN.md
-last_updated: "2026-03-28T08:38:51.164Z"
-last_activity: 2026-03-28
+stopped_at: Completed quick/260330-eke-SUMMARY.md
+last_updated: "2026-03-30T08:26:49.104Z"
+last_activity: "2026-03-30 - Completed quick task 260330-eke: fix backend permission evaluation entity wildcard and edit-implies-view"
 progress:
-  total_phases: 9
+  total_phases: 8
   completed_phases: 8
   total_plans: 33
   completed_plans: 33
