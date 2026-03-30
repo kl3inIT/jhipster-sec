@@ -120,10 +120,11 @@ Recent decisions affecting current work:
 | 260328-f1a | fix duplicate register text on login page | 2026-03-28 | pending | [260328-f1a-fix-duplicate-register-text-on-login-pag](./quick/260328-f1a-fix-duplicate-register-text-on-login-pag/) |
 | 260330-e78 | Fix permission matrix: modify-implies-view and entity wildcard row | 2026-03-30 | 7c2a0d4 | [260330-e78-fix-permission-matrix-attribute-logic-li](./quick/260330-e78-fix-permission-matrix-attribute-logic-li/) |
 | 260330-eke | fix backend permission evaluation: entity wildcard (*) and edit-implies-view attribute cascade | 2026-03-30 | eec037e | [260330-eke-fix-backend-permission-evaluation-entity](./quick/260330-eke-fix-backend-permission-evaluation-entity/) |
+| 260330-l8t | Wildcard permission cleanup and mutual exclusivity: normalizeOutgoing on duplicate path, wildcard * IT coverage | 2026-03-30 | 511e4d3 | [260330-l8t-wildcard-permission-cleanup-and-mutual-e](./quick/260330-l8t-wildcard-permission-cleanup-and-mutual-e/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-30 - Completed quick task 260330-eke: fix backend permission evaluation entity wildcard and edit-implies-view
-Last session: 2026-03-30T03:13:29.000Z
-Stopped at: Completed quick/260330-eke-SUMMARY.md
+Last activity: 2026-03-30 - Completed quick task 260330-l8t: wildcard permission cleanup and normalizeOutgoing fix
+Last session: 2026-03-30T08:45:00.000Z
+Stopped at: Completed quick/260330-l8t-SUMMARY.md
 Resume file: None
