@@ -32,6 +32,9 @@ class RolePermissionServiceDbImplTest {
     @Mock
     private MergedSecurityService mergedSecurityService;
 
+    @Mock
+    private RequestPermissionSnapshot requestPermissionSnapshot;
+
     @InjectMocks
     private RolePermissionServiceDbImpl service;
 
