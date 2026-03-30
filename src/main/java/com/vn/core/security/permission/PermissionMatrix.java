@@ -7,13 +7,22 @@ import java.util.Set;
 
 /**
  * Immutable in-memory permission matrix built from a single bulk query.
- * Empty match sets deny access; any matching ALLOW grants access.
- * Attribute checks also honor wildcard ENTITY.* ALLOW rows.
+ *
+ * <p>Default-deny + union-of-ALLOW semantics: access is granted only when at least one matching
+ * ALLOW key is present. Supports two Jmix-style cascades:
+ * <ul>
+ *   <li><b>Entity wildcard</b>: {@code ENTITY:*:action} grants the action on every entity.</li>
+ *   <li><b>Edit-implies-view</b>: {@code ATTRIBUTE:target:EDIT} (or its wildcard) implicitly
+ *       grants VIEW on the same attribute.</li>
+ * </ul>
  */
 public class PermissionMatrix {
 
     /** Shared empty instance for unauthenticated or no-permission cases. */
     public static final PermissionMatrix EMPTY = new PermissionMatrix(List.of());
+
+    private static final String ENTITY = TargetType.ENTITY.name();
+    private static final String ATTRIBUTE = TargetType.ATTRIBUTE.name();
 
     private final Set<String> allowedKeys;
 
@@ -30,20 +39,38 @@ public class PermissionMatrix {
 
     /**
      * Returns true if the current user has ALLOW for the given entity target and action.
+     * Also checks entity-level wildcard {@code *} that grants the action on all entities.
      */
     public boolean isEntityPermitted(String target, String action) {
-        String key = TargetType.ENTITY.name() + ":" + target + ":" + action;
-        return allowedKeys.contains(key);
+        String key = ENTITY + ":" + target + ":" + action;
+        String wildcardKey = ENTITY + ":*:" + action;
+        return allowedKeys.contains(key) || allowedKeys.contains(wildcardKey);
     }
 
     /**
      * Returns true if the current user has ALLOW for the given attribute target and action.
-     * Also checks wildcard ENTITY.* ALLOW rows.
+     *
+     * <p>Checks (in order):
+     * <ol>
+     *   <li>Direct match on the specific attribute + action.</li>
+     *   <li>Attribute wildcard {@code ENTITY.*} for the same action.</li>
+     *   <li>Edit-implies-view: if {@code action} is {@code VIEW}, also checks EDIT on the same
+     *       targets (direct and wildcard), because modify permission subsumes read permission.</li>
+     * </ol>
      */
     public boolean isAttributePermitted(String attrTarget, String action) {
-        String key = TargetType.ATTRIBUTE.name() + ":" + attrTarget + ":" + action;
+        String key = ATTRIBUTE + ":" + attrTarget + ":" + action;
         String entityPart = attrTarget.split("\\.")[0];
-        String wildcardKey = TargetType.ATTRIBUTE.name() + ":" + entityPart + ".*:" + action;
-        return allowedKeys.contains(key) || allowedKeys.contains(wildcardKey);
+        String wildcardKey = ATTRIBUTE + ":" + entityPart + ".*:" + action;
+        if (allowedKeys.contains(key) || allowedKeys.contains(wildcardKey)) {
+            return true;
+        }
+        // Edit-implies-view: VIEW is implicitly granted when EDIT is granted.
+        if ("VIEW".equals(action)) {
+            String editKey = ATTRIBUTE + ":" + attrTarget + ":EDIT";
+            String editWildcardKey = ATTRIBUTE + ":" + entityPart + ".*:EDIT";
+            return allowedKeys.contains(editKey) || allowedKeys.contains(editWildcardKey);
+        }
+        return false;
     }
 }

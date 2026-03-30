@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for {@link PermissionMatrix} verifying key construction, ALLOW/DENY semantics,
- * entity vs. attribute dispatch, and wildcard attribute resolution.
+ * entity vs. attribute dispatch, wildcard resolution, entity wildcard (*), and edit-implies-view.
  */
 class PermissionMatrixTest {
 
@@ -145,6 +145,64 @@ class PermissionMatrixTest {
         PermissionMatrix matrix = new PermissionMatrix(List.of(attributeAllow("ORDER.AMOUNT", "VIEW")));
 
         assertThat(matrix.isEntityPermitted("ORDER", "READ")).isFalse();
+    }
+
+    // --- Entity wildcard * ---
+
+    @Test
+    void entityWildcardAllowGrantsAnyEntity() {
+        PermissionMatrix matrix = new PermissionMatrix(List.of(entityAllow("*", "READ")));
+
+        assertThat(matrix.isEntityPermitted("ORDER", "READ")).isTrue();
+        assertThat(matrix.isEntityPermitted("INVOICE", "READ")).isTrue();
+    }
+
+    @Test
+    void entityWildcardAllowDoesNotGrantDifferentAction() {
+        PermissionMatrix matrix = new PermissionMatrix(List.of(entityAllow("*", "READ")));
+
+        assertThat(matrix.isEntityPermitted("ORDER", "DELETE")).isFalse();
+    }
+
+    @Test
+    void specificEntityAllowPlusWildcardBothWork() {
+        PermissionMatrix matrix = new PermissionMatrix(List.of(entityAllow("*", "READ"), entityAllow("ORDER", "DELETE")));
+
+        assertThat(matrix.isEntityPermitted("INVOICE", "READ")).isTrue();
+        assertThat(matrix.isEntityPermitted("ORDER", "DELETE")).isTrue();
+        assertThat(matrix.isEntityPermitted("INVOICE", "DELETE")).isFalse();
+    }
+
+    // --- Edit-implies-view ---
+
+    @Test
+    void editAllowImpliesViewForSameAttribute() {
+        PermissionMatrix matrix = new PermissionMatrix(List.of(attributeAllow("ORDER.AMOUNT", "EDIT")));
+
+        assertThat(matrix.isAttributePermitted("ORDER.AMOUNT", "VIEW")).isTrue();
+        assertThat(matrix.isAttributePermitted("ORDER.AMOUNT", "EDIT")).isTrue();
+    }
+
+    @Test
+    void wildcardEditAllowImpliesViewForAllAttributes() {
+        PermissionMatrix matrix = new PermissionMatrix(List.of(attributeAllow("ORDER.*", "EDIT")));
+
+        assertThat(matrix.isAttributePermitted("ORDER.AMOUNT", "VIEW")).isTrue();
+        assertThat(matrix.isAttributePermitted("ORDER.STATUS", "VIEW")).isTrue();
+    }
+
+    @Test
+    void editImpliesViewDoesNotCrossEntityBoundary() {
+        PermissionMatrix matrix = new PermissionMatrix(List.of(attributeAllow("ORDER.*", "EDIT")));
+
+        assertThat(matrix.isAttributePermitted("INVOICE.TOTAL", "VIEW")).isFalse();
+    }
+
+    @Test
+    void viewOnlyDoesNotGrantEdit() {
+        PermissionMatrix matrix = new PermissionMatrix(List.of(attributeAllow("ORDER.AMOUNT", "VIEW")));
+
+        assertThat(matrix.isAttributePermitted("ORDER.AMOUNT", "EDIT")).isFalse();
     }
 
     // --- Multiple permissions ---
