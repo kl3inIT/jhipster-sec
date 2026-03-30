@@ -137,9 +137,9 @@ describe('AppMenu', () => {
     const component = fixture.componentInstance;
     fixture.detectChanges();
 
-    expect(component.model.map(item => item.id)).toEqual(['home', 'entities']);
-    expect(component.model.find(item => item.id === 'security')).toBeUndefined();
-    expect(component.model.find(item => item.id === 'entities')?.items?.map(item => item.id)).toEqual([
+    expect(component.model().map(item => item.id)).toEqual(['home', 'entities']);
+    expect(component.model().find(item => item.id === 'security')).toBeUndefined();
+    expect(component.model().find(item => item.id === 'entities')?.items?.map(item => item.id)).toEqual([
       'entities.organization',
       'entities.department',
       'entities.employee',
@@ -160,11 +160,11 @@ describe('AppMenu', () => {
     const component = fixture.componentInstance;
     fixture.detectChanges();
 
-    expect(component.model.find(item => item.id === 'entities')?.items?.map(item => item.id)).toEqual([
+    expect(component.model().find(item => item.id === 'entities')?.items?.map(item => item.id)).toEqual([
       'entities.department',
       'entities.employee',
     ]);
-    expect(component.model.find(item => item.id === 'entities')?.items?.some(item => item.id === 'entities.organization')).toBe(false);
+    expect(component.model().find(item => item.id === 'entities')?.items?.some(item => item.id === 'entities.organization')).toBe(false);
   });
 
   it('tracks stable path ids from navigation metadata', () => {
@@ -173,9 +173,9 @@ describe('AppMenu', () => {
     const component = fixture.componentInstance;
     fixture.detectChanges();
 
-    expect(component.model.find(item => item.id === 'home')?.['path']).toBe('home');
-    expect(component.model.find(item => item.id === 'entities')?.['path']).toBe('entities');
-    expect(component.model.find(item => item.id === 'security')?.items?.[0]?.['path']).toBe('security.users');
+    expect(component.model().find(item => item.id === 'home')?.['path']).toBe('home');
+    expect(component.model().find(item => item.id === 'entities')?.['path']).toBe('entities');
+    expect(component.model().find(item => item.id === 'security')?.items?.[0]?.['path']).toBe('security.users');
   });
 
   it('refreshes menu labels after a language change', async () => {
@@ -185,8 +185,8 @@ describe('AppMenu', () => {
     await firstValueFrom(translateService.use('en'));
     fixture.detectChanges();
 
-    expect(component.model[0]?.label).toBe('Home');
-    const englishUserManagementItem = component.model.find(item => item.id === 'security')?.items?.find(item => item.id === 'security.users');
+    expect(component.model()[0]?.label).toBe('Home');
+    const englishUserManagementItem = component.model().find(item => item.id === 'security')?.items?.find(item => item.id === 'security.users');
 
     expect(englishUserManagementItem?.label).toBe('User management');
     expect(englishUserManagementItem?.id).toBe('security.users');
@@ -194,9 +194,9 @@ describe('AppMenu', () => {
     await firstValueFrom(translateService.use('vi'));
     fixture.detectChanges();
 
-    expect(component.model[0]?.label).toBe('Trang chu');
-    expect(component.model[1]?.label).toBe('Thuc the');
-    const vietnameseUserManagementItem = component.model.find(item => item.id === 'security')?.items?.find(item => item.id === 'security.users');
+    expect(component.model()[0]?.label).toBe('Trang chu');
+    expect(component.model()[1]?.label).toBe('Thuc the');
+    const vietnameseUserManagementItem = component.model().find(item => item.id === 'security')?.items?.find(item => item.id === 'security.users');
 
     expect(vietnameseUserManagementItem?.label).toBe('Quan ly tai khoan');
     expect(vietnameseUserManagementItem?.id).toBe('security.users');

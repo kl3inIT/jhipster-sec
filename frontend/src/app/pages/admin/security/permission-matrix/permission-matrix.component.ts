@@ -449,6 +449,44 @@ export default class PermissionMatrixComponent implements OnInit {
     );
   }
 
+  /**
+   * Returns true when EDIT is effectively granted for the given attribute target, either explicitly
+   * or via the entity-level wildcard (entityCode.*:EDIT). This mirrors Jmix behaviour where modify
+   * access inherently implies view access.
+   */
+  isViewImpliedByModify(target: string, entityCode: string): boolean {
+    return this.isAttributeEffectivelyGranted(target, 'EDIT', entityCode);
+  }
+
+  /**
+   * Returns true when the entity-level wildcard (`*`) is effectively granted for the given action.
+   */
+  isEntityWildcardEffectivelyGranted(action: string): boolean {
+    return this.isEffectivelyGranted('*', action);
+  }
+
+  /**
+   * Returns true when either the specific entity or the entity-level wildcard (`*`) is effectively
+   * granted for the given action.
+   */
+  isEntityEffectivelyGranted(entityCode: string, action: string): boolean {
+    return this.isEffectivelyGranted(entityCode, action) || this.isEntityWildcardEffectivelyGranted(action);
+  }
+
+  /**
+   * Returns the catalog entries list prepended with a synthetic wildcard entry representing
+   * "grant this action for ALL entities". The wildcard entry has code `*`.
+   */
+  get catalogEntriesWithWildcard(): ISecCatalogEntry[] {
+    const wildcardEntry: ISecCatalogEntry = {
+      code: '*',
+      displayName: this.translateService.instant('security.permissionMatrix.entity.wildcard'),
+      operations: ['CREATE', 'READ', 'UPDATE', 'DELETE'],
+      attributes: [],
+    };
+    return [wildcardEntry, ...this.catalogEntries];
+  }
+
   isPendingChange(target: string, action: string): boolean {
     return this.pendingChanges.has(this.permissionKey(target, action));
   }

@@ -67,7 +67,7 @@
               {{ 'security.permissionMatrix.entity.heading' | translate }}
             </h2>
 
-            <p-table [value]="catalogEntries" dataKey="code" [scrollable]="true">
+            <p-table [value]="catalogEntriesWithWildcard" dataKey="code" [scrollable]="true">
               <ng-template pTemplate="header">
                 <tr>
                   <th>{{ 'security.permissionMatrix.entity.name' | translate }}</th>
@@ -88,9 +88,11 @@
 
               <ng-template pTemplate="body" let-entry>
                 <tr
-                  (click)="onEntitySelect(entry)"
-                  style="cursor: pointer"
+                  (click)="entry.code !== '*' && onEntitySelect(entry)"
+                  [style.cursor]="entry.code !== '*' ? 'pointer' : 'default'"
                   [class.surface-100]="selectedEntity?.code === entry.code"
+                  [class.font-semibold]="entry.code === '*'"
+                  [class.surface-50]="entry.code === '*'"
                 >
                   <td>{{ entry.displayName }}</td>
                   <td class="text-center">
@@ -103,8 +105,8 @@
                     >
                       <p-checkbox
                         [binary]="true"
-                        [ngModel]="isEffectivelyGranted(entry.code, 'CREATE')"
-                        [disabled]="saving"
+                        [ngModel]="isEntityEffectivelyGranted(entry.code, 'CREATE')"
+                        [disabled]="saving || (entry.code !== '*' && isEntityWildcardEffectivelyGranted('CREATE'))"
                         (ngModelChange)="togglePermission('ENTITY', entry.code, 'CREATE', $event)"
                       />
                     </span>
@@ -119,8 +121,8 @@
                     >
                       <p-checkbox
                         [binary]="true"
-                        [ngModel]="isEffectivelyGranted(entry.code, 'READ')"
-                        [disabled]="saving"
+                        [ngModel]="isEntityEffectivelyGranted(entry.code, 'READ')"
+                        [disabled]="saving || (entry.code !== '*' && isEntityWildcardEffectivelyGranted('READ'))"
                         (ngModelChange)="togglePermission('ENTITY', entry.code, 'READ', $event)"
                       />
                     </span>
@@ -135,8 +137,8 @@
                     >
                       <p-checkbox
                         [binary]="true"
-                        [ngModel]="isEffectivelyGranted(entry.code, 'UPDATE')"
-                        [disabled]="saving"
+                        [ngModel]="isEntityEffectivelyGranted(entry.code, 'UPDATE')"
+                        [disabled]="saving || (entry.code !== '*' && isEntityWildcardEffectivelyGranted('UPDATE'))"
                         (ngModelChange)="togglePermission('ENTITY', entry.code, 'UPDATE', $event)"
                       />
                     </span>
@@ -151,8 +153,8 @@
                     >
                       <p-checkbox
                         [binary]="true"
-                        [ngModel]="isEffectivelyGranted(entry.code, 'DELETE')"
-                        [disabled]="saving"
+                        [ngModel]="isEntityEffectivelyGranted(entry.code, 'DELETE')"
+                        [disabled]="saving || (entry.code !== '*' && isEntityWildcardEffectivelyGranted('DELETE'))"
                         (ngModelChange)="togglePermission('ENTITY', entry.code, 'DELETE', $event)"
                       />
                     </span>
@@ -216,10 +218,11 @@
                               row.target,
                               'VIEW',
                               selectedEntity!.code
-                            )
+                            ) || isViewImpliedByModify(row.target, selectedEntity!.code)
                           "
                           [disabled]="
                             saving ||
+                            isViewImpliedByModify(row.target, selectedEntity!.code) ||
                             (!row.isWildcard &&
                               isWildcardEffectivelyGranted(selectedEntity!.code, 'VIEW'))
                           "
