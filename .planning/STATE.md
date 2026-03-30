@@ -118,10 +118,11 @@ Recent decisions affecting current work:
 | 260327-usx | Convert menu permission appName from String to enum with schema migration | 2026-03-27 | pending | [260327-usx-ch-qu-n-l-quy-n-c-a-menu-i-c-i-appname-t](./quick/260327-usx-ch-qu-n-l-quy-n-c-a-menu-i-c-i-appname-t/) |
 | 260328-d4b | configure local mail catcher for dev registration | 2026-03-28 | pending | [260328-d4b-configure-local-mail-catcher-for-dev-reg](./quick/260328-d4b-configure-local-mail-catcher-for-dev-reg/) |
 | 260328-f1a | fix duplicate register text on login page | 2026-03-28 | pending | [260328-f1a-fix-duplicate-register-text-on-login-pag](./quick/260328-f1a-fix-duplicate-register-text-on-login-pag/) |
+| 260330-eke | fix backend permission evaluation entity — add PermissionMatrixTest and @Mock RequestPermissionSnapshot | 2026-03-30 | bbdbb40 | [260330-eke-fix-backend-permission-evaluation-entity](./quick/260330-eke-fix-backend-permission-evaluation-entity/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-28
-Last session: 2026-03-28T08:29:47.359Z
-Stopped at: Completed 09-03-PLAN.md
+Last activity: 2026-03-30
+Last session: 2026-03-30T03:37:20Z
+Stopped at: Completed 260330-eke quick task
 Resume file: None
