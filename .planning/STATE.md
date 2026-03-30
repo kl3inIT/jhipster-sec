@@ -82,6 +82,7 @@ Next: Phase 10 (frontend-reliability-and-regression-coverage)
 - Phase 08.1 inserted after Phase 8: Jmix-Style DataManager Core Alignment (URGENT) - aligned the internal data-access architecture with a Jmix-style `DataManager` / `UnconstrainedDataManager` split while preserving the `SecureDataManager` facade and brownfield contract.
 - Phase 08.2 inserted after Phase 08.1: Multi-App Menu Roles and Jmix-Style JSON Entity Controllers (URGENT) - restored secured `loadByQuery`, supported multi-app menu-role assignment, and moved protected entity boundaries to raw JSON with explicit `PATCH`.
 - Phase 08.3 inserted after Phase 08.2: User registration, live permission refresh, entity-native serialization, validation hardening, and row-policy removal - closes missing self-registration, removes stale authority snapshots, hardens the secured entity pipeline, and retires row policy before Phase 9.
+- Phase 10 replaced: original frontend reliability and regression coverage phase removed; replaced with performance benchmarking (JMeter/k6 load tests, secured vs standard pipeline) and OpenAPI documentation (Swagger annotations for variable response schemas and fetch-plan params).
 
 ### Decisions
 

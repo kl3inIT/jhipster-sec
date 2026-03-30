@@ -184,4 +184,13 @@ Plans:
 - [x] 09-01-PLAN.md — Backend permission caching with request-scoped snapshot bean (PERF-01, PERF-02)
 - [x] 09-02-PLAN.md — Frontend entity list hardening: pagination signals, skeleton loaders, responsive columns (PERF-03, UI-05)
 - [x] 09-03-PLAN.md — First-paint skeleton loader fix for department, employee, and organization entity lists
-
+
+### Phase 10: Performance benchmarking and OpenAPI documentation for the security pipeline — JMeter/k6 load tests comparing secured vs standard endpoints, and Swagger annotations for variable response schemas and fetch-plan params
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 9
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 10 to break down)
