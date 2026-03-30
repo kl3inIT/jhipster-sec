@@ -119,10 +119,11 @@ Recent decisions affecting current work:
 | 260328-d4b | configure local mail catcher for dev registration | 2026-03-28 | pending | [260328-d4b-configure-local-mail-catcher-for-dev-reg](./quick/260328-d4b-configure-local-mail-catcher-for-dev-reg/) |
 | 260328-f1a | fix duplicate register text on login page | 2026-03-28 | pending | [260328-f1a-fix-duplicate-register-text-on-login-pag](./quick/260328-f1a-fix-duplicate-register-text-on-login-pag/) |
 | 260330-e78 | Fix permission matrix: modify-implies-view and entity wildcard row | 2026-03-30 | 7c2a0d4 | [260330-e78-fix-permission-matrix-attribute-logic-li](./quick/260330-e78-fix-permission-matrix-attribute-logic-li/) |
+| 260330-eke | fix backend permission evaluation: entity wildcard (*) and edit-implies-view attribute cascade | 2026-03-30 | eec037e | [260330-eke-fix-backend-permission-evaluation-entity](./quick/260330-eke-fix-backend-permission-evaluation-entity/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-30 - Completed quick task 260330-e78: fix permission matrix attribute logic like jmix star wildcard and modify-implies-view
+Last activity: 2026-03-30 - Completed quick task 260330-eke: fix backend permission evaluation entity wildcard and edit-implies-view
 Last session: 2026-03-30T03:13:29.000Z
-Stopped at: Completed quick/260330-e78-SUMMARY.md
+Stopped at: Completed quick/260330-eke-SUMMARY.md
 Resume file: None

@@ -17,6 +17,10 @@ import org.springframework.stereotype.Component;
  * for the given attribute or its entity wildcard target, access is denied. Matching
  * ALLOW records union across authorities; DENY records do not override another
  * authority's ALLOW.
+ *
+ * <p>Edit-implies-view: VIEW access is implicitly granted whenever EDIT is effectively granted
+ * (directly or via {@code ENTITY.*} wildcard). This mirrors Jmix semantics where modify
+ * permission subsumes read permission.
  */
 @Component
 public class AttributePermissionEvaluatorImpl implements AttributePermissionEvaluator {
@@ -70,15 +74,29 @@ public class AttributePermissionEvaluatorImpl implements AttributePermissionEval
         String wildcardTarget = entityTarget + ".*";
         List<String> targets = List.of(specificTarget, wildcardTarget);
         List<SecPermission> perms = secPermissionRepository.findByRolesAndTargets(authorities, TargetType.ATTRIBUTE, targets, action);
-        if (perms.isEmpty()) {
-            LOG.debug("No attribute permission rows found for targets={} action={} - access denied", targets, action);
-            return false;
+        if (perms.stream().anyMatch(p -> "ALLOW".equals(p.getEffect()))) {
+            return true;
         }
 
-        boolean allowed = perms.stream().anyMatch(p -> "ALLOW".equals(p.getEffect()));
-        if (!allowed) {
-            LOG.debug("No ALLOW attribute permission found for targets={} action={} - access denied", targets, action);
+        // Edit-implies-view: if EDIT is granted (directly or via wildcard), VIEW is implicitly granted.
+        if ("VIEW".equals(action)) {
+            List<SecPermission> editPerms = secPermissionRepository.findByRolesAndTargets(
+                authorities,
+                TargetType.ATTRIBUTE,
+                targets,
+                "EDIT"
+            );
+            if (editPerms.stream().anyMatch(p -> "ALLOW".equals(p.getEffect()))) {
+                LOG.debug(
+                    "Edit-implies-view: EDIT ALLOW found for attribute {} on {} - VIEW granted",
+                    attribute,
+                    entityClass.getSimpleName()
+                );
+                return true;
+            }
         }
-        return allowed;
+
+        LOG.debug("No ALLOW attribute permission found for targets={} action={} - access denied", targets, action);
+        return false;
     }
 }
