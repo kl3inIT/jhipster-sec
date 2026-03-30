@@ -91,6 +91,36 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './permission-matrix.component.html',
+  styles: [
+    `
+      .selected-row {
+        outline: 2px solid var(--p-primary-color);
+        outline-offset: -2px;
+      }
+
+      .implied-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 0;
+        border-radius: 0.375rem;
+        background: var(--p-primary-500);
+        color: var(--p-primary-contrast-color, #fff);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .implied-icon:disabled {
+        opacity: 0.8;
+        cursor: not-allowed;
+      }
+
+      .implied-icon--readonly {
+        background: var(--p-surface-500);
+      }
+    `,
+  ],
 })
 export default class PermissionMatrixComponent implements OnInit {
   private readonly defaultMenuApp = 'jhipster-security-platform';
@@ -515,6 +545,41 @@ export default class PermissionMatrixComponent implements OnInit {
 
   isPendingChange(target: string, action: string): boolean {
     return this.pendingChanges.has(this.permissionKey(target, action));
+  }
+
+  /**
+   * Returns true when the permission is granted only because the wildcard covers it (not explicitly
+   * granted on its own). Used to render the Jmix-style dash icon on implied cells.
+   */
+  isImpliedByEntityWildcard(entityCode: string, action: string): boolean {
+    if (entityCode === '*') return false;
+    return this.isEntityWildcardEffectivelyGranted(action) && !this.isEffectivelyGranted(entityCode, action);
+  }
+
+  isImpliedByAttributeWildcard(target: string, action: string, entityCode: string): boolean {
+    if (target === `${entityCode}.*`) return false;
+    return this.isWildcardEffectivelyGranted(entityCode, action) && !this.isEffectivelyGranted(target, action);
+  }
+
+  /** True when any CRUD op is effectively granted for the entity row (for green row bg). */
+  isEntityRowGranted(entityCode: string): boolean {
+    if (entityCode === '*') {
+      return ['CREATE', 'READ', 'UPDATE', 'DELETE'].some((op) => this.isEffectivelyGranted('*', op));
+    }
+    return ['CREATE', 'READ', 'UPDATE', 'DELETE'].some((op) => this.isEntityEffectivelyGranted(entityCode, op));
+  }
+
+  /** True when VIEW or EDIT is effectively granted for the attribute row (for green row bg). */
+  isAttributeRowGranted(target: string, entityCode: string): boolean {
+    const viewGranted =
+      this.isAttributeEffectivelyGranted(target, 'VIEW', entityCode) ||
+      this.isViewImpliedByModify(target, entityCode);
+    const editGranted = this.isAttributeEffectivelyGranted(target, 'EDIT', entityCode);
+    return viewGranted || editGranted;
+  }
+
+  permissionRowColor(granted: boolean): string {
+    return granted ? 'rgba(34, 197, 94, 0.16)' : 'rgba(239, 68, 68, 0.16)';
   }
 
   private buildAttributeRows(entity: ISecCatalogEntry): AttributeRow[] {
