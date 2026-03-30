@@ -103,6 +103,7 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 - Plan or execute Phase 10 - frontend reliability and regression coverage.
+- Performance test backend security API vs standard JHipster API (JMeter/k6/Gatling benchmark comparing secured pipeline overhead).
 
 ### Blockers/Concerns
 
