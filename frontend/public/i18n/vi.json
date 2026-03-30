@@ -607,8 +607,7 @@
         "read": "Đọc",
         "update": "Cập nhật",
         "delete": "Xóa",
-        "emptySelection": "Hãy chọn một thực thể ở trên để xem quyền thuộc tính của nó.",
-        "wildcard": "Tất cả thực thể (*)"
+        "emptySelection": "Hãy chọn một thực thể ở trên để xem quyền thuộc tính của nó."
       },
       "attribute": {
         "heading": "Quyền thuộc tính: {{ entity }}",

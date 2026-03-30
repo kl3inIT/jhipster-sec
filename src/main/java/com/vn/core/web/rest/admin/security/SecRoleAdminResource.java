@@ -3,10 +3,12 @@ package com.vn.core.web.rest.admin.security;
 import com.vn.core.domain.Authority;
 import com.vn.core.domain.RoleType;
 import com.vn.core.repository.AuthorityRepository;
+import com.vn.core.repository.UserRepository;
 import com.vn.core.security.AuthoritiesConstants;
 import com.vn.core.security.repository.SecPermissionRepository;
 import com.vn.core.service.dto.security.SecRoleDTO;
 import com.vn.core.web.rest.errors.BadRequestAlertException;
+import com.vn.core.web.rest.errors.RoleInUseException;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -41,9 +43,16 @@ public class SecRoleAdminResource {
 
     private final SecPermissionRepository secPermissionRepository;
 
-    public SecRoleAdminResource(AuthorityRepository authorityRepository, SecPermissionRepository secPermissionRepository) {
+    private final UserRepository userRepository;
+
+    public SecRoleAdminResource(
+        AuthorityRepository authorityRepository,
+        SecPermissionRepository secPermissionRepository,
+        UserRepository userRepository
+    ) {
         this.authorityRepository = authorityRepository;
         this.secPermissionRepository = secPermissionRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -123,6 +132,10 @@ public class SecRoleAdminResource {
     @Transactional
     public ResponseEntity<Void> deleteRole(@PathVariable("name") String name) {
         LOG.debug("REST request to delete SecRole : {}", name);
+        long assignedUserCount = userRepository.countByAuthorityName(name);
+        if (assignedUserCount > 0) {
+            throw new RoleInUseException();
+        }
         secPermissionRepository.deleteByAuthorityName(name);
         authorityRepository.deleteById(name);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, name)).build();

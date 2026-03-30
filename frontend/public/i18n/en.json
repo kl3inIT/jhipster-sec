@@ -609,8 +609,7 @@
         "read": "Read",
         "update": "Update",
         "delete": "Delete",
-        "emptySelection": "Select an entity above to view its attribute permissions.",
-        "wildcard": "All entities (*)"
+        "emptySelection": "Select an entity above to view its attribute permissions."
       },
       "attribute": {
         "heading": "Attribute Permissions: {{ entity }}",
