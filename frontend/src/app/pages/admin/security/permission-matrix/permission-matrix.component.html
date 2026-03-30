@@ -106,7 +106,7 @@
                       <p-checkbox
                         [binary]="true"
                         [ngModel]="isEntityEffectivelyGranted(entry.code, 'CREATE')"
-                        [disabled]="saving || (entry.code !== '*' && isEntityWildcardEffectivelyGranted('CREATE'))"
+                        [disabled]="saving"
                         (ngModelChange)="togglePermission('ENTITY', entry.code, 'CREATE', $event)"
                       />
                     </span>
@@ -122,7 +122,7 @@
                       <p-checkbox
                         [binary]="true"
                         [ngModel]="isEntityEffectivelyGranted(entry.code, 'READ')"
-                        [disabled]="saving || (entry.code !== '*' && isEntityWildcardEffectivelyGranted('READ'))"
+                        [disabled]="saving"
                         (ngModelChange)="togglePermission('ENTITY', entry.code, 'READ', $event)"
                       />
                     </span>
@@ -138,7 +138,7 @@
                       <p-checkbox
                         [binary]="true"
                         [ngModel]="isEntityEffectivelyGranted(entry.code, 'UPDATE')"
-                        [disabled]="saving || (entry.code !== '*' && isEntityWildcardEffectivelyGranted('UPDATE'))"
+                        [disabled]="saving"
                         (ngModelChange)="togglePermission('ENTITY', entry.code, 'UPDATE', $event)"
                       />
                     </span>
@@ -154,7 +154,7 @@
                       <p-checkbox
                         [binary]="true"
                         [ngModel]="isEntityEffectivelyGranted(entry.code, 'DELETE')"
-                        [disabled]="saving || (entry.code !== '*' && isEntityWildcardEffectivelyGranted('DELETE'))"
+                        [disabled]="saving"
                         (ngModelChange)="togglePermission('ENTITY', entry.code, 'DELETE', $event)"
                       />
                     </span>
@@ -220,12 +220,7 @@
                               selectedEntity!.code
                             ) || isViewImpliedByModify(row.target, selectedEntity!.code)
                           "
-                          [disabled]="
-                            saving ||
-                            isViewImpliedByModify(row.target, selectedEntity!.code) ||
-                            (!row.isWildcard &&
-                              isWildcardEffectivelyGranted(selectedEntity!.code, 'VIEW'))
-                          "
+                          [disabled]="saving || isViewImpliedByModify(row.target, selectedEntity!.code)"
                           (ngModelChange)="
                             togglePermission('ATTRIBUTE', row.target, 'VIEW', $event)
                           "
@@ -249,11 +244,7 @@
                               selectedEntity!.code
                             )
                           "
-                          [disabled]="
-                            saving ||
-                            (!row.isWildcard &&
-                              isWildcardEffectivelyGranted(selectedEntity!.code, 'EDIT'))
-                          "
+                          [disabled]="saving"
                           (ngModelChange)="
                             togglePermission('ATTRIBUTE', row.target, 'EDIT', $event)
                           "

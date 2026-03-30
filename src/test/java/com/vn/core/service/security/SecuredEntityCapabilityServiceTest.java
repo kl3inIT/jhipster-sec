@@ -61,9 +61,7 @@ class SecuredEntityCapabilityServiceTest {
     @Test
     void returnsSortedCapabilitiesUsingUnionOfAllowForEntityAndWildcardAttributes() {
         when(mergedSecurityService.getCurrentUserAuthorityNames()).thenReturn(List.of("ROLE_USER", "ROLE_MANAGER"));
-        when(securedEntityCatalog.entries()).thenReturn(
-            List.of(entry(BetaEntity.class, "BETA"), entry(AlphaEntity.class, "ALPHA"))
-        );
+        when(securedEntityCatalog.entries()).thenReturn(List.of(entry(BetaEntity.class, "BETA"), entry(AlphaEntity.class, "ALPHA")));
         mockAttributes(AlphaEntity.class, "secret", "name");
         mockAttributes(BetaEntity.class, "title");
         when(secPermissionRepository.findAllByAuthorityNameIn(List.of("ROLE_USER", "ROLE_MANAGER"))).thenReturn(
@@ -90,8 +88,9 @@ class SecuredEntityCapabilityServiceTest {
         assertThat(alphaName.isCanView()).isTrue();
         assertThat(alphaName.isCanEdit()).isTrue();
 
+        // ALPHAENTITY.*:EDIT wildcard implies VIEW for all attributes, including "secret"
         SecuredAttributeCapabilityDTO alphaSecret = attributeByName(alpha, "secret");
-        assertThat(alphaSecret.isCanView()).isFalse();
+        assertThat(alphaSecret.isCanView()).isTrue();
         assertThat(alphaSecret.isCanEdit()).isTrue();
 
         SecuredEntityCapabilityDTO beta = capabilityByCode(result, "BETA");
@@ -133,12 +132,7 @@ class SecuredEntityCapabilityServiceTest {
     }
 
     private SecuredEntityEntry entry(Class<?> entityClass, String code) {
-        return SecuredEntityEntry
-            .builder()
-            .entityClass(entityClass)
-            .code(code)
-            .operations(EnumSet.allOf(EntityOp.class))
-            .build();
+        return SecuredEntityEntry.builder().entityClass(entityClass).code(code).operations(EnumSet.allOf(EntityOp.class)).build();
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -155,20 +149,24 @@ class SecuredEntityCapabilityServiceTest {
     }
 
     private SecPermission permission(String authorityName, TargetType targetType, String target, String action, String effect) {
-        return new SecPermission()
-            .authorityName(authorityName)
-            .targetType(targetType)
-            .target(target)
-            .action(action)
-            .effect(effect);
+        return new SecPermission().authorityName(authorityName).targetType(targetType).target(target).action(action).effect(effect);
     }
 
     private SecuredEntityCapabilityDTO capabilityByCode(List<SecuredEntityCapabilityDTO> capabilities, String code) {
-        return capabilities.stream().filter(capability -> code.equals(capability.getCode())).findFirst().orElseThrow();
+        return capabilities
+            .stream()
+            .filter(capability -> code.equals(capability.getCode()))
+            .findFirst()
+            .orElseThrow();
     }
 
     private SecuredAttributeCapabilityDTO attributeByName(SecuredEntityCapabilityDTO capability, String name) {
-        return capability.getAttributes().stream().filter(attribute -> name.equals(attribute.getName())).findFirst().orElseThrow();
+        return capability
+            .getAttributes()
+            .stream()
+            .filter(attribute -> name.equals(attribute.getName()))
+            .findFirst()
+            .orElseThrow();
     }
 
     static class AlphaEntity {
