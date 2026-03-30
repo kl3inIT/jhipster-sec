@@ -104,6 +104,7 @@ Recent decisions affecting current work:
 
 - Plan or execute Phase 10 - frontend reliability and regression coverage.
 - Performance test backend security API vs standard JHipster API (JMeter/k6/Gatling benchmark comparing secured pipeline overhead).
+- Configure Swagger OpenAPI docs for security-gated endpoints (variable response schemas, fetch-plan params, `@SecuredEntity` markers).
 
 ### Blockers/Concerns
 
