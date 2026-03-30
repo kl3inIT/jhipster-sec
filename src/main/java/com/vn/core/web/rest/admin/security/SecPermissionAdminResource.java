@@ -110,10 +110,12 @@ public class SecPermissionAdminResource {
             if (!duplicatesToDelete.isEmpty()) {
                 secPermissionRepository.deleteAll(duplicatesToDelete);
             }
+            deleteRedundantSpecificPermissions(normalizedDto);
             return ResponseEntity.ok(secPermissionUiContractService.normalizeOutgoing(secPermissionMapper.toDto(canonicalPermission)));
         }
         var entity = secPermissionMapper.toEntity(normalizedDto);
         entity = secPermissionRepository.save(entity);
+        deleteRedundantSpecificPermissions(normalizedDto);
         SecPermissionDTO result = secPermissionMapper.toDto(entity);
         return ResponseEntity.created(new URI("/api/admin/sec/permissions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -180,6 +182,28 @@ public class SecPermissionAdminResource {
         var entity = secPermissionMapper.toEntity(normalizedDto);
         entity = secPermissionRepository.save(entity);
         return ResponseEntity.ok(secPermissionMapper.toDto(entity));
+    }
+
+    /**
+     * Deletes redundant specific permissions when a wildcard is saved.
+     * <ul>
+     *   <li>Entity wildcard ({@code target='*'}): removes all specific entity rows for same authority+action+effect.</li>
+     *   <li>Attribute wildcard ({@code target='ENTITY.*'}): removes all specific attribute rows under the same entity prefix.</li>
+     * </ul>
+     */
+    private void deleteRedundantSpecificPermissions(SecPermissionDTO normalizedDto) {
+        String targetType = normalizedDto.getTargetType();
+        String target = normalizedDto.getTarget();
+        String authority = normalizedDto.getAuthorityName();
+        String action = normalizedDto.getAction();
+        String effect = normalizedDto.getEffect();
+
+        if (TargetType.ENTITY.name().equals(targetType) && "*".equals(target)) {
+            secPermissionRepository.deleteSpecificEntityPermissions(authority, action, effect);
+        } else if (TargetType.ATTRIBUTE.name().equals(targetType) && target != null && target.endsWith(".*")) {
+            String entityCode = target.substring(0, target.length() - 2);
+            secPermissionRepository.deleteSpecificAttributePermissions(authority, entityCode + ".%", target, action, effect);
+        }
     }
 
     /**

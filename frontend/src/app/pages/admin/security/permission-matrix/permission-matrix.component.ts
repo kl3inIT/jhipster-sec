@@ -529,13 +529,192 @@ export default class PermissionMatrixComponent implements OnInit {
   }
 
   togglePermission(targetType: string, target: string, action: string, checked: boolean): void {
+    if (targetType === 'ENTITY') {
+      this.toggleEntityPermission(target, action, checked);
+    } else if (targetType === 'ATTRIBUTE') {
+      this.toggleAttributePermission(target, action, checked);
+    } else {
+      this.applySimpleToggle(targetType, target, action, checked);
+    }
+    this.cdr.detectChanges();
+  }
+
+  private applySimpleToggle(targetType: string, target: string, action: string, checked: boolean): void {
     const key = this.permissionKey(target, action);
     if (checked === this.isGranted(target, action)) {
       this.pendingChanges.delete(key);
     } else {
       this.pendingChanges.set(key, { checked, targetType, target, action });
     }
-    this.cdr.detectChanges();
+  }
+
+  private toggleEntityPermission(target: string, action: string, checked: boolean): void {
+    if (target === '*') {
+      this.applySimpleToggle('ENTITY', '*', action, checked);
+      if (checked) {
+        // wildcard turned ON: mark all granted specifics as pending-delete; remove any pending-adds
+        for (const entry of this.catalogEntries) {
+          const key = this.permissionKey(entry.code, action);
+          const pending = this.pendingChanges.get(key);
+          if (pending?.checked) {
+            this.pendingChanges.delete(key);
+          } else if (!pending && this.granted.has(key)) {
+            this.pendingChanges.set(key, { checked: false, targetType: 'ENTITY', target: entry.code, action });
+          }
+        }
+      } else {
+        // wildcard turned OFF: remove auto-generated pending-deletes for specifics
+        for (const entry of this.catalogEntries) {
+          const key = this.permissionKey(entry.code, action);
+          const pending = this.pendingChanges.get(key);
+          if (pending && !pending.checked && !this.granted.has(key)) {
+            // it was never in DB — only pending-delete due to wildcard expansion; remove it
+            this.pendingChanges.delete(key);
+          }
+        }
+      }
+    } else {
+      // Specific entity toggled
+      const wildcardEffective = this.isEntityWildcardEffectivelyGranted(action);
+      if (!checked && wildcardEffective) {
+        // Unticking a specific while wildcard is active: expand wildcard into individual permissions
+        // 1. Remove wildcard (or mark wildcard as pending-delete)
+        this.applySimpleToggle('ENTITY', '*', action, false);
+        // 2. Remove auto-generated pending-deletes from any prior wildcard-on that are still there
+        //    and add pending-add for all OTHER specifics that are not already in DB
+        for (const entry of this.catalogEntries) {
+          if (entry.code === target) {
+            // This one is being unticked — ensure it's marked unchecked (not granted by wildcard anymore)
+            const key = this.permissionKey(entry.code, action);
+            if (this.granted.has(key)) {
+              this.pendingChanges.set(key, { checked: false, targetType: 'ENTITY', target: entry.code, action });
+            } else {
+              this.pendingChanges.delete(key);
+            }
+          } else {
+            // All others should remain checked — add pending-add only if not already in DB
+            const key = this.permissionKey(entry.code, action);
+            if (!this.granted.has(key)) {
+              this.pendingChanges.set(key, { checked: true, targetType: 'ENTITY', target: entry.code, action });
+            } else {
+              // Already in DB — remove any pending-delete that may have been set
+              this.pendingChanges.delete(key);
+            }
+          }
+        }
+      } else {
+        this.applySimpleToggle('ENTITY', target, action, checked);
+        if (checked) {
+          this.checkAutoPromoteEntity(action);
+        }
+      }
+    }
+  }
+
+  private checkAutoPromoteEntity(action: string): void {
+    const allGranted = this.catalogEntries.every((entry) =>
+      this.isEffectivelyGranted(entry.code, action),
+    );
+    if (!allGranted) return;
+    // All specifics are now checked — promote to wildcard
+    this.applySimpleToggle('ENTITY', '*', action, true);
+    // Mark all specifically-granted entries as pending-delete (wildcard supersedes)
+    for (const entry of this.catalogEntries) {
+      const key = this.permissionKey(entry.code, action);
+      const pending = this.pendingChanges.get(key);
+      if (pending?.checked) {
+        // Was pending-add, no longer needed
+        this.pendingChanges.delete(key);
+      } else if (!pending && this.granted.has(key)) {
+        this.pendingChanges.set(key, { checked: false, targetType: 'ENTITY', target: entry.code, action });
+      }
+    }
+  }
+
+  private toggleAttributePermission(target: string, action: string, checked: boolean): void {
+    const entity = this.selectedEntity;
+    if (!entity) {
+      this.applySimpleToggle('ATTRIBUTE', target, action, checked);
+      return;
+    }
+    const wildcardTarget = `${entity.code}.*`;
+    if (target === wildcardTarget) {
+      this.applySimpleToggle('ATTRIBUTE', wildcardTarget, action, checked);
+      if (checked) {
+        // wildcard turned ON: mark all granted specifics as pending-delete; remove pending-adds
+        for (const attr of entity.attributes) {
+          const specificTarget = `${entity.code}.${attr}`;
+          const key = this.permissionKey(specificTarget, action);
+          const pending = this.pendingChanges.get(key);
+          if (pending?.checked) {
+            this.pendingChanges.delete(key);
+          } else if (!pending && this.granted.has(key)) {
+            this.pendingChanges.set(key, { checked: false, targetType: 'ATTRIBUTE', target: specificTarget, action });
+          }
+        }
+      } else {
+        // wildcard turned OFF: remove auto-generated pending-deletes for specifics
+        for (const attr of entity.attributes) {
+          const specificTarget = `${entity.code}.${attr}`;
+          const key = this.permissionKey(specificTarget, action);
+          const pending = this.pendingChanges.get(key);
+          if (pending && !pending.checked && !this.granted.has(key)) {
+            this.pendingChanges.delete(key);
+          }
+        }
+      }
+    } else {
+      // Specific attribute toggled
+      const wildcardEffective = this.isWildcardEffectivelyGranted(entity.code, action);
+      if (!checked && wildcardEffective) {
+        // Unticking a specific while wildcard is active
+        this.applySimpleToggle('ATTRIBUTE', wildcardTarget, action, false);
+        for (const attr of entity.attributes) {
+          const specificTarget = `${entity.code}.${attr}`;
+          if (specificTarget === target) {
+            const key = this.permissionKey(specificTarget, action);
+            if (this.granted.has(key)) {
+              this.pendingChanges.set(key, { checked: false, targetType: 'ATTRIBUTE', target: specificTarget, action });
+            } else {
+              this.pendingChanges.delete(key);
+            }
+          } else {
+            const key = this.permissionKey(specificTarget, action);
+            if (!this.granted.has(key)) {
+              this.pendingChanges.set(key, { checked: true, targetType: 'ATTRIBUTE', target: specificTarget, action });
+            } else {
+              this.pendingChanges.delete(key);
+            }
+          }
+        }
+      } else {
+        this.applySimpleToggle('ATTRIBUTE', target, action, checked);
+        if (checked) {
+          this.checkAutoPromoteAttribute(entity.code, action);
+        }
+      }
+    }
+  }
+
+  private checkAutoPromoteAttribute(entityCode: string, action: string): void {
+    const entity = this.catalogEntries.find((e) => e.code === entityCode);
+    if (!entity || entity.attributes.length === 0) return;
+    const allGranted = entity.attributes.every((attr) =>
+      this.isEffectivelyGranted(`${entityCode}.${attr}`, action),
+    );
+    if (!allGranted) return;
+    const wildcardTarget = `${entityCode}.*`;
+    this.applySimpleToggle('ATTRIBUTE', wildcardTarget, action, true);
+    for (const attr of entity.attributes) {
+      const specificTarget = `${entityCode}.${attr}`;
+      const key = this.permissionKey(specificTarget, action);
+      const pending = this.pendingChanges.get(key);
+      if (pending?.checked) {
+        this.pendingChanges.delete(key);
+      } else if (!pending && this.granted.has(key)) {
+        this.pendingChanges.set(key, { checked: false, targetType: 'ATTRIBUTE', target: specificTarget, action });
+      }
+    }
   }
 
   confirmSave(): void {
