@@ -232,8 +232,8 @@ class SecPermissionAdminResourceIT {
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(existing.getId()))
-            .andExpect(jsonPath("$.target").value("ORGANIZATION"))
-            .andExpect(jsonPath("$.effect").value("ALLOW"));
+            .andExpect(jsonPath("$.target").value("organization"))
+            .andExpect(jsonPath("$.effect").value("GRANT"));
 
         assertThat(
             secPermissionRepository.findAllByAuthorityNameAndTargetTypeAndTargetAndActionOrderByIdAsc(
@@ -243,6 +243,28 @@ class SecPermissionAdminResourceIT {
                 "READ"
             )
         ).hasSize(1);
+    }
+
+    @Test
+    void createPermission_entityWildcardGrantStoresAsWildcardAndRoundTripsAsGrant() throws Exception {
+        SecPermissionDTO created = createPermission(createMatrixPermissionDto("ENTITY", "*", "READ"));
+
+        SecPermission persisted = secPermissionRepository.findById(created.getId()).orElseThrow();
+        assertThat(persisted.getTarget()).isEqualTo("*");
+        assertThat(persisted.getEffect()).isEqualTo("ALLOW");
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL + "?authorityName=" + MATRIX_AUTHORITY_NAME))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].target").value("*"))
+            .andExpect(jsonPath("$[0].effect").value("GRANT"));
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL_ID, created.getId()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.target").value("*"))
+            .andExpect(jsonPath("$.effect").value("GRANT"));
     }
 
     @Test

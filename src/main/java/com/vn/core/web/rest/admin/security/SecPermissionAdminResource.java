@@ -110,7 +110,7 @@ public class SecPermissionAdminResource {
             if (!duplicatesToDelete.isEmpty()) {
                 secPermissionRepository.deleteAll(duplicatesToDelete);
             }
-            return ResponseEntity.ok(secPermissionMapper.toDto(canonicalPermission));
+            return ResponseEntity.ok(secPermissionUiContractService.normalizeOutgoing(secPermissionMapper.toDto(canonicalPermission)));
         }
         var entity = secPermissionMapper.toEntity(normalizedDto);
         entity = secPermissionRepository.save(entity);
