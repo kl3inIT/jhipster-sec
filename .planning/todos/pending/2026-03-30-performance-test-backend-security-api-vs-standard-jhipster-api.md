@@ -7,20 +7,20 @@ files: []
 
 ## Problem
 
-Chưa có baseline hiệu năng để đánh giá overhead mà hệ thống core security gây ra so với API JHipster gốc. Khi mọi request entity đi qua pipeline `SecureDataManagerImpl` (catalog lookup → CRUD check → fetch-plan resolution → secure merge/serialize), cần biết latency và throughput thực tế bị ảnh hưởng bao nhiêu so với endpoint không qua security pipeline.
+No performance baseline exists to measure the overhead introduced by the core security pipeline versus the stock JHipster API. Every entity request now passes through `SecureDataManagerImpl` (catalog lookup → CRUD check → fetch-plan resolution → secure merge/serialize). Without benchmark data, it is impossible to know how much latency and throughput are affected compared to endpoints that bypass the security pipeline.
 
-Cụ thể cần đo:
-- API JHipster gốc (không qua `@SecuredEntity` / `SecureDataManagerImpl`)
-- API đi qua full security pipeline (permission check + fetch-plan + secure serialize)
-- Diff về p50/p95/p99 latency và throughput (req/s)
+Need to measure:
+- Stock JHipster endpoint (no `@SecuredEntity` / `SecureDataManagerImpl`)
+- Full security-pipeline endpoint (permission check + fetch-plan + secure serialize)
+- Delta on p50/p95/p99 latency and throughput (req/s)
 
 ## Solution
 
-Dùng JMeter hoặc công cụ tương đương (k6, Gatling, hey) để tạo test plan:
+Use JMeter or an equivalent tool (k6, Gatling, hey) to build a test plan:
 
-1. Chọn 1-2 entity endpoint đại diện (e.g. GET list, GET single, POST create)
-2. Tạo test plan với 2 thread group: baseline (JHipster standard) vs secured
-3. Chạy với các mức concurrency: 1, 10, 50, 100 users
-4. Thu thập metrics: latency (p50/p95/p99), throughput, error rate
-5. So sánh và ghi nhận overhead % của security pipeline
-6. Xác định bottleneck nếu overhead > ngưỡng chấp nhận được (TBD, đề xuất < 20%)
+1. Select 1–2 representative entity endpoints (e.g. GET list, GET single, POST create).
+2. Create two thread groups: baseline (standard JHipster) vs. secured pipeline.
+3. Run at multiple concurrency levels: 1, 10, 50, 100 virtual users.
+4. Collect metrics: latency (p50/p95/p99), throughput, error rate.
+5. Compare and document the overhead percentage introduced by the security pipeline.
+6. Identify bottlenecks if overhead exceeds an acceptable threshold (TBD — suggested target: < 20 %).
