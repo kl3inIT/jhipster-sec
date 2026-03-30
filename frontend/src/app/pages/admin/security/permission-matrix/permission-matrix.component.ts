@@ -110,6 +110,7 @@ export default class PermissionMatrixComponent implements OnInit {
   loading = true;
   selectedEntity: ISecCatalogEntry | null = null;
   selectedEntityAttributeRows: AttributeRow[] = [];
+  catalogEntriesWithWildcard: ISecCatalogEntry[] = [];
 
   granted = new Map<string, number>();
   pendingChanges = new Map<string, PendingChange>();
@@ -117,6 +118,7 @@ export default class PermissionMatrixComponent implements OnInit {
 
   // Menu access tab state
   availableMenuApps: string[] = [];
+  menuAppOptions: Array<{ label: string; value: string }> = [];
   selectedMenuApp = this.defaultMenuApp;
   menuDefinitions: ISecMenuDefinition[] = [];
   menuTreeNodes: TreeNode[] = [];
@@ -131,12 +133,10 @@ export default class PermissionMatrixComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initializeComputedCollections();
+
     this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      if (this.selectedEntity) {
-        this.selectedEntityAttributeRows = this.buildAttributeRows(this.selectedEntity);
-      }
-      this.buildMenuTree();
-      this.cdr.detectChanges();
+      this.onLanguageChanged();
     });
 
     this.roleName = this.route.snapshot.paramMap.get('name') ?? '';
@@ -157,18 +157,9 @@ export default class PermissionMatrixComponent implements OnInit {
       )
       .subscribe({
         next: ({ catalogEntries, permissions }) => {
-          this.catalogEntries = catalogEntries;
-          this.granted.clear();
-          permissions.forEach((permission) => {
-            if (permission.id !== undefined) {
-              this.granted.set(
-                this.permissionKey(permission.target, permission.action),
-                permission.id,
-              );
-            }
-          });
+          this.onPermissionDataLoaded(catalogEntries, permissions);
         },
-        error: (err: any) =>
+        error: (err: unknown) =>
           handleHttpError(
             this.messageService,
             this.translateService,
@@ -180,42 +171,98 @@ export default class PermissionMatrixComponent implements OnInit {
     this.loadMenuPermissions();
   }
 
+  private onLanguageChanged(): void {
+    if (this.selectedEntity) {
+      this.selectedEntityAttributeRows = this.buildAttributeRows(this.selectedEntity);
+    }
+    this.initializeComputedCollections();
+    this.buildMenuTree();
+    this.cdr.detectChanges();
+  }
+
+  private initializeComputedCollections(): void {
+    this.catalogEntriesWithWildcard = this.buildCatalogEntriesWithWildcard();
+    this.updateMenuAppOptions();
+  }
+
+  private buildCatalogEntriesWithWildcard(): ISecCatalogEntry[] {
+    const wildcardEntry: ISecCatalogEntry = {
+      code: '*',
+      displayName: this.translateService.instant('security.permissionMatrix.entity.wildcard'),
+      operations: ['CREATE', 'READ', 'UPDATE', 'DELETE'],
+      attributes: [],
+    };
+    return [wildcardEntry, ...this.catalogEntries];
+  }
+
+  private onPermissionDataLoaded(catalogEntries: ISecCatalogEntry[], permissions: ISecPermission[]): void {
+    this.catalogEntries = catalogEntries;
+    this.catalogEntriesWithWildcard = this.buildCatalogEntriesWithWildcard();
+    this.granted.clear();
+    permissions.forEach((permission) => {
+      if (permission.id !== undefined) {
+        this.granted.set(this.permissionKey(permission.target, permission.action), permission.id);
+      }
+    });
+  }
+
   private loadMenuPermissions(): void {
     this.menuLoading = true;
     forkJoin({
       permissions: this.menuPermissionService.query(this.roleName),
       definitions: this.menuDefinitionService.queryAll().pipe(
-        map(response => response.body ?? []),
+        map((response) => response.body ?? []),
         catchError(() => of([])),
       ),
     }).subscribe({
       next: ({ permissions, definitions }) => {
-        this.menuGranted.clear();
-        permissions.forEach((p) => {
-          if (p.id !== undefined) {
-            this.menuGranted.set(this.menuPermissionKey(p.appName, p.menuId), p.id);
-          }
-        });
-        this.availableMenuApps = this.resolveAvailableMenuApps(permissions, definitions);
-        const nextSelectedApp = this.availableMenuApps.includes(this.selectedMenuApp)
-          ? this.selectedMenuApp
-          : (this.availableMenuApps[0] ?? this.defaultMenuApp);
-        this.loadMenuDefinitions(nextSelectedApp);
+        this.onMenuPermissionsLoaded(permissions, definitions);
       },
-      error: (err) => {
-        handleHttpError(
-          this.messageService,
-          this.translateService,
-          err,
-          'feedback.security.menuAccess.loadFailed',
-        );
-        this.menuLoading = false;
-        this.menuDefinitions = [];
-        this.menuTreeNodes = [];
-        this.menuSelectionKeys = {};
-        this.cdr.detectChanges();
+      error: (err: unknown) => {
+        this.onMenuLoadError(err);
       },
     });
+  }
+
+  private onMenuPermissionsLoaded(
+    permissions: ISecMenuPermissionAdmin[],
+    definitions: ISecMenuDefinition[],
+  ): void {
+    this.menuGranted.clear();
+    permissions.forEach((p) => {
+      if (p.id !== undefined) {
+        this.menuGranted.set(this.menuPermissionKey(p.appName, p.menuId), p.id);
+      }
+    });
+    this.availableMenuApps = this.resolveAvailableMenuApps(permissions, definitions);
+    this.updateMenuAppOptions();
+    const nextSelectedApp = this.availableMenuApps.includes(this.selectedMenuApp)
+      ? this.selectedMenuApp
+      : (this.availableMenuApps[0] ?? this.defaultMenuApp);
+    this.loadMenuDefinitions(nextSelectedApp);
+  }
+
+  private onMenuLoadError(err: unknown): void {
+    handleHttpError(
+      this.messageService,
+      this.translateService,
+      err,
+      'feedback.security.menuAccess.loadFailed',
+    );
+    this.menuLoading = false;
+    this.menuDefinitions = [];
+    this.menuTreeNodes = [];
+    this.menuSelectionKeys = {};
+    this.availableMenuApps = [this.defaultMenuApp];
+    this.updateMenuAppOptions();
+    this.cdr.detectChanges();
+  }
+
+  private updateMenuAppOptions(): void {
+    this.menuAppOptions = this.availableMenuApps.map((appName) => ({
+      label: this.currentMenuAppLabel(appName),
+      value: appName,
+    }));
   }
 
   loadMenuDefinitions(appName: string): void {
@@ -415,13 +462,6 @@ export default class PermissionMatrixComponent implements OnInit {
     return appName;
   }
 
-  menuAppOptions(): Array<{ label: string; value: string }> {
-    return this.availableMenuApps.map((appName) => ({
-      label: this.currentMenuAppLabel(appName),
-      value: appName,
-    }));
-  }
-
   onEntitySelect(entry: ISecCatalogEntry): void {
     this.selectedEntity = entry;
     this.selectedEntityAttributeRows = this.buildAttributeRows(entry);
@@ -471,20 +511,6 @@ export default class PermissionMatrixComponent implements OnInit {
    */
   isEntityEffectivelyGranted(entityCode: string, action: string): boolean {
     return this.isEffectivelyGranted(entityCode, action) || this.isEntityWildcardEffectivelyGranted(action);
-  }
-
-  /**
-   * Returns the catalog entries list prepended with a synthetic wildcard entry representing
-   * "grant this action for ALL entities". The wildcard entry has code `*`.
-   */
-  get catalogEntriesWithWildcard(): ISecCatalogEntry[] {
-    const wildcardEntry: ISecCatalogEntry = {
-      code: '*',
-      displayName: this.translateService.instant('security.permissionMatrix.entity.wildcard'),
-      operations: ['CREATE', 'READ', 'UPDATE', 'DELETE'],
-      attributes: [],
-    };
-    return [wildcardEntry, ...this.catalogEntries];
   }
 
   isPendingChange(target: string, action: string): boolean {

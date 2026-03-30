@@ -88,7 +88,7 @@
 
               <ng-template pTemplate="body" let-entry>
                 <tr
-                  (click)="entry.code !== '*' && onEntitySelect(entry)"
+                  (click)="entry.code !== '*' ? onEntitySelect(entry) : null"
                   [style.cursor]="entry.code !== '*' ? 'pointer' : 'default'"
                   [class.surface-100]="selectedEntity?.code === entry.code"
                   [class.font-semibold]="entry.code === '*'"
@@ -274,12 +274,12 @@
                 {{ 'security.permissionMatrix.menu.appLabel' | translate }}
               </label>
 
-              @if (menuAppOptions().length > 0) {
+              @if (menuAppOptions.length > 0) {
                 <p-select
                   inputId="menuAppSelect"
                   [ngModel]="selectedMenuApp"
                   [ngModelOptions]="{ standalone: true }"
-                  [options]="menuAppOptions()"
+                  [options]="menuAppOptions"
                   optionLabel="label"
                   optionValue="value"
                   [emptyMessage]="'security.permissionMatrix.menu.noApps' | translate"
