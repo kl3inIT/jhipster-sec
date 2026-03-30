@@ -1,0 +1,45 @@
+<div class="max-w-2xl mx-auto space-y-4">
+  <h1 class="m-0 text-2xl font-semibold">{{ 'angappApp.shoe.detail.title' | translate }}</h1>
+
+  @if (shoe(); as entity) {
+    <p-card class="shadow-sm">
+      <div class="grid grid-cols-1 gap-4">
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">{{ 'angappApp.shoe.id' | translate }}</span>
+          <span>{{ entity.id }}</span>
+        </div>
+        @if (entity.name) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">{{ 'angappApp.shoe.name' | translate }}</span>
+            <span>{{ entity.name }}</span>
+          </div>
+        }
+        @if (entity.decription) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">{{ 'angappApp.shoe.decription' | translate }}</span>
+            <span>{{ entity.decription }}</span>
+          </div>
+        }
+        @if (entity.brand) {
+          <div class="flex flex-col gap-1">
+            <span class="text-sm font-medium">{{ 'angappApp.shoe.brand' | translate }}</span>
+            <span>{{ entity.brand.name }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="flex gap-2 mt-4 pt-4" style="border-top: 1px solid var(--surface-border)">
+        <button
+          type="button"
+          pButton
+          severity="secondary"
+          [outlined]="true"
+          icon="pi pi-arrow-left"
+          [label]="'entity.action.back' | translate"
+          (click)="back()"
+        ></button>
+        <button type="button" pButton [outlined]="true" icon="pi pi-pencil" [label]="'entity.action.edit' | translate" (click)="edit(entity)"></button>
+      </div>
+    </p-card>
+  }
+</div>

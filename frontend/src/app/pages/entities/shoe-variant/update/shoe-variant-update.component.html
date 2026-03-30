@@ -1,0 +1,52 @@
+<p-toast></p-toast>
+
+<div class="max-w-xl mx-auto space-y-4">
+  <h1 class="m-0 text-2xl font-semibold">
+    @if (isEdit()) {
+      {{ 'angappApp.shoeVariant.home.createOrEditLabel' | translate }}
+    } @else {
+      {{ 'angappApp.shoeVariant.home.createLabel' | translate }}
+    }
+  </h1>
+
+  <p-card class="shadow-sm">
+    <form [formGroup]="form" (ngSubmit)="save()" class="space-y-4">
+      <div class="grid grid-cols-1 gap-4">
+        <div>
+          <label for="name" class="block text-sm font-medium mb-1">{{ 'angappApp.shoeVariant.name' | translate }}</label>
+          <input id="name" type="text" pInputText formControlName="name" class="w-full" maxlength="255" />
+        </div>
+        <div>
+          <label for="decription" class="block text-sm font-medium mb-1">{{ 'angappApp.shoeVariant.decription' | translate }}</label>
+          <input id="decription" type="text" pInputText formControlName="decription" class="w-full" maxlength="255" />
+        </div>
+        <div>
+          <label for="shoeId" class="block text-sm font-medium mb-1">{{ 'angappApp.shoeVariant.shoe' | translate }}</label>
+          <p-select
+            id="shoeId"
+            formControlName="shoeId"
+            [options]="shoeOptions"
+            optionLabel="label"
+            optionValue="value"
+            [placeholder]="'angappApp.shoeVariant.shoe' | translate"
+            class="w-full"
+          ></p-select>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button
+          type="button"
+          pButton
+          severity="secondary"
+          [outlined]="true"
+          icon="pi pi-times"
+          [label]="'entity.action.cancel' | translate"
+          (click)="cancel()"
+          [disabled]="isSaving()"
+        ></button>
+        <button type="submit" pButton icon="pi pi-check" [label]="'entity.action.save' | translate" [disabled]="isSaving()"></button>
+      </div>
+    </form>
+  </p-card>
+</div>

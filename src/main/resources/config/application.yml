@@ -194,6 +194,8 @@ info:
 # ===================================================================
 
 jhipster:
+  clientApp:
+    name: jhipstersec
   mail:
     from: jhipster-sec@localhost
   api-docs:

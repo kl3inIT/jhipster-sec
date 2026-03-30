@@ -3,9 +3,12 @@ package com.vn.core.security.fetch;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.vn.core.config.ApplicationProperties;
+import com.vn.core.domain.Brand;
 import com.vn.core.domain.Department;
 import com.vn.core.domain.Employee;
 import com.vn.core.domain.Organization;
+import com.vn.core.domain.Shoe;
+import com.vn.core.domain.ShoeVariant;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -169,5 +172,34 @@ class YamlFetchPlanRepositoryTest {
         FetchPlan departmentPlan = employeeList.getProperty("department").orElseThrow().fetchPlan();
         assertThat(departmentPlan).isNotNull();
         assertThat(departmentPlan.getProperties()).extracting(FetchPlanProperty::name).containsExactly("id", "name");
+    }
+
+    @Test
+    void testBrandShoeAndShoeVariantPlansAreAvailableWithExpectedNestedProperties() {
+        ApplicationProperties applicationProperties = new ApplicationProperties();
+        applicationProperties.getFetchPlans().setConfig("classpath:fetch-plans.yml");
+        YamlFetchPlanRepository proofRepository = new YamlFetchPlanRepository(applicationProperties, new DefaultResourceLoader());
+        proofRepository.init();
+
+        FetchPlan brandDetail = proofRepository.findByEntityAndName(Brand.class, "brand-detail").orElseThrow();
+        FetchPlan brandShoesPlan = brandDetail.getProperty("shoes").orElseThrow().fetchPlan();
+        assertThat(brandShoesPlan).isNotNull();
+        assertThat(brandShoesPlan.getProperties()).extracting(FetchPlanProperty::name).containsExactly("id", "name", "decription");
+
+        FetchPlan shoeDetail = proofRepository.findByEntityAndName(Shoe.class, "shoe-detail").orElseThrow();
+        FetchPlan shoeBrandPlan = shoeDetail.getProperty("brand").orElseThrow().fetchPlan();
+        FetchPlan shoeVariantsPlan = shoeDetail.getProperty("shoeVariants").orElseThrow().fetchPlan();
+        assertThat(shoeBrandPlan).isNotNull();
+        assertThat(shoeBrandPlan.getProperties()).extracting(FetchPlanProperty::name).containsExactly("id", "name", "description");
+        assertThat(shoeVariantsPlan).isNotNull();
+        assertThat(shoeVariantsPlan.getProperties()).extracting(FetchPlanProperty::name).containsExactly("id", "name", "decription");
+
+        FetchPlan shoeVariantDetail = proofRepository.findByEntityAndName(ShoeVariant.class, "shoevariant-detail").orElseThrow();
+        FetchPlan shoePlan = shoeVariantDetail.getProperty("shoe").orElseThrow().fetchPlan();
+        assertThat(shoePlan).isNotNull();
+        assertThat(shoePlan.getProperties()).extracting(FetchPlanProperty::name).containsExactly("id", "name", "decription", "brand");
+        assertThat(shoePlan.getProperty("brand").orElseThrow().fetchPlan().getProperties())
+            .extracting(FetchPlanProperty::name)
+            .containsExactly("id", "name");
     }
 }

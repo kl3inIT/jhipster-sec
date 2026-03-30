@@ -1,0 +1,39 @@
+{
+  "angappApp": {
+    "shoeVariant": {
+      "home": {
+        "title": "Shoe Variants",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "New Shoe Variant",
+        "createOrEditLabel": "Edit Shoe Variant",
+        "notFound": "No shoe variants found."
+      },
+      "delete": {
+        "title": "Delete Shoe Variant",
+        "question": "Are you sure you want to delete this shoe variant? This action cannot be undone."
+      },
+      "detail": {
+        "title": "Shoe Variant"
+      },
+      "id": "ID",
+      "name": "Name",
+      "decription": "Description",
+      "shoe": "Shoe"
+    }
+  },
+  "global": {
+    "menu": {
+      "entities": {
+        "shoeVariant": "Shoe Variant"
+      }
+    }
+  },
+  "feedback": {
+    "entities": {
+      "shoeVariants": {
+        "deleted": "Shoe variant deleted successfully.",
+        "saved": "Shoe variant saved successfully."
+      }
+    }
+  }
+}

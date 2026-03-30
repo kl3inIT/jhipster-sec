@@ -1,769 +1,844 @@
-{
-  "activate": {
-    "title": "Kích hoạt",
-    "messages": {
-      "success": "<strong>Tài khoản của bạn đã được kích hoạt.</strong> Bạn vui lòng ",
-      "error": "<strong>Không thể kích hoạt tài khoản của bạn.</strong> Vui lòng quay lại trang đăng ký để tạo tài khoản."
-    }
-  },
-  "angappApp": {
-    "adminAuthority": {
-      "home": {
-        "title": "Authorities",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Thêm mới một Authority",
-        "createOrEditLabel": "Thêm mới hoặc cập nhật Authority",
-        "notFound": "No Authorities found"
-      },
-      "created": "Một Authority mới được tạo với định danh {{ param }}",
-      "updated": "Một Authority cập nhật với định danh {{ param }}",
-      "deleted": "Một Authority đã xóa với định danh {{ param }}",
-      "delete": {
-        "question": "Bạn có chắc là muốn xóa Authority {{ id }}?"
-      },
-      "detail": {
-        "title": "Authority"
-      },
-      "name": "Name"
-    },
-    "department": {
-      "home": {
-        "title": "Phòng ban",
-        "refreshListLabel": "Làm mới danh sách",
-        "createLabel": "Tạo phòng ban mới",
-        "createOrEditLabel": "Chỉnh sửa phòng ban",
-        "notFound": "Không tìm thấy phòng ban nào.",
-        "denied": {
-          "title": "Quyền truy cập phòng ban bị giới hạn",
-          "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi phòng ban."
-        }
-      },
-      "created": "Đã tạo phòng ban mới với định danh {{ param }}",
-      "updated": "Đã cập nhật phòng ban với định danh {{ param }}",
-      "deleted": "Đã xóa phòng ban với định danh {{ param }}",
-      "delete": {
-        "title": "Xóa phòng ban",
-        "question": "Bạn có chắc muốn xóa phòng ban này không? Hành động này không thể hoàn tác."
-      },
-      "detail": {
-        "title": "Phòng ban"
-      },
-      "id": "ID",
-      "name": "Tên",
-      "code": "Mã",
-      "organization": "Tổ chức",
-      "costCenter": "Mã chi phí"
-    },
-    "employee": {
-      "home": {
-        "title": "Nhân viên",
-        "createLabel": "Tạo nhân viên mới",
-        "createOrEditLabel": "Chỉnh sửa nhân viên",
-        "notFound": "Không tìm thấy nhân viên nào.",
-        "denied": {
-          "title": "Quyền truy cập nhân viên bị giới hạn",
-          "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi nhân viên."
-        }
-      },
-      "delete": {
-        "title": "Xóa nhân viên",
-        "question": "Bạn có chắc muốn xóa nhân viên này không? Hành động này không thể hoàn tác."
-      },
-      "detail": {
-        "title": "Nhân viên"
-      },
-      "id": "ID",
-      "employeeNumber": "Mã nhân viên",
-      "firstName": "Tên",
-      "lastName": "Họ",
-      "department": "Phòng ban",
-      "email": "Email",
-      "salary": "Lương"
-    },
-    "organization": {
-      "home": {
-        "title": "Tổ chức",
-        "refreshListLabel": "Làm mới danh sách",
-        "createLabel": "Tạo tổ chức mới",
-        "createOrEditLabel": "Chỉnh sửa tổ chức",
-        "notFound": "Không tìm thấy tổ chức nào.",
-        "denied": {
-          "title": "Quyền truy cập tổ chức bị giới hạn",
-          "message": "Bạn có thể mở workspace này từ shell, nhưng không có quyền xem bản ghi tổ chức."
-        }
-      },
-      "created": "Đã tạo tổ chức mới với định danh {{ param }}",
-      "updated": "Đã cập nhật tổ chức với định danh {{ param }}",
-      "deleted": "Đã xóa tổ chức với định danh {{ param }}",
-      "delete": {
-        "title": "Xóa tổ chức",
-        "question": "Bạn có chắc muốn xóa tổ chức này không? Hành động này không thể hoàn tác."
-      },
-      "detail": {
-        "title": "Tổ chức",
-        "workbench": {
-          "subtitle": "Xem và thao tác trên tổ chức gốc cùng các phòng ban, nhân viên liên quan trong một workspace bảo mật duy nhất.",
-          "loading": "Đang tải workspace tổ chức...",
-          "departmentCountLabel": "Số phòng ban trong tổ chức",
-          "employeeCountLabel": "Số nhân viên trong tổ chức",
-          "departmentsHelp": "Chọn một phòng ban để xem bản ghi và quản lý nhân viên con ngay trên cùng màn hình.",
-          "employeeSectionHelp": "Phòng ban đang chọn vẫn có thể chỉnh sửa ngay trong cùng flow workbench.",
-          "employeeCrudHelp": "Tạo, cập nhật, xóa nhân viên tại đây rồi reload lại root graph đã được bảo mật.",
-          "departmentEmployeeCount": "{{ count }} nhân viên",
-          "emptyDepartments": "Tổ chức này chưa có phòng ban nào.",
-          "emptyEmployees": "Phòng ban đang chọn chưa có nhân viên nào.",
-          "selectDepartment": "Chọn một phòng ban ở cột bên trái để mở workspace nhân viên."
-        }
-      },
-      "id": "ID",
-      "code": "Mã",
-      "name": "Tên",
-      "ownerLogin": "Người phụ trách",
-      "budget": "Ngân sách",
-      "description": "Mô tả"
-    }
-  },
-  "entity": {
-    "action": {
-      "addblob": "Thêm nội dung",
-      "addimage": "Thêm ảnh",
-      "back": "Quay lại",
-      "cancel": "Hủy",
-      "delete": "Xóa",
-      "discard": "Bỏ thay đổi",
-      "edit": "Sửa",
-      "open": "Mở",
-      "save": "Lưu",
-      "view": "Xem",
-      "show": "Hiển thị {{otherEntity}}"
-    },
-    "detail": {
-      "field": "Trường",
-      "value": "Giá trị"
-    },
-    "delete": {
-      "title": "Xác nhận hành động xóa"
-    },
-    "validation": {
-      "required": "Trường này bắt buộc phải nhập.",
-      "minlength": "Trường này phải có ít nhất {{ min }} ký tự.",
-      "maxlength": "Trường này không được vượt quá {{ max }} ký tự.",
-      "min": "Trường này phải lớn hơn {{ min }}.",
-      "max": "Trường này phải nhỏ hơn {{ max }}.",
-      "minbytes": "Dung lượng trường này phải lớn hơn {{ min }} bytes.",
-      "maxbytes": "Dung lượng trường này phải nhỏ hơn {{ max }} bytes.",
-      "pattern": "Trường này phải theo định dạng {{ pattern }}.",
-      "number": "Trường này phải là một số.",
-      "datetimelocal": "Trường này phải là định dạng thời gian.",
-      "patternLogin": "Trường này chỉ được chứa chữ cái, chữ số và địa chỉ email."
-    },
-    "filters": {
-      "set": "Các bộ lọc đang được áp dụng",
-      "clear": "Xóa bộ lọc",
-      "clearAll": "Xóa tất cả bộ lọc"
-    },
-    "pagination": {
-      "report": "Hiển thị {first} đến {last} trên tổng số {totalRecords} bản ghi"
-    },
-    "list": {
-      "actions": "Thao tác"
-    }
-  },
-  "error": {
-    "internalServerError": "Lỗi máy chủ nội bộ",
-    "server.not.reachable": "Không tìm thấy máy chủ",
-    "url.not.found": "Không tìm thấy",
-    "NotNull": "Trường {{ fieldName }} không được để trống!",
-    "Size": "Trường {{ fieldName }} không nằm trong giới hạn tối thiểu/tối đa!",
-    "userexists": "Tên đăng nhập đã được sử dụng!",
-    "emailexists": "Email đã được sử dụng!",
-    "idexists": "Thêm mới {{ entityName }} không được trùng với định danh đã tồn tại",
-    "idnull": "Invalid ID",
-    "idinvalid": "Invalid Id",
-    "idnotfound": "ID cannot be found",
-    "file": {
-      "could.not.extract": "Could not extract file",
-      "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""
-    },
-    "title": "Trang thông tin lỗi!",
-    "http": {
-      "400": "Bad request.",
-      "403": "Bạn không có quyền xem trang này.",
-      "404": "Trang không tồn tại.",
-      "405": "The HTTP verb you used is not supported for this URL.",
-      "500": "Internal server error."
-    },
-    "concurrencyFailure": "Another user modified this data at the same time as you. Your changes were rejected.",
-    "validation": "Validation error on the server.",
-    "backToHome": "Về trang chủ",
-    "accessDenied": {
-      "blockedMessage": "Bạn không có quyền truy cập {{ destination }}.",
-      "recoveryMessage": "Đi tới {{ fallback }} hoặc liên hệ quản trị viên nếu bạn cho rằng điều này là nhầm lẫn.",
-      "goTo": "Đi tới {{ destination }}"
-    }
-  },
-  "feedback": {
-    "toast": {
-      "deleted": "Đã xóa",
-      "success": "Thành công",
-      "saved": "Đã lưu"
-    },
-    "httpError": {
-      "accessDenied": {
-        "summary": "Từ chối truy cập",
-        "detail": "Bạn không có quyền thực hiện hành động này."
-      },
-      "unexpected": {
-        "summary": "Lỗi",
-        "detail": "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại."
-      }
-    },
-    "security": {
-      "roles": {
-        "deleted": "Vai trò \"{{ param }}\" đã bị xóa.",
-        "loadFailed": "Không thể tải danh sách vai trò bảo mật.",
-        "deleteFailed": "Không thể xóa vai trò bảo mật."
-      },
-      "permissionMatrix": {
-        "loadFailed": "Không thể tải ma trận quyền. Vui lòng thử lại.",
-        "saveFailed": "Không thể lưu các thay đổi quyền. Vui lòng thử lại."
-      },
-      "menuAccess": {
-        "loadFailed": "Không thể tải quyền menu. Vui lòng thử lại."
-      },
-      "menuDefinitions": {
-        "deleted": "Định nghĩa menu \"{{ param }}\" đã bị xóa.",
-        "loadFailed": "Không thể tải danh sách định nghĩa menu.",
-        "deleteFailed": "Không thể xóa định nghĩa menu.",
-        "saveFailed": "Không thể lưu định nghĩa menu. Hãy kiểm tra lại biểu mẫu và thử lại.",
-        "syncFailed": "Không thể đồng bộ định nghĩa menu từ registry.",
-        "syncSuccess": "Đã đồng bộ {{ seeded }} định nghĩa menu từ registry."
-      }
-    },
-    "entities": {
-      "organizations": {
-        "deleted": "Đã xóa tổ chức thành công.",
-        "saved": "Đã lưu tổ chức thành công."
-      },
-      "departments": {
-        "deleted": "Đã xóa phòng ban thành công.",
-        "saved": "Đã lưu phòng ban thành công."
-      },
-      "employees": {
-        "deleted": "Đã xóa nhân viên thành công.",
-        "saved": "Đã lưu nhân viên thành công."
-      }
-    }
-  },
-  "footer": "Đây là chân trang của bạn",
-  "global": {
-    "title": "Angapp",
-    "browsehappy": "Bạn đang sử dụng một trình duyệt <strong>quá cũ</strong>. Vui lòng <a href=\"http://browsehappy.com/?locale=en\">nâng cấp trình duyệt</a> của bạn để có trải nghiệm tốt nhất.",
-    "menu": {
-      "home": "Trang chủ",
-      "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
-      "entities": {
-        "main": "Thực thể",
-        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
-        "department": "Department",
-        "organization": "Organization"
-      },
-      "account": {
-        "main": "Tài khoản",
-        "settings": "Cài đặt",
-        "password": "Mật khẩu",
-        "sessions": "Phiên đăng nhập",
-        "login": "Đăng nhập",
-        "logout": "Đăng xuất",
-        "register": "Đăng ký"
-      },
-      "admin": {
-        "main": "Quản trị",
-        "userManagement": "Quản lý tài khoản",
-        "tracker": "Theo dõi người dùng",
-        "metrics": "Số liệu",
-        "health": "Tình trạng",
-        "configuration": "Cấu hình",
-        "logs": "Ghi logs",
-        "apidocs": "API",
-        "database": "Cơ sở dữ liệu",
-        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
-      },
-      "language": "Ngôn ngữ"
-    },
-    "form": {
-      "username.label": "Tên tài khoản",
-      "username.placeholder": "Nhập tên tài khoản của bạn",
-      "newpassword.label": "Mật khẩu mới",
-      "newpassword.placeholder": "Nhập mật khẩu mới",
-      "confirmpassword.label": "Xác nhận mật khẩu mới",
-      "confirmpassword.placeholder": "Nhập lại mật khẩu mới",
-      "email.label": "Email",
-      "email.placeholder": "Nhập email của bạn"
-    },
-    "messages": {
-      "info": {
-        "authenticated": {
-          "prefix": "Nếu bạn muốn ",
-          "link": "đăng nhập",
-          "suffix": ", bạn có thể thử với tài khoản mặc định:<br/>- Quản trị viên (tài khoản=\"admin\" và mật khẩu=\"admin\") <br/>- Người dùng (tài khoản=\"user\" và mật khẩu=\"user\")."
-        },
-        "register": {
-          "noaccount": "Bạn vẫn chưa có tài khoản?",
-          "link": "Đăng ký tài khoản mới"
-        }
-      },
-      "error": {
-        "dontmatch": "Xác nhận mật khẩu không khớp!"
-      },
-      "validate": {
-        "newpassword": {
-          "required": "Bạn phải nhập mật khẩu.",
-          "minlength": "Mật khẩu phải có ít nhất 4 ký tự.",
-          "maxlength": "Mật khẩu không được vượt quá 50 ký tự.",
-          "strength": "Độ mạnh của mật khẩu:"
-        },
-        "confirmpassword": {
-          "required": "Bạn phải nhập lại mật khẩu để xác nhận.",
-          "minlength": "Mật khẩu phải có ít nhất 4 ký tự.",
-          "maxlength": "Mật khẩu không được vượt quá 50 ký tự."
-        },
-        "email": {
-          "required": "Bạn phải nhập email.",
-          "invalid": "Email bạn nhập không hợp lệ.",
-          "minlength": "Email phải có ít nhất 5 ký tự.",
-          "maxlength": "Email không được vượt quá 50 ký tự."
-        }
-      }
-    },
-    "field": {
-      "id": "ID"
-    },
-    "ribbon": {
-      "dev": "Phát triển"
-    },
-    "item-count": "Showing {{first}} - {{second}} of {{total}} items."
-  },
-  "home": {
-    "title": "Chào mừng bạn đến với Java Hipster!",
-    "subtitle": "Đây là trang chủ của bạn",
-    "logged": {
-      "message": "Bạn đang đăng nhập bằng tài khoản \"{{username}}\"."
-    },
-    "question": "Nếu bạn có bất kỳ câu hỏi nào về JHipster vui lòng truy cập:",
-    "link": {
-      "homepage": "Trang chủ JHipster",
-      "stackoverflow": "JHipster trên Stack Overflow",
-      "bugtracker": "Theo dõi các lỗi JHipster",
-      "chat": "Phòng chat công cộng JHipster",
-      "follow": "Theo dõi @jhipster trên Twitter"
-    },
-    "like": "Nếu bạn thích JHipster, đừng quên cho chúng tôi thêm một ngôi sao trên",
-    "github": "GitHub"
-  },
-  "layout": {
-    "breadcrumb": "Điều hướng",
-    "brand": {
-      "name": "JHipster Security",
-      "shortName": "JS"
-    },
-    "footer": {
-      "productName": "JHipster Security Platform"
-    },
-    "topbar": {
-      "toggleMenu": "Mở hoặc đóng menu",
-      "toggleTheme": "Đổi giao diện",
-      "openSettings": "Mở cài đặt",
-      "login": "Đăng nhập",
-      "logout": "Đăng xuất"
-    },
-    "settings": {
-      "title": "Cài đặt",
-      "subtitle": "Ngôn ngữ, giao diện và tùy chọn bố cục",
-      "language": "Ngôn ngữ",
-      "preset": "Preset",
-      "primary": "Màu chính",
-      "surface": "Bề mặt",
-      "appearance": {
-        "label": "Giao diện",
-        "light": "Sáng",
-        "dark": "Tối"
-      },
-      "menuMode": {
-        "label": "Chế độ menu",
-        "static": "Static",
-        "overlay": "Overlay",
-        "drawer": "Drawer"
-      }
-    },
-    "language": {
-      "en": "English",
-      "vi": "Tiếng Việt"
-    },
-    "menu": {
-      "security": {
-        "main": "Quản trị bảo mật",
-        "roles": "Vai trò bảo mật",
-        "permissions": "Ma trận quyền",
-        "menuDefinitions": "Định nghĩa menu"
-      },
-      "entities": {
-        "employee": "Nhân viên"
-      }
-    }
-  },
-  "login": {
-    "title": "Đăng nhập",
-    "form": {
-      "password": "Mật khẩu",
-      "password.placeholder": "Nhập mật khẩu của bạn",
-      "rememberme": "Nhớ tài khoản",
-      "button": "Đăng nhập"
-    },
-    "messages": {
-      "error": {
-        "authentication": "<strong>Đăng nhập thất bại!</strong> Bạn vui lòng kiểm tra thông tin đăng nhập và thử lại."
-      }
-    },
-    "password": {
-      "forgot": "Bạn quên mật khẩu?"
-    }
-  },
-  "pageTitle": {
-    "home": "Trang chủ",
-    "login": "Đăng nhập",
-    "accessDenied": "Từ chối truy cập",
-    "notFound": "Không tìm thấy trang",
-    "error": "Lỗi không mong muốn",
-    "securityRoles": "Vai trò bảo mật",
-    "permissionMatrix": "Ma trận quyền",
-    "menuDefinitions": "Định nghĩa menu"
-  },
-  "password": {
-    "title": "Mật khẩu cho tài khoản [<strong>{{username}}</strong>]",
-    "form": {
-      "button": "Lưu"
-    },
-    "messages": {
-      "error": "<strong>Có lỗi xảy ra!</strong> Không thể thay đổi mật khẩu.",
-      "success": "<strong>Mật khẩu đã được thay đổi!</strong>"
-    }
-  },
-  "register": {
-    "title": "Đăng ký",
-    "form": {
-      "button": "Đăng ký"
-    },
-    "messages": {
-      "validate": {
-        "login": {
-          "required": "Bạn phải nhập tên tài khoản.",
-          "minlength": "Tên tài khoản phải có ít nhất 1 ký tự.",
-          "maxlength": "Tên tài khoản không được vượt quá 50 ký tự.",
-          "pattern": "Your username is invalid."
-        }
-      },
-      "success": "<strong>Đăng ký thành công!</strong> Bạn vui lòng kiểm tra hộp thư để xác nhận tài khoản.",
-      "error": {
-        "fail": "<strong>Đăng ký thất bại!</strong> Vui lòng thử lại sau.",
-        "userexists": "<strong>Tên tài khoản này đã được sử dụng!</strong> Bạn vui lòng chọn tên tài khoản khác.",
-        "emailexists": "<strong>Email này đã được sử dụng!</strong> Bạn vui lòng nhập email khác."
-      }
-    }
-  },
-  "reset": {
-    "request": {
-      "title": "Đặt lại mật khẩu của bạn",
-      "form": {
-        "button": "Đặt lại mật khẩu"
-      },
-      "messages": {
-        "info": "Nhập địa chỉ email mà bạn đã sử dụng để đăng ký",
-        "success": "Vui lòng kiểm tra hòm thư của bạn để xem chi tiết cách lấy lại mật khẩu."
-      }
-    },
-    "finish": {
-      "title": "Đặt lại mật khẩu",
-      "form": {
-        "button": "Kiểm tra mật khẩu mới"
-      },
-      "messages": {
-        "info": "Chọn mật khẩu mới",
-        "success": "<strong>Mật khẩu của bạn đã được đặt lại.</strong> Bạn vui lòng ",
-        "keymissing": "Không tìm thấy khóa để đặt lại mật khẩu.",
-        "error": "Không thể đặt lại mật khẩu của bạn. Lưu ý, yêu cầu đặt lại mật khẩu chỉ có hiệu lực trong 24 giờ."
-      }
-    }
-  },
-  "security": {
-    "roles": {
-      "title": "Vai trò bảo mật",
-      "new": "Tạo vai trò",
-      "managePermissions": "Quản lý quyền",
-      "columns": {
-        "name": "Tên",
-        "displayName": "Tên hiển thị",
-        "type": "Loại",
-        "actions": "Thao tác"
-      },
-      "empty": {
-        "title": "Chưa có vai trò nào",
-        "message": "Hãy tạo vai trò bảo mật đầu tiên bằng nút Tạo vai trò."
-      },
-      "type": {
-        "resource": "Tài nguyên"
-      },
-      "dialog": {
-        "createTitle": "Tạo vai trò",
-        "editTitle": "Chỉnh sửa vai trò",
-        "name": "Tên",
-        "namePlaceholder": "UPPER_SNAKE_CASE, ví dụ SALES_MANAGER",
-        "nameRequired": "Tên là bắt buộc (tối đa 50 ký tự).",
-        "displayName": "Tên hiển thị",
-        "displayNamePlaceholder": "Nhãn dễ đọc",
-        "type": "Loại",
-        "typePlaceholder": "Chọn loại",
-        "typeRequired": "Loại là bắt buộc."
-      },
-      "confirmDelete": {
-        "title": "Xóa vai trò",
-        "message": "Bạn có chắc muốn xóa vai trò này không? Mọi quyền gán cho vai trò này cũng sẽ bị xóa."
-      },
-      "confirmSave": {
-        "title": "Lưu vai trò",
-        "message": "Bạn có muốn lưu vai trò này không?"
-      }
-    },
-    "menuDefinitions": {
-      "title": "Định nghĩa menu",
-      "new": "Tạo định nghĩa menu",
-      "sync": "Đồng bộ từ registry",
-      "columns": {
-        "menuId": "Mã menu",
-        "labelMenuId": "Nhãn / Mã menu",
-        "label": "Nhãn",
-        "parent": "Menu cha",
-        "route": "Đường dẫn",
-        "icon": "Biểu tượng",
-        "ordering": "Thứ tự",
-        "actions": "Thao tác"
-      },
-      "empty": {
-        "title": "Chưa có định nghĩa menu nào",
-        "message": "Hãy tạo định nghĩa menu đầu tiên hoặc đồng bộ các node điều hướng hiện có từ registry."
-      },
-      "dialog": {
-        "createTitle": "Tạo định nghĩa menu",
-        "editTitle": "Chỉnh sửa định nghĩa menu",
-        "menuId": "Mã menu",
-        "menuIdPlaceholder": "ví dụ security.menu-definitions",
-        "menuIdRequired": "Mã menu là bắt buộc (tối đa 150 ký tự).",
-        "menuName": "Tên menu",
-        "menuNamePlaceholder": "ví dụ Menu Definitions",
-        "menuNameRequired": "Tên menu là bắt buộc (tối đa 200 ký tự).",
-        "label": "Nhãn",
-        "labelPlaceholder": "Nhãn hiển thị",
-        "labelRequired": "Nhãn là bắt buộc (tối đa 200 ký tự).",
-        "parentMenuId": "Mã menu cha",
-        "parentMenuIdPlaceholder": "Để trống nếu là menu cấp cao nhất",
-        "route": "Đường dẫn",
-        "routePlaceholder": "ví dụ /admin/security/menu-definitions",
-        "icon": "Biểu tượng",
-        "iconPlaceholder": "ví dụ pi pi-list",
-        "ordering": "Thứ tự",
-        "orderingRequired": "Thứ tự là bắt buộc.",
-        "description": "Mô tả"
-      },
-      "confirmDelete": {
-        "title": "Xóa định nghĩa menu",
-        "message": "Bạn có chắc muốn xóa định nghĩa menu này không? Các quyền vai trò gắn với node menu này cũng sẽ bị xóa."
-      },
-      "confirmSave": {
-        "title": "Lưu định nghĩa menu",
-        "message": "Bạn có muốn lưu định nghĩa menu này không?"
-      },
-      "confirmSync": {
-        "title": "Đồng bộ từ registry",
-        "message": "Thao tác này sẽ thêm các node điều hướng từ registry frontend chưa có trong catalog. Các định nghĩa hiện có sẽ không bị chỉnh sửa."
-      }
-    },
-    "permissionMatrix": {
-      "title": "Quyền của {{ roleName }}",
-      "backToRoles": "Quay lại vai trò",
-      "saveChanges": "Lưu thay đổi",
-      "discard": "Bỏ thay đổi",
-      "unsavedChanges": "{{ count }} thay đổi chưa lưu",
-      "tabs": {
-        "entity": "Quyền thực thể",
-        "menu": "Quyền menu"
-      },
-      "menu": {
-        "node": "Nút điều hướng"
-      },
-      "entity": {
-        "heading": "Quyền thực thể",
-        "name": "Thực thể",
-        "create": "Tạo",
-        "read": "Đọc",
-        "update": "Cập nhật",
-        "delete": "Xóa",
-        "emptySelection": "Hãy chọn một thực thể ở trên để xem quyền thuộc tính của nó."
-      },
-      "attribute": {
-        "heading": "Quyền thuộc tính: {{ entity }}",
-        "name": "Thuộc tính",
-        "view": "Xem",
-        "modify": "Sửa",
-        "wildcard": "Tất cả thuộc tính (*)",
-        "none": "Thực thể này không có thuộc tính nào được liệt kê."
-      },
-      "confirmSave": {
-        "title": "Lưu quyền",
-        "message": "Bạn có muốn lưu các thay đổi quyền này không?"
-      }
-    },
-    "alert": {
-      "secRole": {
-        "created": "Đã tạo vai trò bảo mật mới với định danh {{ param }}",
-        "updated": "Đã cập nhật vai trò bảo mật với định danh {{ param }}",
-        "deleted": "Đã xóa vai trò bảo mật với định danh {{ param }}"
-      },
-      "secPermission": {
-        "created": "Đã tạo quyền bảo mật mới với định danh {{ param }}",
-        "updated": "Đã cập nhật quyền bảo mật với định danh {{ param }}",
-        "deleted": "Đã xóa quyền bảo mật với định danh {{ param }}"
-      }
-    }
-  },
-  "sessions": {
-    "title": "Các phiên đăng nhập hiện tại của [<strong>{{username}}</strong>]",
-    "table": {
-      "ipaddress": "Địa chỉ IP",
-      "useragent": "Trình duyệt",
-      "date": "Ngày",
-      "button": "Đóng phiên này"
-    },
-    "messages": {
-      "success": "<strong>Phiên đăng nhập đã được đóng!</strong>",
-      "error": "<strong>Có lỗi xảy ra!</strong> Không thể đóng phiên đăng nhập."
-    }
-  },
-  "settings": {
-    "title": "Cài đặt người dùng của [<strong>{{username}}</strong>]",
-    "form": {
-      "firstname": "Tên",
-      "firstname.placeholder": "Nhập tên của bạn",
-      "lastname": "Họ",
-      "lastname.placeholder": "Nhập họ của bạn",
-      "language": "Ngôn ngữ",
-      "button": "Lưu"
-    },
-    "messages": {
-      "error": {
-        "fail": "<strong>Có lỗi xảy ra!</strong> Không thể lưu cài đặt.",
-        "emailexists": "<strong>Email đã được sử dụng!</strong> Vui lòng nhập email khác."
-      },
-      "success": "<strong>Đã lưu cài đặt!</strong>",
-      "validate": {
-        "firstname": {
-          "required": "Bạn phải nhập tên.",
-          "minlength": "Tên phải có ít nhất 1 ký tự",
-          "maxlength": "Tên không được vượt quá 50 ký tự"
-        },
-        "lastname": {
-          "required": "Bạn phải nhập họ tên.",
-          "minlength": "Họ tên phải có ít nhất 1 ký tự",
-          "maxlength": "Họ tên không được vượt quá 50 ký tự"
-        }
-      }
-    }
-  },
-  "userManagement": {
-    "home": {
-      "title": "Tài khoản",
-      "refreshListLabel": "Làm mới danh sách",
-      "createLabel": "Tạo tài khoản mới",
-      "createOrEditLabel": "Tạo hoặc sửa tài khoản",
-      "searchPlaceholder": "Tìm kiếm theo tên đăng nhập, email hoặc tên",
-      "emptyTitle": "Không tìm thấy tài khoản nào",
-      "emptyBody": "Thử tìm kiếm khác hoặc tạo tài khoản mới.",
-      "loadError": "Không thể tải danh sách tài khoản. Hãy làm mới trang. Nếu vẫn tiếp tục, hãy liên hệ quản trị viên."
-    },
-    "created": "Một tài khoản mới đã được tạo với định danh {{ param }}",
-    "updated": "Một tài khoản đã được cập nhật với định danh {{ param }}",
-    "deleted": "Một tài khoản đã bị xóa với định danh {{ param }}",
-    "delete": {
-      "question": "Bạn có chắc chắn muốn xóa tài khoản {{ login }}?",
-      "title": "Xóa tài khoản",
-      "keep": "Giữ lại",
-      "confirm": "Xóa"
-    },
-    "detail": {
-      "title": "Tài khoản",
-      "summaryTitle": "Chi tiết tài khoản",
-      "rolesTitle": "Vai trò",
-      "backToList": "Quay lại danh sách",
-      "auditTitle": "Thông tin kiểm tra"
-    },
-    "form": {
-      "sectionTitle": "Thông tin tài khoản",
-      "rolesTitle": "Vai trò được gán",
-      "save": "Lưu tài khoản",
-      "create": "Tạo tài khoản",
-      "discard": "Bỏ thay đổi",
-      "validation": {
-        "loginRequired": "Bắt buộc nhập tên đăng nhập.",
-        "emailRequired": "Bắt buộc nhập email.",
-        "emailInvalid": "Email không hợp lệ.",
-        "maxLength": "Trường này không được vượt quá {{ max }} ký tự.",
-        "langKeyRequired": "Bắt buộc chọn ngôn ngữ."
-      }
-    },
-    "actions": {
-      "view": "Xem",
-      "edit": "Sửa",
-      "activate": "Kích hoạt",
-      "deactivate": "Khóa",
-      "delete": "Xóa",
-      "new": "Tạo mới"
-    },
-    "columns": {
-      "fullName": "Họ và tên",
-      "status": "Trạng thái",
-      "roles": "Vai trò",
-      "lastModified": "Lần sửa cuối",
-      "actions": "Thao tác"
-    },
-    "authorityLabels": {
-      "ROLE_ADMIN": "Quản trị viên",
-      "ROLE_USER": "Người dùng",
-      "ROLE_ACCOUNTANT": "Kế toán",
-      "ROLE_STOCKKEEPER": "Thủ kho",
-      "ROLE_DIRECTOR": "Giám đốc"
-    },
-    "status": {
-      "active": "Đang hoạt động",
-      "inactive": "Bị khóa"
-    },
-    "login": "Tên đăng nhập",
-    "firstName": "Tên",
-    "lastName": "Họ",
-    "email": "Email",
-    "activated": "Kích hoạt",
-    "deactivated": "Khóa",
-    "profiles": "Các quyền",
-    "feedback": {
-      "createFailed": "Không thể tạo tài khoản. Hãy kiểm tra lại biểu mẫu và thử lại.",
-      "updateFailed": "Không thể lưu tài khoản. Hãy kiểm tra lại biểu mẫu và thử lại.",
-      "saved": "Tài khoản {{ login }} đã được lưu."
-    },
-    "langKey": "Ngôn ngữ",
-    "createdBy": "Người tạo",
-    "createdDate": "Ngày tạo",
-    "lastModifiedBy": "Người sửa",
-    "lastModifiedDate": "Ngày sửa",
-    "placeholder": {
-      "phase6": "Màn hình quản lý người dùng đầy đủ sẽ hoàn thành ở Phase 8. Placeholder này giữ nguyên hợp đồng route và service."
-    }
-  }
+﻿{
+    "activate":  {
+                     "title":  "KÃ­ch hoáº¡t",
+                     "messages":  {
+                                      "success":  "\u003cstrong\u003eTÃ i khoáº£n cá»§a báº¡n Ä‘Ã£ Ä‘Æ°á»£c kÃ­ch hoáº¡t.\u003c/strong\u003e Báº¡n vui lÃ²ng ",
+                                      "error":  "\u003cstrong\u003eKhÃ´ng thá»ƒ kÃ­ch hoáº¡t tÃ i khoáº£n cá»§a báº¡n.\u003c/strong\u003e Vui lÃ²ng quay láº¡i trang Ä‘Äƒng kÃ½ Ä‘á»ƒ táº¡o tÃ i khoáº£n."
+                                  }
+                 },
+    "entity":  {
+                   "action":  {
+                                  "addblob":  "ThÃªm ná»™i dung",
+                                  "addimage":  "ThÃªm áº£nh",
+                                  "back":  "Quay láº¡i",
+                                  "cancel":  "Há»§y",
+                                  "delete":  "XÃ³a",
+                                  "discard":  "Bá» thay Ä‘á»•i",
+                                  "edit":  "Sá»­a",
+                                  "open":  "Má»Ÿ",
+                                  "save":  "LÆ°u",
+                                  "view":  "Xem",
+                                  "show":  "Hiá»ƒn thá»‹ {{otherEntity}}"
+                              },
+                   "detail":  {
+                                  "field":  "TrÆ°á»ng",
+                                  "value":  "GiÃ¡ trá»‹"
+                              },
+                   "delete":  {
+                                  "title":  "XÃ¡c nháº­n hÃ nh Ä‘á»™ng xÃ³a"
+                              },
+                   "validation":  {
+                                      "required":  "TrÆ°á»ng nÃ y báº¯t buá»™c pháº£i nháº­p.",
+                                      "minlength":  "TrÆ°á»ng nÃ y pháº£i cÃ³ Ã­t nháº¥t {{ min }} kÃ½ tá»±.",
+                                      "maxlength":  "TrÆ°á»ng nÃ y khÃ´ng Ä‘Æ°á»£c vÆ°á»£t quÃ¡ {{ max }} kÃ½ tá»±.",
+                                      "min":  "TrÆ°á»ng nÃ y pháº£i lá»›n hÆ¡n {{ min }}.",
+                                      "max":  "TrÆ°á»ng nÃ y pháº£i nhá» hÆ¡n {{ max }}.",
+                                      "minbytes":  "Dung lÆ°á»£ng trÆ°á»ng nÃ y pháº£i lá»›n hÆ¡n {{ min }} bytes.",
+                                      "maxbytes":  "Dung lÆ°á»£ng trÆ°á»ng nÃ y pháº£i nhá» hÆ¡n {{ max }} bytes.",
+                                      "pattern":  "TrÆ°á»ng nÃ y pháº£i theo Ä‘á»‹nh dáº¡ng {{ pattern }}.",
+                                      "number":  "TrÆ°á»ng nÃ y pháº£i lÃ  má»™t sá»‘.",
+                                      "datetimelocal":  "TrÆ°á»ng nÃ y pháº£i lÃ  Ä‘á»‹nh dáº¡ng thá»i gian.",
+                                      "patternLogin":  "TrÆ°á»ng nÃ y chá»‰ Ä‘Æ°á»£c chá»©a chá»¯ cÃ¡i, chá»¯ sá»‘ vÃ  Ä‘á»‹a chá»‰ email."
+                                  },
+                   "filters":  {
+                                   "set":  "CÃ¡c bá»™ lá»c Ä‘ang Ä‘Æ°á»£c Ã¡p dá»¥ng",
+                                   "clear":  "XÃ³a bá»™ lá»c",
+                                   "clearAll":  "XÃ³a táº¥t cáº£ bá»™ lá»c"
+                               },
+                   "pagination":  {
+                                      "report":  "Hiá»ƒn thá»‹ {first} Ä‘áº¿n {last} trÃªn tá»•ng sá»‘ {totalRecords} báº£n ghi"
+                                  },
+                   "list":  {
+                                "actions":  "Thao tác"
+                            }
+               },
+    "error":  {
+                  "internalServerError":  "Lá»—i mÃ¡y chá»§ ná»™i bá»™",
+                  "server.not.reachable":  "KhÃ´ng tÃ¬m tháº¥y mÃ¡y chá»§",
+                  "url.not.found":  "KhÃ´ng tÃ¬m tháº¥y",
+                  "NotNull":  "TrÆ°á»ng {{ fieldName }} khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng!",
+                  "Size":  "TrÆ°á»ng {{ fieldName }} khÃ´ng náº±m trong giá»›i háº¡n tá»‘i thiá»ƒu/tá»‘i Ä‘a!",
+                  "userexists":  "TÃªn Ä‘Äƒng nháº­p Ä‘Ã£ Ä‘Æ°á»£c sá»­ dá»¥ng!",
+                  "emailexists":  "Email Ä‘Ã£ Ä‘Æ°á»£c sá»­ dá»¥ng!",
+                  "idexists":  "ThÃªm má»›i {{ entityName }} khÃ´ng Ä‘Æ°á»£c trÃ¹ng vá»›i Ä‘á»‹nh danh Ä‘Ã£ tá»“n táº¡i",
+                  "idnull":  "Invalid ID",
+                  "idinvalid":  "Invalid Id",
+                  "idnotfound":  "ID cannot be found",
+                  "file":  {
+                               "could.not.extract":  "Could not extract file",
+                               "not.image":  "File was expected to be an image but was found to be \"{{ fileType }}\""
+                           },
+                  "title":  "Trang thÃ´ng tin lá»—i!",
+                  "http":  {
+                               "400":  "Bad request.",
+                               "403":  "Báº¡n khÃ´ng cÃ³ quyá»n xem trang nÃ y.",
+                               "404":  "Trang khÃ´ng tá»“n táº¡i.",
+                               "405":  "The HTTP verb you used is not supported for this URL.",
+                               "500":  "Internal server error."
+                           },
+                  "concurrencyFailure":  "Another user modified this data at the same time as you. Your changes were rejected.",
+                  "validation":  "Validation error on the server.",
+                  "backToHome":  "Vá» trang chá»§",
+                  "accessDenied":  {
+                                       "blockedMessage":  "Báº¡n khÃ´ng cÃ³ quyá»n truy cáº­p {{ destination }}.",
+                                       "recoveryMessage":  "Äi tá»›i {{ fallback }} hoáº·c liÃªn há»‡ quáº£n trá»‹ viÃªn náº¿u báº¡n cho ráº±ng Ä‘iá»u nÃ y lÃ  nháº§m láº«n.",
+                                       "goTo":  "Äi tá»›i {{ destination }}"
+                                   }
+              },
+    "footer":  "ÄÃ¢y lÃ  chÃ¢n trang cá»§a báº¡n",
+    "home":  {
+                 "title":  "ChÃ o má»«ng báº¡n Ä‘áº¿n vá»›i Java Hipster!",
+                 "subtitle":  "ÄÃ¢y lÃ  trang chá»§ cá»§a báº¡n",
+                 "logged":  {
+                                "message":  "Báº¡n Ä‘ang Ä‘Äƒng nháº­p báº±ng tÃ i khoáº£n \"{{username}}\"."
+                            },
+                 "question":  "Náº¿u báº¡n cÃ³ báº¥t ká»³ cÃ¢u há»i nÃ o vá» JHipster vui lÃ²ng truy cáº­p:",
+                 "link":  {
+                              "homepage":  "Trang chá»§ JHipster",
+                              "stackoverflow":  "JHipster trÃªn Stack Overflow",
+                              "bugtracker":  "Theo dÃµi cÃ¡c lá»—i JHipster",
+                              "chat":  "PhÃ²ng chat cÃ´ng cá»™ng JHipster",
+                              "follow":  "Theo dÃµi @jhipster trÃªn Twitter"
+                          },
+                 "like":  "Náº¿u báº¡n thÃ­ch JHipster, Ä‘á»«ng quÃªn cho chÃºng tÃ´i thÃªm má»™t ngÃ´i sao trÃªn",
+                 "github":  "GitHub"
+             },
+    "layout":  {
+                   "breadcrumb":  "Äiá»u hÆ°á»›ng",
+                   "brand":  {
+                                 "name":  "JHipster Security",
+                                 "shortName":  "JS"
+                             },
+                   "footer":  {
+                                  "productName":  "JHipster Security Platform"
+                              },
+                   "topbar":  {
+                                  "toggleMenu":  "Má»Ÿ hoáº·c Ä‘Ã³ng menu",
+                                  "toggleTheme":  "Äá»•i giao diá»‡n",
+                                  "openSettings":  "Má»Ÿ cÃ i Ä‘áº·t",
+                                  "login":  "ÄÄƒng nháº­p",
+                                  "logout":  "ÄÄƒng xuáº¥t"
+                              },
+                   "settings":  {
+                                    "title":  "CÃ i Ä‘áº·t",
+                                    "subtitle":  "NgÃ´n ngá»¯, giao diá»‡n vÃ  tÃ¹y chá»n bá»‘ cá»¥c",
+                                    "language":  "NgÃ´n ngá»¯",
+                                    "preset":  "Preset",
+                                    "primary":  "MÃ u chÃ­nh",
+                                    "surface":  "Bá» máº·t",
+                                    "appearance":  {
+                                                       "label":  "Giao diá»‡n",
+                                                       "light":  "SÃ¡ng",
+                                                       "dark":  "Tá»‘i"
+                                                   },
+                                    "menuMode":  {
+                                                     "label":  "Cháº¿ Ä‘á»™ menu",
+                                                     "static":  "Static",
+                                                     "overlay":  "Overlay",
+                                                     "drawer":  "Drawer"
+                                                 }
+                                },
+                   "language":  {
+                                    "en":  "English",
+                                    "vi":  "Tiáº¿ng Viá»‡t"
+                                },
+                   "menu":  {
+                                "security":  {
+                                                 "main":  "Quáº£n trá»‹ báº£o máº­t",
+                                                 "roles":  "Vai trÃ² báº£o máº­t",
+                                                 "permissions":  "Ma tráº­n quyá»n",
+                                                 "menuDefinitions":  "Äá»‹nh nghÄ©a menu"
+                                             },
+                                "entities":  {
+                                                 "employee":  "NhÃ¢n viÃªn"
+                                             }
+                            }
+               },
+    "login":  {
+                  "title":  "ÄÄƒng nháº­p",
+                  "form":  {
+                               "password":  "Máº­t kháº©u",
+                               "password.placeholder":  "Nháº­p máº­t kháº©u cá»§a báº¡n",
+                               "rememberme":  "Nhá»› tÃ i khoáº£n",
+                               "button":  "ÄÄƒng nháº­p"
+                           },
+                  "messages":  {
+                                   "error":  {
+                                                 "authentication":  "\u003cstrong\u003eÄÄƒng nháº­p tháº¥t báº¡i!\u003c/strong\u003e Báº¡n vui lÃ²ng kiá»ƒm tra thÃ´ng tin Ä‘Äƒng nháº­p vÃ  thá»­ láº¡i."
+                                             }
+                               },
+                  "password":  {
+                                   "forgot":  "Báº¡n quÃªn máº­t kháº©u?"
+                               }
+              },
+    "pageTitle":  {
+                      "home":  "Trang chá»§",
+                      "login":  "ÄÄƒng nháº­p",
+                      "accessDenied":  "Tá»« chá»‘i truy cáº­p",
+                      "notFound":  "KhÃ´ng tÃ¬m tháº¥y trang",
+                      "error":  "Lá»—i khÃ´ng mong muá»‘n",
+                      "securityRoles":  "Vai trÃ² báº£o máº­t",
+                      "permissionMatrix":  "Ma tráº­n quyá»n",
+                      "menuDefinitions":  "Äá»‹nh nghÄ©a menu"
+                  },
+    "password":  {
+                     "title":  "Máº­t kháº©u cho tÃ i khoáº£n [\u003cstrong\u003e{{username}}\u003c/strong\u003e]",
+                     "form":  {
+                                  "button":  "LÆ°u"
+                              },
+                     "messages":  {
+                                      "error":  "\u003cstrong\u003eCÃ³ lá»—i xáº£y ra!\u003c/strong\u003e KhÃ´ng thá»ƒ thay Ä‘á»•i máº­t kháº©u.",
+                                      "success":  "\u003cstrong\u003eMáº­t kháº©u Ä‘Ã£ Ä‘Æ°á»£c thay Ä‘á»•i!\u003c/strong\u003e"
+                                  }
+                 },
+    "register":  {
+                     "title":  "ÄÄƒng kÃ½",
+                     "form":  {
+                                  "button":  "ÄÄƒng kÃ½"
+                              },
+                     "messages":  {
+                                      "validate":  {
+                                                       "login":  {
+                                                                     "required":  "Báº¡n pháº£i nháº­p tÃªn tÃ i khoáº£n.",
+                                                                     "minlength":  "TÃªn tÃ i khoáº£n pháº£i cÃ³ Ã­t nháº¥t 1 kÃ½ tá»±.",
+                                                                     "maxlength":  "TÃªn tÃ i khoáº£n khÃ´ng Ä‘Æ°á»£c vÆ°á»£t quÃ¡ 50 kÃ½ tá»±.",
+                                                                     "pattern":  "Your username is invalid."
+                                                                 }
+                                                   },
+                                      "success":  "\u003cstrong\u003eÄÄƒng kÃ½ thÃ nh cÃ´ng!\u003c/strong\u003e Báº¡n vui lÃ²ng kiá»ƒm tra há»™p thÆ° Ä‘á»ƒ xÃ¡c nháº­n tÃ i khoáº£n.",
+                                      "error":  {
+                                                    "fail":  "\u003cstrong\u003eÄÄƒng kÃ½ tháº¥t báº¡i!\u003c/strong\u003e Vui lÃ²ng thá»­ láº¡i sau.",
+                                                    "userexists":  "\u003cstrong\u003eTÃªn tÃ i khoáº£n nÃ y Ä‘Ã£ Ä‘Æ°á»£c sá»­ dá»¥ng!\u003c/strong\u003e Báº¡n vui lÃ²ng chá»n tÃªn tÃ i khoáº£n khÃ¡c.",
+                                                    "emailexists":  "\u003cstrong\u003eEmail nÃ y Ä‘Ã£ Ä‘Æ°á»£c sá»­ dá»¥ng!\u003c/strong\u003e Báº¡n vui lÃ²ng nháº­p email khÃ¡c."
+                                                }
+                                  }
+                 },
+    "reset":  {
+                  "request":  {
+                                  "title":  "Äáº·t láº¡i máº­t kháº©u cá»§a báº¡n",
+                                  "form":  {
+                                               "button":  "Äáº·t láº¡i máº­t kháº©u"
+                                           },
+                                  "messages":  {
+                                                   "info":  "Nháº­p Ä‘á»‹a chá»‰ email mÃ  báº¡n Ä‘Ã£ sá»­ dá»¥ng Ä‘á»ƒ Ä‘Äƒng kÃ½",
+                                                   "success":  "Vui lÃ²ng kiá»ƒm tra hÃ²m thÆ° cá»§a báº¡n Ä‘á»ƒ xem chi tiáº¿t cÃ¡ch láº¥y láº¡i máº­t kháº©u."
+                                               }
+                              },
+                  "finish":  {
+                                 "title":  "Äáº·t láº¡i máº­t kháº©u",
+                                 "form":  {
+                                              "button":  "Kiá»ƒm tra máº­t kháº©u má»›i"
+                                          },
+                                 "messages":  {
+                                                  "info":  "Chá»n máº­t kháº©u má»›i",
+                                                  "success":  "\u003cstrong\u003eMáº­t kháº©u cá»§a báº¡n Ä‘Ã£ Ä‘Æ°á»£c Ä‘áº·t láº¡i.\u003c/strong\u003e Báº¡n vui lÃ²ng ",
+                                                  "keymissing":  "KhÃ´ng tÃ¬m tháº¥y khÃ³a Ä‘á»ƒ Ä‘áº·t láº¡i máº­t kháº©u.",
+                                                  "error":  "KhÃ´ng thá»ƒ Ä‘áº·t láº¡i máº­t kháº©u cá»§a báº¡n. LÆ°u Ã½, yÃªu cáº§u Ä‘áº·t láº¡i máº­t kháº©u chá»‰ cÃ³ hiá»‡u lá»±c trong 24 giá»."
+                                              }
+                             }
+              },
+    "security":  {
+                     "roles":  {
+                                   "title":  "Vai trÃ² báº£o máº­t",
+                                   "new":  "Táº¡o vai trÃ²",
+                                   "managePermissions":  "Quáº£n lÃ½ quyá»n",
+                                   "columns":  {
+                                                   "name":  "TÃªn",
+                                                   "displayName":  "TÃªn hiá»ƒn thá»‹",
+                                                   "type":  "Loáº¡i",
+                                                   "actions":  "Thao tÃ¡c"
+                                               },
+                                   "empty":  {
+                                                 "title":  "ChÆ°a cÃ³ vai trÃ² nÃ o",
+                                                 "message":  "HÃ£y táº¡o vai trÃ² báº£o máº­t Ä‘áº§u tiÃªn báº±ng nÃºt Táº¡o vai trÃ²."
+                                             },
+                                   "type":  {
+                                                "resource":  "TÃ i nguyÃªn"
+                                            },
+                                   "dialog":  {
+                                                  "createTitle":  "Táº¡o vai trÃ²",
+                                                  "editTitle":  "Chá»‰nh sá»­a vai trÃ²",
+                                                  "name":  "TÃªn",
+                                                  "namePlaceholder":  "UPPER_SNAKE_CASE, vÃ­ dá»¥ SALES_MANAGER",
+                                                  "nameRequired":  "TÃªn lÃ  báº¯t buá»™c (tá»‘i Ä‘a 50 kÃ½ tá»±).",
+                                                  "displayName":  "TÃªn hiá»ƒn thá»‹",
+                                                  "displayNamePlaceholder":  "NhÃ£n dá»… Ä‘á»c",
+                                                  "type":  "Loáº¡i",
+                                                  "typePlaceholder":  "Chá»n loáº¡i",
+                                                  "typeRequired":  "Loáº¡i lÃ  báº¯t buá»™c."
+                                              },
+                                   "confirmDelete":  {
+                                                         "title":  "XÃ³a vai trÃ²",
+                                                         "message":  "Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a vai trÃ² nÃ y khÃ´ng? Má»i quyá»n gÃ¡n cho vai trÃ² nÃ y cÅ©ng sáº½ bá»‹ xÃ³a."
+                                                     },
+                                   "confirmSave":  {
+                                                       "title":  "LÆ°u vai trÃ²",
+                                                       "message":  "Báº¡n cÃ³ muá»‘n lÆ°u vai trÃ² nÃ y khÃ´ng?"
+                                                   }
+                               },
+                     "menuDefinitions":  {
+                                             "title":  "Äá»‹nh nghÄ©a menu",
+                                             "new":  "Táº¡o Ä‘á»‹nh nghÄ©a menu",
+                                             "sync":  "Äá»“ng bá»™ tá»« registry",
+                                             "columns":  {
+                                                             "menuId":  "MÃ£ menu",
+                                                             "labelMenuId":  "NhÃ£n / MÃ£ menu",
+                                                             "label":  "NhÃ£n",
+                                                             "parent":  "Menu cha",
+                                                             "route":  "ÄÆ°á»ng dáº«n",
+                                                             "icon":  "Biá»ƒu tÆ°á»£ng",
+                                                             "ordering":  "Thá»© tá»±",
+                                                             "actions":  "Thao tÃ¡c"
+                                                         },
+                                             "empty":  {
+                                                           "title":  "ChÆ°a cÃ³ Ä‘á»‹nh nghÄ©a menu nÃ o",
+                                                           "message":  "HÃ£y táº¡o Ä‘á»‹nh nghÄ©a menu Ä‘áº§u tiÃªn hoáº·c Ä‘á»“ng bá»™ cÃ¡c node Ä‘iá»u hÆ°á»›ng hiá»‡n cÃ³ tá»« registry."
+                                                       },
+                                             "dialog":  {
+                                                            "createTitle":  "Táº¡o Ä‘á»‹nh nghÄ©a menu",
+                                                            "editTitle":  "Chá»‰nh sá»­a Ä‘á»‹nh nghÄ©a menu",
+                                                            "menuId":  "MÃ£ menu",
+                                                            "menuIdPlaceholder":  "vÃ­ dá»¥ security.menu-definitions",
+                                                            "menuIdRequired":  "MÃ£ menu lÃ  báº¯t buá»™c (tá»‘i Ä‘a 150 kÃ½ tá»±).",
+                                                            "menuName":  "TÃªn menu",
+                                                            "menuNamePlaceholder":  "vÃ­ dá»¥ Menu Definitions",
+                                                            "menuNameRequired":  "TÃªn menu lÃ  báº¯t buá»™c (tá»‘i Ä‘a 200 kÃ½ tá»±).",
+                                                            "label":  "NhÃ£n",
+                                                            "labelPlaceholder":  "NhÃ£n hiá»ƒn thá»‹",
+                                                            "labelRequired":  "NhÃ£n lÃ  báº¯t buá»™c (tá»‘i Ä‘a 200 kÃ½ tá»±).",
+                                                            "parentMenuId":  "MÃ£ menu cha",
+                                                            "parentMenuIdPlaceholder":  "Äá»ƒ trá»‘ng náº¿u lÃ  menu cáº¥p cao nháº¥t",
+                                                            "route":  "ÄÆ°á»ng dáº«n",
+                                                            "routePlaceholder":  "vÃ­ dá»¥ /admin/security/menu-definitions",
+                                                            "icon":  "Biá»ƒu tÆ°á»£ng",
+                                                            "iconPlaceholder":  "vÃ­ dá»¥ pi pi-list",
+                                                            "ordering":  "Thá»© tá»±",
+                                                            "orderingRequired":  "Thá»© tá»± lÃ  báº¯t buá»™c.",
+                                                            "description":  "MÃ´ táº£"
+                                                        },
+                                             "confirmDelete":  {
+                                                                   "title":  "XÃ³a Ä‘á»‹nh nghÄ©a menu",
+                                                                   "message":  "Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a Ä‘á»‹nh nghÄ©a menu nÃ y khÃ´ng? CÃ¡c quyá»n vai trÃ² gáº¯n vá»›i node menu nÃ y cÅ©ng sáº½ bá»‹ xÃ³a."
+                                                               },
+                                             "confirmSave":  {
+                                                                 "title":  "LÆ°u Ä‘á»‹nh nghÄ©a menu",
+                                                                 "message":  "Báº¡n cÃ³ muá»‘n lÆ°u Ä‘á»‹nh nghÄ©a menu nÃ y khÃ´ng?"
+                                                             },
+                                             "confirmSync":  {
+                                                                 "title":  "Äá»“ng bá»™ tá»« registry",
+                                                                 "message":  "Thao tÃ¡c nÃ y sáº½ thÃªm cÃ¡c node Ä‘iá»u hÆ°á»›ng tá»« registry frontend chÆ°a cÃ³ trong catalog. CÃ¡c Ä‘á»‹nh nghÄ©a hiá»‡n cÃ³ sáº½ khÃ´ng bá»‹ chá»‰nh sá»­a."
+                                                             }
+                                         },
+                     "permissionMatrix":  {
+                                              "title":  "Quyá»n cá»§a {{ roleName }}",
+                                              "backToRoles":  "Quay láº¡i vai trÃ²",
+                                              "saveChanges":  "LÆ°u thay Ä‘á»•i",
+                                              "discard":  "Bá» thay Ä‘á»•i",
+                                              "unsavedChanges":  "{{ count }} thay Ä‘á»•i chÆ°a lÆ°u",
+                                              "tabs":  {
+                                                           "entity":  "Quyá»n thá»±c thá»ƒ",
+                                                           "menu":  "Quyá»n menu"
+                                                       },
+                                              "menu":  {
+                                                           "node":  "NÃºt Ä‘iá»u hÆ°á»›ng"
+                                                       },
+                                              "entity":  {
+                                                             "heading":  "Quyá»n thá»±c thá»ƒ",
+                                                             "name":  "Thá»±c thá»ƒ",
+                                                             "create":  "Táº¡o",
+                                                             "read":  "Äá»c",
+                                                             "update":  "Cáº­p nháº­t",
+                                                             "delete":  "XÃ³a",
+                                                             "emptySelection":  "HÃ£y chá»n má»™t thá»±c thá»ƒ á»Ÿ trÃªn Ä‘á»ƒ xem quyá»n thuá»™c tÃ­nh cá»§a nÃ³."
+                                                         },
+                                              "attribute":  {
+                                                                "heading":  "Quyá»n thuá»™c tÃ­nh: {{ entity }}",
+                                                                "name":  "Thuá»™c tÃ­nh",
+                                                                "view":  "Xem",
+                                                                "modify":  "Sá»­a",
+                                                                "wildcard":  "Táº¥t cáº£ thuá»™c tÃ­nh (*)",
+                                                                "none":  "Thá»±c thá»ƒ nÃ y khÃ´ng cÃ³ thuá»™c tÃ­nh nÃ o Ä‘Æ°á»£c liá»‡t kÃª."
+                                                            },
+                                              "confirmSave":  {
+                                                                  "title":  "LÆ°u quyá»n",
+                                                                  "message":  "Báº¡n cÃ³ muá»‘n lÆ°u cÃ¡c thay Ä‘á»•i quyá»n nÃ y khÃ´ng?"
+                                                              }
+                                          },
+                     "alert":  {
+                                   "secRole":  {
+                                                   "created":  "ÄÃ£ táº¡o vai trÃ² báº£o máº­t má»›i vá»›i Ä‘á»‹nh danh {{ param }}",
+                                                   "updated":  "ÄÃ£ cáº­p nháº­t vai trÃ² báº£o máº­t vá»›i Ä‘á»‹nh danh {{ param }}",
+                                                   "deleted":  "ÄÃ£ xÃ³a vai trÃ² báº£o máº­t vá»›i Ä‘á»‹nh danh {{ param }}"
+                                               },
+                                   "secPermission":  {
+                                                         "created":  "ÄÃ£ táº¡o quyá»n báº£o máº­t má»›i vá»›i Ä‘á»‹nh danh {{ param }}",
+                                                         "updated":  "ÄÃ£ cáº­p nháº­t quyá»n báº£o máº­t vá»›i Ä‘á»‹nh danh {{ param }}",
+                                                         "deleted":  "ÄÃ£ xÃ³a quyá»n báº£o máº­t vá»›i Ä‘á»‹nh danh {{ param }}"
+                                                     }
+                               }
+                 },
+    "sessions":  {
+                     "title":  "CÃ¡c phiÃªn Ä‘Äƒng nháº­p hiá»‡n táº¡i cá»§a [\u003cstrong\u003e{{username}}\u003c/strong\u003e]",
+                     "table":  {
+                                   "ipaddress":  "Äá»‹a chá»‰ IP",
+                                   "useragent":  "TrÃ¬nh duyá»‡t",
+                                   "date":  "NgÃ y",
+                                   "button":  "ÄÃ³ng phiÃªn nÃ y"
+                               },
+                     "messages":  {
+                                      "success":  "\u003cstrong\u003ePhiÃªn Ä‘Äƒng nháº­p Ä‘Ã£ Ä‘Æ°á»£c Ä‘Ã³ng!\u003c/strong\u003e",
+                                      "error":  "\u003cstrong\u003eCÃ³ lá»—i xáº£y ra!\u003c/strong\u003e KhÃ´ng thá»ƒ Ä‘Ã³ng phiÃªn Ä‘Äƒng nháº­p."
+                                  }
+                 },
+    "settings":  {
+                     "title":  "CÃ i Ä‘áº·t ngÆ°á»i dÃ¹ng cá»§a [\u003cstrong\u003e{{username}}\u003c/strong\u003e]",
+                     "form":  {
+                                  "firstname":  "TÃªn",
+                                  "firstname.placeholder":  "Nháº­p tÃªn cá»§a báº¡n",
+                                  "lastname":  "Há»",
+                                  "lastname.placeholder":  "Nháº­p há» cá»§a báº¡n",
+                                  "language":  "NgÃ´n ngá»¯",
+                                  "button":  "LÆ°u"
+                              },
+                     "messages":  {
+                                      "error":  {
+                                                    "fail":  "\u003cstrong\u003eCÃ³ lá»—i xáº£y ra!\u003c/strong\u003e KhÃ´ng thá»ƒ lÆ°u cÃ i Ä‘áº·t.",
+                                                    "emailexists":  "\u003cstrong\u003eEmail Ä‘Ã£ Ä‘Æ°á»£c sá»­ dá»¥ng!\u003c/strong\u003e Vui lÃ²ng nháº­p email khÃ¡c."
+                                                },
+                                      "success":  "\u003cstrong\u003eÄÃ£ lÆ°u cÃ i Ä‘áº·t!\u003c/strong\u003e",
+                                      "validate":  {
+                                                       "firstname":  {
+                                                                         "required":  "Báº¡n pháº£i nháº­p tÃªn.",
+                                                                         "minlength":  "TÃªn pháº£i cÃ³ Ã­t nháº¥t 1 kÃ½ tá»±",
+                                                                         "maxlength":  "TÃªn khÃ´ng Ä‘Æ°á»£c vÆ°á»£t quÃ¡ 50 kÃ½ tá»±"
+                                                                     },
+                                                       "lastname":  {
+                                                                        "required":  "Báº¡n pháº£i nháº­p há» tÃªn.",
+                                                                        "minlength":  "Há» tÃªn pháº£i cÃ³ Ã­t nháº¥t 1 kÃ½ tá»±",
+                                                                        "maxlength":  "Há» tÃªn khÃ´ng Ä‘Æ°á»£c vÆ°á»£t quÃ¡ 50 kÃ½ tá»±"
+                                                                    }
+                                                   }
+                                  }
+                 },
+    "angappApp":  {
+                      "adminAuthority":  {
+                                             "home":  {
+                                                          "title":  "Authorities",
+                                                          "refreshListLabel":  "Refresh list",
+                                                          "createLabel":  "ThÃªm má»›i má»™t Authority",
+                                                          "createOrEditLabel":  "ThÃªm má»›i hoáº·c cáº­p nháº­t Authority",
+                                                          "notFound":  "No Authorities found"
+                                                      },
+                                             "created":  "Má»™t Authority má»›i Ä‘Æ°á»£c táº¡o vá»›i Ä‘á»‹nh danh {{ param }}",
+                                             "updated":  "Má»™t Authority cáº­p nháº­t vá»›i Ä‘á»‹nh danh {{ param }}",
+                                             "deleted":  "Má»™t Authority Ä‘Ã£ xÃ³a vá»›i Ä‘á»‹nh danh {{ param }}",
+                                             "delete":  {
+                                                            "question":  "Báº¡n cÃ³ cháº¯c lÃ  muá»‘n xÃ³a Authority {{ id }}?"
+                                                        },
+                                             "detail":  {
+                                                            "title":  "Authority"
+                                                        },
+                                             "name":  "Name"
+                                         },
+                      "brand":  {
+                                    "home":  {
+                                                 "title":  "Thương hiệu",
+                                                 "refreshListLabel":  "Làm mới danh sách",
+                                                 "createLabel":  "Tạo thương hiệu mới",
+                                                 "createOrEditLabel":  "Chỉnh sửa thương hiệu",
+                                                 "notFound":  "Không tìm thấy thương hiệu nào."
+                                             },
+                                    "delete":  {
+                                                   "title":  "Xóa thương hiệu",
+                                                   "question":  "Bạn có chắc muốn xóa thương hiệu này không? Hành động này không thể hoàn tác."
+                                               },
+                                    "detail":  {
+                                                   "title":  "Thương hiệu"
+                                               },
+                                    "id":  "ID",
+                                    "name":  "Tên",
+                                    "description":  "Mô tả"
+                                },
+                      "department":  {
+                                         "home":  {
+                                                      "title":  "PhÃ²ng ban",
+                                                      "refreshListLabel":  "LÃ m má»›i danh sÃ¡ch",
+                                                      "createLabel":  "Táº¡o phÃ²ng ban má»›i",
+                                                      "createOrEditLabel":  "Chá»‰nh sá»­a phÃ²ng ban",
+                                                      "notFound":  "KhÃ´ng tÃ¬m tháº¥y phÃ²ng ban nÃ o.",
+                                                      "denied":  {
+                                                                     "title":  "Quyá»n truy cáº­p phÃ²ng ban bá»‹ giá»›i háº¡n",
+                                                                     "message":  "Báº¡n cÃ³ thá»ƒ má»Ÿ workspace nÃ y tá»« shell, nhÆ°ng khÃ´ng cÃ³ quyá»n xem báº£n ghi phÃ²ng ban."
+                                                                 }
+                                                  },
+                                         "created":  "ÄÃ£ táº¡o phÃ²ng ban má»›i vá»›i Ä‘á»‹nh danh {{ param }}",
+                                         "updated":  "ÄÃ£ cáº­p nháº­t phÃ²ng ban vá»›i Ä‘á»‹nh danh {{ param }}",
+                                         "deleted":  "ÄÃ£ xÃ³a phÃ²ng ban vá»›i Ä‘á»‹nh danh {{ param }}",
+                                         "delete":  {
+                                                        "title":  "XÃ³a phÃ²ng ban",
+                                                        "question":  "Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a phÃ²ng ban nÃ y khÃ´ng? HÃ nh Ä‘á»™ng nÃ y khÃ´ng thá»ƒ hoÃ n tÃ¡c."
+                                                    },
+                                         "detail":  {
+                                                        "title":  "PhÃ²ng ban"
+                                                    },
+                                         "id":  "ID",
+                                         "name":  "TÃªn",
+                                         "code":  "MÃ£",
+                                         "organization":  "Tá»• chá»©c",
+                                         "costCenter":  "MÃ£ chi phÃ­"
+                                     },
+                      "employee":  {
+                                       "home":  {
+                                                    "title":  "NhÃ¢n viÃªn",
+                                                    "createLabel":  "Táº¡o nhÃ¢n viÃªn má»›i",
+                                                    "createOrEditLabel":  "Chá»‰nh sá»­a nhÃ¢n viÃªn",
+                                                    "notFound":  "KhÃ´ng tÃ¬m tháº¥y nhÃ¢n viÃªn nÃ o.",
+                                                    "denied":  {
+                                                                   "title":  "Quyá»n truy cáº­p nhÃ¢n viÃªn bá»‹ giá»›i háº¡n",
+                                                                   "message":  "Báº¡n cÃ³ thá»ƒ má»Ÿ workspace nÃ y tá»« shell, nhÆ°ng khÃ´ng cÃ³ quyá»n xem báº£n ghi nhÃ¢n viÃªn."
+                                                               }
+                                                },
+                                       "delete":  {
+                                                      "title":  "XÃ³a nhÃ¢n viÃªn",
+                                                      "question":  "Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a nhÃ¢n viÃªn nÃ y khÃ´ng? HÃ nh Ä‘á»™ng nÃ y khÃ´ng thá»ƒ hoÃ n tÃ¡c."
+                                                  },
+                                       "detail":  {
+                                                      "title":  "NhÃ¢n viÃªn"
+                                                  },
+                                       "id":  "ID",
+                                       "employeeNumber":  "MÃ£ nhÃ¢n viÃªn",
+                                       "firstName":  "TÃªn",
+                                       "lastName":  "Há»",
+                                       "department":  "PhÃ²ng ban",
+                                       "email":  "Email",
+                                       "salary":  "LÆ°Æ¡ng"
+                                   },
+                      "organization":  {
+                                           "home":  {
+                                                        "title":  "Tá»• chá»©c",
+                                                        "refreshListLabel":  "LÃ m má»›i danh sÃ¡ch",
+                                                        "createLabel":  "Táº¡o tá»• chá»©c má»›i",
+                                                        "createOrEditLabel":  "Chá»‰nh sá»­a tá»• chá»©c",
+                                                        "notFound":  "KhÃ´ng tÃ¬m tháº¥y tá»• chá»©c nÃ o.",
+                                                        "denied":  {
+                                                                       "title":  "Quyá»n truy cáº­p tá»• chá»©c bá»‹ giá»›i háº¡n",
+                                                                       "message":  "Báº¡n cÃ³ thá»ƒ má»Ÿ workspace nÃ y tá»« shell, nhÆ°ng khÃ´ng cÃ³ quyá»n xem báº£n ghi tá»• chá»©c."
+                                                                   }
+                                                    },
+                                           "created":  "ÄÃ£ táº¡o tá»• chá»©c má»›i vá»›i Ä‘á»‹nh danh {{ param }}",
+                                           "updated":  "ÄÃ£ cáº­p nháº­t tá»• chá»©c vá»›i Ä‘á»‹nh danh {{ param }}",
+                                           "deleted":  "ÄÃ£ xÃ³a tá»• chá»©c vá»›i Ä‘á»‹nh danh {{ param }}",
+                                           "delete":  {
+                                                          "title":  "XÃ³a tá»• chá»©c",
+                                                          "question":  "Báº¡n cÃ³ cháº¯c muá»‘n xÃ³a tá»• chá»©c nÃ y khÃ´ng? HÃ nh Ä‘á»™ng nÃ y khÃ´ng thá»ƒ hoÃ n tÃ¡c."
+                                                      },
+                                           "detail":  {
+                                                          "title":  "Tá»• chá»©c",
+                                                          "workbench":  {
+                                                                            "subtitle":  "Xem vÃ  thao tÃ¡c trÃªn tá»• chá»©c gá»‘c cÃ¹ng cÃ¡c phÃ²ng ban, nhÃ¢n viÃªn liÃªn quan trong má»™t workspace báº£o máº­t duy nháº¥t.",
+                                                                            "loading":  "Äang táº£i workspace tá»• chá»©c...",
+                                                                            "departmentCountLabel":  "Sá»‘ phÃ²ng ban trong tá»• chá»©c",
+                                                                            "employeeCountLabel":  "Sá»‘ nhÃ¢n viÃªn trong tá»• chá»©c",
+                                                                            "departmentsHelp":  "Chá»n má»™t phÃ²ng ban Ä‘á»ƒ xem báº£n ghi vÃ  quáº£n lÃ½ nhÃ¢n viÃªn con ngay trÃªn cÃ¹ng mÃ n hÃ¬nh.",
+                                                                            "employeeSectionHelp":  "PhÃ²ng ban Ä‘ang chá»n váº«n cÃ³ thá»ƒ chá»‰nh sá»­a ngay trong cÃ¹ng flow workbench.",
+                                                                            "employeeCrudHelp":  "Táº¡o, cáº­p nháº­t, xÃ³a nhÃ¢n viÃªn táº¡i Ä‘Ã¢y rá»“i reload láº¡i root graph Ä‘Ã£ Ä‘Æ°á»£c báº£o máº­t.",
+                                                                            "departmentEmployeeCount":  "{{ count }} nhÃ¢n viÃªn",
+                                                                            "emptyDepartments":  "Tá»• chá»©c nÃ y chÆ°a cÃ³ phÃ²ng ban nÃ o.",
+                                                                            "emptyEmployees":  "PhÃ²ng ban Ä‘ang chá»n chÆ°a cÃ³ nhÃ¢n viÃªn nÃ o.",
+                                                                            "selectDepartment":  "Chá»n má»™t phÃ²ng ban á»Ÿ cá»™t bÃªn trÃ¡i Ä‘á»ƒ má»Ÿ workspace nhÃ¢n viÃªn."
+                                                                        }
+                                                      },
+                                           "id":  "ID",
+                                           "code":  "MÃ£",
+                                           "name":  "TÃªn",
+                                           "ownerLogin":  "NgÆ°á»i phá»¥ trÃ¡ch",
+                                           "budget":  "NgÃ¢n sÃ¡ch",
+                                           "description":  "MÃ´ táº£"
+                                       },
+                      "shoe":  {
+                                   "home":  {
+                                                "title":  "Giày",
+                                                "refreshListLabel":  "Làm mới danh sách",
+                                                "createLabel":  "Tạo giày mới",
+                                                "createOrEditLabel":  "Chỉnh sửa giày",
+                                                "notFound":  "Không tìm thấy giày nào."
+                                            },
+                                   "delete":  {
+                                                  "title":  "Xóa giày",
+                                                  "question":  "Bạn có chắc muốn xóa giày này không? Hành động này không thể hoàn tác."
+                                              },
+                                   "detail":  {
+                                                  "title":  "Giày"
+                                              },
+                                   "id":  "ID",
+                                   "name":  "Tên",
+                                   "decription":  "Mô tả",
+                                   "brand":  "Thương hiệu"
+                               },
+                      "shoeVariant":  {
+                                          "home":  {
+                                                       "title":  "Biến thể giày",
+                                                       "refreshListLabel":  "Làm mới danh sách",
+                                                       "createLabel":  "Tạo biến thể giày mới",
+                                                       "createOrEditLabel":  "Chỉnh sửa biến thể giày",
+                                                       "notFound":  "Không tìm thấy biến thể giày nào."
+                                                   },
+                                          "delete":  {
+                                                         "title":  "Xóa biến thể giày",
+                                                         "question":  "Bạn có chắc muốn xóa biến thể giày này không? Hành động này không thể hoàn tác."
+                                                     },
+                                          "detail":  {
+                                                         "title":  "Biến thể giày"
+                                                     },
+                                          "id":  "ID",
+                                          "name":  "Tên",
+                                          "decription":  "Mô tả",
+                                          "shoe":  "Giày"
+                                      }
+                  },
+    "global":  {
+                   "title":  "Angapp",
+                   "browsehappy":  "Báº¡n Ä‘ang sá»­ dá»¥ng má»™t trÃ¬nh duyá»‡t \u003cstrong\u003equÃ¡ cÅ©\u003c/strong\u003e. Vui lÃ²ng \u003ca href=\"http://browsehappy.com/?locale=en\"\u003enÃ¢ng cáº¥p trÃ¬nh duyá»‡t\u003c/a\u003e cá»§a báº¡n Ä‘á»ƒ cÃ³ tráº£i nghiá»‡m tá»‘t nháº¥t.",
+                   "form":  {
+                                "username.label":  "TÃªn tÃ i khoáº£n",
+                                "username.placeholder":  "Nháº­p tÃªn tÃ i khoáº£n cá»§a báº¡n",
+                                "newpassword.label":  "Máº­t kháº©u má»›i",
+                                "newpassword.placeholder":  "Nháº­p máº­t kháº©u má»›i",
+                                "confirmpassword.label":  "XÃ¡c nháº­n máº­t kháº©u má»›i",
+                                "confirmpassword.placeholder":  "Nháº­p láº¡i máº­t kháº©u má»›i",
+                                "email.label":  "Email",
+                                "email.placeholder":  "Nháº­p email cá»§a báº¡n"
+                            },
+                   "messages":  {
+                                    "info":  {
+                                                 "authenticated":  {
+                                                                       "prefix":  "Náº¿u báº¡n muá»‘n ",
+                                                                       "link":  "Ä‘Äƒng nháº­p",
+                                                                       "suffix":  ", báº¡n cÃ³ thá»ƒ thá»­ vá»›i tÃ i khoáº£n máº·c Ä‘á»‹nh:\u003cbr/\u003e- Quáº£n trá»‹ viÃªn (tÃ i khoáº£n=\"admin\" vÃ  máº­t kháº©u=\"admin\") \u003cbr/\u003e- NgÆ°á»i dÃ¹ng (tÃ i khoáº£n=\"user\" vÃ  máº­t kháº©u=\"user\")."
+                                                                   },
+                                                 "register":  {
+                                                                  "noaccount":  "Báº¡n váº«n chÆ°a cÃ³ tÃ i khoáº£n?",
+                                                                  "link":  "ÄÄƒng kÃ½ tÃ i khoáº£n má»›i"
+                                                              }
+                                             },
+                                    "error":  {
+                                                  "dontmatch":  "XÃ¡c nháº­n máº­t kháº©u khÃ´ng khá»›p!"
+                                              },
+                                    "validate":  {
+                                                     "newpassword":  {
+                                                                         "required":  "Báº¡n pháº£i nháº­p máº­t kháº©u.",
+                                                                         "minlength":  "Máº­t kháº©u pháº£i cÃ³ Ã­t nháº¥t 4 kÃ½ tá»±.",
+                                                                         "maxlength":  "Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c vÆ°á»£t quÃ¡ 50 kÃ½ tá»±.",
+                                                                         "strength":  "Äá»™ máº¡nh cá»§a máº­t kháº©u:"
+                                                                     },
+                                                     "confirmpassword":  {
+                                                                             "required":  "Báº¡n pháº£i nháº­p láº¡i máº­t kháº©u Ä‘á»ƒ xÃ¡c nháº­n.",
+                                                                             "minlength":  "Máº­t kháº©u pháº£i cÃ³ Ã­t nháº¥t 4 kÃ½ tá»±.",
+                                                                             "maxlength":  "Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c vÆ°á»£t quÃ¡ 50 kÃ½ tá»±."
+                                                                         },
+                                                     "email":  {
+                                                                   "required":  "Báº¡n pháº£i nháº­p email.",
+                                                                   "invalid":  "Email báº¡n nháº­p khÃ´ng há»£p lá»‡.",
+                                                                   "minlength":  "Email pháº£i cÃ³ Ã­t nháº¥t 5 kÃ½ tá»±.",
+                                                                   "maxlength":  "Email khÃ´ng Ä‘Æ°á»£c vÆ°á»£t quÃ¡ 50 kÃ½ tá»±."
+                                                               }
+                                                 }
+                                },
+                   "field":  {
+                                 "id":  "ID"
+                             },
+                   "ribbon":  {
+                                  "dev":  "PhÃ¡t triá»ƒn"
+                              },
+                   "item-count":  "Showing {{first}} - {{second}} of {{total}} items.",
+                   "menu":  {
+                                "home":  "Trang chá»§",
+                                "jhipster-needle-menu-add-element":  "JHipster will add additional menu entries here (do not translate!)",
+                                "account":  {
+                                                "main":  "TÃ i khoáº£n",
+                                                "settings":  "CÃ i Ä‘áº·t",
+                                                "password":  "Máº­t kháº©u",
+                                                "sessions":  "PhiÃªn Ä‘Äƒng nháº­p",
+                                                "login":  "ÄÄƒng nháº­p",
+                                                "logout":  "ÄÄƒng xuáº¥t",
+                                                "register":  "ÄÄƒng kÃ½"
+                                            },
+                                "admin":  {
+                                              "main":  "Quáº£n trá»‹",
+                                              "userManagement":  "Quáº£n lÃ½ tÃ i khoáº£n",
+                                              "tracker":  "Theo dÃµi ngÆ°á»i dÃ¹ng",
+                                              "metrics":  "Sá»‘ liá»‡u",
+                                              "health":  "TÃ¬nh tráº¡ng",
+                                              "configuration":  "Cáº¥u hÃ¬nh",
+                                              "logs":  "Ghi logs",
+                                              "apidocs":  "API",
+                                              "database":  "CÆ¡ sá»Ÿ dá»¯ liá»‡u",
+                                              "jhipster-needle-menu-add-admin-element":  "JHipster will add additional menu entries here (do not translate!)"
+                                          },
+                                "language":  "NgÃ´n ngá»¯",
+                                "entities":  {
+                                                 "brand":  "Thương hiệu",
+                                                 "main":  "Thá»±c thá»ƒ",
+                                                 "jhipster-needle-menu-add-entry":  "JHipster will add additional entities here (do not translate!)",
+                                                 "department":  "Department",
+                                                 "organization":  "Organization",
+                                                 "shoe":  "Giày",
+                                                 "shoeVariant":  "Biến thể giày"
+                                             }
+                            }
+               },
+    "feedback":  {
+                     "toast":  {
+                                   "deleted":  "ÄÃ£ xÃ³a",
+                                   "success":  "ThÃ nh cÃ´ng",
+                                   "saved":  "ÄÃ£ lÆ°u"
+                               },
+                     "httpError":  {
+                                       "accessDenied":  {
+                                                            "summary":  "Tá»« chá»‘i truy cáº­p",
+                                                            "detail":  "Báº¡n khÃ´ng cÃ³ quyá»n thá»±c hiá»‡n hÃ nh Ä‘á»™ng nÃ y."
+                                                        },
+                                       "unexpected":  {
+                                                          "summary":  "Lá»—i",
+                                                          "detail":  "ÄÃ£ xáº£y ra lá»—i khÃ´ng mong muá»‘n. Vui lÃ²ng thá»­ láº¡i."
+                                                      }
+                                   },
+                     "security":  {
+                                      "roles":  {
+                                                    "deleted":  "Vai trÃ² \"{{ param }}\" Ä‘Ã£ bá»‹ xÃ³a.",
+                                                    "loadFailed":  "KhÃ´ng thá»ƒ táº£i danh sÃ¡ch vai trÃ² báº£o máº­t.",
+                                                    "deleteFailed":  "KhÃ´ng thá»ƒ xÃ³a vai trÃ² báº£o máº­t."
+                                                },
+                                      "permissionMatrix":  {
+                                                               "loadFailed":  "KhÃ´ng thá»ƒ táº£i ma tráº­n quyá»n. Vui lÃ²ng thá»­ láº¡i.",
+                                                               "saveFailed":  "KhÃ´ng thá»ƒ lÆ°u cÃ¡c thay Ä‘á»•i quyá»n. Vui lÃ²ng thá»­ láº¡i."
+                                                           },
+                                      "menuAccess":  {
+                                                         "loadFailed":  "KhÃ´ng thá»ƒ táº£i quyá»n menu. Vui lÃ²ng thá»­ láº¡i."
+                                                     },
+                                      "menuDefinitions":  {
+                                                              "deleted":  "Äá»‹nh nghÄ©a menu \"{{ param }}\" Ä‘Ã£ bá»‹ xÃ³a.",
+                                                              "loadFailed":  "KhÃ´ng thá»ƒ táº£i danh sÃ¡ch Ä‘á»‹nh nghÄ©a menu.",
+                                                              "deleteFailed":  "KhÃ´ng thá»ƒ xÃ³a Ä‘á»‹nh nghÄ©a menu.",
+                                                              "saveFailed":  "KhÃ´ng thá»ƒ lÆ°u Ä‘á»‹nh nghÄ©a menu. HÃ£y kiá»ƒm tra láº¡i biá»ƒu máº«u vÃ  thá»­ láº¡i.",
+                                                              "syncFailed":  "KhÃ´ng thá»ƒ Ä‘á»“ng bá»™ Ä‘á»‹nh nghÄ©a menu tá»« registry.",
+                                                              "syncSuccess":  "ÄÃ£ Ä‘á»“ng bá»™ {{ seeded }} Ä‘á»‹nh nghÄ©a menu tá»« registry."
+                                                          }
+                                  },
+                     "entities":  {
+                                      "brands":  {
+                                                     "deleted":  "Đã xóa thương hiệu thành công.",
+                                                     "saved":  "Đã lưu thương hiệu thành công."
+                                                 },
+                                      "organizations":  {
+                                                            "deleted":  "ÄÃ£ xÃ³a tá»• chá»©c thÃ nh cÃ´ng.",
+                                                            "saved":  "ÄÃ£ lÆ°u tá»• chá»©c thÃ nh cÃ´ng."
+                                                        },
+                                      "departments":  {
+                                                          "deleted":  "ÄÃ£ xÃ³a phÃ²ng ban thÃ nh cÃ´ng.",
+                                                          "saved":  "ÄÃ£ lÆ°u phÃ²ng ban thÃ nh cÃ´ng."
+                                                      },
+                                      "employees":  {
+                                                        "deleted":  "ÄÃ£ xÃ³a nhÃ¢n viÃªn thÃ nh cÃ´ng.",
+                                                        "saved":  "ÄÃ£ lÆ°u nhÃ¢n viÃªn thÃ nh cÃ´ng."
+                                                    },
+                                      "shoes":  {
+                                                    "deleted":  "Đã xóa giày thành công.",
+                                                    "saved":  "Đã lưu giày thành công."
+                                                },
+                                      "shoeVariants":  {
+                                                           "deleted":  "Đã xóa biến thể giày thành công.",
+                                                           "saved":  "Đã lưu biến thể giày thành công."
+                                                       }
+                                  }
+                 },
+    "userManagement":  {
+                           "home":  {
+                                        "title":  "TÃ i khoáº£n",
+                                        "refreshListLabel":  "LÃ m má»›i danh sÃ¡ch",
+                                        "createLabel":  "Táº¡o tÃ i khoáº£n má»›i",
+                                        "createOrEditLabel":  "Táº¡o hoáº·c sá»­a tÃ i khoáº£n",
+                                        "searchPlaceholder":  "TÃ¬m kiáº¿m theo tÃªn Ä‘Äƒng nháº­p, email hoáº·c tÃªn",
+                                        "emptyTitle":  "KhÃ´ng tÃ¬m tháº¥y tÃ i khoáº£n nÃ o",
+                                        "emptyBody":  "Thá»­ tÃ¬m kiáº¿m khÃ¡c hoáº·c táº¡o tÃ i khoáº£n má»›i.",
+                                        "loadError":  "KhÃ´ng thá»ƒ táº£i danh sÃ¡ch tÃ i khoáº£n. HÃ£y lÃ m má»›i trang. Náº¿u váº«n tiáº¿p tá»¥c, hÃ£y liÃªn há»‡ quáº£n trá»‹ viÃªn."
+                                    },
+                           "created":  "Má»™t tÃ i khoáº£n má»›i Ä‘Ã£ Ä‘Æ°á»£c táº¡o vá»›i Ä‘á»‹nh danh {{ param }}",
+                           "updated":  "Má»™t tÃ i khoáº£n Ä‘Ã£ Ä‘Æ°á»£c cáº­p nháº­t vá»›i Ä‘á»‹nh danh {{ param }}",
+                           "deleted":  "Má»™t tÃ i khoáº£n Ä‘Ã£ bá»‹ xÃ³a vá»›i Ä‘á»‹nh danh {{ param }}",
+                           "delete":  {
+                                          "question":  "Báº¡n cÃ³ cháº¯c cháº¯n muá»‘n xÃ³a tÃ i khoáº£n {{ login }}?",
+                                          "title":  "XÃ³a tÃ i khoáº£n",
+                                          "keep":  "Giá»¯ láº¡i",
+                                          "confirm":  "XÃ³a"
+                                      },
+                           "detail":  {
+                                          "title":  "TÃ i khoáº£n",
+                                          "summaryTitle":  "Chi tiáº¿t tÃ i khoáº£n",
+                                          "rolesTitle":  "Vai trÃ²",
+                                          "backToList":  "Quay láº¡i danh sÃ¡ch",
+                                          "auditTitle":  "ThÃ´ng tin kiá»ƒm tra"
+                                      },
+                           "form":  {
+                                        "sectionTitle":  "ThÃ´ng tin tÃ i khoáº£n",
+                                        "rolesTitle":  "Vai trÃ² Ä‘Æ°á»£c gÃ¡n",
+                                        "save":  "LÆ°u tÃ i khoáº£n",
+                                        "create":  "Táº¡o tÃ i khoáº£n",
+                                        "discard":  "Bá» thay Ä‘á»•i",
+                                        "validation":  {
+                                                           "loginRequired":  "Báº¯t buá»™c nháº­p tÃªn Ä‘Äƒng nháº­p.",
+                                                           "emailRequired":  "Báº¯t buá»™c nháº­p email.",
+                                                           "emailInvalid":  "Email khÃ´ng há»£p lá»‡.",
+                                                           "maxLength":  "TrÆ°á»ng nÃ y khÃ´ng Ä‘Æ°á»£c vÆ°á»£t quÃ¡ {{ max }} kÃ½ tá»±.",
+                                                           "langKeyRequired":  "Báº¯t buá»™c chá»n ngÃ´n ngá»¯."
+                                                       }
+                                    },
+                           "actions":  {
+                                           "view":  "Xem",
+                                           "edit":  "Sá»­a",
+                                           "activate":  "KÃ­ch hoáº¡t",
+                                           "deactivate":  "KhÃ³a",
+                                           "delete":  "XÃ³a",
+                                           "new":  "Táº¡o má»›i"
+                                       },
+                           "columns":  {
+                                           "fullName":  "Há» vÃ  tÃªn",
+                                           "status":  "Tráº¡ng thÃ¡i",
+                                           "roles":  "Vai trÃ²",
+                                           "lastModified":  "Láº§n sá»­a cuá»‘i",
+                                           "actions":  "Thao tÃ¡c"
+                                       },
+                           "authorityLabels":  {
+                                                   "ROLE_ADMIN":  "Quáº£n trá»‹ viÃªn",
+                                                   "ROLE_USER":  "NgÆ°á»i dÃ¹ng",
+                                                   "ROLE_ACCOUNTANT":  "Káº¿ toÃ¡n",
+                                                   "ROLE_STOCKKEEPER":  "Thá»§ kho",
+                                                   "ROLE_DIRECTOR":  "GiÃ¡m Ä‘á»‘c"
+                                               },
+                           "status":  {
+                                          "active":  "Äang hoáº¡t Ä‘á»™ng",
+                                          "inactive":  "Bá»‹ khÃ³a"
+                                      },
+                           "login":  "TÃªn Ä‘Äƒng nháº­p",
+                           "firstName":  "TÃªn",
+                           "lastName":  "Há»",
+                           "email":  "Email",
+                           "activated":  "KÃ­ch hoáº¡t",
+                           "deactivated":  "KhÃ³a",
+                           "profiles":  "CÃ¡c quyá»n",
+                           "feedback":  {
+                                            "createFailed":  "KhÃ´ng thá»ƒ táº¡o tÃ i khoáº£n. HÃ£y kiá»ƒm tra láº¡i biá»ƒu máº«u vÃ  thá»­ láº¡i.",
+                                            "updateFailed":  "KhÃ´ng thá»ƒ lÆ°u tÃ i khoáº£n. HÃ£y kiá»ƒm tra láº¡i biá»ƒu máº«u vÃ  thá»­ láº¡i.",
+                                            "saved":  "TÃ i khoáº£n {{ login }} Ä‘Ã£ Ä‘Æ°á»£c lÆ°u."
+                                        },
+                           "langKey":  "NgÃ´n ngá»¯",
+                           "createdBy":  "NgÆ°á»i táº¡o",
+                           "createdDate":  "NgÃ y táº¡o",
+                           "lastModifiedBy":  "NgÆ°á»i sá»­a",
+                           "lastModifiedDate":  "NgÃ y sá»­a",
+                           "placeholder":  {
+                                               "phase6":  "MÃ n hÃ¬nh quáº£n lÃ½ ngÆ°á»i dÃ¹ng Ä‘áº§y Ä‘á»§ sáº½ hoÃ n thÃ nh á»Ÿ Phase 8. Placeholder nÃ y giá»¯ nguyÃªn há»£p Ä‘á»“ng route vÃ  service."
+                                           }
+                       }
 }
+

@@ -1,0 +1,39 @@
+{
+  "angappApp": {
+    "shoe": {
+      "home": {
+        "title": "Shoes",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "New Shoe",
+        "createOrEditLabel": "Edit Shoe",
+        "notFound": "No shoes found."
+      },
+      "delete": {
+        "title": "Delete Shoe",
+        "question": "Are you sure you want to delete this shoe? This action cannot be undone."
+      },
+      "detail": {
+        "title": "Shoe"
+      },
+      "id": "ID",
+      "name": "Name",
+      "decription": "Description",
+      "brand": "Brand"
+    }
+  },
+  "global": {
+    "menu": {
+      "entities": {
+        "shoe": "Shoe"
+      }
+    }
+  },
+  "feedback": {
+    "entities": {
+      "shoes": {
+        "deleted": "Shoe deleted successfully.",
+        "saved": "Shoe saved successfully."
+      }
+    }
+  }
+}

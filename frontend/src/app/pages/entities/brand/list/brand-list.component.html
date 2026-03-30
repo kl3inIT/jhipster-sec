@@ -1,0 +1,108 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="space-y-4">
+  <div class="flex items-center justify-between gap-3">
+    <div>
+      <h1 class="m-0 text-2xl font-semibold">{{ 'angappApp.brand.home.title' | translate }}</h1>
+    </div>
+    <div class="flex gap-2">
+      <button pButton type="button" icon="pi pi-plus" [label]="'angappApp.brand.home.createLabel' | translate" (click)="create()"></button>
+    </div>
+  </div>
+
+  <p-card class="shadow-sm">
+    <p-table
+      [value]="tableValue()"
+      [lazy]="true"
+      [paginator]="true"
+      [rows]="itemsPerPage"
+      [totalRecords]="totalItems()"
+      [first]="firstRow()"
+      [loading]="loading() && brands().length > 0"
+      [sortField]="sortState().predicate ?? 'id'"
+      [sortOrder]="sortState().order === 'desc' ? -1 : 1"
+      [tableStyle]="{ 'min-width': '100%' }"
+      styleClass="p-datatable-gridlines p-datatable-sm"
+      dataKey="id"
+      (onLazyLoad)="onLazyLoad($event)"
+      [rowsPerPageOptions]="[10, 20, 30]"
+      [showCurrentPageReport]="true"
+      [currentPageReportTemplate]="'entity.pagination.report' | translate"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          @if (showIdColumn()) {
+            <th pSortableColumn="id" style="width: 6rem">{{ 'angappApp.brand.id' | translate }} <p-sortIcon field="id" /></th>
+          }
+          <th pSortableColumn="name">{{ 'angappApp.brand.name' | translate }} <p-sortIcon field="name" /></th>
+          @if (showDescriptionColumn()) {
+            <th pSortableColumn="description">{{ 'angappApp.brand.description' | translate }} <p-sortIcon field="description" /></th>
+          }
+          <th style="width: 10rem; text-align: center">{{ 'entity.list.actions' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        @if (loading() && brands().length === 0) {
+          <tr>
+            @if (showIdColumn()) {
+              <td><p-skeleton height="1.2rem" /></td>
+            }
+            <td><p-skeleton height="1.2rem" /></td>
+            @if (showDescriptionColumn()) {
+              <td><p-skeleton height="1.2rem" /></td>
+            }
+            <td><p-skeleton height="1.2rem" /></td>
+          </tr>
+        } @else {
+          <tr>
+            @if (showIdColumn()) {
+              <td>
+                <a [routerLink]="['/entities/brand', row.id, 'view']" class="font-medium">{{ row.id }}</a>
+              </td>
+            }
+            <td>{{ row.name }}</td>
+            @if (showDescriptionColumn()) {
+              <td>{{ row.description }}</td>
+            }
+            <td style="text-align: center">
+              <div [class]="isTablet() ? 'flex flex-column items-center gap-1' : 'flex items-center justify-center gap-2'">
+                <button
+                  pButton
+                  type="button"
+                  class="p-button-text p-button-sm"
+                  icon="pi pi-eye"
+                  [attr.aria-label]="'entity.action.view' | translate"
+                  (click)="view(row)"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  class="p-button-text p-button-sm"
+                  icon="pi pi-pencil"
+                  [attr.aria-label]="'entity.action.edit' | translate"
+                  (click)="edit(row)"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  class="p-button-text p-button-danger p-button-sm"
+                  icon="pi pi-trash"
+                  [attr.aria-label]="'entity.action.delete' | translate"
+                  (click)="confirmDelete(row)"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        }
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="2 + (showIdColumn() ? 1 : 0) + (showDescriptionColumn() ? 1 : 0)" class="text-center py-4">
+            {{ 'angappApp.brand.home.notFound' | translate }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>

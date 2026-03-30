@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260330093000-1" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_definition"/>
+        </preConditions>
+
+        <sql splitStatements="true" endDelimiter=";">
+            <![CDATA[
+            insert into sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            select 'entities.brand', 'jhipster-security-platform', 'Brand', 'global.menu.entities.brand', null, 'entities', '/entities/brand', 'pi pi-tag', 10
+            where not exists (
+                select 1
+                from sec_menu_definition
+                where app_name = 'jhipster-security-platform'
+                  and menu_id = 'entities.brand'
+            );
+
+            insert into sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            select 'entities.shoe', 'jhipster-security-platform', 'Shoe', 'global.menu.entities.shoe', null, 'entities', '/entities/shoe', 'pi pi-box', 20
+            where not exists (
+                select 1
+                from sec_menu_definition
+                where app_name = 'jhipster-security-platform'
+                  and menu_id = 'entities.shoe'
+            );
+
+            insert into sec_menu_definition (menu_id, app_name, menu_name, label, description, parent_menu_id, route, icon, ordering)
+            select 'entities.shoe-variant', 'jhipster-security-platform', 'Shoe Variant', 'global.menu.entities.shoeVariant', null, 'entities', '/entities/shoe-variant', 'pi pi-clone', 30
+            where not exists (
+                select 1
+                from sec_menu_definition
+                where app_name = 'jhipster-security-platform'
+                  and menu_id = 'entities.shoe-variant'
+            );
+            ]]>
+        </sql>
+    </changeSet>
+
+    <changeSet id="20260330093000-2" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sec_menu_permission"/>
+            <tableExists tableName="jhi_authority"/>
+        </preConditions>
+
+        <sql splitStatements="true" endDelimiter=";">
+            <![CDATA[
+            insert into sec_menu_permission (role, app_name, menu_id, effect)
+            select 'ROLE_ADMIN', 'JHIPSTER_SECURITY_PLATFORM', 'entities.brand', 'ALLOW'
+            where exists (
+                select 1
+                from jhi_authority
+                where name = 'ROLE_ADMIN'
+            )
+              and not exists (
+                select 1
+                from sec_menu_permission
+                where role = 'ROLE_ADMIN'
+                  and app_name = 'JHIPSTER_SECURITY_PLATFORM'
+                  and menu_id = 'entities.brand'
+            );
+
+            insert into sec_menu_permission (role, app_name, menu_id, effect)
+            select 'ROLE_ADMIN', 'JHIPSTER_SECURITY_PLATFORM', 'entities.shoe', 'ALLOW'
+            where exists (
+                select 1
+                from jhi_authority
+                where name = 'ROLE_ADMIN'
+            )
+              and not exists (
+                select 1
+                from sec_menu_permission
+                where role = 'ROLE_ADMIN'
+                  and app_name = 'JHIPSTER_SECURITY_PLATFORM'
+                  and menu_id = 'entities.shoe'
+            );
+
+            insert into sec_menu_permission (role, app_name, menu_id, effect)
+            select 'ROLE_ADMIN', 'JHIPSTER_SECURITY_PLATFORM', 'entities.shoe-variant', 'ALLOW'
+            where exists (
+                select 1
+                from jhi_authority
+                where name = 'ROLE_ADMIN'
+            )
+              and not exists (
+                select 1
+                from sec_menu_permission
+                where role = 'ROLE_ADMIN'
+                  and app_name = 'JHIPSTER_SECURITY_PLATFORM'
+                  and menu_id = 'entities.shoe-variant'
+            );
+            ]]>
+        </sql>
+    </changeSet>
+</databaseChangeLog>

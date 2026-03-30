@@ -1,0 +1,38 @@
+{
+  "angappApp": {
+    "brand": {
+      "home": {
+        "title": "Brands",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "New Brand",
+        "createOrEditLabel": "Edit Brand",
+        "notFound": "No brands found."
+      },
+      "delete": {
+        "title": "Delete Brand",
+        "question": "Are you sure you want to delete this brand? This action cannot be undone."
+      },
+      "detail": {
+        "title": "Brand"
+      },
+      "id": "ID",
+      "name": "Name",
+      "description": "Description"
+    }
+  },
+  "global": {
+    "menu": {
+      "entities": {
+        "brand": "Brand"
+      }
+    }
+  },
+  "feedback": {
+    "entities": {
+      "brands": {
+        "deleted": "Brand deleted successfully.",
+        "saved": "Brand saved successfully."
+      }
+    }
+  }
+}

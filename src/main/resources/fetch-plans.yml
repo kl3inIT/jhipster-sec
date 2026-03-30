@@ -81,3 +81,77 @@ fetch-plans:
           - id
           - code
           - name
+
+  - entity: com.vn.core.domain.Brand
+    name: brand-list
+    properties:
+      - id
+      - name
+      - description
+
+  - entity: com.vn.core.domain.Brand
+    name: brand-detail
+    extends: brand-list
+    properties:
+      - name: shoes
+        properties:
+          - id
+          - name
+          - decription
+
+  - entity: com.vn.core.domain.Shoe
+    name: shoe-list
+    properties:
+      - id
+      - name
+      - decription
+      - name: brand
+        properties:
+          - id
+          - name
+          - description
+
+  - entity: com.vn.core.domain.Shoe
+    name: shoe-detail
+    extends: shoe-list
+    properties:
+      - name: brand
+        properties:
+          - id
+          - name
+          - description
+      - name: shoeVariants
+        properties:
+          - id
+          - name
+          - decription
+
+  - entity: com.vn.core.domain.ShoeVariant
+    name: shoevariant-list
+    properties:
+      - id
+      - name
+      - decription
+      - name: shoe
+        properties:
+          - id
+          - name
+          - decription
+          - name: brand
+            properties:
+              - id
+              - name
+
+  - entity: com.vn.core.domain.ShoeVariant
+    name: shoevariant-detail
+    extends: shoevariant-list
+    properties:
+      - name: shoe
+        properties:
+          - id
+          - name
+          - decription
+          - name: brand
+            properties:
+              - id
+              - name
