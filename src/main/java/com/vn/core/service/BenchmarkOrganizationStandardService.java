@@ -1,7 +1,9 @@
 package com.vn.core.service;
 
-import com.vn.core.domain.Organization;
 import com.vn.core.repository.OrganizationRepository;
+import com.vn.core.service.dto.OrganizationDTO;
+import com.vn.core.service.dto.OrganizationDetailDTO;
+import com.vn.core.service.mapper.OrganizationMapper;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,18 +22,20 @@ public class BenchmarkOrganizationStandardService {
     private static final Logger LOG = LoggerFactory.getLogger(BenchmarkOrganizationStandardService.class);
 
     private final OrganizationRepository organizationRepository;
+    private final OrganizationMapper organizationMapper;
 
-    public BenchmarkOrganizationStandardService(OrganizationRepository organizationRepository) {
+    public BenchmarkOrganizationStandardService(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper) {
         this.organizationRepository = organizationRepository;
+        this.organizationMapper = organizationMapper;
     }
 
-    public Page<Organization> list(Pageable pageable) {
+    public Page<OrganizationDTO> list(Pageable pageable) {
         LOG.debug("Benchmark request to list organizations with standard flow");
-        return organizationRepository.findAll(pageable);
+        return organizationRepository.findAll(pageable).map(organizationMapper::toDto);
     }
 
-    public Optional<Organization> findOne(Long id) {
+    public Optional<OrganizationDetailDTO> findOne(Long id) {
         LOG.debug("Benchmark request to get organization with standard flow : {}", id);
-        return organizationRepository.findById(id);
+        return organizationRepository.findById(id).map(organizationMapper::toDetailDto);
     }
 }
