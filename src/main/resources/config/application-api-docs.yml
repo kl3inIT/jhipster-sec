@@ -1,0 +1,12 @@
+# ===================================================================
+# Spring Boot configuration for the "api-docs" profile.
+#
+# This profile enables springdoc OpenAPI documentation and Swagger UI.
+# Activate with: --spring.profiles.active=dev,api-docs
+# ===================================================================
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
