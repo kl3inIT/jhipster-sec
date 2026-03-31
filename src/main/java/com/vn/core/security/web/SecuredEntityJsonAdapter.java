@@ -69,8 +69,9 @@ public class SecuredEntityJsonAdapter {
             return objectMapper.nullNode();
         }
 
+        // D-08: resolve the fetch plan once per detail response call.
         FetchPlan fetchPlan = fetchPlanResolver.resolve(ClassUtils.getUserClass(entity), fetchPlanCode);
-        return objectMapper.valueToTree(secureEntitySerializer.serialize(entity, fetchPlan));
+        return toJsonWithPlan(entity, fetchPlan);
     }
 
     public String toJsonString(Object entity, String fetchPlanCode) {
@@ -82,19 +83,36 @@ public class SecuredEntityJsonAdapter {
     }
 
     public String toJsonArrayString(Iterable<?> entities, String fetchPlanCode) {
+        if (entities == null) {
+            try {
+                return objectMapper.writeValueAsString(objectMapper.createArrayNode());
+            } catch (JsonProcessingException ex) {
+                throw new IllegalStateException("Failed to serialize empty secured entity collection response", ex);
+            }
+        }
+
         try {
+            java.util.List<?> entityList = java.util.stream.StreamSupport.stream(entities.spliterator(), false).toList();
+            if (entityList.isEmpty()) {
+                return objectMapper.writeValueAsString(objectMapper.createArrayNode());
+            }
+
+            // D-08: resolve the fetch plan once per list serialization call, not once per entity.
+            FetchPlan fetchPlan = fetchPlanResolver.resolve(ClassUtils.getUserClass(entityList.get(0)), fetchPlanCode);
             return objectMapper.writeValueAsString(
-                entities == null
-                    ? objectMapper.createArrayNode()
-                    : objectMapper.valueToTree(
-                          java.util.stream.StreamSupport.stream(entities.spliterator(), false)
-                              .map(entity -> toJson(entity, fetchPlanCode))
-                              .toList()
-                      )
+                objectMapper.valueToTree(entityList.stream().map(entity -> toJsonWithPlan(entity, fetchPlan)).toList())
             );
         } catch (JsonProcessingException ex) {
             throw new IllegalStateException("Failed to serialize secured entity collection response", ex);
         }
+    }
+
+    /**
+     * Serialize a single entity using an already-resolved {@link FetchPlan}.
+     * This is the internal hot path used by both detail and list serialization.
+     */
+    private JsonNode toJsonWithPlan(Object entity, FetchPlan fetchPlan) {
+        return objectMapper.valueToTree(secureEntitySerializer.serialize(entity, fetchPlan));
     }
 
     private Set<String> collectTopLevelFields(JsonNode body) {

@@ -5,20 +5,22 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.core.security.fetch.FetchPlan;
 import com.vn.core.security.fetch.FetchPlanBuilder;
 import com.vn.core.security.permission.AttributePermissionEvaluator;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Unit tests for {@link SecureEntitySerializerImpl} verifying attribute filtering,
  * id always-visible rule (D-16), and denied attribute omission (D-15).
+ * D-09: ObjectMapper replaces BeanWrapperImpl; these tests verify contract preservation.
  */
 @ExtendWith(MockitoExtension.class)
 class SecureEntitySerializerImplTest {
@@ -26,8 +28,12 @@ class SecureEntitySerializerImplTest {
     @Mock
     private AttributePermissionEvaluator attributePermissionEvaluator;
 
-    @InjectMocks
     private SecureEntitySerializerImpl serializer;
+
+    @BeforeEach
+    void setUp() {
+        serializer = new SecureEntitySerializerImpl(attributePermissionEvaluator, new ObjectMapper());
+    }
 
     /** Test entity with getters (BeanWrapper requires them). */
     static class TestEntity {
