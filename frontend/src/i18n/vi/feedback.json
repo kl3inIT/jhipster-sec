@@ -49,6 +49,10 @@
       "employees": {
         "deleted": "Đã xóa nhân viên thành công.",
         "saved": "Đã lưu nhân viên thành công."
+      },
+      "topicOrientations": {
+        "deleted": "Đã xóa định hướng đề tài thành công.",
+        "saved": "Đã lưu định hướng đề tài thành công."
       }
     }
   }

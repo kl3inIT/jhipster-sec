@@ -1,0 +1,180 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="space-y-4">
+  <div class="flex items-center justify-between gap-3">
+    <h1 class="m-0 text-2xl font-semibold">{{ 'angappApp.topicOrientation.home.title' | translate }}</h1>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-plus"
+      [label]="'angappApp.topicOrientation.home.createLabel' | translate"
+      (click)="create()"
+    ></button>
+  </div>
+
+  <p-card class="shadow-sm">
+    <p-table
+      [value]="topicOrientations()"
+      [lazy]="true"
+      [paginator]="true"
+      [rows]="itemsPerPage"
+      [totalRecords]="totalItems()"
+      [first]="(page() - 1) * itemsPerPage"
+      [loading]="loading()"
+      [sortField]="sortState().predicate ?? 'code'"
+      [sortOrder]="sortState().order === 'desc' ? -1 : 1"
+      [tableStyle]="{ 'min-width': '100%' }"
+      styleClass="p-datatable-gridlines p-datatable-sm"
+      dataKey="id"
+      (onLazyLoad)="onLazyLoad($event)"
+      [rowsPerPageOptions]="[10, 20, 30]"
+      [showCurrentPageReport]="true"
+      [currentPageReportTemplate]="'entity.pagination.report' | translate"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="code">{{ 'angappApp.topicOrientation.code' | translate }} <p-sortIcon field="code" /></th>
+          <th pSortableColumn="title">{{ 'angappApp.topicOrientation.title' | translate }} <p-sortIcon field="title" /></th>
+          <th>{{ 'angappApp.topicOrientation.movieProfile' | translate }}</th>
+          <th pSortableColumn="proposer">{{ 'angappApp.topicOrientation.proposer' | translate }} <p-sortIcon field="proposer" /></th>
+          <th pSortableColumn="submitDate">{{ 'angappApp.topicOrientation.submitDate' | translate }} <p-sortIcon field="submitDate" /></th>
+          <th pSortableColumn="status">{{ 'angappApp.topicOrientation.statusLabel' | translate }} <p-sortIcon field="status" /></th>
+          <th style="width: 10rem; text-align: center">{{ 'entity.list.actions' | translate }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td><a [routerLink]="['/entities/topic-orientation', row.id, 'view']" class="font-medium">{{ row.code }}</a></td>
+          <td>{{ row.title }}</td>
+          <td>{{ row.movieProfile?.profileCode }} - {{ row.movieProfile?.movieName }}</td>
+          <td>{{ row.proposer }}</td>
+          <td>{{ row.submitDate }}</td>
+          <td>{{ getStatusLabel(row.status) }}</td>
+          <td style="text-align: center">
+            <div class="flex items-center justify-center gap-2">
+              <button
+                pButton
+                type="button"
+                class="p-button-text p-button-sm"
+                icon="pi pi-eye"
+                [attr.aria-label]="'entity.action.view' | translate"
+                (click)="view(row)"
+              ></button>
+              <button
+                pButton
+                type="button"
+                class="p-button-text p-button-sm"
+                icon="pi pi-pencil"
+                [attr.aria-label]="'entity.action.edit' | translate"
+                (click)="edit(row)"
+              ></button>
+              <button
+                pButton
+                type="button"
+                class="p-button-text p-button-danger p-button-sm"
+                icon="pi pi-trash"
+                [attr.aria-label]="'entity.action.delete' | translate"
+                (click)="confirmDelete(row)"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center py-4">
+            {{ 'angappApp.topicOrientation.home.notFound' | translate }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>
+
+<p-dialog
+  [header]="dialogTitle()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '40rem', maxWidth: '95vw' }"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+>
+  <form [formGroup]="form" (ngSubmit)="saveDialog()" class="space-y-4">
+    <div class="grid grid-cols-1 gap-4">
+      <div>
+        <label for="title" class="block text-sm font-medium mb-1">{{ 'angappApp.topicOrientation.title' | translate }}</label>
+        <input
+          id="title"
+          type="text"
+          pInputText
+          formControlName="title"
+          class="w-full"
+          [class.ng-invalid]="form.controls['title'].invalid && form.controls['title'].touched"
+          [class.ng-dirty]="form.controls['title'].invalid && form.controls['title'].touched"
+        />
+        @if (form.controls['title'].invalid && form.controls['title'].touched) {
+          <p-message severity="error" class="mt-1" [text]="'entity.validation.required' | translate"></p-message>
+        }
+      </div>
+
+      <div>
+        <label for="movieProfileId" class="block text-sm font-medium mb-1">{{ 'angappApp.topicOrientation.movieProfile' | translate }}</label>
+        <p-select
+          id="movieProfileId"
+          formControlName="movieProfileId"
+          [options]="movieProfileOptions"
+          optionLabel="label"
+          optionValue="value"
+          [placeholder]="'angappApp.topicOrientation.movieProfile' | translate"
+          class="w-full"
+        ></p-select>
+      </div>
+
+      <div>
+        <label for="proposer" class="block text-sm font-medium mb-1">{{ 'angappApp.topicOrientation.proposer' | translate }}</label>
+        <input id="proposer" type="text" pInputText formControlName="proposer" class="w-full" />
+      </div>
+
+      <div>
+        <label for="submitDate" class="block text-sm font-medium mb-1">{{ 'angappApp.topicOrientation.submitDate' | translate }}</label>
+        <p-datepicker inputId="submitDate" formControlName="submitDate" [showIcon]="true" dateFormat="yy-mm-dd" class="w-full"></p-datepicker>
+      </div>
+
+      <div>
+        <label for="status" class="block text-sm font-medium mb-1">{{ 'angappApp.topicOrientation.statusLabel' | translate }}</label>
+        <p-select
+          id="status"
+          formControlName="status"
+          [options]="statusOptions"
+          optionLabel="label"
+          optionValue="value"
+          [placeholder]="'angappApp.topicOrientation.statusLabel' | translate"
+          class="w-full"
+        ></p-select>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-2 pt-2">
+      <button
+        type="button"
+        pButton
+        severity="secondary"
+        [outlined]="true"
+        icon="pi pi-times"
+        [label]="'entity.action.cancel' | translate"
+        (click)="closeDialog()"
+        [disabled]="savingDialog()"
+      ></button>
+      <button
+        type="submit"
+        pButton
+        icon="pi pi-check"
+        [label]="'entity.action.save' | translate"
+        [disabled]="savingDialog()"
+      ></button>
+    </div>
+  </form>
+</p-dialog>

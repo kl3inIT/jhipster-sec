@@ -1,12 +1,16 @@
 package com.vn.core.domain.movie;
 
 import com.vn.core.domain.movie.enumeration.Status;
+
+import com.vn.core.security.catalog.SecuredEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.Year;
 
 @Entity
 @Table(name = "topic_orientation")
+@SecuredEntity(code = "topic-orientation", fetchPlanCodes = { "topic-orientation-list", "topic-orientation-detail" })
 public class TopicOrientation {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
@@ -88,5 +92,15 @@ public class TopicOrientation {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @PrePersist
+    void ensureCodeBeforeInsert() {
+        if (code != null && !code.isBlank()) {
+            return;
+        }
+        String year = String.valueOf(Year.now().getValue());
+        long sequence = id != null ? id : Math.abs(System.nanoTime() % 10_000);
+        this.code = "TO-" + year + "-" + String.format("%04d", sequence % 10_000);
     }
 }

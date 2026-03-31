@@ -47,7 +47,8 @@
       },
       "entities": {
         "employee": "Nhân viên",
-        "movie": "Dự án phim"
+        "movie": "Dự án phim",
+        "topicOrientation": "Định hướng đề tài"
       }
     }
   }

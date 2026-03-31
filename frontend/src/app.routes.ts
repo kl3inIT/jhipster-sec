@@ -50,14 +50,14 @@ export const appRoutes: Routes = [
       },
       {
         path: 'entities/movie',
-        loadChildren: () => import('./app/pages/movie/movie.routes'),
+        loadChildren: () => import('./app/pages/entities/movie/movie.routes'),
         // canActivate: [UserRouteAccessService],
       },
 
       {
         path: 'entities/topic',
-        loadChildren: () => import('./app/pages/topic/topic.routes'),
-        // canActivate: [UserRouteAccessService],
+        redirectTo: 'entities/topic-orientation',
+        pathMatch: 'full',
       },
   
       {

@@ -1,0 +1,54 @@
+<div class="max-w-2xl mx-auto space-y-4">
+  <h1 class="m-0 text-2xl font-semibold">{{ 'angappApp.topicOrientation.detail.title' | translate }}</h1>
+
+  @if (topicOrientation(); as item) {
+    <p-card class="shadow-sm">
+      <div class="grid grid-cols-1 gap-4">
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">{{ 'angappApp.topicOrientation.code' | translate }}</span>
+          <span>{{ item.code }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">{{ 'angappApp.topicOrientation.title' | translate }}</span>
+          <span>{{ item.title }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">{{ 'angappApp.topicOrientation.movieProfile' | translate }}</span>
+          <span>{{ item.movieProfile?.profileCode }} - {{ item.movieProfile?.movieName }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">{{ 'angappApp.topicOrientation.proposer' | translate }}</span>
+          <span>{{ item.proposer }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">{{ 'angappApp.topicOrientation.submitDate' | translate }}</span>
+          <span>{{ item.submitDate }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium">{{ 'angappApp.topicOrientation.statusLabel' | translate }}</span>
+          <span>{{ getStatusLabel(item.status) }}</span>
+        </div>
+      </div>
+
+      <div class="flex gap-2 mt-4 pt-4" style="border-top: 1px solid var(--surface-border)">
+        <button
+          type="button"
+          pButton
+          severity="secondary"
+          [outlined]="true"
+          icon="pi pi-arrow-left"
+          [label]="'entity.action.back' | translate"
+          (click)="back()"
+        ></button>
+        <button
+          type="button"
+          pButton
+          [outlined]="true"
+          icon="pi pi-pencil"
+          [label]="'entity.action.edit' | translate"
+          (click)="edit(item)"
+        ></button>
+      </div>
+    </p-card>
+  }
+</div>

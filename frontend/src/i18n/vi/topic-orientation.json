@@ -1,0 +1,34 @@
+{
+  "angappApp": {
+    "topicOrientation": {
+      "home": {
+        "title": "Định hướng đề tài",
+        "createLabel": "Tạo định hướng đề tài",
+        "createOrEditLabel": "Chỉnh sửa định hướng đề tài",
+        "notFound": "Không tìm thấy định hướng đề tài nào."
+      },
+      "detail": {
+        "title": "Định hướng đề tài"
+      },
+      "delete": {
+        "title": "Xóa định hướng đề tài",
+        "question": "Bạn có chắc muốn xóa định hướng đề tài này không?"
+      },
+      "id": "ID",
+      "code": "Mã",
+      "title": "Tiêu đề",
+      "movieProfile": "Dự án phim",
+      "proposer": "Người đề xuất",
+      "submitDate": "Ngày nộp",
+      "statusLabel": "Trạng thái",
+      "status": {
+        "ACTIVE": "Đang hoạt động",
+        "PENDING": "Chờ duyệt",
+        "APPROVED": "Đã duyệt",
+        "REJECTED": "Từ chối",
+        "COMPLETED": "Hoàn thành",
+        "CANCELED": "Đã hủy"
+      }
+    }
+  }
+}

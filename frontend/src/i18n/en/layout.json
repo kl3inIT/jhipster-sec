@@ -47,7 +47,8 @@
       },
       "entities": {
         "employee": "Employees",
-        "movie": "Movie Profile"
+        "movie": "Movie Profile",
+        "topicOrientation": "Topic Orientation"
       }
     }
   }

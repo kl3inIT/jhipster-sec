@@ -121,6 +121,36 @@
       "ownerLogin": "Người phụ trách",
       "budget": "Ngân sách",
       "description": "Mô tả"
+    },
+    "topicOrientation": {
+      "home": {
+        "title": "Định hướng đề tài",
+        "createLabel": "Tạo định hướng đề tài",
+        "createOrEditLabel": "Chỉnh sửa định hướng đề tài",
+        "notFound": "Không tìm thấy định hướng đề tài nào."
+      },
+      "detail": {
+        "title": "Định hướng đề tài"
+      },
+      "delete": {
+        "title": "Xóa định hướng đề tài",
+        "question": "Bạn có chắc muốn xóa định hướng đề tài này không?"
+      },
+      "id": "ID",
+      "code": "Mã",
+      "title": "Tiêu đề",
+      "movieProfile": "Dự án phim",
+      "proposer": "Người đề xuất",
+      "submitDate": "Ngày nộp",
+      "statusLabel": "Trạng thái",
+      "status": {
+        "ACTIVE": "Đang hoạt động",
+        "PENDING": "Chờ duyệt",
+        "APPROVED": "Đã duyệt",
+        "REJECTED": "Từ chối",
+        "COMPLETED": "Hoàn thành",
+        "CANCELED": "Đã hủy"
+      }
     }
   },
   "entity": {
@@ -252,6 +282,10 @@
       "employees": {
         "deleted": "Đã xóa nhân viên thành công.",
         "saved": "Đã lưu nhân viên thành công."
+      },
+      "topicOrientations": {
+        "deleted": "Đã xóa định hướng đề tài thành công.",
+        "saved": "Đã lưu định hướng đề tài thành công."
       }
     }
   },
@@ -267,7 +301,8 @@
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
         "department": "Department",
         "organization": "Organization",
-        "movie": "Dự án phim"
+        "movie": "Dự án phim",
+        "topicOrientation": "Định hướng đề tài"
       },
       "account": {
         "main": "Tài khoản",
@@ -410,7 +445,8 @@
       },
       "entities": {
         "employee": "Nhân viên",
-        "movie": "Dự án phim"
+        "movie": "Dự án phim",
+        "topicOrientation": "Định hướng đề tài"
       }
     }
   },

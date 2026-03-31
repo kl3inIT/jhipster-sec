@@ -1,0 +1,99 @@
+<p-toast></p-toast>
+
+<div class="max-w-xl mx-auto space-y-4">
+  <h1 class="m-0 text-2xl font-semibold">
+    @if (isEdit()) {
+      {{ 'angappApp.topicOrientation.home.createOrEditLabel' | translate }}
+    } @else {
+      {{ 'angappApp.topicOrientation.home.createLabel' | translate }}
+    }
+  </h1>
+
+  <p-card class="shadow-sm">
+    <form [formGroup]="form" (ngSubmit)="save()" class="space-y-4">
+      <div class="grid grid-cols-1 gap-4">
+        <div>
+          <label for="code" class="block text-sm font-medium mb-1">{{ 'angappApp.topicOrientation.code' | translate }}</label>
+          <input
+            id="code"
+            type="text"
+            pInputText
+            formControlName="code"
+            class="w-full"
+            [class.ng-invalid]="form.controls['code'].invalid && form.controls['code'].touched"
+            [class.ng-dirty]="form.controls['code'].invalid && form.controls['code'].touched"
+          />
+          @if (form.controls['code'].invalid && form.controls['code'].touched) {
+            <p-message severity="error" class="mt-1" [text]="'entity.validation.required' | translate"></p-message>
+          }
+        </div>
+
+        <div>
+          <label for="title" class="block text-sm font-medium mb-1">{{ 'angappApp.topicOrientation.title' | translate }}</label>
+          <input
+            id="title"
+            type="text"
+            pInputText
+            formControlName="title"
+            class="w-full"
+            [class.ng-invalid]="form.controls['title'].invalid && form.controls['title'].touched"
+            [class.ng-dirty]="form.controls['title'].invalid && form.controls['title'].touched"
+          />
+          @if (form.controls['title'].invalid && form.controls['title'].touched) {
+            <p-message severity="error" class="mt-1" [text]="'entity.validation.required' | translate"></p-message>
+          }
+        </div>
+
+        <div>
+          <label for="movieProfileId" class="block text-sm font-medium mb-1">{{ 'angappApp.topicOrientation.movieProfile' | translate }}</label>
+          <p-select
+            id="movieProfileId"
+            formControlName="movieProfileId"
+            [options]="movieProfileOptions"
+            optionLabel="label"
+            optionValue="value"
+            [placeholder]="'angappApp.topicOrientation.movieProfile' | translate"
+            class="w-full"
+          ></p-select>
+        </div>
+
+        <div>
+          <label for="proposer" class="block text-sm font-medium mb-1">{{ 'angappApp.topicOrientation.proposer' | translate }}</label>
+          <input id="proposer" type="text" pInputText formControlName="proposer" class="w-full" />
+        </div>
+
+        <div>
+          <label for="submitDate" class="block text-sm font-medium mb-1">{{ 'angappApp.topicOrientation.submitDate' | translate }}</label>
+          <p-datepicker inputId="submitDate" formControlName="submitDate" [showIcon]="true" dateFormat="yy-mm-dd" class="w-full"></p-datepicker>
+        </div>
+
+        <div>
+          <label for="status" class="block text-sm font-medium mb-1">{{ 'angappApp.topicOrientation.statusLabel' | translate }}</label>
+          <p-select
+            id="status"
+            formControlName="status"
+            [options]="statusOptions"
+            optionLabel="label"
+            optionValue="value"
+            [placeholder]="'angappApp.topicOrientation.statusLabel' | translate"
+            class="w-full"
+          ></p-select>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button
+          type="button"
+          pButton
+          severity="secondary"
+          [outlined]="true"
+          icon="pi pi-times"
+          [label]="'entity.action.cancel' | translate"
+          (click)="cancel()"
+          [disabled]="isSaving()"
+        ></button>
+        <button type="submit" pButton icon="pi pi-check" [label]="'entity.action.save' | translate" [disabled]="isSaving()"></button>
+      </div>
+    </form>
+  </p-card>
+</div>

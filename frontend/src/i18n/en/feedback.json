@@ -49,6 +49,10 @@
       "employees": {
         "deleted": "Employee deleted successfully.",
         "saved": "Employee saved successfully."
+      },
+      "topicOrientations": {
+        "deleted": "Topic orientation deleted successfully.",
+        "saved": "Topic orientation saved successfully."
       }
     }
   }

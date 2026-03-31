@@ -73,6 +73,16 @@ export const APP_NAVIGATION_TREE: readonly AppNavigationSection[] = [
         breadcrumbKey: 'layout.menu.entities.movie',
         deniedMode: 'in-shell',
       },
+      {
+        id: 'entities.topic-orientation',
+        sectionId: 'entities',
+        labelKey: 'global.menu.entities.topicOrientation',
+        icon: 'pi pi-book',
+        routerLink: ['/entities/topic-orientation'],
+        routePrefix: '/entities/topic-orientation',
+        breadcrumbKey: 'global.menu.entities.topicOrientation',
+        deniedMode: 'in-shell',
+      },
     ],
   },
   {

@@ -121,3 +121,22 @@ fetch-plans:
   - entity: com.vn.core.domain.movie.ProductionEkip
     name: production-ekip-detail
     extends: production-ekip-list
+
+  - entity: com.vn.core.domain.movie.TopicOrientation
+    name: topic-orientation-list
+    properties:
+      - id
+      - code
+      - title
+      - proposer
+      - submitDate
+      - status
+      - name: movieProfile
+        properties:
+          - id
+          - profileCode
+          - movieName
+
+  - entity: com.vn.core.domain.movie.TopicOrientation
+    name: topic-orientation-detail
+    extends: topic-orientation-list

@@ -1,0 +1,34 @@
+{
+  "angappApp": {
+    "topicOrientation": {
+      "home": {
+        "title": "Topic Orientations",
+        "createLabel": "Create topic orientation",
+        "createOrEditLabel": "Edit topic orientation",
+        "notFound": "No topic orientations found."
+      },
+      "detail": {
+        "title": "Topic Orientation"
+      },
+      "delete": {
+        "title": "Delete topic orientation",
+        "question": "Are you sure you want to delete this topic orientation?"
+      },
+      "id": "ID",
+      "code": "Code",
+      "title": "Title",
+      "movieProfile": "Movie profile",
+      "proposer": "Proposer",
+      "submitDate": "Submit date",
+      "statusLabel": "Status",
+      "status": {
+        "ACTIVE": "Active",
+        "PENDING": "Pending",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected",
+        "COMPLETED": "Completed",
+        "CANCELED": "Canceled"
+      }
+    }
+  }
+}

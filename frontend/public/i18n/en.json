@@ -121,6 +121,36 @@
       "ownerLogin": "Owner Login",
       "budget": "Budget",
       "description": "Description"
+    },
+    "topicOrientation": {
+      "home": {
+        "title": "Topic Orientations",
+        "createLabel": "Create topic orientation",
+        "createOrEditLabel": "Edit topic orientation",
+        "notFound": "No topic orientations found."
+      },
+      "detail": {
+        "title": "Topic Orientation"
+      },
+      "delete": {
+        "title": "Delete topic orientation",
+        "question": "Are you sure you want to delete this topic orientation?"
+      },
+      "id": "ID",
+      "code": "Code",
+      "title": "Title",
+      "movieProfile": "Movie profile",
+      "proposer": "Proposer",
+      "submitDate": "Submit date",
+      "statusLabel": "Status",
+      "status": {
+        "ACTIVE": "Active",
+        "PENDING": "Pending",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected",
+        "COMPLETED": "Completed",
+        "CANCELED": "Canceled"
+      }
     }
   },
   "entity": {
@@ -252,6 +282,10 @@
       "employees": {
         "deleted": "Employee deleted successfully.",
         "saved": "Employee saved successfully."
+      },
+      "topicOrientations": {
+        "deleted": "Topic orientation deleted successfully.",
+        "saved": "Topic orientation saved successfully."
       }
     }
   },
@@ -267,7 +301,8 @@
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
         "department": "Department",
         "organization": "Organization",
-        "movie": "Movie Profile"
+        "movie": "Movie Profile",
+        "topicOrientation": "Topic Orientation"
       },
       "account": {
         "main": "Account",
@@ -412,7 +447,8 @@
       },
       "entities": {
         "employee": "Employees",
-        "movie": "Movie Profile"
+        "movie": "Movie Profile",
+        "topicOrientation": "Topic Orientation"
       }
     }
   },

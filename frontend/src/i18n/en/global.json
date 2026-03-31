@@ -10,7 +10,8 @@
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
         "department": "Department",
         "organization": "Organization",
-        "movie": "Movie Profile"
+        "movie": "Movie Profile",
+        "topicOrientation": "Topic Orientation"
       },
       "account": {
         "main": "Account",

@@ -10,7 +10,8 @@
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
         "department": "Department",
         "organization": "Organization",
-        "movie": "Dự án phim"
+        "movie": "Dự án phim",
+        "topicOrientation": "Định hướng đề tài"
       },
       "account": {
         "main": "Tài khoản",
