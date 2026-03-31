@@ -37,6 +37,15 @@ const SORT = 'sort';
 const DEFAULT_SORT_DATA = 'defaultSort';
 const STATUS_VALUES: TopicOrientationStatus[] = ['ACTIVE', 'PENDING', 'APPROVED', 'REJECTED', 'COMPLETED', 'CANCELED'];
 
+const EMPTY_DIALOG_FORM_VALUE = {
+  id: null,
+  title: '',
+  movieProfileId: null,
+  proposer: '',
+  submitDate: null,
+  status: null,
+};
+
 @Component({
   selector: 'app-topic-orientation-list',
   standalone: true,
@@ -74,6 +83,9 @@ export default class TopicOrientationListComponent implements OnInit, OnDestroy 
   movieProfiles = signal<IMovieProfile[]>([]);
 
   form: FormGroup;
+
+  private pendingCloseBehavior: 'clear' | 'preserve' | 'saved' | null = null;
+  private shouldResetCreateFormOnOpen = true;
 
   readonly router = inject(Router);
   protected readonly topicOrientationService = inject(TopicOrientationService);
@@ -146,14 +158,10 @@ export default class TopicOrientationListComponent implements OnInit, OnDestroy 
 
   create(): void {
     this.isEditDialog.set(false);
-    this.form.reset({
-      id: null,
-      title: '',
-      movieProfileId: null,
-      proposer: '',
-      submitDate: null,
-      status: null,
-    });
+    if (this.shouldResetCreateFormOnOpen) {
+      this.form.reset(EMPTY_DIALOG_FORM_VALUE);
+    }
+    this.shouldResetCreateFormOnOpen = true;
     this.dialogVisible.set(true);
   }
 
@@ -209,8 +217,36 @@ export default class TopicOrientationListComponent implements OnInit, OnDestroy 
       }));
   }
 
-  closeDialog(): void {
+  closeDialog(shouldReset = true): void {
+    this.pendingCloseBehavior = shouldReset ? 'clear' : 'preserve';
     this.dialogVisible.set(false);
+    if (shouldReset) {
+      this.form.reset(EMPTY_DIALOG_FORM_VALUE);
+      this.shouldResetCreateFormOnOpen = true;
+    }
+  }
+
+  onDialogHide(): void {
+    const closeBehavior = this.pendingCloseBehavior;
+    this.pendingCloseBehavior = null;
+
+    if (closeBehavior === 'clear' || closeBehavior === 'saved') {
+      return;
+    }
+
+    if (!this.isEditDialog()) {
+      this.shouldResetCreateFormOnOpen = false;
+    }
+  }
+
+  onDialogHeaderCloseClick(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.closeDialog(true);
+  }
+
+  onDialogVisibleChange(visible: boolean): void {
+    this.dialogVisible.set(visible);
   }
 
   saveDialog(): void {
@@ -248,7 +284,9 @@ export default class TopicOrientationListComponent implements OnInit, OnDestroy 
           summary: 'feedback.toast.saved',
           detail: 'feedback.entities.topicOrientations.saved',
         });
+        this.pendingCloseBehavior = 'saved';
         this.dialogVisible.set(false);
+        this.shouldResetCreateFormOnOpen = true;
         this.load();
       },
       error: (err: unknown) => handleHttpError(this.messageService, this.translateService, err),

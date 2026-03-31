@@ -41,3 +41,4 @@ export class TopicOrientationService {
     return topicOrientation.id ?? 0;
   }
 }
+

@@ -93,15 +93,30 @@
 </div>
 
 <p-dialog
-  [header]="dialogTitle()"
   [modal]="true"
   [draggable]="false"
   [resizable]="false"
   [dismissableMask]="true"
   [style]="{ width: '40rem', maxWidth: '95vw' }"
   [visible]="dialogVisible()"
-  (visibleChange)="dialogVisible.set($event)"
+  (visibleChange)="onDialogVisibleChange($event)"
+  (onHide)="onDialogHide()"
 >
+  <ng-template #header>
+    <div class="flex items-center justify-between gap-2">
+      <span>{{ dialogTitle() }}</span>
+      <button
+        type="button"
+        pButton
+        severity="secondary"
+        [text]="true"
+        [rounded]="true"
+        icon="pi pi-times"
+        [ariaLabel]="'entity.action.cancel' | translate"
+        (click)="onDialogHeaderCloseClick($event)"
+      ></button>
+    </div>
+  </ng-template>
   <form [formGroup]="form" (ngSubmit)="saveDialog()" class="space-y-4">
     <div class="grid grid-cols-1 gap-4">
       <div>
