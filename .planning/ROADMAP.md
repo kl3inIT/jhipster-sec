@@ -195,8 +195,8 @@ Plans:
 2. A profile-gated baseline endpoint serves Organization data via UnconstrainedDataManager (bypassing the security pipeline) for fair comparison.
 3. All five in-scope resource controllers (Organization, Department, Employee, SecuredEntityCapability, MenuPermission) have @Tag, @Operation, and @ApiResponse annotations with fetch-plan descriptions and correct schema types.
 4. An OperationCustomizer bean marks all @SecuredEntity-backed operations with x-secured-entity: true in the generated OpenAPI spec.
-**Plans:** 2 plans
+**Plans:** 1/2 plans complete
 
 Plans:
-- [ ] 10-01-PLAN.md — k6 benchmark infrastructure: baseline controller, load test scripts, and README
+- [x] 10-01-PLAN.md — k6 benchmark infrastructure: baseline controller, load test scripts, and README
 - [ ] 10-02-PLAN.md — OpenAPI annotations: OperationCustomizer bean and @Operation/@ApiResponse on 5 controllers

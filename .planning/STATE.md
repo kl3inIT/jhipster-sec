@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: "Phase 09 shipped — PR #12"
-stopped_at: Completed quick/260330-eke-SUMMARY.md
-last_updated: "2026-03-30T08:26:49.104Z"
-last_activity: "2026-03-30 - Completed quick task 260330-l8t: wildcard permission cleanup and mutual exclusion UI"
+status: "Phase 10 in progress — plan 10-01 completed"
+stopped_at: Completed 10-01-PLAN.md
+last_updated: "2026-03-31T04:06:21.730Z"
+last_activity: "2026-03-31 - Completed 10-01 benchmark baseline and k6 infrastructure"
 progress:
-  total_phases: 8
+  total_phases: 9
   completed_phases: 8
-  total_plans: 33
-  completed_plans: 33
+  total_plans: 35
+  completed_plans: 34
 ---
 
 # Project State
@@ -20,12 +20,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-27)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, authority, and attribute-level access decisions.
-**Current focus:** Phase 10 — frontend-reliability-and-regression-coverage
+**Current focus:** Phase 10 — performance-benchmarking-and-openapi-documentation-for-the-security-pipeline-jmeter-k6-load-tests-comparing-secured-vs-standard-endpoints-and-swagger-annotations-for-variable-response-schemas-and-fetch-plan-params
 
 ## Current Position
 
-Phase: 10 (frontend-reliability-and-regression-coverage) — READY TO PLAN
-Next: Phase 10 (frontend-reliability-and-regression-coverage)
+Phase: 10 (performance-benchmarking-and-openapi-documentation-for-the-security-pipeline-jmeter-k6-load-tests-comparing-secured-vs-standard-endpoints-and-swagger-annotations-for-variable-response-schemas-and-fetch-plan-params) — IN PROGRESS
+Plan: 2 of 2
+Status: Ready to execute
+Last activity: 2026-03-31 -- Completed plan 10-01 benchmark baseline and k6 infrastructure
+Next: Execute plan 10-02 (OpenAPI annotations)
 
 ## Performance Metrics
 
@@ -73,6 +76,7 @@ Next: Phase 10 (frontend-reliability-and-regression-coverage)
 | Phase 09 P01 | 7 min | 3 tasks | 7 files |
 | Phase 09 P02 | 22 min | 2 tasks | 8 files |
 | Phase 09 P03 | 2 min | 2 tasks | 3 files |
+| Phase 10 P01 | 11 min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -100,12 +104,13 @@ Recent decisions affecting current work:
 - [Phase 09]: Skeleton loaders use tableValue computed signal switching between 5 skeletonRows and real data array for initial-fetch-only skeleton
 - [Phase 09]: Initialize entity list loading signals to true so first-render skeleton rows appear before data arrives.
 - [Phase 09]: Use an empty verification commit when a required task only performs build validation and introduces no tracked file changes.
+- [Phase 10]: Benchmark baseline reuses SecuredEntityJsonAdapter serialization to isolate security-check overhead from serializer differences
+- [Phase 10]: Benchmark endpoint is gated to api-docs profile and hidden from OpenAPI so it remains dev-only
 
 ### Pending Todos
 
-- Plan or execute Phase 10 - frontend reliability and regression coverage.
-- Performance test backend security API vs standard JHipster API (JMeter/k6/Gatling benchmark comparing secured pipeline overhead).
-- Configure Swagger OpenAPI docs for security-gated endpoints (variable response schemas, fetch-plan params, `@SecuredEntity` markers).
+- Execute Phase 10 plan 10-02: OpenAPI annotations and x-secured-entity extension for security and proof-domain endpoints.
+- Run manual k6 benchmarks and capture baseline result snapshots using the new load-tests scripts.
 
 ### Blockers/Concerns
 
@@ -127,7 +132,7 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last activity: 2026-03-30 - Completed quick task 260330-l8t: wildcard permission cleanup and normalizeOutgoing fix
-Last session: 2026-03-30T08:45:00.000Z
-Stopped at: Completed quick/260330-l8t-SUMMARY.md
+Last activity: 2026-03-31 - Completed 10-01 benchmark baseline and k6 infrastructure
+Last session: 2026-03-31T04:03:11.378Z
+Stopped at: Completed 10-01-PLAN.md
 Resume file: None
