@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: "Phase 09 shipped — PR #12"
-stopped_at: Completed 09-03-PLAN.md
-last_updated: "2026-03-28T08:38:51.164Z"
-last_activity: 2026-03-28
+stopped_at: Completed quick/260330-eke-SUMMARY.md
+last_updated: "2026-03-30T08:26:49.104Z"
+last_activity: "2026-03-30 - Completed quick task 260330-l8t: wildcard permission cleanup and mutual exclusion UI"
 progress:
-  total_phases: 9
+  total_phases: 8
   completed_phases: 8
   total_plans: 33
   completed_plans: 33
@@ -82,6 +82,7 @@ Next: Phase 10 (frontend-reliability-and-regression-coverage)
 - Phase 08.1 inserted after Phase 8: Jmix-Style DataManager Core Alignment (URGENT) - aligned the internal data-access architecture with a Jmix-style `DataManager` / `UnconstrainedDataManager` split while preserving the `SecureDataManager` facade and brownfield contract.
 - Phase 08.2 inserted after Phase 08.1: Multi-App Menu Roles and Jmix-Style JSON Entity Controllers (URGENT) - restored secured `loadByQuery`, supported multi-app menu-role assignment, and moved protected entity boundaries to raw JSON with explicit `PATCH`.
 - Phase 08.3 inserted after Phase 08.2: User registration, live permission refresh, entity-native serialization, validation hardening, and row-policy removal - closes missing self-registration, removes stale authority snapshots, hardens the secured entity pipeline, and retires row policy before Phase 9.
+- Phase 10 replaced: original frontend reliability and regression coverage phase removed; replaced with performance benchmarking (JMeter/k6 load tests, secured vs standard pipeline) and OpenAPI documentation (Swagger annotations for variable response schemas and fetch-plan params).
 
 ### Decisions
 
@@ -103,6 +104,8 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 - Plan or execute Phase 10 - frontend reliability and regression coverage.
+- Performance test backend security API vs standard JHipster API (JMeter/k6/Gatling benchmark comparing secured pipeline overhead).
+- Configure Swagger OpenAPI docs for security-gated endpoints (variable response schemas, fetch-plan params, `@SecuredEntity` markers).
 
 ### Blockers/Concerns
 
@@ -118,10 +121,13 @@ Recent decisions affecting current work:
 | 260327-usx | Convert menu permission appName from String to enum with schema migration | 2026-03-27 | pending | [260327-usx-ch-qu-n-l-quy-n-c-a-menu-i-c-i-appname-t](./quick/260327-usx-ch-qu-n-l-quy-n-c-a-menu-i-c-i-appname-t/) |
 | 260328-d4b | configure local mail catcher for dev registration | 2026-03-28 | pending | [260328-d4b-configure-local-mail-catcher-for-dev-reg](./quick/260328-d4b-configure-local-mail-catcher-for-dev-reg/) |
 | 260328-f1a | fix duplicate register text on login page | 2026-03-28 | pending | [260328-f1a-fix-duplicate-register-text-on-login-pag](./quick/260328-f1a-fix-duplicate-register-text-on-login-pag/) |
+| 260330-e78 | Fix permission matrix: modify-implies-view and entity wildcard row | 2026-03-30 | 7c2a0d4 | [260330-e78-fix-permission-matrix-attribute-logic-li](./quick/260330-e78-fix-permission-matrix-attribute-logic-li/) |
+| 260330-eke | fix backend permission evaluation: entity wildcard (*) and edit-implies-view attribute cascade | 2026-03-30 | eec037e | [260330-eke-fix-backend-permission-evaluation-entity](./quick/260330-eke-fix-backend-permission-evaluation-entity/) |
+| 260330-l8t | wildcard permission cleanup and mutual exclusion UI | 2026-03-30 | 84eedbf | [260330-l8t-wildcard-permission-cleanup-and-mutual-e](./quick/260330-l8t-wildcard-permission-cleanup-and-mutual-e/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-28
-Last session: 2026-03-28T08:29:47.359Z
-Stopped at: Completed 09-03-PLAN.md
+Last activity: 2026-03-30 - Completed quick task 260330-l8t: wildcard permission cleanup and normalizeOutgoing fix
+Last session: 2026-03-30T08:45:00.000Z
+Stopped at: Completed quick/260330-l8t-SUMMARY.md
 Resume file: None

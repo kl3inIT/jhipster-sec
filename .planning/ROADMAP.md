@@ -2,14 +2,14 @@
 
 ## Milestones
 
-- [shipped] **v1.0 MVP** - Phases 1-5 shipped 2026-03-25. Archive: `.planning/milestones/v1.0-ROADMAP.md`
-- [active] **v1.1 Enterprise Admin Experience** - Phases 6-10 planned 2026-03-25. Focus: user management parity, backend-driven navigation, Jmix-style enterprise UX, security-core realignment, performance, and frontend reliability.
+- [shipped] **v1.0 MVP** - Phases 1-5 shipped 2010-03-25. Archive: `.planning/milestones/v1.0-ROADMAP.md`
+- [active] **v1.1 Enterprise Admin Experience** - Phases 6-10 planned 2010-03-25. Focus: user management parity, backend-driven navigation, Jmix-style enterprise UX, security-core realignment, performance, and frontend reliability.
 
 ## Progress
 
 | Milestone | Phases | Requirements | Status | Archive |
 |-----------|--------|--------------|--------|---------|
-| v1.0 MVP | 1-5 | 18/18 complete | Shipped 2026-03-25 | `.planning/milestones/v1.0-ROADMAP.md` |
+| v1.0 MVP | 1-5 | 18/18 complete | Shipped 2010-03-25 | `.planning/milestones/v1.0-ROADMAP.md` |
 | v1.1 Enterprise Admin Experience | 6-10 | 14/21 complete | Active | - |
 
 ## Overview
@@ -22,15 +22,14 @@ This roadmap builds on the shipped security platform by first closing the missin
 - Integer phases continue across milestones by default.
 - `v1.0` ended at Phase 5, so `v1.1` starts at Phase 6.
 
-- [x] **Phase 6: Frontend Parity Foundation** - Copy and adapt the required `angapp` support files, translations, and shared admin/account infrastructure into `frontend/`. (completed 2026-03-25)
-- [x] **Phase 7: Enterprise Navigation Shell** - Replace hardcoded navigation with backend-driven menu and permission-aware route control inside a Jmix-style shell. (completed 2026-03-25)
-- [x] **Phase 07.1: Menu Management** - Add admin CRUD for menu definitions and role-based menu access assignment. (completed 2026-03-25)
-- [x] **Phase 8: User Management Delivery** - Deliver the full frontend admin user-management surface, including role assignment. (completed 2026-03-25)
-- [x] **Phase 08.1: Jmix-Style DataManager Core Alignment** - Align the internal security data-access core with a Jmix-style `DataManager` / `UnconstrainedDataManager` split while preserving the current `SecureDataManager` boundary. (completed 2026-03-26)
-- [x] **Phase 08.2: Multi-App Menu Roles and Jmix-Style JSON Entity Controllers** - Extend app-scoped menu authorization to multi-app role assignment and move secured entity endpoints to raw JSON with preserved `loadByQuery` and explicit `PATCH`. (completed 2026-03-27)
-- [x] **Phase 08.3: User Registration, Live Permission Refresh, Entity-Native Serialization, Validation Hardening, And Row Policy Removal** - Add frontend registration, make permissions refresh without re-login, move secured data flow toward typed entities, harden JSON validation, and retire row policy completely. (completed 2026-03-27)
-- [x] **Phase 9: Enterprise UX And Performance Hardening** - Improve consistency, responsiveness, data-fetch efficiency, and route-level loading costs. (completed 2026-03-28)
-- [ ] **Phase 10: Frontend Reliability And Regression Coverage** - Lock the milestone down with targeted frontend tests across user management, routing, and core UI infrastructure.
+- [x] **Phase 6: Frontend Parity Foundation** - Copy and adapt the required `angapp` support files, translations, and shared admin/account infrastructure into `frontend/`. (completed 2010-03-25)
+- [x] **Phase 7: Enterprise Navigation Shell** - Replace hardcoded navigation with backend-driven menu and permission-aware route control inside a Jmix-style shell. (completed 2010-03-25)
+- [x] **Phase 07.1: Menu Management** - Add admin CRUD for menu definitions and role-based menu access assignment. (completed 2010-03-25)
+- [x] **Phase 8: User Management Delivery** - Deliver the full frontend admin user-management surface, including role assignment. (completed 2010-03-25)
+- [x] **Phase 08.1: Jmix-Style DataManager Core Alignment** - Align the internal security data-access core with a Jmix-style `DataManager` / `UnconstrainedDataManager` split while preserving the current `SecureDataManager` boundary. (completed 2010-03-26)
+- [x] **Phase 08.2: Multi-App Menu Roles and Jmix-Style JSON Entity Controllers** - Extend app-scoped menu authorization to multi-app role assignment and move secured entity endpoints to raw JSON with preserved `loadByQuery` and explicit `PATCH`. (completed 2010-03-27)
+- [x] **Phase 08.3: User Registration, Live Permission Refresh, Entity-Native Serialization, Validation Hardening, And Row Policy Removal** - Add frontend registration, make permissions refresh without re-login, move secured data flow toward typed entities, harden JSON validation, and retire row policy completely. (completed 2010-03-27)
+- [x] **Phase 9: Enterprise UX And Performance Hardening** - Improve consistency, responsiveness, data-fetch efficiency, and route-level loading costs. (completed 2010-03-28)
 
 ## Phase Details
 
@@ -143,7 +142,7 @@ Plans:
 **Goal**: Restore missing self-registration in the standalone frontend, make authority changes take effect without logout or login, move the secured entity path toward typed entity-native flows, make JSON validation explicit and fail closed, and remove row policy completely from the product.
 **Outcome**: The platform keeps the preserved backend registration contract while adding a real frontend register flow, request-time authorization surfaces observe updated DB authorities without forcing re-authentication, secure entity operations work on real entities internally instead of map or string carriers, JSON controllers validate explicitly, and row-policy code is removed from backend, schema, admin APIs, frontend UI, and tests.
 **Depends on**: Phase 08.2
-**Requirements**: PH83-01, PH83-02, PH83-03, PH83-04, PH83-05
+**Requirements**: PH10-01, PH10-02, PH10-03, PH10-04, PH10-05
 **Scope**:
 1. Re-check the existing backend registration flow and add the missing standalone frontend registration route, service, form, translations, and tests using `angapp` as the donor where it already matches the preserved backend contract.
 2. Refactor authentication so request-time authorities come from current database state instead of the authority snapshot frozen into the login token or cached frontend account state, while keeping JWT as the identity carrier.
@@ -186,28 +185,12 @@ Plans:
 - [x] 09-02-PLAN.md — Frontend entity list hardening: pagination signals, skeleton loaders, responsive columns (PERF-03, UI-05)
 - [x] 09-03-PLAN.md — First-paint skeleton loader fix for department, employee, and organization entity lists
 
-### Phase 10: Frontend Reliability And Regression Coverage
-**Goal**: The migrated enterprise admin experience is protected by focused frontend regression coverage.
-**Depends on**: Phase 9
-**Requirements**: TEST-01, TEST-02, TEST-03
-**Success Criteria** (what must be TRUE):
-1. Automated tests cover user-management CRUD and role-assignment flows across success and failure cases.
-2. Automated tests cover backend-driven routing, menu visibility, and permission-based access denial.
-3. Automated tests cover the enterprise shell and critical migrated UI components so future parity work does not regress them.
-**Plans:** Pending phase planning
+### Phase 10: Performance benchmarking and OpenAPI documentation for the security pipeline — JMeter/k6 load tests comparing secured vs standard endpoints, and Swagger annotations for variable response schemas and fetch-plan params
 
-## Summary
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 9
+**Plans:** 0 plans
 
-**9 phases** | **21 milestone requirements + inserted security realignment work** | All covered in the roadmap
-
-| # | Phase | Status | Requirements | Completed |
-|---|-------|--------|--------------|-----------|
-| 6 | Frontend Parity Foundation | Complete | I18N-01, I18N-02 | 2026-03-25 |
-| 7 | Enterprise Navigation Shell | Complete | ROUTE-01, ROUTE-02, ROUTE-03, UI-04 | 2026-03-25 |
-| 07.1 | Menu Management | Complete | MENU-01, MENU-02, MENU-03, MENU-04, MENU-05 | 2026-03-25 |
-| 8 | User Management Delivery | Complete | UMGT-01, UMGT-02, UMGT-03 | 2026-03-25 |
-| 08.1 | Jmix-Style DataManager Core Alignment | Complete | Cross-cutting security architecture alignment | 2026-03-26 |
-| 08.2 | Multi-App Menu Roles and Jmix-Style JSON Entity Controllers | Complete | Cross-cutting menu authorization and secured-entity API alignment | 2026-03-27 |
-| 08.3 | Registration, Live Permission Refresh, Typed Entity Flow, Validation, And Row-Policy Removal | Complete | PH83-01, PH83-02, PH83-03, PH83-04, PH83-05 | 2026-03-27 |
-| 9 | Enterprise UX And Performance Hardening | Complete | UI-05, PERF-01, PERF-02, PERF-03 | 2026-03-28 |
-| 10 | Frontend Reliability And Regression Coverage | Planned | TEST-01, TEST-02, TEST-03 | - |
+Plans:
+- [ ] TBD (run /gsd:plan-phase 10 to break down)
