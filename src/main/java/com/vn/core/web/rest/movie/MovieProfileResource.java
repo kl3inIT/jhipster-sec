@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.vn.core.domain.movie.MovieProfile;
+import com.vn.core.domain.movie.enumeration.ekip.ProductionRole;
 import com.vn.core.security.data.SecureDataManager.EntityMutation;
 import com.vn.core.security.web.SecuredEntityJsonAdapter;
 import com.vn.core.service.movie.MovieProfileService;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,10 +92,12 @@ public class MovieProfileResource {
     public ResponseEntity<String> createMovieProfile(@RequestBody String body) {
         LOG.debug("REST request to create movie profile");
         ObjectNode root = parseObjectBody(body);
-        List<Map<String, Object>> ekipMembers = extractEkipMembers(root);
-        root.remove("ekipMembers");
+        EkipMembersPayload ekipMembersPayload = extractEkipMembers(root);
+        if (ekipMembersPayload.present()) {
+            root.remove("ekipMembers");
+        }
         EntityMutation<MovieProfile> mutation = securedEntityJsonAdapter.fromJson(root, MovieProfile.class);
-        MovieProfile result = movieProfileService.create(mutation, ekipMembers);
+        MovieProfile result = movieProfileService.create(mutation, ekipMembersPayload.members());
         return ResponseEntity.created(URI.create("/api/movie-profiles/" + result.getId()))
             .contentType(MediaType.APPLICATION_JSON)
             .body(securedEntityJsonAdapter.toJsonString(result, DETAIL_FETCH_PLAN));
@@ -104,12 +108,19 @@ public class MovieProfileResource {
     public ResponseEntity<String> updateMovieProfile(@PathVariable("id") Long id, @RequestBody String body) {
         LOG.debug("REST request to update movie profile : {}", id);
         ObjectNode root = parseObjectBody(body);
-        List<Map<String, Object>> ekipMembers = extractEkipMembers(root);
-        root.remove("ekipMembers");
+        EkipMembersPayload ekipMembersPayload = extractEkipMembers(root);
+        if (ekipMembersPayload.present()) {
+            root.remove("ekipMembers");
+        }
         EntityMutation<MovieProfile> mutation = securedEntityJsonAdapter.fromJson(root, MovieProfile.class);
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_JSON)
-            .body(securedEntityJsonAdapter.toJsonString(movieProfileService.update(id, mutation, ekipMembers), DETAIL_FETCH_PLAN));
+            .body(
+                securedEntityJsonAdapter.toJsonString(
+                    movieProfileService.update(id, mutation, ekipMembersPayload.members()),
+                    DETAIL_FETCH_PLAN
+                )
+            );
     }
 
     @DeleteMapping("/{id}")
@@ -165,17 +176,77 @@ public class MovieProfileResource {
         }
     }
 
-    private List<Map<String, Object>> extractEkipMembers(ObjectNode root) {
+    private EkipMembersPayload extractEkipMembers(ObjectNode root) {
         JsonNode raw = root.get("ekipMembers");
-        if (raw == null || !raw.isArray()) {
-            return List.of();
+        if (raw == null || raw.isNull()) {
+            return EkipMembersPayload.absent();
+        }
+        if (!raw.isArray()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'ekipMembers' must be a JSON array");
         }
         List<Map<String, Object>> result = new ArrayList<>();
         for (JsonNode item : raw) {
-            if (item.isObject()) {
-                result.add(objectMapper.convertValue(item, new TypeReference<Map<String, Object>>() {}));
+            validateEkipMemberItem(item);
+            result.add(objectMapper.convertValue(item, new TypeReference<Map<String, Object>>() {}));
+        }
+        return EkipMembersPayload.present(result);
+    }
+
+    private void validateEkipMemberItem(JsonNode item) {
+        if (!item.isObject()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Each 'ekipMembers' item must be a JSON object");
+        }
+        if (item.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'ekipMembers' items must not be empty objects");
+        }
+
+        JsonNode idNode = item.get("id");
+        if (idNode != null && !idNode.isNull()) {
+            if (idNode.isNumber()) {
+                if (idNode.longValue() <= 0) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'ekipMembers[].id' must be greater than 0");
+                }
+            } else if (idNode.isTextual()) {
+                try {
+                    if (Long.parseLong(idNode.asText().trim()) <= 0) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'ekipMembers[].id' must be greater than 0");
+                    }
+                } catch (NumberFormatException ex) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'ekipMembers[].id' must be a valid number");
+                }
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'ekipMembers[].id' must be a valid number");
             }
         }
-        return result;
+
+        String ekipName = readRequiredText(item, "ekipName");
+        if (ekipName.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'ekipMembers[].ekipName' must not be blank");
+        }
+
+        String roleValue = readRequiredText(item, "role");
+        try {
+            ProductionRole.valueOf(roleValue.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'ekipMembers[].role' is invalid");
+        }
+    }
+
+    private String readRequiredText(JsonNode item, String fieldName) {
+        JsonNode value = item.get(fieldName);
+        if (value == null || value.isNull() || !value.isTextual()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'ekipMembers[]." + fieldName + "' is required");
+        }
+        return value.asText().trim();
+    }
+
+    private record EkipMembersPayload(boolean present, List<Map<String, Object>> members) {
+        private static EkipMembersPayload absent() {
+            return new EkipMembersPayload(false, null);
+        }
+
+        private static EkipMembersPayload present(List<Map<String, Object>> members) {
+            return new EkipMembersPayload(true, List.copyOf(members));
+        }
     }
 }

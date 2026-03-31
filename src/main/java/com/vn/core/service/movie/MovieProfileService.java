@@ -3,10 +3,12 @@ package com.vn.core.service.movie;
 import com.vn.core.domain.movie.MovieProfile;
 import com.vn.core.domain.movie.ProductionEkip;
 import com.vn.core.domain.movie.enumeration.ekip.ProductionRole;
+import com.vn.core.repository.movie.MovieProfileRepository;
 import com.vn.core.security.data.SecureDataManager;
 import com.vn.core.security.data.SecureDataManager.EntityMutation;
 import com.vn.core.security.data.SecuredLoadQuery;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,12 +37,13 @@ public class MovieProfileService {
     private static final String EKIP_ENTITY_CODE = "production-ekip";
     private static final String PROFILE_CODE_PREFIX = "FP-";
     private static final int BATCH_SIZE = 200;
-    private static final Set<String> EKIP_MUTATION_ATTRIBUTES = Set.of("ekipName", "role", "movieProfile");
 
     private final SecureDataManager secureDataManager;
+    private final MovieProfileRepository movieProfileRepository;
 
-    public MovieProfileService(SecureDataManager secureDataManager) {
+    public MovieProfileService(SecureDataManager secureDataManager, MovieProfileRepository movieProfileRepository) {
         this.secureDataManager = secureDataManager;
+        this.movieProfileRepository = movieProfileRepository;
     }
 
     @Transactional(readOnly = true)
@@ -59,16 +62,20 @@ public class MovieProfileService {
         LOG.debug("Request to create movie profile");
         MovieProfile saved = secureDataManager.save(MOVIE_PROFILE_CLASS, null, mutation);
         if (saved.getId() != null) {
-            syncProductionEkips(saved.getId(), ekipMembers);
+            if (ekipMembers != null) {
+                syncProductionEkips(saved.getId(), ekipMembers);
+            }
             return secureDataManager.loadOne(MOVIE_PROFILE_CLASS, saved.getId()).orElse(saved);
         }
         return saved;
     }
 
     public MovieProfile update(Long id, EntityMutation<MovieProfile> mutation, List<Map<String, Object>> ekipMembers) {
-            MovieProfile saved = secureDataManager.save(MOVIE_PROFILE_CLASS, id, mutation);
+        MovieProfile saved = secureDataManager.save(MOVIE_PROFILE_CLASS, id, mutation);
+        if (ekipMembers != null) {
             syncProductionEkips(id, ekipMembers);
-            return secureDataManager.loadOne(MOVIE_PROFILE_CLASS, id).orElse(saved);
+        }
+        return secureDataManager.loadOne(MOVIE_PROFILE_CLASS, id).orElse(saved);
     }
 
     public void delete(Long id) {
@@ -136,41 +143,51 @@ public class MovieProfileService {
     }
 
     private void syncProductionEkips(Long movieProfileId, List<Map<String, Object>> attributes) {
-        List<ProductionEkip> existing = loadProductionEkipsForProfile(movieProfileId);
-        Set<Long> existingIds = new HashSet<>();
+        MovieProfile managedProfile = movieProfileRepository
+            .findById(movieProfileId)
+            .orElseThrow(() -> new IllegalArgumentException("Movie profile not found: " + movieProfileId));
+        List<ProductionEkip> existing = new ArrayList<>(managedProfile.getEkipMembers());
+        Map<Long, ProductionEkip> existingById = new HashMap<>();
         for (ProductionEkip row : existing) {
             if (row.getId() != null) {
-                existingIds.add(row.getId());
+                existingById.put(row.getId(), row);
             }
         }
 
         Set<Long> incomingIds = new HashSet<>();
-        MovieProfile profileRef = new MovieProfile();
-        profileRef.setId(movieProfileId);
 
         for (Map<String, Object> item : attributes) {
             Long ekipId = readLong(item, "id");
+            ProductionEkip target;
             if (ekipId != null) {
-                incomingIds.add(ekipId);
+                if (!incomingIds.add(ekipId)) {
+                    throw new IllegalArgumentException("Duplicate production ekip id in request: " + ekipId);
+                }
+                target = existingById.get(ekipId);
+                if (target == null) {
+                    throw new IllegalArgumentException("Production ekip does not belong to movie profile " + movieProfileId + ": " + ekipId);
+                }
+            } else {
+                target = new ProductionEkip();
             }
 
-            ProductionEkip payload = new ProductionEkip();
-            payload.setEkipName(readString(item, "ekipName"));
-            payload.setRole(parseEnum(ProductionRole.class, item.get("role")));
-            payload.setMovieProfile(profileRef);
-
-            secureDataManager.save(
-                PRODUCTION_EKIP_CLASS,
-                ekipId,
-                new EntityMutation<>(payload, EKIP_MUTATION_ATTRIBUTES)
-            );
-        }
-
-        for (Long ekipId : existingIds) {
-            if (!incomingIds.contains(ekipId)) {
-                secureDataManager.delete(PRODUCTION_EKIP_CLASS, ekipId);
+            target.setEkipName(readString(item, "ekipName"));
+            target.setRole(parseEnum(ProductionRole.class, item.get("role")));
+            target.setMovieProfile(managedProfile);
+            if (ekipId == null) {
+                managedProfile.getEkipMembers().add(target);
             }
         }
+
+        managedProfile
+            .getEkipMembers()
+            .removeIf(row -> row.getId() != null && !incomingIds.contains(row.getId()));
+
+        for (ProductionEkip row : managedProfile.getEkipMembers()) {
+            row.setMovieProfile(managedProfile);
+        }
+
+        movieProfileRepository.save(managedProfile);
     }
 
     private List<ProductionEkip> loadProductionEkipsForProfile(Long movieProfileId) {
