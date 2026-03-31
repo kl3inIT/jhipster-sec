@@ -3,7 +3,7 @@
 ## Milestones
 
 - [shipped] **v1.0 MVP** - Phases 1-5 shipped 2010-03-25. Archive: `.planning/milestones/v1.0-ROADMAP.md`
-- [active] **v1.1 Enterprise Admin Experience** - Phases 6-10 planned 2010-03-25. Focus: user management parity, backend-driven navigation, Jmix-style enterprise UX, security-core realignment, performance, and frontend reliability.
+- [active] **v1.1 Enterprise Admin Experience** - Phases 6-11 planned. Focus: user management parity, backend-driven navigation, Jmix-style enterprise UX, security-core realignment, performance hardening, and frontend reliability.
 
 ## Progress
 
@@ -203,3 +203,13 @@ Plans:
 - [x] 10-02-PLAN.md — OpenAPI annotations: OperationCustomizer bean and @Operation/@ApiResponse on 5 controllers
 - [x] 10-03-PLAN.md — Refactor benchmark baseline to standard JHipster flow (gap closure)
 - [x] 10-04-PLAN.md — Phase 10 requirements traceability alignment (gap closure)
+
+### Phase 11: Security Pipeline Performance Hardening — p95 Overhead Under 10 Percent
+
+**Goal:** Reduce the secured endpoint p95 latency overhead to under 10% of the baseline by eliminating redundant DB round-trips on every request (permission matrix caching, authority validation caching), fixing the Criteria API ID lookup inefficiency on detail loads, and resolving the per-entity fetch-plan resolution and serialization overhead.
+**Requirements**: PERF-04
+**Depends on:** Phase 10
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 11 to break down)
