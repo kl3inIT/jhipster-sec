@@ -1,5 +1,22 @@
 # Milestones
 
+## v1.1 Enterprise Admin Experience (Shipped: 2026-03-31)
+
+**Phases completed:** 10 phases, 39 plans, 55 tasks
+
+**Audit:** `.planning/milestones/v1.1-MILESTONE-AUDIT.md`
+**Archives:** `.planning/milestones/v1.1-ROADMAP.md`, `.planning/milestones/v1.1-REQUIREMENTS.md`
+
+**Key accomplishments:**
+
+- Delivered enterprise admin parity in `frontend/`: backend-driven navigation, full user-management CRUD, and role/menu permission surfaces.
+- Completed security-core realignment: request-time authority refresh, typed secured-entity data flow, explicit fail-closed JSON validation, and full row-policy retirement.
+- Shipped Phase 9 UX/performance hardening with responsive PrimeNG list workspaces, skeleton loading patterns, and reduced redundant permission-evaluation chatter.
+- Shipped benchmark and OpenAPI documentation track for secured entity APIs, including tagged operations and generated `x-secured-entity` metadata.
+- Landed Phase 11 performance hardening and proved PERF-04 with load-test evidence: secured p95 overhead reduced to within the <10% target.
+
+---
+
 ## v1.0 MVP (Shipped: 2026-03-25)
 
 **Phases completed:** 5 phases, 30 plans, 43 tasks
