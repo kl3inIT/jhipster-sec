@@ -41,6 +41,7 @@
 - [x] **PERF-01**: The frontend minimizes redundant API calls for auth, menu, capability, and user-management data through shared state or safe caching.
 - [x] **PERF-02**: Initial load and route transitions improve through lazy loading, code splitting, and leaner route-level bundles.
 - [x] **PERF-03**: Enterprise admin screens remain responsive under larger data sets through efficient rendering, pagination or filtering, and predictable state updates.
+- [x] **PERF-04**: The secured `@SecuredEntity` pipeline keeps p95 overhead under 10% of the unsecured baseline by eliminating redundant permission-evaluation round-trips, replacing the detail-load id-spec path, reducing per-response fetch-plan and serializer overhead, and persisting before-or-after benchmark proof.
 
 ### Frontend Reliability
 
@@ -97,6 +98,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PERF-01 | Phase 9 | Complete |
 | PERF-02 | Phase 9 | Complete |
 | PERF-03 | Phase 9 | Complete |
+| PERF-04 | Phase 11 | Planned |
 | TEST-01 | Backlog | Deferred |
 | TEST-02 | Backlog | Deferred |
 | TEST-03 | Backlog | Deferred |

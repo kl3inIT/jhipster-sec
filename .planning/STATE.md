@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 10-01-PLAN.md
-last_updated: "2026-03-31T08:21:37.448Z"
+stopped_at: Completed 11-02-PLAN.md
+last_updated: "2026-03-31T15:51:12.708Z"
 last_activity: 2026-03-31
 progress:
-  total_phases: 9
-  completed_phases: 9
-  total_plans: 37
-  completed_plans: 37
+  total_phases: 10
+  completed_phases: 10
+  total_plans: 39
+  completed_plans: 39
 ---
 
 # Project State
@@ -20,13 +20,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-27)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, authority, and attribute-level access decisions.
-**Current focus:** Phase 10 — performance-benchmarking-and-openapi-documentation
+**Current focus:** Phase 11 — security-pipeline-performance-hardening-p95-overhead-under-10-percent
 
 ## Current Position
 
-Phase: 10 (performance-benchmarking-and-openapi-documentation) — COMPLETE
-Plan: 4 of 4 complete
-Status: Phase 10 complete - ready for verification and milestone review
+Phase: 11 (security-pipeline-performance-hardening-p95-overhead-under-10-percent) — EXECUTING
+Plan: 2 of 2
+Status: Phase complete — ready for verification
 Last activity: 2026-03-31
 Next: Run /gsd:verify-work or /gsd:audit-milestone
 
@@ -80,6 +80,8 @@ Next: Run /gsd:verify-work or /gsd:audit-milestone
 | Phase 10 P02 | 15 min | 2 tasks | 6 files |
 | Phase 10 P03 | 8 min | 2 tasks | 5 files |
 | Phase 10 P04 | 3 min | 2 tasks | 4 files |
+| Phase 11-security-pipeline-performance-hardening-p95-overhead-under-10-percent P01 | 19 | 3 tasks | 7 files |
+| Phase 11-security-pipeline-performance-hardening-p95-overhead-under-10-percent P02 | 1341 | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -110,6 +112,11 @@ Recent decisions affecting current work:
 - [Phase 09]: Use an empty verification commit when a required task only performs build validation and introduces no tracked file changes.
 - [Phase 10]: Benchmark baseline reuses SecuredEntityJsonAdapter serialization to isolate security-check overhead from serializer differences
 - [Phase 10]: Benchmark endpoint is gated to api-docs profile and hidden from OpenAPI so it remains dev-only
+- [Phase 11-01]: JWT authority names trusted directly from token in RequestPermissionSnapshot (D-05/D-06); no jhi_authority DB cross-check on hot path
+- [Phase 11-01]: PermissionMatrix shared across requests via Hazelcast cache keyed by sorted JWT authority set; write-path eviction (not TTL) ensures correctness (D-01 through D-04)
+- [Phase 11-01]: SecPermissionService is the single cache-eviction seam; SecPermissionAdminResource and SecRoleAdminResource are transport-only per CLAUDE.md layering
+- [Phase 11]: D-09 applied as hybrid: Jackson ObjectNode for scalar reads, BeanWrapper retained for association traversal to preserve typed Java object references for recursive serialize calls
+- [Phase 11]: D-07: loadOneInternal uses checkCrud + unconstrained().load(entityClass, id) replacing Criteria API Specification id-lookup path; JPA L1 cache now eligible for secure detail reads
 
 ### Pending Todos
 
@@ -137,6 +144,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last activity: 2026-03-31 - Completed 10-01 benchmark baseline and k6 infrastructure
-Last session: 2026-03-31T04:03:11.378Z
-Stopped at: Completed 10-01-PLAN.md
+Last session: 2026-03-31T15:51:12.699Z
+Stopped at: Completed 11-02-PLAN.md
 Resume file: None
