@@ -2,8 +2,8 @@
 phase: 11
 slug: security-pipeline-performance-hardening-p95-overhead-under-10-percent
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-03-31
 ---
 
@@ -38,12 +38,12 @@ created: 2026-03-31
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 11-01-01 | 01 | 0 | PERF-04 | unit | `./gradlew test --tests "*.RequestPermissionSnapshotTest"` | ❌ W0 | ⬜ pending |
-| 11-01-02 | 01 | 1 | PERF-04 | unit | `./gradlew test --tests "*.SecPermissionServiceTest"` | ❌ W0 | ⬜ pending |
-| 11-02-01 | 02 | 1 | PERF-04 | unit | `./gradlew test --tests "*.AccessManagerImplTest"` | ❌ W0 | ⬜ pending |
-| 11-03-01 | 03 | 1 | PERF-04 | unit | `./gradlew test --tests "*.SecureDataManagerImplTest"` | ✅ | ⬜ pending |
-| 11-04-01 | 04 | 1 | PERF-04 | unit | `./gradlew test --tests "*.SecuredEntityJsonAdapterTest"` | ❌ W0 | ⬜ pending |
-| 11-05-01 | 05 | 2 | PERF-04 | integration | `./gradlew test --tests "*.SecureEntitySerializerImplTest"` | ✅ | ⬜ pending |
+| 11-01-00 | 01 | 0 | PERF-04 | unit | `./gradlew test --tests "com.vn.core.security.permission.RequestPermissionSnapshotTest" --tests "com.vn.core.service.security.SecPermissionServiceTest"` | ❌ W0 | ⬜ pending |
+| 11-01-01 | 01 | 1 | PERF-04 | unit | `./gradlew test --tests "com.vn.core.security.permission.RequestPermissionSnapshotTest" --tests "com.vn.core.security.permission.RolePermissionServiceDbImplTest"` | ❌ W0 | ⬜ pending |
+| 11-01-02 | 01 | 1 | PERF-04 | integration | `./gradlew integrationTest --tests "com.vn.core.web.rest.SecuredEntityEnforcementIT"` | ✅ | ⬜ pending |
+| 11-02-00 | 02 | 0 | PERF-04 | unit | `./gradlew test --tests "com.vn.core.security.access.AccessManagerImplTest" --tests "com.vn.core.security.web.SecuredEntityJsonAdapterTest"` | ❌ W0 | ⬜ pending |
+| 11-02-01 | 02 | 1 | PERF-04 | unit+integration | `./gradlew test --tests "com.vn.core.security.web.SecuredEntityJsonAdapterTest" --tests "com.vn.core.security.serialize.SecureEntitySerializerImplTest" && ./gradlew integrationTest --tests "com.vn.core.web.rest.SecuredEntityEnforcementIT"` | ❌ W0 | ⬜ pending |
+| 11-02-02 | 02 | 1 | PERF-04 | unit+benchmark | `./gradlew test --tests "com.vn.core.security.access.AccessManagerImplTest" && k6 run load-tests/scripts/org-list-benchmark.js && k6 run --env ORG_ID=1501 load-tests/scripts/org-detail-benchmark.js` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -51,10 +51,10 @@ created: 2026-03-31
 
 ## Wave 0 Requirements
 
-- [ ] `src/test/java/com/vn/core/security/RequestPermissionSnapshotTest.java` — stubs for PERF-04 permission matrix caching
-- [ ] `src/test/java/com/vn/core/security/SecPermissionServiceTest.java` — stubs for cache eviction on write paths
-- [ ] `src/test/java/com/vn/core/security/AccessManagerImplTest.java` — stubs for authority validation caching
-- [ ] `src/test/java/com/vn/core/security/SecuredEntityJsonAdapterTest.java` — stubs for BeanWrapper → Jackson swap
+- [ ] `src/test/java/com/vn/core/security/permission/RequestPermissionSnapshotTest.java` — focused coverage for JWT-authority trust and PermissionMatrix cache reuse
+- [ ] `src/test/java/com/vn/core/service/security/SecPermissionServiceTest.java` — focused coverage for service-layer cache eviction on create, update, and delete
+- [ ] `src/test/java/com/vn/core/security/access/AccessManagerImplTest.java` — focused coverage for constructor-time constraint sorting preserving getOrder sequence
+- [ ] `src/test/java/com/vn/core/security/web/SecuredEntityJsonAdapterTest.java` — focused coverage for one fetch-plan resolution per detail/list response call
 
 ---
 
