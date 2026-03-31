@@ -6,18 +6,18 @@ k6 load tests comparing the @SecuredEntity pipeline overhead against an unsecure
 
 - **k6** — install via `winget install k6 --source winget` or download from
   https://github.com/grafana/k6/releases
-- **Backend running** with dev profile (includes `api-docs` profile group which activates the
+- **Backend running** with `dev,api-docs` profiles (activates springdoc OpenAPI and the
   benchmark baseline endpoint at `/api/benchmark/organizations-standard`)
 - **Seeded test data** — the `dev` + `faker` Liquibase contexts seed Organization data automatically
 
 ## Starting the Backend
 
 ```bash
-./gradlew bootRun
+./gradlew bootRun --args='--spring.profiles.active=dev,api-docs'
 ```
 
-The dev profile activates by default and includes the `api-docs` profile group. Verify the
-benchmark endpoint is available:
+The `api-docs` profile enables springdoc and the benchmark baseline endpoint. Verify the
+benchmark endpoint is available: 
 
 ```bash
 curl -s http://localhost:8080/api/benchmark/organizations-standard -H "Authorization: Bearer <token>" | head -c 200
