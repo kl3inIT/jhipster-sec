@@ -107,6 +107,7 @@
       "entity": {
         "heading": "Entity Permissions",
         "name": "Entity",
+        "wildcard": "All entities (*)",
         "create": "Create",
         "read": "Read",
         "update": "Update",

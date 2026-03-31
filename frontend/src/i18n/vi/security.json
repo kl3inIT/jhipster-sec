@@ -107,6 +107,7 @@
       "entity": {
         "heading": "Quyền thực thể",
         "name": "Thực thể",
+        "wildcard": "Tất cả thực thể (*)",
         "create": "Tạo",
         "read": "Đọc",
         "update": "Cập nhật",

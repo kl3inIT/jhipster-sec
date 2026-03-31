@@ -55,32 +55,45 @@
       <p-progressSpinner />
     </div>
   } @else {
-    <p-tabs [value]="activeTabValue" (valueChange)="activeTabValue = $event?.toString() ?? '0'">
+    <p-tabs
+      [value]="activeTabValue"
+      styleClass="permission-tabs"
+      (valueChange)="activeTabValue = $event?.toString() ?? '0'"
+    >
       <p-tablist>
         <p-tab value="0">{{ 'security.permissionMatrix.tabs.entity' | translate }}</p-tab>
         <p-tab value="1">{{ 'security.permissionMatrix.tabs.menu' | translate }}</p-tab>
       </p-tablist>
       <p-tabpanels>
         <p-tabpanel value="0">
-          <div class="p-4">
-            <h2 class="mb-4 text-base font-semibold">
-              {{ 'security.permissionMatrix.entity.heading' | translate }}
-            </h2>
+          <section class="permission-section">
+            <div class="permission-section__header">
+              <h2 class="permission-section__title">
+                {{ 'security.permissionMatrix.entity.heading' | translate }}
+              </h2>
+            </div>
 
-            <p-table [value]="catalogEntriesWithWildcard" dataKey="code" [scrollable]="true">
+            <p-table
+              [value]="catalogEntriesWithWildcard"
+              dataKey="code"
+              [scrollable]="true"
+              styleClass="permission-matrix-table"
+            >
               <ng-template pTemplate="header">
                 <tr>
-                  <th>{{ 'security.permissionMatrix.entity.name' | translate }}</th>
-                  <th class="text-center" style="width: 80px">
+                  <th class="permission-matrix__entity-col">
+                    {{ 'security.permissionMatrix.entity.name' | translate }}
+                  </th>
+                  <th class="permission-matrix__action-col">
                     {{ 'security.permissionMatrix.entity.create' | translate }}
                   </th>
-                  <th class="text-center" style="width: 80px">
+                  <th class="permission-matrix__action-col">
                     {{ 'security.permissionMatrix.entity.read' | translate }}
                   </th>
-                  <th class="text-center" style="width: 80px">
+                  <th class="permission-matrix__action-col">
                     {{ 'security.permissionMatrix.entity.update' | translate }}
                   </th>
-                  <th class="text-center" style="width: 80px">
+                  <th class="permission-matrix__action-col">
                     {{ 'security.permissionMatrix.entity.delete' | translate }}
                   </th>
                 </tr>
@@ -90,20 +103,25 @@
                 <tr
                   (click)="entry.code !== '*' ? onEntitySelect(entry) : null"
                   [style.cursor]="entry.code !== '*' ? 'pointer' : 'default'"
-                  [style.background-color]="permissionRowColor(isEntityRowGranted(entry.code))"
-                  [class.selected-row]="selectedEntity?.code === entry.code"
-                  [class.font-semibold]="entry.code === '*'"
+                  [class.permission-row--clickable]="entry.code !== '*'"
+                  [class.permission-row--selected]="selectedEntity?.code === entry.code"
+                  [class.permission-row--active]="isEntityRowGranted(entry.code)"
+                  [class.permission-row--wildcard]="entry.code === '*'"
                 >
-                  <td>{{ entry.displayName }}</td>
-                  @for (op of ['CREATE', 'READ', 'UPDATE', 'DELETE']; track op) {
-                    <td class="text-center">
+                  <td>
+                    <div class="permission-entity-cell">
                       <span
-                        class="inline-flex items-center rounded-sm"
-                        [class.border-l-2]="isPendingChange(entry.code, op)"
-                        [class.border-orange-400]="isPendingChange(entry.code, op)"
-                        [class.bg-orange-50]="isPendingChange(entry.code, op)"
-                        [class.pl-1]="isPendingChange(entry.code, op)"
+                        class="permission-entity-cell__label"
+                        [class.permission-entity-cell__label--wildcard]="entry.code === '*'"
                       >
+                        {{ entry.displayName }}
+                      </span>
+                      <span class="permission-entity-cell__code">{{ entry.code }}</span>
+                    </div>
+                  </td>
+                  @for (op of ['CREATE', 'READ', 'UPDATE', 'DELETE']; track op) {
+                    <td class="permission-cell">
+                      <span class="permission-toggle" [class.permission-toggle--pending]="isPendingChange(entry.code, op)">
                         @if (isImpliedByEntityWildcard(entry.code, op)) {
                           <button
                             type="button"
@@ -128,33 +146,41 @@
                 </tr>
               </ng-template>
             </p-table>
-          </div>
+          </section>
 
           @if (!selectedEntity) {
-            <p class="p-4 text-color-secondary">
+            <p class="permission-empty-state">
               {{ 'security.permissionMatrix.entity.emptySelection' | translate }}
             </p>
           } @else if (selectedEntity.attributes.length === 0) {
-            <p class="p-4 text-color-secondary">
+            <p class="permission-empty-state">
               {{ 'security.permissionMatrix.attribute.none' | translate }}
             </p>
           } @else {
-            <div class="p-4">
-              <h2 class="mb-4 text-base font-semibold">
-                {{
-                  'security.permissionMatrix.attribute.heading'
-                    | translate: { entity: selectedEntity!.displayName }
-                }}
-              </h2>
+            <section class="permission-section permission-section--attributes">
+              <div class="permission-section__header">
+                <h2 class="permission-section__title">
+                  {{
+                    'security.permissionMatrix.attribute.heading'
+                      | translate: { entity: selectedEntity!.displayName }
+                  }}
+                </h2>
+              </div>
 
-              <p-table [value]="selectedEntityAttributeRows" [scrollable]="true">
+              <p-table
+                [value]="selectedEntityAttributeRows"
+                [scrollable]="true"
+                styleClass="permission-matrix-table"
+              >
                 <ng-template pTemplate="header">
                   <tr>
-                    <th>{{ 'security.permissionMatrix.attribute.name' | translate }}</th>
-                    <th class="text-center" style="width: 80px">
+                    <th class="permission-matrix__entity-col">
+                      {{ 'security.permissionMatrix.attribute.name' | translate }}
+                    </th>
+                    <th class="permission-matrix__action-col">
                       {{ 'security.permissionMatrix.attribute.view' | translate }}
                     </th>
-                    <th class="text-center" style="width: 80px">
+                    <th class="permission-matrix__action-col">
                       {{ 'security.permissionMatrix.attribute.modify' | translate }}
                     </th>
                   </tr>
@@ -162,24 +188,20 @@
 
                 <ng-template pTemplate="body" let-row>
                   <tr
-                    [style.background-color]="permissionRowColor(isAttributeRowGranted(row.target, selectedEntity!.code))"
-                    [class.font-semibold]="row.isWildcard"
+                    [class.permission-row--active]="isAttributeRowGranted(row.target, selectedEntity!.code)"
+                    [class.permission-row--wildcard]="row.isWildcard"
                   >
-                    <td>
-                      {{
-                        row.isWildcard
-                          ? ('security.permissionMatrix.attribute.wildcard' | translate)
-                          : row.label
-                      }}
+                    <td class="permission-attribute-cell">
+                      <span [class.font-semibold]="row.isWildcard">
+                        {{
+                          row.isWildcard
+                            ? ('security.permissionMatrix.attribute.wildcard' | translate)
+                            : row.label
+                        }}
+                      </span>
                     </td>
-                    <td class="text-center">
-                      <span
-                        class="inline-flex items-center rounded-sm"
-                        [class.border-l-2]="isPendingChange(row.target, 'VIEW')"
-                        [class.border-orange-400]="isPendingChange(row.target, 'VIEW')"
-                        [class.bg-orange-50]="isPendingChange(row.target, 'VIEW')"
-                        [class.pl-1]="isPendingChange(row.target, 'VIEW')"
-                      >
+                    <td class="permission-cell">
+                      <span class="permission-toggle" [class.permission-toggle--pending]="isPendingChange(row.target, 'VIEW')">
                         @if (isViewImpliedByModify(row.target, selectedEntity!.code) && !isEffectivelyGranted(row.target, 'VIEW')) {
                           <!-- VIEW implied by EDIT — show dash, not interactive -->
                           <button type="button" class="implied-icon implied-icon--readonly" disabled aria-hidden="true">
@@ -208,14 +230,8 @@
                         }
                       </span>
                     </td>
-                    <td class="text-center">
-                      <span
-                        class="inline-flex items-center rounded-sm"
-                        [class.border-l-2]="isPendingChange(row.target, 'EDIT')"
-                        [class.border-orange-400]="isPendingChange(row.target, 'EDIT')"
-                        [class.bg-orange-50]="isPendingChange(row.target, 'EDIT')"
-                        [class.pl-1]="isPendingChange(row.target, 'EDIT')"
-                      >
+                    <td class="permission-cell">
+                      <span class="permission-toggle" [class.permission-toggle--pending]="isPendingChange(row.target, 'EDIT')">
                         @if (!row.isWildcard && isImpliedByAttributeWildcard(row.target, 'EDIT', selectedEntity!.code)) {
                           <button
                             type="button"
@@ -239,7 +255,7 @@
                   </tr>
                 </ng-template>
               </p-table>
-            </div>
+            </section>
           }
         </p-tabpanel>
 

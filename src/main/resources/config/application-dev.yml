@@ -34,7 +34,7 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://157.230.42.136:5555/jhipster-sec
+    url: jdbc:postgresql://157.230.42.136:5555/jhipster-sec?CurrentSchema=tung
     username: postgres
     password: admin123
     hikari:

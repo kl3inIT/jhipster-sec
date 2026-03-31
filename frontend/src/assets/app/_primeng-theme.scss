@@ -1,13 +1,13 @@
 :root {
   --app-shell-bg:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--p-primary-color) 16%, transparent), transparent 28%),
-    linear-gradient(180deg, color-mix(in srgb, var(--p-primary-50) 70%, white) 0%, rgba(255, 255, 255, 0) 26%),
+    radial-gradient(circle at top right, rgba(148, 163, 184, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(248, 250, 252, 0.96) 0%, rgba(255, 255, 255, 0) 26%),
     var(--surface-ground, var(--p-surface-50));
-  --app-surface-soft: color-mix(in srgb, var(--p-primary-50) 66%, white);
-  --app-surface-muted: color-mix(in srgb, var(--p-primary-100) 26%, white);
-  --app-surface-strong: color-mix(in srgb, var(--p-primary-100) 52%, white);
-  --app-border-soft: color-mix(in srgb, var(--p-primary-200) 16%, var(--surface-border, #dbe3ea));
-  --app-border-strong: color-mix(in srgb, var(--p-primary-200) 30%, var(--surface-border, #dbe3ea));
+  --app-surface-soft: color-mix(in srgb, white 88%, #f1f5f9);
+  --app-surface-muted: color-mix(in srgb, white 80%, #e2e8f0);
+  --app-surface-strong: color-mix(in srgb, white 68%, #cbd5e1);
+  --app-border-soft: color-mix(in srgb, #cbd5e1 28%, var(--surface-border, #dbe3ea));
+  --app-border-strong: color-mix(in srgb, #94a3b8 24%, var(--surface-border, #dbe3ea));
   --app-text-muted: color-mix(in srgb, var(--text-color-secondary, #475569) 88%, #64748b);
   --app-shadow-xs: 0 12px 28px -24px rgba(15, 23, 42, 0.26);
   --app-shadow-sm: 0 20px 44px -32px rgba(15, 23, 42, 0.32);
@@ -41,24 +41,24 @@
   --app-btn-danger-border: #b91c1c;
   --app-btn-danger-hover: #991b1b;
   --app-btn-danger-color: #ffffff;
-  --app-field-bg: color-mix(in srgb, white 92%, var(--p-primary-50));
-  --app-field-bg-hover: color-mix(in srgb, white 82%, var(--p-primary-50));
-  --app-field-border: color-mix(in srgb, var(--p-primary-200) 22%, #cbd5e1);
-  --app-field-border-hover: color-mix(in srgb, var(--p-primary-300) 34%, #94a3b8);
-  --app-field-shadow: 0 0 0 4px color-mix(in srgb, var(--p-primary-200) 16%, transparent);
-  --app-overlay-bg: color-mix(in srgb, white 94%, var(--p-primary-50));
+  --app-field-bg: color-mix(in srgb, white 92%, #f8fafc);
+  --app-field-bg-hover: color-mix(in srgb, white 84%, #f1f5f9);
+  --app-field-border: color-mix(in srgb, #cbd5e1 36%, #dbe3ea);
+  --app-field-border-hover: color-mix(in srgb, #94a3b8 34%, #cbd5e1);
+  --app-field-shadow: 0 0 0 4px rgba(148, 163, 184, 0.14);
+  --app-overlay-bg: color-mix(in srgb, white 94%, #f8fafc);
 }
 
 .app-dark {
   --app-shell-bg:
-    radial-gradient(circle at top right, color-mix(in srgb, var(--p-primary-color) 18%, transparent), transparent 26%),
+    radial-gradient(circle at top right, rgba(148, 163, 184, 0.12), transparent 26%),
     linear-gradient(180deg, rgba(15, 23, 42, 0.64) 0%, rgba(15, 23, 42, 0) 32%),
     var(--surface-ground, var(--p-surface-950));
-  --app-surface-soft: color-mix(in srgb, var(--p-primary-950) 24%, var(--p-surface-900));
-  --app-surface-muted: color-mix(in srgb, var(--p-primary-900) 22%, var(--p-surface-900));
-  --app-surface-strong: color-mix(in srgb, var(--p-primary-900) 34%, var(--p-surface-900));
-  --app-border-soft: color-mix(in srgb, var(--p-primary-700) 16%, var(--surface-border, #334155));
-  --app-border-strong: color-mix(in srgb, var(--p-primary-700) 28%, var(--surface-border, #334155));
+  --app-surface-soft: color-mix(in srgb, var(--p-surface-900) 86%, #0f172a);
+  --app-surface-muted: color-mix(in srgb, var(--p-surface-900) 76%, #111827);
+  --app-surface-strong: color-mix(in srgb, var(--p-surface-900) 64%, #1f2937);
+  --app-border-soft: color-mix(in srgb, #475569 22%, var(--surface-border, #334155));
+  --app-border-strong: color-mix(in srgb, #64748b 24%, var(--surface-border, #334155));
   --app-text-muted: color-mix(in srgb, var(--text-color-secondary, #cbd5e1) 86%, #94a3b8);
   --app-shadow-xs: 0 14px 32px -24px rgba(2, 6, 23, 0.52);
   --app-shadow-sm: 0 24px 48px -30px rgba(2, 6, 23, 0.62);
@@ -89,12 +89,12 @@
   --app-btn-danger-border: #ef4444;
   --app-btn-danger-hover: #f87171;
   --app-btn-danger-color: #450a0a;
-  --app-field-bg: color-mix(in srgb, var(--p-surface-950) 90%, var(--p-primary-950));
-  --app-field-bg-hover: color-mix(in srgb, var(--p-surface-950) 78%, var(--p-primary-900));
-  --app-field-border: color-mix(in srgb, var(--p-primary-700) 18%, #334155);
-  --app-field-border-hover: color-mix(in srgb, var(--p-primary-500) 30%, #475569);
-  --app-field-shadow: 0 0 0 4px color-mix(in srgb, var(--p-primary-400) 14%, transparent);
-  --app-overlay-bg: color-mix(in srgb, var(--p-surface-900) 92%, var(--p-primary-950));
+  --app-field-bg: color-mix(in srgb, var(--p-surface-950) 90%, #0f172a);
+  --app-field-bg-hover: color-mix(in srgb, var(--p-surface-950) 78%, #111827);
+  --app-field-border: color-mix(in srgb, #475569 28%, #334155);
+  --app-field-border-hover: color-mix(in srgb, #64748b 30%, #475569);
+  --app-field-shadow: 0 0 0 4px rgba(100, 116, 139, 0.18);
+  --app-overlay-bg: color-mix(in srgb, var(--p-surface-900) 92%, #111827);
 }
 
 body {
@@ -411,7 +411,7 @@ small.text-red-500,
 .p-treetable {
   overflow: hidden;
   border: 1px solid var(--app-border-strong);
-  border-radius: var(--app-radius-md);
+  border-radius: var(--app-radius-sm);
   background: color-mix(in srgb, var(--p-content-background) 92%, var(--app-surface-soft));
 }
 
@@ -421,8 +421,8 @@ small.text-red-500,
   background: linear-gradient(180deg, var(--app-surface-soft) 0%, var(--app-surface-muted) 100%);
 }
 
-.p-datatable .p-datatable-thead > tr > th,
-.p-treetable .p-treetable-thead > tr > th {
+.p-datatable .p-datatable-thead>tr>th,
+.p-treetable .p-treetable-thead>tr>th {
   padding: 0.95rem 1rem;
   border-bottom: 1px solid var(--app-border-strong);
   background: linear-gradient(180deg, var(--app-surface-soft) 0%, var(--app-surface-muted) 100%);
@@ -433,30 +433,30 @@ small.text-red-500,
   text-transform: uppercase;
 }
 
-.p-datatable .p-datatable-tbody > tr,
-.p-treetable .p-treetable-tbody > tr {
+.p-datatable .p-datatable-tbody>tr,
+.p-treetable .p-treetable-tbody>tr {
   transition: background-color 0.18s ease;
 }
 
-.p-datatable .p-datatable-tbody > tr > td,
-.p-treetable .p-treetable-tbody > tr > td {
+.p-datatable .p-datatable-tbody>tr>td,
+.p-treetable .p-treetable-tbody>tr>td {
   padding: 1rem;
   border-bottom: 1px solid color-mix(in srgb, var(--app-border-soft) 60%, transparent);
   vertical-align: middle;
 }
 
-.p-datatable .p-datatable-tbody > tr:last-child > td,
-.p-treetable .p-treetable-tbody > tr:last-child > td {
+.p-datatable .p-datatable-tbody>tr:last-child>td,
+.p-treetable .p-treetable-tbody>tr:last-child>td {
   border-bottom: 0;
 }
 
-.p-datatable .p-datatable-tbody > tr:hover,
-.p-treetable .p-treetable-tbody > tr:hover {
+.p-datatable .p-datatable-tbody>tr:hover,
+.p-treetable .p-treetable-tbody>tr:hover {
   background: color-mix(in srgb, var(--app-surface-soft) 70%, transparent);
 }
 
-.p-datatable .p-datatable-tbody > tr.p-highlight,
-.p-treetable .p-treetable-tbody > tr.p-highlight {
+.p-datatable .p-datatable-tbody>tr.p-highlight,
+.p-treetable .p-treetable-tbody>tr.p-highlight {
   background: color-mix(in srgb, var(--p-primary-100) 62%, var(--app-surface-soft));
 }
 
@@ -549,6 +549,7 @@ small.text-red-500,
   border-radius: 999px;
   color: var(--app-text-muted);
   font-weight: 600;
+  border: 0;
   transition:
     background-color 0.18s ease,
     color 0.18s ease;
@@ -557,6 +558,10 @@ small.text-red-500,
 .p-tabs .p-tab.p-tab-active {
   background: color-mix(in srgb, var(--p-primary-color) 12%, white);
   color: var(--p-primary-700);
+}
+
+.p-tabs .p-tablist-active-bar {
+  display: none !important;
 }
 
 .p-tabs .p-tabpanels {
@@ -645,6 +650,7 @@ small.text-red-500,
 }
 
 @media (max-width: 768px) {
+
   .p-card .p-card-body,
   .p-dialog .p-dialog-content,
   .p-dialog .p-dialog-footer {
@@ -655,10 +661,10 @@ small.text-red-500,
     padding-inline: 1rem;
   }
 
-  .p-datatable .p-datatable-thead > tr > th,
-  .p-treetable .p-treetable-thead > tr > th,
-  .p-datatable .p-datatable-tbody > tr > td,
-  .p-treetable .p-treetable-tbody > tr > td {
+  .p-datatable .p-datatable-thead>tr>th,
+  .p-treetable .p-treetable-thead>tr>th,
+  .p-datatable .p-datatable-tbody>tr>td,
+  .p-treetable .p-treetable-tbody>tr>td {
     padding-inline: 0.85rem;
   }
 

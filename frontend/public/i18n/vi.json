@@ -603,6 +603,7 @@
       "entity": {
         "heading": "Quyền thực thể",
         "name": "Thực thể",
+        "wildcard": "Tất cả thực thể (*)",
         "create": "Tạo",
         "read": "Đọc",
         "update": "Cập nhật",
@@ -617,6 +618,7 @@
         "wildcard": "Tất cả thuộc tính (*)",
         "none": "Thực thể này không có thuộc tính nào được liệt kê."
       },
+      "impliedByWildcard": "Quyền này được kế thừa từ wildcard",
       "confirmSave": {
         "title": "Lưu quyền",
         "message": "Bạn có muốn lưu các thay đổi quyền này không?"

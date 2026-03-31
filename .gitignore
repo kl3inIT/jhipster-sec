@@ -158,6 +158,7 @@ aef-main/
 
 # Local Codex / planning / visual-debug artifacts
 .agent/
+.agents/
 .playwright-cli/
 .planning/quick/260328-a9k-seed-admin-shell-menu-bootstrap/
 .planning/quick/260328-prime-theme-prototype/

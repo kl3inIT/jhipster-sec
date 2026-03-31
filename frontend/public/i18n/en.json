@@ -605,6 +605,7 @@
       "entity": {
         "heading": "Entity Permissions",
         "name": "Entity",
+        "wildcard": "All entities (*)",
         "create": "Create",
         "read": "Read",
         "update": "Update",
@@ -619,6 +620,7 @@
         "wildcard": "All attributes (*)",
         "none": "This entity has no enumerated attributes."
       },
+      "impliedByWildcard": "Permission is implied by wildcard",
       "confirmSave": {
         "title": "Save Permissions",
         "message": "Do you want to save the permission changes?"
