@@ -58,17 +58,14 @@
   }
 
   .layout-topbar-config-panel {
-    &.hidden {
-      display: none !important;
-    }
-
-    &:not(.hidden) {
-      animation: layout-panel-scalein 0.15s ease-out;
-
-      app-configurator {
-        display: block !important;
-      }
-    }
+    animation: layout-panel-scalein 0.15s ease-out;
+    border-radius: 1.5rem;
+    border: 1px solid var(--app-border-strong);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--app-surface-soft) 56%, white) 0%, var(--p-content-background) 24%),
+      var(--p-content-background);
+    box-shadow: var(--app-shadow-md);
+    backdrop-filter: blur(14px);
   }
 
   /* Color swatches in configurator: always solid circles (no stripes/gradients) */
@@ -82,6 +79,20 @@
       padding: 0 !important;
       background-image: none !important;
       box-shadow: 0 0 0 1px var(--surface-border);
+    }
+  }
+
+  .layout-topbar-config-wrapper > button {
+    background: transparent;
+    transition:
+      background-color 0.18s ease,
+      color 0.18s ease,
+      transform 0.18s ease;
+
+    &:hover {
+      background: color-mix(in srgb, var(--app-surface-soft) 76%, transparent);
+      color: var(--p-primary-700);
+      transform: translateY(-1px);
     }
   }
 
@@ -159,6 +170,12 @@
   .config-panel-settings {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .p-selectbutton {
+    display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
   }
 }

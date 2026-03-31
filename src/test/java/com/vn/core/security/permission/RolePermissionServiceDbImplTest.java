@@ -20,8 +20,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Unit tests for {@link RolePermissionServiceDbImpl} verifying default-deny
- * union-of-ALLOW semantics for entity checks.
+ * Unit tests for {@link RolePermissionServiceDbImpl} verifying default-deny,
+ * union-of-ALLOW semantics, entity wildcard (*) fallback, and correct repository dispatch.
  */
 @ExtendWith(MockitoExtension.class)
 class RolePermissionServiceDbImplTest {
@@ -31,6 +31,9 @@ class RolePermissionServiceDbImplTest {
 
     @Mock
     private MergedSecurityService mergedSecurityService;
+
+    @Mock
+    private RequestPermissionSnapshot requestPermissionSnapshot;
 
     @InjectMocks
     private RolePermissionServiceDbImpl service;
@@ -45,7 +48,7 @@ class RolePermissionServiceDbImplTest {
     void testAllowAndDenyStillReturnsTrue() {
         SecPermission allow = new SecPermission().effect("ALLOW");
         SecPermission deny = new SecPermission().effect("DENY");
-        when(secPermissionRepository.findByRolesAndTarget(anyCollection(), any(TargetType.class), any(), any())).thenReturn(
+        when(secPermissionRepository.findByRolesAndTargets(anyCollection(), any(TargetType.class), any(), any())).thenReturn(
             List.of(allow, deny)
         );
 
@@ -57,7 +60,9 @@ class RolePermissionServiceDbImplTest {
     @Test
     void testAllowOnlyReturnsTrue() {
         SecPermission allow = new SecPermission().effect("ALLOW");
-        when(secPermissionRepository.findByRolesAndTarget(anyCollection(), any(TargetType.class), any(), any())).thenReturn(List.of(allow));
+        when(secPermissionRepository.findByRolesAndTargets(anyCollection(), any(TargetType.class), any(), any())).thenReturn(
+            List.of(allow)
+        );
 
         boolean result = service.hasPermission(List.of("ROLE_USER"), TargetType.ENTITY, "SOMEENTITY", "READ");
 
@@ -66,7 +71,7 @@ class RolePermissionServiceDbImplTest {
 
     @Test
     void testEmptyResultReturnsFalse() {
-        when(secPermissionRepository.findByRolesAndTarget(anyCollection(), any(TargetType.class), any(), any())).thenReturn(List.of());
+        when(secPermissionRepository.findByRolesAndTargets(anyCollection(), any(TargetType.class), any(), any())).thenReturn(List.of());
 
         boolean result = service.hasPermission(List.of("ROLE_USER"), TargetType.ENTITY, "SOMEENTITY", "READ");
 
@@ -80,22 +85,21 @@ class RolePermissionServiceDbImplTest {
         boolean result = service.isEntityOpPermitted(SomeEntity.class, EntityOp.READ);
 
         assertThat(result).isFalse();
-        verify(secPermissionRepository, never()).findByRolesAndTarget(anyCollection(), any(), any(), any());
+        verify(secPermissionRepository, never()).findByRolesAndTargets(anyCollection(), any(), any(), any());
     }
 
     @Test
-    void testEntityTargetNormalization() {
+    void testEntityTargetNormalizationIncludesWildcard() {
         when(mergedSecurityService.getCurrentUserAuthorityNames()).thenReturn(List.of("ROLE_USER"));
-        when(secPermissionRepository.findByRolesAndTarget(anyCollection(), any(TargetType.class), eq("SOMEENTITY"), any())).thenReturn(
-            List.of()
-        );
+        when(secPermissionRepository.findByRolesAndTargets(anyCollection(), any(TargetType.class), any(), any())).thenReturn(List.of());
 
         service.isEntityOpPermitted(SomeEntity.class, EntityOp.READ);
 
-        verify(secPermissionRepository).findByRolesAndTarget(
+        // Entity checks must include both the specific target and the wildcard "*".
+        verify(secPermissionRepository).findByRolesAndTargets(
             anyCollection(),
             eq(TargetType.ENTITY),
-            eq("SOMEENTITY"),
+            eq(List.of("SOMEENTITY", "*")),
             eq(EntityOp.READ.name())
         );
     }
@@ -103,7 +107,7 @@ class RolePermissionServiceDbImplTest {
     @Test
     void testDenyOnlyReturnsFalse() {
         SecPermission deny = new SecPermission().effect("DENY");
-        when(secPermissionRepository.findByRolesAndTarget(anyCollection(), any(TargetType.class), any(), any())).thenReturn(List.of(deny));
+        when(secPermissionRepository.findByRolesAndTargets(anyCollection(), any(TargetType.class), any(), any())).thenReturn(List.of(deny));
 
         boolean result = service.hasPermission(List.of("ROLE_ADMIN"), TargetType.ENTITY, "ORDER", "READ");
 
@@ -111,12 +115,26 @@ class RolePermissionServiceDbImplTest {
     }
 
     @Test
-    void testHasPermissionCallsRepositoryWithCorrectParams() {
+    void testEntityWildcardAllowGrantsAccess() {
+        // Wildcard "*" ALLOW in DB grants any entity READ.
+        SecPermission wildcardAllow = new SecPermission().effect("ALLOW");
+        when(
+            secPermissionRepository.findByRolesAndTargets(anyCollection(), eq(TargetType.ENTITY), eq(List.of("ORDER", "*")), eq("READ"))
+        ).thenReturn(List.of(wildcardAllow));
+
+        boolean result = service.hasPermission(List.of("ROLE_USER"), TargetType.ENTITY, "ORDER", "READ");
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void testAttributeCheckDoesNotIncludeWildcardTarget() {
         Collection<String> authorities = List.of("ROLE_ADMIN");
-        when(secPermissionRepository.findByRolesAndTarget(anyCollection(), any(TargetType.class), any(), any())).thenReturn(List.of());
+        when(secPermissionRepository.findByRolesAndTargets(anyCollection(), any(TargetType.class), any(), any())).thenReturn(List.of());
 
         service.hasPermission(authorities, TargetType.ATTRIBUTE, "ORDER.AMOUNT", "VIEW");
 
-        verify(secPermissionRepository).findByRolesAndTarget(authorities, TargetType.ATTRIBUTE, "ORDER.AMOUNT", "VIEW");
+        // Attribute type: only the specific target is passed (wildcard handled in AttributePermissionEvaluatorImpl).
+        verify(secPermissionRepository).findByRolesAndTargets(authorities, TargetType.ATTRIBUTE, List.of("ORDER.AMOUNT"), "VIEW");
     }
 }

@@ -12,9 +12,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vn.core.IntegrationTest;
+import com.vn.core.config.Constants;
 import com.vn.core.domain.Authority;
 import com.vn.core.domain.RoleType;
+import com.vn.core.domain.User;
 import com.vn.core.repository.AuthorityRepository;
+import com.vn.core.repository.UserRepository;
 import com.vn.core.security.AuthoritiesConstants;
 import com.vn.core.security.domain.SecPermission;
 import com.vn.core.security.permission.TargetType;
@@ -57,6 +60,9 @@ class SecRoleAdminResourceIT {
 
     @Autowired
     private SecPermissionRepository secPermissionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     void testCreateRole() throws Exception {
@@ -160,6 +166,26 @@ class SecRoleAdminResourceIT {
 
         assertThat(authorityRepository.findById("TEST_ROLE_DELETE")).isEmpty();
         assertThat(secPermissionRepository.findByAuthorityName("TEST_ROLE_DELETE")).isEmpty();
+    }
+
+    @Test
+    void testDeleteRoleWhenAssignedToUsersReturnsConflict() throws Exception {
+        Authority role = authorityRepository.saveAndFlush(createAuthority("TEST_ROLE_IN_USE", "Role In Use", RoleType.RESOURCE));
+        User user = new User();
+        user.setLogin("role.in.use");
+        user.setEmail("role.in.use@example.com");
+        user.setPassword("$2a$10$7QJ6qYQhY8n7a0sJQjWn7e5j4xq1nC2nH1kK7WJ9q2Qw7kXnQ7f5u");
+        user.setActivated(true);
+        user.setLangKey(Constants.DEFAULT_LANGUAGE);
+        user.setAuthorities(java.util.Set.of(role));
+        userRepository.saveAndFlush(user);
+
+        restMockMvc
+            .perform(delete(ENTITY_API_URL_ID, "TEST_ROLE_IN_USE"))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.message").value("error.roleinuse"));
+
+        assertThat(authorityRepository.findById("TEST_ROLE_IN_USE")).isPresent();
     }
 
     @Test

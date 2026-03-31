@@ -3,8 +3,8 @@
     <div class="flex items-center justify-between gap-3">
       <h1 class="m-0 text-2xl font-semibold">{{ 'userManagement.detail.title' | translate }}: {{ user.login }}</h1>
       <div class="flex gap-2">
-        <button pButton type="button" icon="pi pi-pencil" [label]="'userManagement.actions.edit' | translate" (click)="edit()"></button>
-        <button pButton type="button" severity="secondary" icon="pi pi-arrow-left" [label]="'userManagement.detail.backToList' | translate" (click)="back()"></button>
+        <button pButton type="button" [outlined]="true" icon="pi pi-pencil" [label]="'userManagement.actions.edit' | translate" (click)="edit()"></button>
+        <button pButton type="button" severity="secondary" [outlined]="true" icon="pi pi-arrow-left" [label]="'userManagement.detail.backToList' | translate" (click)="back()"></button>
       </div>
     </div>
 

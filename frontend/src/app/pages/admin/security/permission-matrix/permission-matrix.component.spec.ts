@@ -203,6 +203,7 @@ describe('PermissionMatrixComponent', () => {
           },
           entity: {
             emptySelection: 'Select an entity above',
+            wildcard: 'All entities (*)',
           },
           attribute: {
             heading: 'Attribute Permissions: {{ entity }}',
@@ -633,5 +634,181 @@ describe('PermissionMatrixComponent', () => {
 
     expect(fixture.componentInstance.loading).toBe(false);
     expect(permissionService.query).not.toHaveBeenCalled();
+  });
+
+  describe('modify-implies-view', () => {
+    it('returns true when explicit EDIT is granted for the same attribute target', () => {
+      permissionService.query.mockReturnValue(
+        of<ISecPermission[]>([
+          {
+            id: 50,
+            authorityName: 'ROLE_PROOF_NONE',
+            targetType: 'ATTRIBUTE',
+            target: 'organization.budget',
+            action: 'EDIT',
+            effect: 'GRANT',
+          },
+        ]),
+      );
+
+      const fixture = createFixture();
+      const component = fixture.componentInstance;
+
+      expect(component.isViewImpliedByModify('organization.budget', 'organization')).toBe(true);
+    });
+
+    it('returns false when EDIT is NOT granted for the attribute', () => {
+      const fixture = createFixture();
+      const component = fixture.componentInstance;
+
+      expect(component.isViewImpliedByModify('organization.budget', 'organization')).toBe(false);
+    });
+
+    it('returns true when wildcard EDIT is granted for the entity (organization.*:EDIT implies view for any attribute)', () => {
+      permissionService.query.mockReturnValue(
+        of<ISecPermission[]>([
+          {
+            id: 51,
+            authorityName: 'ROLE_PROOF_NONE',
+            targetType: 'ATTRIBUTE',
+            target: 'organization.*',
+            action: 'EDIT',
+            effect: 'GRANT',
+          },
+        ]),
+      );
+
+      const fixture = createFixture();
+      const component = fixture.componentInstance;
+
+      expect(component.isViewImpliedByModify('organization.budget', 'organization')).toBe(true);
+      expect(component.isViewImpliedByModify('organization.name', 'organization')).toBe(true);
+    });
+
+    it('does not imply view for attributes of a different entity', () => {
+      permissionService.query.mockReturnValue(
+        of<ISecPermission[]>([
+          {
+            id: 52,
+            authorityName: 'ROLE_PROOF_NONE',
+            targetType: 'ATTRIBUTE',
+            target: 'organization.*',
+            action: 'EDIT',
+            effect: 'GRANT',
+          },
+        ]),
+      );
+
+      const fixture = createFixture();
+      const component = fixture.componentInstance;
+
+      // department is a different entity -- should not be implied
+      expect(component.isViewImpliedByModify('department.costCenter', 'department')).toBe(false);
+    });
+  });
+
+  describe('entity wildcard row', () => {
+    it('catalogEntriesWithWildcard prepends a synthetic wildcard entry before catalog entries', () => {
+      const fixture = createFixture();
+      const component = fixture.componentInstance;
+
+      const entries = component.catalogEntriesWithWildcard;
+
+      expect(entries.length).toBe(CATALOG_ENTRIES.length + 1);
+      expect(entries[0].code).toBe('*');
+      expect(entries[0].operations).toEqual(['CREATE', 'READ', 'UPDATE', 'DELETE']);
+      expect(entries[0].attributes).toEqual([]);
+    });
+
+    it('isEntityWildcardEffectivelyGranted returns true when *:action is granted', () => {
+      permissionService.query.mockReturnValue(
+        of<ISecPermission[]>([
+          {
+            id: 60,
+            authorityName: 'ROLE_PROOF_NONE',
+            targetType: 'ENTITY',
+            target: '*',
+            action: 'READ',
+            effect: 'GRANT',
+          },
+        ]),
+      );
+
+      const fixture = createFixture();
+      const component = fixture.componentInstance;
+
+      expect(component.isEntityWildcardEffectivelyGranted('READ')).toBe(true);
+      expect(component.isEntityWildcardEffectivelyGranted('CREATE')).toBe(false);
+    });
+
+    it('isEntityEffectivelyGranted returns true when entity is explicitly granted', () => {
+      permissionService.query.mockReturnValue(
+        of<ISecPermission[]>([
+          {
+            id: 61,
+            authorityName: 'ROLE_PROOF_NONE',
+            targetType: 'ENTITY',
+            target: 'organization',
+            action: 'READ',
+            effect: 'GRANT',
+          },
+        ]),
+      );
+
+      const fixture = createFixture();
+      const component = fixture.componentInstance;
+
+      expect(component.isEntityEffectivelyGranted('organization', 'READ')).toBe(true);
+      expect(component.isEntityEffectivelyGranted('department', 'READ')).toBe(false);
+    });
+
+    it('isEntityEffectivelyGranted returns true for all entities when wildcard is granted', () => {
+      permissionService.query.mockReturnValue(
+        of<ISecPermission[]>([
+          {
+            id: 62,
+            authorityName: 'ROLE_PROOF_NONE',
+            targetType: 'ENTITY',
+            target: '*',
+            action: 'READ',
+            effect: 'GRANT',
+          },
+        ]),
+      );
+
+      const fixture = createFixture();
+      const component = fixture.componentInstance;
+
+      expect(component.isEntityEffectivelyGranted('organization', 'READ')).toBe(true);
+      expect(component.isEntityEffectivelyGranted('department', 'READ')).toBe(true);
+      expect(component.isEntityEffectivelyGranted('organization', 'CREATE')).toBe(false);
+    });
+
+    it('entity wildcard toggle saves with target * and targetType ENTITY', () => {
+      const fixture = createFixture();
+      const component = fixture.componentInstance;
+
+      component.togglePermission('ENTITY', '*', 'READ', true);
+      component.flushChanges();
+
+      expect(permissionService.create).toHaveBeenCalledWith({
+        authorityName: 'ROLE_PROOF_NONE',
+        targetType: 'ENTITY',
+        target: '*',
+        action: 'READ',
+        effect: 'GRANT',
+      });
+    });
+
+    it('isEntityWildcardEffectivelyGranted respects pending changes', () => {
+      const fixture = createFixture();
+      const component = fixture.componentInstance;
+
+      expect(component.isEntityWildcardEffectivelyGranted('CREATE')).toBe(false);
+
+      component.togglePermission('ENTITY', '*', 'CREATE', true);
+
+      expect(component.isEntityWildcardEffectivelyGranted('CREATE')).toBe(true);
+    });
   });
 });

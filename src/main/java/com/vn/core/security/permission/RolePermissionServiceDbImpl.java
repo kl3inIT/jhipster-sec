@@ -57,7 +57,9 @@ public class RolePermissionServiceDbImpl implements RolePermissionService {
 
     @Override
     public boolean hasPermission(Collection<String> authorityNames, TargetType targetType, String target, String action) {
-        List<SecPermission> perms = secPermissionRepository.findByRolesAndTarget(authorityNames, targetType, target, action);
+        // For entity checks also include the wildcard target "*" so ENTITY:*:action grants all entities.
+        List<String> targets = TargetType.ENTITY.equals(targetType) ? List.of(target, "*") : List.of(target);
+        List<SecPermission> perms = secPermissionRepository.findByRolesAndTargets(authorityNames, targetType, targets, action);
         if (perms.isEmpty()) {
             LOG.debug("No permission rows found for target={} action={} - access denied", target, action);
             return false;

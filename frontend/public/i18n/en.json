@@ -367,7 +367,8 @@
   "layout": {
     "breadcrumb": "Breadcrumb",
     "brand": {
-      "name": "JHipster Security"
+      "name": "JHipster Security",
+      "shortName": "JS"
     },
     "footer": {
       "productName": "JHipster Security Platform"
@@ -375,8 +376,28 @@
     "topbar": {
       "toggleMenu": "Toggle menu",
       "toggleTheme": "Toggle theme",
+      "openSettings": "Open settings",
       "login": "Sign in",
       "logout": "Sign out"
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Language, appearance and layout preferences",
+      "language": "Language",
+      "preset": "Preset",
+      "primary": "Primary",
+      "surface": "Surface",
+      "appearance": {
+        "label": "Appearance",
+        "light": "Light",
+        "dark": "Dark"
+      },
+      "menuMode": {
+        "label": "Menu mode",
+        "static": "Static",
+        "overlay": "Overlay",
+        "drawer": "Drawer"
+      }
     },
     "language": {
       "en": "English",
@@ -600,6 +621,7 @@
         "wildcard": "All attributes (*)",
         "none": "This entity has no enumerated attributes."
       },
+      "impliedByWildcard": "Permission is implied by wildcard",
       "confirmSave": {
         "title": "Save Permissions",
         "message": "Do you want to save the permission changes?"
