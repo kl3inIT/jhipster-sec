@@ -48,6 +48,11 @@
 - [ ] **TEST-02**: Automated frontend tests cover backend-driven routing, menu visibility, and permission-based access denial.
 - [ ] **TEST-03**: Automated frontend tests cover the enterprise shell and critical migrated UI components so copied JHipster support files do not regress behavior.
 
+### Performance Benchmarking And API Documentation
+
+- [ ] **BENCH-01**: Benchmark scripts compare secured vs standard JHipster Organization endpoints at 1, 10, and 50 virtual users and produce persisted Markdown summaries including p95 overhead against the < 10% target.
+- [ ] **OPENAPI-01**: In-scope secured and security endpoints expose accurate OpenAPI annotations including fetch-plan notes, response schema typing for `ResponseEntity<String>` JSON bodies, and `x-secured-entity` markers for secured entity operations.
+
 ## Future Requirements
 
 ### Deferred Platform Expansion
@@ -92,15 +97,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PERF-01 | Phase 9 | Complete |
 | PERF-02 | Phase 9 | Complete |
 | PERF-03 | Phase 9 | Complete |
-| TEST-01 | Phase 10 | Pending |
-| TEST-02 | Phase 10 | Pending |
-| TEST-03 | Phase 10 | Pending |
+| TEST-01 | Backlog | Deferred |
+| TEST-02 | Backlog | Deferred |
+| TEST-03 | Backlog | Deferred |
+| BENCH-01 | Phase 10 | Pending |
+| OPENAPI-01 | Phase 10 | Pending |
 
 **Coverage:**
-- Milestone requirements: 21 total
-- Mapped to phases: 21
+- Milestone requirements: 23 total
+- Mapped to phases: 23
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-25*
-*Last updated: 2026-03-28 after Phase 08.3 completion*
+*Last updated: 2026-03-31 after Phase 10 gap-closure (BENCH-01, OPENAPI-01 defined)*
