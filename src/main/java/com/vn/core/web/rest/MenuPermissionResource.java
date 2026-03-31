@@ -4,6 +4,12 @@ import com.vn.core.security.domain.MenuAppName;
 import com.vn.core.service.dto.security.MenuPermissionResponseDTO;
 import com.vn.core.service.security.CurrentUserMenuPermissionService;
 import com.vn.core.web.rest.errors.BadRequestAlertException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * REST controller exposing app-scoped menu permissions for the current user.
  */
+@Tag(name = "Security", description = "Current-user security metadata endpoints.")
 @RestController
 @RequestMapping("/api/security")
 @PreAuthorize("isAuthenticated()")
@@ -36,8 +43,21 @@ public class MenuPermissionResource {
      * @param appName the frontend app identifier.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the menu permission payload in the body.
      */
+    @Operation(
+        operationId = "getMenuPermissions",
+        summary = "Get current-user menu permissions for an app",
+        description = "Returns the list of menu IDs the current user is allowed to see for the specified app. Used " +
+        "by the frontend navigation service to filter the menu tree."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "OK"),
+        @ApiResponse(responseCode = "400", description = "Invalid appName parameter", content = @Content),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+    })
     @GetMapping("/menu-permissions")
-    public ResponseEntity<MenuPermissionResponseDTO> getMenuPermissions(@RequestParam("appName") String appName) {
+    public ResponseEntity<MenuPermissionResponseDTO> getMenuPermissions(
+        @Parameter(description = "Frontend app identifier (e.g., 'MAIN')", required = true) @RequestParam("appName") String appName
+    ) {
         LOG.debug("REST request to get current-user menu permissions for app {}", appName);
         MenuAppName menuAppName = parseAppName(appName);
         MenuPermissionResponseDTO response = new MenuPermissionResponseDTO();

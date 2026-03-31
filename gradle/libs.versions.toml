@@ -10,6 +10,7 @@ hazelcast-hibernate53 = "5.2.0"
 [libraries]
 jhipster-framework = { module = "tech.jhipster:jhipster-framework", version = "9.0.0" }
 springdoc-openapi-starter-webmvc-api = { module = "org.springdoc:springdoc-openapi-starter-webmvc-api", version = "3.0.2" }
+springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version = "3.0.2" }
 archunit-junit5-api = { module = "com.tngtech.archunit:archunit-junit5-api", version.ref = "archunit-junit5" }
 archunit-junit5-engine = { module = "com.tngtech.archunit:archunit-junit5-engine", version.ref = "archunit-junit5" }
 mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }

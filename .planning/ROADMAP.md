@@ -10,7 +10,7 @@
 | Milestone | Phases | Requirements | Status | Archive |
 |-----------|--------|--------------|--------|---------|
 | v1.0 MVP | 1-5 | 18/18 complete | Shipped 2010-03-25 | `.planning/milestones/v1.0-ROADMAP.md` |
-| v1.1 Enterprise Admin Experience | 6-10 | 14/21 complete | Active | - |
+| v1.1 Enterprise Admin Experience | 6-10 | 16/21 complete | Ready for Review | - |
 
 ## Overview
 
@@ -30,6 +30,7 @@ This roadmap builds on the shipped security platform by first closing the missin
 - [x] **Phase 08.2: Multi-App Menu Roles and Jmix-Style JSON Entity Controllers** - Extend app-scoped menu authorization to multi-app role assignment and move secured entity endpoints to raw JSON with preserved `loadByQuery` and explicit `PATCH`. (completed 2010-03-27)
 - [x] **Phase 08.3: User Registration, Live Permission Refresh, Entity-Native Serialization, Validation Hardening, And Row Policy Removal** - Add frontend registration, make permissions refresh without re-login, move secured data flow toward typed entities, harden JSON validation, and retire row policy completely. (completed 2010-03-27)
 - [x] **Phase 9: Enterprise UX And Performance Hardening** - Improve consistency, responsiveness, data-fetch efficiency, and route-level loading costs. (completed 2010-03-28)
+- [x] **Phase 10: Performance Benchmarking and OpenAPI Documentation** - Quantify security pipeline overhead with k6 load tests and document API surface with OpenAPI annotations. (completed 2010-03-31)
 
 ## Phase Details
 
@@ -185,12 +186,20 @@ Plans:
 - [x] 09-02-PLAN.md — Frontend entity list hardening: pagination signals, skeleton loaders, responsive columns (PERF-03, UI-05)
 - [x] 09-03-PLAN.md — First-paint skeleton loader fix for department, employee, and organization entity lists
 
-### Phase 10: Performance benchmarking and OpenAPI documentation for the security pipeline — JMeter/k6 load tests comparing secured vs standard endpoints, and Swagger annotations for variable response schemas and fetch-plan params
+### Phase 10: Performance Benchmarking and OpenAPI Documentation for the Security Pipeline
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal**: Quantify the latency overhead of the @SecuredEntity pipeline with k6 load tests at multiple concurrency levels, and annotate the project-specific API surface with accurate OpenAPI documentation including response schemas, fetch-plan descriptions, and a machine-readable x-secured-entity extension.
+**Requirements**: BENCH-01, OPENAPI-01
 **Depends on:** Phase 9
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+1. k6 benchmark scripts compare secured vs unsecured Organization endpoints at 1, 10, and 50 virtual users and produce a Markdown report with p95 overhead calculation against the 10% target.
+2. A profile-gated baseline endpoint serves Organization data via UnconstrainedDataManager (bypassing the security pipeline) for fair comparison.
+3. All five in-scope resource controllers (Organization, Department, Employee, SecuredEntityCapability, MenuPermission) have @Tag, @Operation, and @ApiResponse annotations with fetch-plan descriptions and correct schema types.
+4. An OperationCustomizer bean marks all @SecuredEntity-backed operations with x-secured-entity: true in the generated OpenAPI spec.
+**Plans:** 4/4 plans complete
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 10 to break down)
+- [x] 10-01-PLAN.md — k6 benchmark infrastructure: baseline controller, load test scripts, and README
+- [x] 10-02-PLAN.md — OpenAPI annotations: OperationCustomizer bean and @Operation/@ApiResponse on 5 controllers
+- [x] 10-03-PLAN.md — Refactor benchmark baseline to standard JHipster flow (gap closure)
+- [x] 10-04-PLAN.md — Phase 10 requirements traceability alignment (gap closure)
