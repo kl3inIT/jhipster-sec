@@ -55,6 +55,7 @@ dependencies {
     implementation libs.jhipster.framework
     implementation libs.mapstruct
     implementation libs.springdoc.openapi.starter.webmvc.api
+    implementation libs.springdoc.openapi.starter.webmvc.ui
     implementation "org.springframework.boot:spring-boot-h2console"
     implementation "org.springframework.boot:spring-boot-jackson2"
     implementation "org.springframework.boot:spring-boot-starter"
