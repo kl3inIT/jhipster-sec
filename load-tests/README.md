@@ -7,7 +7,7 @@ k6 load tests comparing the @SecuredEntity pipeline overhead against an unsecure
 - **k6** — install via `winget install k6 --source winget` or download from
   https://github.com/grafana/k6/releases
 - **Backend running** with dev profile (includes `api-docs` profile group which activates the
-  benchmark baseline endpoint at `/api/benchmark/organizations`)
+  benchmark baseline endpoint at `/api/benchmark/organizations-standard`)
 - **Seeded test data** — the `dev` + `faker` Liquibase contexts seed Organization data automatically
 
 ## Starting the Backend
@@ -20,7 +20,7 @@ The dev profile activates by default and includes the `api-docs` profile group. 
 benchmark endpoint is available:
 
 ```bash
-curl -s http://localhost:8080/api/benchmark/organizations -H "Authorization: Bearer <token>" | head -c 200
+curl -s http://localhost:8080/api/benchmark/organizations-standard -H "Authorization: Bearer <token>" | head -c 200
 ```
 
 ## Running Benchmarks
@@ -65,8 +65,8 @@ exceeded but does not block builds.
 
 | Endpoint                          | Pipeline               | Security Checks                                  |
 | --------------------------------- | ---------------------- | ------------------------------------------------ |
-| `GET /api/organizations`          | SecureDataManagerImpl  | CRUD check + permission cache + secure serialize |
-| `GET /api/benchmark/organizations` | UnconstrainedDataManager | None (same serializer, no permission checks)     |
+| `GET /api/organizations`                       | SecureDataManagerImpl  | CRUD check + permission cache + secure serialize |
+| `GET /api/benchmark/organizations-standard`    | Standard JHipster flow | None (same serializer, no permission checks)     |
 
 Both endpoints use the same `SecuredEntityJsonAdapter` serializer with the `organization-list`
 fetch plan. The only difference is the CRUD permission check and permission cache lookup in

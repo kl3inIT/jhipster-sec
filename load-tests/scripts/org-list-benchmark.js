@@ -82,7 +82,7 @@ export function securedList(data) {
 }
 
 export function baselineList(data) {
-  const res = http.get(`${BASE_URL}/api/benchmark/organizations?page=0&size=20`, {
+  const res = http.get(`${BASE_URL}/api/benchmark/organizations-standard?page=0&size=20`, {
     headers: authHeaders(data.token),
     tags: { endpoint: 'baseline' },
   });
