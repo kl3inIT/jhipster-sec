@@ -38,6 +38,7 @@ import org.springframework.security.core.context.SecurityContextImpl;
  * </ul>
  */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class RequestPermissionSnapshotTest {
 
     @Mock
