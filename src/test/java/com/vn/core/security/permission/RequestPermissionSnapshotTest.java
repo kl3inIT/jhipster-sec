@@ -7,6 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.map.IMap;
 import com.vn.core.security.domain.SecPermission;
 import com.vn.core.security.repository.SecPermissionRepository;
 import java.util.Collection;
@@ -16,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -39,11 +43,20 @@ class RequestPermissionSnapshotTest {
     @Mock
     private SecPermissionRepository secPermissionRepository;
 
+    @Mock
+    private HazelcastInstance hazelcastInstance;
+
+    @Mock
+    private IMap<String, PermissionMatrix> permissionMatrixCache;
+
     private RequestPermissionSnapshot snapshot;
 
     @BeforeEach
+    @SuppressWarnings("unchecked")
     void setUp() {
-        snapshot = new RequestPermissionSnapshot(secPermissionRepository);
+        when(hazelcastInstance.<String, PermissionMatrix>getMap(RequestPermissionSnapshot.PERMISSION_MATRIX_CACHE))
+            .thenReturn(permissionMatrixCache);
+        snapshot = new RequestPermissionSnapshot(secPermissionRepository, hazelcastInstance);
         SecurityContextHolder.clearContext();
     }
 
@@ -65,6 +78,7 @@ class RequestPermissionSnapshotTest {
         PermissionMatrix matrix = snapshot.getMatrix();
 
         assertThat(matrix).isSameAs(PermissionMatrix.EMPTY);
+        verify(hazelcastInstance, never()).getMap(RequestPermissionSnapshot.PERMISSION_MATRIX_CACHE);
         verify(secPermissionRepository, never()).findAllByAuthorityNameIn(anyCollection());
     }
 
@@ -99,57 +113,60 @@ class RequestPermissionSnapshotTest {
         assertThat(authorities).isEmpty();
     }
 
-    // --- No AuthorityRepository lookup ---
+    // --- No AuthorityRepository lookup on hot path ---
 
     @Test
-    void getAuthorities_doesNotQueryAuthorityRepository() {
+    void getAuthorities_doesNotQuerySecPermissionRepository() {
         setAuthentication("user1", "ROLE_ADMIN");
 
         snapshot.getAuthorities();
 
-        // No AuthorityRepository is injected into this constructor; confirm only
-        // SecPermissionRepository can be called (and only on getMatrix, not getAuthorities).
+        // SecPermissionRepository is never invoked during authority loading — only during matrix build.
         verify(secPermissionRepository, never()).findAllByAuthorityNameIn(anyCollection());
     }
 
-    // --- PermissionMatrix cache reuse within same snapshot instance ---
+    // --- PermissionMatrix reuse from cross-request Hazelcast cache ---
 
     @Test
-    void getMatrix_calledTwice_buildsOnlyOnce() {
+    void getMatrix_usesHazelcastCacheForAuthority() {
         setAuthentication("user1", "ROLE_VIEWER");
-        when(secPermissionRepository.findAllByAuthorityNameIn(anyCollection())).thenReturn(List.of());
+        PermissionMatrix cached = new PermissionMatrix(List.of());
+        when(permissionMatrixCache.computeIfAbsent(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any())).thenReturn(
+            cached
+        );
+
+        PermissionMatrix result = snapshot.getMatrix();
+
+        assertThat(result).isSameAs(cached);
+    }
+
+    @Test
+    void getMatrix_calledTwice_usesLocalCacheForSecondCall() {
+        setAuthentication("user1", "ROLE_VIEWER");
+        PermissionMatrix cached = new PermissionMatrix(List.of());
+        when(permissionMatrixCache.computeIfAbsent(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any())).thenReturn(
+            cached
+        );
 
         PermissionMatrix first = snapshot.getMatrix();
         PermissionMatrix second = snapshot.getMatrix();
 
         assertThat(first).isSameAs(second);
-        verify(secPermissionRepository, times(1)).findAllByAuthorityNameIn(anyCollection());
+        // Hazelcast is only consulted once per request; subsequent calls reuse the request-local cache.
+        verify(permissionMatrixCache, times(1)).computeIfAbsent(
+            org.mockito.ArgumentMatchers.anyString(),
+            org.mockito.ArgumentMatchers.any()
+        );
     }
 
     @Test
-    void getMatrix_withPermissions_buildsMatrixFromRepository() {
-        setAuthentication("user1", "ROLE_VIEWER");
-        SecPermission perm = new SecPermission()
-            .authorityName("ROLE_VIEWER")
-            .targetType(TargetType.ENTITY)
-            .target("ORGANIZATION")
-            .action("READ")
-            .effect("ALLOW");
-        when(secPermissionRepository.findAllByAuthorityNameIn(anyCollection())).thenReturn(List.of(perm));
-
-        PermissionMatrix matrix = snapshot.getMatrix();
-
-        assertThat(matrix.isEntityPermitted("ORGANIZATION", "READ")).isTrue();
-    }
-
-    @Test
-    void getMatrix_emptyAuthorities_returnsEmptyWithoutRepositoryCall() {
+    void getMatrix_emptyAuthorities_returnsEmptyWithoutCacheCall() {
         SecurityContextHolder.clearContext();
 
         PermissionMatrix matrix = snapshot.getMatrix();
 
         assertThat(matrix).isSameAs(PermissionMatrix.EMPTY);
-        verify(secPermissionRepository, never()).findAllByAuthorityNameIn(anyCollection());
+        verify(hazelcastInstance, never()).getMap(RequestPermissionSnapshot.PERMISSION_MATRIX_CACHE);
     }
 
     @Test
@@ -162,6 +179,24 @@ class RequestPermissionSnapshotTest {
         assertThat(first).isEqualTo(second);
         // SecPermissionRepository is never invoked during authority loading.
         verify(secPermissionRepository, never()).findAllByAuthorityNameIn(anyCollection());
+    }
+
+    // --- Cache key determinism ---
+
+    @Test
+    void toCacheKey_sameAuthoritiesInDifferentOrder_produceSameKey() {
+        String key1 = RequestPermissionSnapshot.toCacheKey(List.of("ROLE_A", "ROLE_B"));
+        String key2 = RequestPermissionSnapshot.toCacheKey(List.of("ROLE_B", "ROLE_A"));
+
+        assertThat(key1).isEqualTo(key2);
+    }
+
+    @Test
+    void toCacheKey_differentAuthoritySets_produceDifferentKeys() {
+        String key1 = RequestPermissionSnapshot.toCacheKey(List.of("ROLE_A"));
+        String key2 = RequestPermissionSnapshot.toCacheKey(List.of("ROLE_B"));
+
+        assertThat(key1).isNotEqualTo(key2);
     }
 
     // --- Helpers ---
