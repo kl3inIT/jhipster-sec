@@ -42,7 +42,11 @@ The repository now includes:
 
 **Phase 9 complete** - Backend N+1 permission query explosion eliminated via request-scoped `RequestPermissionSnapshot` caching (one authority query + one bulk permission query per HTTP request). Department, Employee, and Organization list components migrated to signal-based pagination with `OnPush` change detection, `p-skeleton` loaders for initial data fetch, and responsive column hiding below 1024px. Validated in Phase 9: UI-05, PERF-01, PERF-02, PERF-03.
 
-The next part of `v1.1` now starts from this context:
+**Phase 10 complete** - k6 load tests established Phase 10 baseline: secured list p95=497ms (+70% overhead vs baseline 291ms), secured detail p95=340ms (+426% overhead vs baseline 64ms). OpenAPI annotations added for variable response schemas and fetch-plan params.
+
+**Phase 11 complete** - Security pipeline performance hardening achieved PERF-04 target. Six optimizations shipped: JWT authority direct trust (D-05/D-06), cross-request Hazelcast PermissionMatrix cache keyed by authority set (D-01/D-04), write-path cache eviction in SecPermissionService (D-02/D-03), direct id load eliminating Criteria API spec (D-07), single fetch-plan resolution per response (D-08), constructor-time constraint sorting (D-11). Phase 11 k6 results: list overhead +0.2%, detail overhead −0.8% — **PERF-04 PASS**. Validated in Phase 11: PERF-04.
+
+The milestone is now complete:
 
 - The backend and standalone frontend now share the preserved registration contract end to end.
 - Current-user menu and capability state can refresh without forcing logout or login, so Phase 9 can focus on responsiveness and redundant work reduction instead of stale-auth repair.
@@ -135,4 +139,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-28 after Phase 08.3 completion and Phase 9 handoff*
+*Last updated: 2026-03-31 after Phase 11 completion — PERF-04 passed*

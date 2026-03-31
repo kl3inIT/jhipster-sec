@@ -10,15 +10,16 @@ import com.vn.core.security.fetch.FetchPlanBuilder;
 import com.vn.core.security.permission.AttributePermissionEvaluator;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Unit tests for {@link SecureEntitySerializerImpl} verifying attribute filtering,
  * id always-visible rule (D-16), and denied attribute omission (D-15).
+ * A single BeanWrapperImpl instance is reused per entity to avoid per-property descriptor overhead.
  */
 @ExtendWith(MockitoExtension.class)
 class SecureEntitySerializerImplTest {
@@ -26,8 +27,12 @@ class SecureEntitySerializerImplTest {
     @Mock
     private AttributePermissionEvaluator attributePermissionEvaluator;
 
-    @InjectMocks
     private SecureEntitySerializerImpl serializer;
+
+    @BeforeEach
+    void setUp() {
+        serializer = new SecureEntitySerializerImpl(attributePermissionEvaluator);
+    }
 
     /** Test entity with getters (BeanWrapper requires them). */
     static class TestEntity {

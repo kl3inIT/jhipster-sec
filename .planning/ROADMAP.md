@@ -206,10 +206,11 @@ Plans:
 
 ### Phase 11: Security Pipeline Performance Hardening — p95 Overhead Under 10 Percent
 
-**Goal:** Reduce the secured endpoint p95 latency overhead to under 10% of the baseline by eliminating redundant DB round-trips on every request (permission matrix caching, authority validation caching), fixing the Criteria API ID lookup inefficiency on detail loads, and resolving the per-entity fetch-plan resolution and serialization overhead.
+**Goal:** Reduce the secured endpoint p95 latency overhead to under 10% of the baseline by eliminating redundant DB round-trips in permission evaluation, fixing the Criteria API ID lookup inefficiency on detail loads, reducing per-response fetch-plan and serializer overhead, and proving the outcome with a persisted Phase 10 benchmark rerun.
 **Requirements**: PERF-04
 **Depends on:** Phase 10
-**Plans:** 0 plans
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 11 to break down)
+- [x] 11-01-PLAN.md — Cache PermissionMatrix by JWT authority set, trust JWT names directly, and evict on SecPermission service-layer writes
+- [x] 11-02-PLAN.md — Remove secure detail id-spec overhead, switch serializer property access to ObjectReader, and persist benchmark rerun results

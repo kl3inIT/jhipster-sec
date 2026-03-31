@@ -7,6 +7,7 @@ import com.vn.core.security.permission.TargetType;
 import com.vn.core.security.repository.SecPermissionRepository;
 import com.vn.core.service.dto.security.SecPermissionDTO;
 import com.vn.core.service.mapper.security.SecPermissionMapper;
+import com.vn.core.service.security.SecPermissionService;
 import com.vn.core.service.security.SecPermissionUiContractService;
 import com.vn.core.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
@@ -35,6 +36,10 @@ import tech.jhipster.web.util.ResponseUtil;
 /**
  * REST controller for managing security permissions.
  * Exposes full CRUD at /api/admin/sec/permissions for admin users only.
+ *
+ * <p>This controller is HTTP transport only. All persistence, duplicate cleanup, and
+ * permission-cache eviction are delegated to {@link SecPermissionService}, consistent with
+ * CLAUDE.md layering rules.
  */
 @RestController
 @RequestMapping("/api/admin/sec/permissions")
@@ -56,16 +61,20 @@ public class SecPermissionAdminResource {
 
     private final SecPermissionUiContractService secPermissionUiContractService;
 
+    private final SecPermissionService secPermissionService;
+
     public SecPermissionAdminResource(
         SecPermissionRepository secPermissionRepository,
         SecPermissionMapper secPermissionMapper,
         AuthorityRepository authorityRepository,
-        SecPermissionUiContractService secPermissionUiContractService
+        SecPermissionUiContractService secPermissionUiContractService,
+        SecPermissionService secPermissionService
     ) {
         this.secPermissionRepository = secPermissionRepository;
         this.secPermissionMapper = secPermissionMapper;
         this.authorityRepository = authorityRepository;
         this.secPermissionUiContractService = secPermissionUiContractService;
+        this.secPermissionService = secPermissionService;
     }
 
     /**
@@ -86,7 +95,7 @@ public class SecPermissionAdminResource {
             throw new BadRequestAlertException("The specified role does not exist", ENTITY_NAME, "rolenotfound");
         }
         SecPermissionDTO normalizedDto = secPermissionUiContractService.normalizeIncoming(dto);
-        List<SecPermission> existingPermissions = secPermissionRepository.findAllByAuthorityNameAndTargetTypeAndTargetAndActionOrderByIdAsc(
+        List<SecPermission> existingPermissions = secPermissionService.findDuplicates(
             normalizedDto.getAuthorityName(),
             TargetType.valueOf(normalizedDto.getTargetType()),
             normalizedDto.getTarget(),
@@ -100,7 +109,7 @@ public class SecPermissionAdminResource {
                 .orElse(existingPermissions.getFirst());
             if (!normalizedDto.getEffect().equals(canonicalPermission.getEffect())) {
                 canonicalPermission.setEffect(normalizedDto.getEffect());
-                canonicalPermission = secPermissionRepository.save(canonicalPermission);
+                canonicalPermission = secPermissionService.update(canonicalPermission);
             }
             Long canonicalPermissionId = canonicalPermission.getId();
             List<SecPermission> duplicatesToDelete = existingPermissions
@@ -108,13 +117,13 @@ public class SecPermissionAdminResource {
                 .filter(permission -> !permission.getId().equals(canonicalPermissionId))
                 .toList();
             if (!duplicatesToDelete.isEmpty()) {
-                secPermissionRepository.deleteAll(duplicatesToDelete);
+                secPermissionService.deleteAll(duplicatesToDelete);
             }
             deleteRedundantSpecificPermissions(normalizedDto);
             return ResponseEntity.ok(secPermissionUiContractService.normalizeOutgoing(secPermissionMapper.toDto(canonicalPermission)));
         }
         var entity = secPermissionMapper.toEntity(normalizedDto);
-        entity = secPermissionRepository.save(entity);
+        entity = secPermissionService.save(entity);
         deleteRedundantSpecificPermissions(normalizedDto);
         SecPermissionDTO result = secPermissionMapper.toDto(entity);
         return ResponseEntity.created(new URI("/api/admin/sec/permissions/" + result.getId()))
@@ -149,7 +158,7 @@ public class SecPermissionAdminResource {
     @GetMapping("/{id}")
     public ResponseEntity<SecPermissionDTO> getPermission(@PathVariable("id") Long id) {
         LOG.debug("REST request to get SecPermission : {}", id);
-        Optional<SecPermissionDTO> dto = secPermissionRepository
+        Optional<SecPermissionDTO> dto = secPermissionService
             .findById(id)
             .map(secPermissionMapper::toDto)
             .map(secPermissionUiContractService::normalizeOutgoing);
@@ -172,7 +181,7 @@ public class SecPermissionAdminResource {
         if (!id.equals(dto.getId())) {
             throw new BadRequestAlertException("ID in path and body must match", ENTITY_NAME, "idmismatch");
         }
-        if (secPermissionRepository.findById(id).isEmpty()) {
+        if (secPermissionService.findById(id).isEmpty()) {
             throw new BadRequestAlertException("Permission not found", ENTITY_NAME, "notfound");
         }
         if (authorityRepository.findById(dto.getAuthorityName()).isEmpty()) {
@@ -180,7 +189,7 @@ public class SecPermissionAdminResource {
         }
         SecPermissionDTO normalizedDto = secPermissionUiContractService.normalizeIncoming(dto);
         var entity = secPermissionMapper.toEntity(normalizedDto);
-        entity = secPermissionRepository.save(entity);
+        entity = secPermissionService.update(entity);
         return ResponseEntity.ok(secPermissionMapper.toDto(entity));
     }
 
@@ -216,18 +225,7 @@ public class SecPermissionAdminResource {
     @Transactional
     public ResponseEntity<Void> deletePermission(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete SecPermission : {}", id);
-        secPermissionRepository
-            .findById(id)
-            .ifPresent(permission ->
-                secPermissionRepository.deleteAll(
-                    secPermissionRepository.findAllByAuthorityNameAndTargetTypeAndTargetAndActionOrderByIdAsc(
-                        permission.getAuthorityName(),
-                        permission.getTargetType(),
-                        permission.getTarget(),
-                        permission.getAction()
-                    )
-                )
-            );
+        secPermissionService.deleteById(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
