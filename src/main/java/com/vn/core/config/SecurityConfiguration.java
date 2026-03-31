@@ -50,7 +50,7 @@ public class SecurityConfiguration {
                     .requestMatchers("/api/account/reset-password/finish").permitAll()
                     .requestMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
                     .requestMatchers("/api/**").authenticated()
-                    .requestMatchers("/v3/api-docs/**").hasAuthority(AuthoritiesConstants.ADMIN)
+                    .requestMatchers("/v3/api-docs/**").permitAll()
                     .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()
                     .requestMatchers("/management/health").permitAll()
                     .requestMatchers("/management/health/**").permitAll()
