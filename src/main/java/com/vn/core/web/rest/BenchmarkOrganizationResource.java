@@ -1,10 +1,10 @@
 package com.vn.core.web.rest;
 
 import com.vn.core.domain.Organization;
-import com.vn.core.security.data.UnconstrainedDataManager;
 import com.vn.core.security.web.SecuredEntityJsonAdapter;
+import com.vn.core.service.BenchmarkOrganizationStandardService;
 import io.swagger.v3.oas.annotations.Hidden;
-import jakarta.persistence.EntityNotFoundException;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.annotations.ParameterObject;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Profile("api-docs")
 @Hidden
-@RequestMapping("/api/benchmark/organizations")
+@RequestMapping("/api/benchmark/organizations-standard")
 @PreAuthorize("isAuthenticated()")
 public class BenchmarkOrganizationResource {
 
@@ -34,11 +34,14 @@ public class BenchmarkOrganizationResource {
     private static final String LIST_FETCH_PLAN = "organization-list";
     private static final String DETAIL_FETCH_PLAN = "organization-detail";
 
-    private final UnconstrainedDataManager unconstrainedDataManager;
+    private final BenchmarkOrganizationStandardService benchmarkOrganizationStandardService;
     private final SecuredEntityJsonAdapter securedEntityJsonAdapter;
 
-    public BenchmarkOrganizationResource(UnconstrainedDataManager unconstrainedDataManager, SecuredEntityJsonAdapter securedEntityJsonAdapter) {
-        this.unconstrainedDataManager = unconstrainedDataManager;
+    public BenchmarkOrganizationResource(
+        BenchmarkOrganizationStandardService benchmarkOrganizationStandardService,
+        SecuredEntityJsonAdapter securedEntityJsonAdapter
+    ) {
+        this.benchmarkOrganizationStandardService = benchmarkOrganizationStandardService;
         this.securedEntityJsonAdapter = securedEntityJsonAdapter;
     }
 
@@ -46,7 +49,7 @@ public class BenchmarkOrganizationResource {
     @Transactional(readOnly = true)
     public ResponseEntity<String> getAllOrganizations(@ParameterObject Pageable pageable) {
         LOG.debug("REST benchmark request to get organizations");
-        Page<Organization> page = unconstrainedDataManager.loadPage(Organization.class, null, pageable);
+        Page<Organization> page = benchmarkOrganizationStandardService.list(pageable);
         String json = securedEntityJsonAdapter.toJsonArrayString(page.getContent(), LIST_FETCH_PLAN);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);
     }
@@ -55,13 +58,14 @@ public class BenchmarkOrganizationResource {
     @Transactional(readOnly = true)
     public ResponseEntity<String> getOrganization(@PathVariable("id") Long id) {
         LOG.debug("REST benchmark request to get organization : {}", id);
-        try {
-            Organization organization = unconstrainedDataManager.load(Organization.class, id);
-            String json = securedEntityJsonAdapter.toJsonString(organization, DETAIL_FETCH_PLAN);
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);
-        } catch (EntityNotFoundException exception) {
-            LOG.debug("Benchmark organization not found: {}", id);
-            return ResponseEntity.notFound().build();
-        }
+        Optional<Organization> organizationOptional = benchmarkOrganizationStandardService.findOne(id);
+        return organizationOptional
+            .map(organization ->
+                ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(securedEntityJsonAdapter.toJsonString(organization, DETAIL_FETCH_PLAN))
+            )
+            .orElseGet(() -> {
+                LOG.debug("Benchmark organization not found: {}", id);
+                return ResponseEntity.notFound().build();
+            });
     }
 }
