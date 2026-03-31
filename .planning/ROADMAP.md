@@ -185,12 +185,18 @@ Plans:
 - [x] 09-02-PLAN.md — Frontend entity list hardening: pagination signals, skeleton loaders, responsive columns (PERF-03, UI-05)
 - [x] 09-03-PLAN.md — First-paint skeleton loader fix for department, employee, and organization entity lists
 
-### Phase 10: Performance benchmarking and OpenAPI documentation for the security pipeline — JMeter/k6 load tests comparing secured vs standard endpoints, and Swagger annotations for variable response schemas and fetch-plan params
+### Phase 10: Performance Benchmarking and OpenAPI Documentation for the Security Pipeline
 
-**Goal:** [To be planned]
-**Requirements**: TBD
+**Goal**: Quantify the latency overhead of the @SecuredEntity pipeline with k6 load tests at multiple concurrency levels, and annotate the project-specific API surface with accurate OpenAPI documentation including response schemas, fetch-plan descriptions, and a machine-readable x-secured-entity extension.
+**Requirements**: BENCH-01, OPENAPI-01
 **Depends on:** Phase 9
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+1. k6 benchmark scripts compare secured vs unsecured Organization endpoints at 1, 10, and 50 virtual users and produce a Markdown report with p95 overhead calculation against the 10% target.
+2. A profile-gated baseline endpoint serves Organization data via UnconstrainedDataManager (bypassing the security pipeline) for fair comparison.
+3. All five in-scope resource controllers (Organization, Department, Employee, SecuredEntityCapability, MenuPermission) have @Tag, @Operation, and @ApiResponse annotations with fetch-plan descriptions and correct schema types.
+4. An OperationCustomizer bean marks all @SecuredEntity-backed operations with x-secured-entity: true in the generated OpenAPI spec.
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 10 to break down)
+- [ ] 10-01-PLAN.md — k6 benchmark infrastructure: baseline controller, load test scripts, and README
+- [ ] 10-02-PLAN.md — OpenAPI annotations: OperationCustomizer bean and @Operation/@ApiResponse on 5 controllers
