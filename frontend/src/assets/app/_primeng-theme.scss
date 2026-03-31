@@ -1,0 +1,668 @@
+:root {
+  --app-shell-bg:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--p-primary-color) 16%, transparent), transparent 28%),
+    linear-gradient(180deg, color-mix(in srgb, var(--p-primary-50) 70%, white) 0%, rgba(255, 255, 255, 0) 26%),
+    var(--surface-ground, var(--p-surface-50));
+  --app-surface-soft: color-mix(in srgb, var(--p-primary-50) 66%, white);
+  --app-surface-muted: color-mix(in srgb, var(--p-primary-100) 26%, white);
+  --app-surface-strong: color-mix(in srgb, var(--p-primary-100) 52%, white);
+  --app-border-soft: color-mix(in srgb, var(--p-primary-200) 16%, var(--surface-border, #dbe3ea));
+  --app-border-strong: color-mix(in srgb, var(--p-primary-200) 30%, var(--surface-border, #dbe3ea));
+  --app-text-muted: color-mix(in srgb, var(--text-color-secondary, #475569) 88%, #64748b);
+  --app-shadow-xs: 0 12px 28px -24px rgba(15, 23, 42, 0.26);
+  --app-shadow-sm: 0 20px 44px -32px rgba(15, 23, 42, 0.32);
+  --app-shadow-md: 0 24px 58px -34px rgba(15, 23, 42, 0.38);
+  --app-radius-sm: 14px;
+  --app-radius-md: 18px;
+  --app-radius-lg: 24px;
+  --app-btn-primary-bg: var(--p-primary-color);
+  --app-btn-primary-border: var(--p-primary-color);
+  --app-btn-primary-hover: var(--p-primary-hover-color, var(--p-primary-color));
+  --app-btn-primary-color: var(--p-primary-contrast-color, #ffffff);
+  --app-btn-secondary-bg: color-mix(in srgb, var(--p-primary-color) 8%, var(--p-surface-0, #ffffff));
+  --app-btn-secondary-border: color-mix(in srgb, var(--p-primary-color) 24%, var(--surface-border, #dbe3ea));
+  --app-btn-secondary-hover: color-mix(in srgb, var(--p-primary-color) 14%, var(--p-surface-0, #ffffff));
+  --app-btn-secondary-color: var(--p-primary-color);
+  --app-btn-text-hover: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
+  --app-btn-text-color: var(--p-primary-color);
+  --app-btn-text-hover-color: var(--p-primary-hover-color, var(--p-primary-color));
+  --app-btn-outlined-border: color-mix(in srgb, var(--p-primary-color) 70%, transparent);
+  --app-btn-outlined-hover: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
+  --app-btn-outlined-color: var(--p-primary-color);
+  --app-btn-success-bg: #166534;
+  --app-btn-success-border: #166534;
+  --app-btn-success-hover: #14532d;
+  --app-btn-success-color: #ffffff;
+  --app-btn-warning-bg: #d97706;
+  --app-btn-warning-border: #d97706;
+  --app-btn-warning-hover: #b45309;
+  --app-btn-warning-color: #ffffff;
+  --app-btn-danger-bg: #b91c1c;
+  --app-btn-danger-border: #b91c1c;
+  --app-btn-danger-hover: #991b1b;
+  --app-btn-danger-color: #ffffff;
+  --app-field-bg: color-mix(in srgb, white 92%, var(--p-primary-50));
+  --app-field-bg-hover: color-mix(in srgb, white 82%, var(--p-primary-50));
+  --app-field-border: color-mix(in srgb, var(--p-primary-200) 22%, #cbd5e1);
+  --app-field-border-hover: color-mix(in srgb, var(--p-primary-300) 34%, #94a3b8);
+  --app-field-shadow: 0 0 0 4px color-mix(in srgb, var(--p-primary-200) 16%, transparent);
+  --app-overlay-bg: color-mix(in srgb, white 94%, var(--p-primary-50));
+}
+
+.app-dark {
+  --app-shell-bg:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--p-primary-color) 18%, transparent), transparent 26%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.64) 0%, rgba(15, 23, 42, 0) 32%),
+    var(--surface-ground, var(--p-surface-950));
+  --app-surface-soft: color-mix(in srgb, var(--p-primary-950) 24%, var(--p-surface-900));
+  --app-surface-muted: color-mix(in srgb, var(--p-primary-900) 22%, var(--p-surface-900));
+  --app-surface-strong: color-mix(in srgb, var(--p-primary-900) 34%, var(--p-surface-900));
+  --app-border-soft: color-mix(in srgb, var(--p-primary-700) 16%, var(--surface-border, #334155));
+  --app-border-strong: color-mix(in srgb, var(--p-primary-700) 28%, var(--surface-border, #334155));
+  --app-text-muted: color-mix(in srgb, var(--text-color-secondary, #cbd5e1) 86%, #94a3b8);
+  --app-shadow-xs: 0 14px 32px -24px rgba(2, 6, 23, 0.52);
+  --app-shadow-sm: 0 24px 48px -30px rgba(2, 6, 23, 0.62);
+  --app-shadow-md: 0 30px 70px -34px rgba(2, 6, 23, 0.7);
+  --app-btn-primary-bg: var(--p-primary-color);
+  --app-btn-primary-border: var(--p-primary-color);
+  --app-btn-primary-hover: var(--p-primary-hover-color, var(--p-primary-color));
+  --app-btn-primary-color: var(--p-primary-contrast-color, var(--p-surface-950));
+  --app-btn-secondary-bg: color-mix(in srgb, var(--p-primary-color) 16%, transparent);
+  --app-btn-secondary-border: color-mix(in srgb, var(--p-primary-color) 34%, transparent);
+  --app-btn-secondary-hover: color-mix(in srgb, var(--p-primary-color) 24%, transparent);
+  --app-btn-secondary-color: var(--p-primary-color);
+  --app-btn-text-hover: color-mix(in srgb, var(--p-primary-color) 16%, transparent);
+  --app-btn-text-color: var(--p-primary-color);
+  --app-btn-text-hover-color: var(--p-primary-hover-color, var(--p-primary-color));
+  --app-btn-outlined-border: color-mix(in srgb, var(--p-primary-color) 70%, transparent);
+  --app-btn-outlined-hover: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+  --app-btn-outlined-color: var(--p-primary-color);
+  --app-btn-success-bg: #22c55e;
+  --app-btn-success-border: #22c55e;
+  --app-btn-success-hover: #4ade80;
+  --app-btn-success-color: #052e16;
+  --app-btn-warning-bg: #f59e0b;
+  --app-btn-warning-border: #f59e0b;
+  --app-btn-warning-hover: #fbbf24;
+  --app-btn-warning-color: #451a03;
+  --app-btn-danger-bg: #ef4444;
+  --app-btn-danger-border: #ef4444;
+  --app-btn-danger-hover: #f87171;
+  --app-btn-danger-color: #450a0a;
+  --app-field-bg: color-mix(in srgb, var(--p-surface-950) 90%, var(--p-primary-950));
+  --app-field-bg-hover: color-mix(in srgb, var(--p-surface-950) 78%, var(--p-primary-900));
+  --app-field-border: color-mix(in srgb, var(--p-primary-700) 18%, #334155);
+  --app-field-border-hover: color-mix(in srgb, var(--p-primary-500) 30%, #475569);
+  --app-field-shadow: 0 0 0 4px color-mix(in srgb, var(--p-primary-400) 14%, transparent);
+  --app-overlay-bg: color-mix(in srgb, var(--p-surface-900) 92%, var(--p-primary-950));
+}
+
+body {
+  background: var(--app-shell-bg);
+}
+
+a {
+  color: var(--p-primary-700);
+}
+
+.app-page-shell {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.app-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.app-page-title,
+.app-section-title {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.app-page-title {
+  font-size: clamp(1.75rem, 2vw, 2.15rem);
+}
+
+.app-section-title {
+  font-size: 1.15rem;
+}
+
+.app-page-subtitle,
+.app-section-subtitle {
+  margin: 0.45rem 0 0;
+  color: var(--app-text-muted);
+  line-height: 1.6;
+}
+
+.app-page-actions,
+.app-row-actions,
+.app-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.app-row-actions {
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.app-form-actions {
+  justify-content: flex-end;
+}
+
+.app-surface-card,
+.p-card {
+  border-radius: var(--app-radius-lg);
+}
+
+.p-card {
+  overflow: hidden;
+  border: 1px solid var(--app-border-strong);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--app-surface-soft) 62%, white) 0%, var(--p-content-background) 26%),
+    var(--p-content-background);
+  box-shadow: var(--app-shadow-sm);
+  backdrop-filter: blur(10px);
+}
+
+.p-card .p-card-body {
+  padding: 1.35rem 1.5rem;
+}
+
+.p-card .p-card-caption,
+.p-card .p-card-title {
+  letter-spacing: -0.03em;
+}
+
+.p-card .p-card-subtitle {
+  color: var(--app-text-muted);
+}
+
+.p-button,
+.p-button.p-component {
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  box-shadow: var(--app-shadow-xs);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+  background: var(--app-btn-primary-bg);
+  border-color: var(--app-btn-primary-border);
+  color: var(--app-btn-primary-color);
+}
+
+.p-button .p-button-label {
+  font-weight: 600;
+}
+
+.p-button:not(:disabled):hover,
+.p-button.p-component:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: var(--app-shadow-sm);
+  background: var(--app-btn-primary-hover);
+  border-color: var(--app-btn-primary-hover);
+  color: var(--app-btn-primary-color);
+}
+
+.p-button:focus-visible,
+.p-inputtext:focus,
+.p-inputnumber-input:focus,
+.p-password-input:focus,
+.p-textarea:focus,
+.p-select:focus-within,
+.p-multiselect:focus-within {
+  box-shadow: var(--app-field-shadow);
+}
+
+.p-button.p-button-text,
+.p-button.p-button-outlined,
+.p-button.p-button-secondary {
+  box-shadow: none;
+}
+
+.p-button.p-button-secondary {
+  background: var(--app-btn-secondary-bg);
+  border-color: var(--app-btn-secondary-border);
+  color: var(--app-btn-secondary-color);
+}
+
+.p-button.p-button-secondary:not(:disabled):hover {
+  background: var(--app-btn-secondary-hover);
+  border-color: var(--app-btn-secondary-border);
+  color: var(--app-btn-secondary-color);
+}
+
+.p-button.p-button-text {
+  background: transparent;
+  border-color: transparent;
+  color: var(--app-btn-text-color);
+}
+
+.p-button.p-button-text:not(:disabled):hover {
+  background: var(--app-btn-text-hover);
+  border-color: transparent;
+  color: var(--app-btn-text-hover-color);
+  transform: none;
+}
+
+.p-button.p-button-outlined {
+  background: transparent;
+  border-color: var(--app-btn-outlined-border);
+  color: var(--app-btn-outlined-color);
+}
+
+.p-button.p-button-outlined:not(:disabled):hover {
+  background: var(--app-btn-outlined-hover);
+  border-color: var(--app-btn-outlined-border);
+  color: var(--app-btn-outlined-color);
+}
+
+.p-button.p-button-success {
+  background: var(--app-btn-success-bg);
+  border-color: var(--app-btn-success-border);
+  color: var(--app-btn-success-color);
+}
+
+.p-button.p-button-success:not(:disabled):hover {
+  background: var(--app-btn-success-hover);
+  border-color: var(--app-btn-success-hover);
+  color: var(--app-btn-success-color);
+}
+
+.p-button.p-button-warning {
+  background: var(--app-btn-warning-bg);
+  border-color: var(--app-btn-warning-border);
+  color: var(--app-btn-warning-color);
+}
+
+.p-button.p-button-warning:not(:disabled):hover {
+  background: var(--app-btn-warning-hover);
+  border-color: var(--app-btn-warning-hover);
+  color: var(--app-btn-warning-color);
+}
+
+.p-button.p-button-danger {
+  background: var(--app-btn-danger-bg);
+  border-color: var(--app-btn-danger-border);
+  color: var(--app-btn-danger-color);
+}
+
+.p-button.p-button-danger:not(:disabled):hover {
+  background: var(--app-btn-danger-hover);
+  border-color: var(--app-btn-danger-hover);
+  color: var(--app-btn-danger-color);
+}
+
+.p-button.p-button-sm {
+  padding-inline: 0.85rem;
+}
+
+.p-button.p-button-icon-only {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.p-inputtext,
+.p-inputnumber-input,
+.p-password-input,
+.p-textarea,
+.p-select,
+.p-multiselect {
+  border-radius: var(--app-radius-sm);
+  border-color: var(--app-field-border);
+  background: var(--app-field-bg);
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.p-inputtext,
+.p-inputnumber-input,
+.p-password-input,
+.p-textarea {
+  padding: 0.8rem 0.95rem;
+}
+
+.p-inputtext:hover,
+.p-inputnumber-input:hover,
+.p-password-input:hover,
+.p-textarea:hover,
+.p-select:hover,
+.p-multiselect:hover {
+  border-color: var(--app-field-border-hover);
+  background: var(--app-field-bg-hover);
+}
+
+.p-select,
+.p-multiselect {
+  min-height: 3rem;
+  align-items: center;
+}
+
+.p-select .p-select-label,
+.p-multiselect .p-multiselect-label {
+  padding: 0.8rem 0.95rem;
+}
+
+.p-password {
+  width: 100%;
+}
+
+.p-password .p-password-input {
+  width: 100%;
+}
+
+.p-inputicon {
+  color: var(--app-text-muted);
+}
+
+label,
+.p-floatlabel label {
+  font-weight: 600;
+  color: var(--text-color, #0f172a);
+}
+
+small.text-red-500,
+.p-message.p-message-error,
+.p-message.p-component {
+  border-radius: 12px;
+}
+
+.p-message {
+  border-width: 0;
+}
+
+.p-message .p-message-content {
+  gap: 0.55rem;
+}
+
+.p-checkbox .p-checkbox-box {
+  border-radius: 8px;
+  border-color: var(--app-field-border);
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.p-checkbox .p-checkbox-box.p-highlight {
+  background: var(--p-primary-color);
+  border-color: var(--p-primary-color);
+}
+
+.p-checkbox:not(.p-disabled) .p-checkbox-box:hover {
+  border-color: var(--app-field-border-hover);
+}
+
+.p-datatable,
+.p-treetable {
+  overflow: hidden;
+  border: 1px solid var(--app-border-strong);
+  border-radius: var(--app-radius-md);
+  background: color-mix(in srgb, var(--p-content-background) 92%, var(--app-surface-soft));
+}
+
+.p-datatable .p-datatable-header,
+.p-treetable .p-treetable-header {
+  border-bottom: 1px solid var(--app-border-strong);
+  background: linear-gradient(180deg, var(--app-surface-soft) 0%, var(--app-surface-muted) 100%);
+}
+
+.p-datatable .p-datatable-thead > tr > th,
+.p-treetable .p-treetable-thead > tr > th {
+  padding: 0.95rem 1rem;
+  border-bottom: 1px solid var(--app-border-strong);
+  background: linear-gradient(180deg, var(--app-surface-soft) 0%, var(--app-surface-muted) 100%);
+  color: var(--app-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.p-datatable .p-datatable-tbody > tr,
+.p-treetable .p-treetable-tbody > tr {
+  transition: background-color 0.18s ease;
+}
+
+.p-datatable .p-datatable-tbody > tr > td,
+.p-treetable .p-treetable-tbody > tr > td {
+  padding: 1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--app-border-soft) 60%, transparent);
+  vertical-align: middle;
+}
+
+.p-datatable .p-datatable-tbody > tr:last-child > td,
+.p-treetable .p-treetable-tbody > tr:last-child > td {
+  border-bottom: 0;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover,
+.p-treetable .p-treetable-tbody > tr:hover {
+  background: color-mix(in srgb, var(--app-surface-soft) 70%, transparent);
+}
+
+.p-datatable .p-datatable-tbody > tr.p-highlight,
+.p-treetable .p-treetable-tbody > tr.p-highlight {
+  background: color-mix(in srgb, var(--p-primary-100) 62%, var(--app-surface-soft));
+}
+
+.p-paginator {
+  gap: 0.25rem;
+  padding: 0.85rem 1rem 1rem;
+  border-top: 1px solid var(--app-border-strong);
+  background: color-mix(in srgb, var(--p-content-background) 86%, var(--app-surface-soft));
+}
+
+.p-paginator .p-paginator-page,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-last,
+.p-paginator .p-paginator-rpp-dropdown {
+  min-width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+}
+
+.p-paginator .p-paginator-page.p-highlight {
+  background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+  color: var(--p-primary-color);
+}
+
+.p-dialog {
+  overflow: hidden;
+  border: 1px solid var(--app-border-strong);
+  border-radius: calc(var(--app-radius-lg) + 4px);
+  background: var(--app-overlay-bg);
+  box-shadow: var(--app-shadow-md);
+  backdrop-filter: blur(14px);
+}
+
+.p-dialog .p-dialog-header,
+.p-confirmdialog .p-dialog-header {
+  padding: 1.2rem 1.35rem 0.8rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--app-border-soft) 68%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--app-surface-soft) 68%, transparent), transparent);
+}
+
+.p-dialog .p-dialog-title {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.p-dialog .p-dialog-content {
+  padding: 1.2rem 1.35rem;
+}
+
+.p-dialog .p-dialog-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 0.85rem 1.35rem 1.35rem;
+  border-top: 1px solid color-mix(in srgb, var(--app-border-soft) 68%, transparent);
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--app-surface-soft) 52%, transparent));
+}
+
+.p-toast .p-toast-message {
+  border: 1px solid var(--app-border-strong);
+  border-radius: var(--app-radius-md);
+  box-shadow: var(--app-shadow-sm);
+  backdrop-filter: blur(12px);
+}
+
+.p-toast .p-toast-message-content {
+  gap: 0.8rem;
+}
+
+.p-confirmdialog .p-dialog-content {
+  padding-top: 1rem;
+}
+
+.p-confirmdialog .p-dialog-content .p-confirm-dialog-message {
+  line-height: 1.6;
+}
+
+.p-tabs .p-tablist {
+  gap: 0.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--app-border-strong);
+  background: color-mix(in srgb, var(--app-surface-soft) 66%, transparent);
+  padding: 0.35rem;
+}
+
+.p-tabs .p-tab {
+  border-radius: 999px;
+  color: var(--app-text-muted);
+  font-weight: 600;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.p-tabs .p-tab.p-tab-active {
+  background: color-mix(in srgb, var(--p-primary-color) 12%, white);
+  color: var(--p-primary-700);
+}
+
+.p-tabs .p-tabpanels {
+  padding-inline: 0;
+}
+
+.p-selectbutton {
+  gap: 0.45rem;
+}
+
+.p-selectbutton .p-button {
+  box-shadow: none;
+  min-height: 2.4rem;
+  padding-inline: 0.95rem;
+}
+
+.p-selectbutton .p-button:not(.p-highlight) {
+  background: var(--app-field-bg);
+  border-color: var(--app-field-border);
+  color: var(--app-text-muted);
+}
+
+.p-selectbutton .p-button:not(.p-highlight):hover {
+  background: var(--app-field-bg-hover);
+  border-color: var(--app-field-border-hover);
+  color: var(--text-color, #0f172a);
+  transform: none;
+  box-shadow: none;
+}
+
+.p-selectbutton .p-button.p-highlight {
+  background: color-mix(in srgb, var(--p-primary-color) 14%, white);
+  border-color: color-mix(in srgb, var(--p-primary-color) 26%, transparent);
+  color: var(--p-primary-700);
+}
+
+.p-tag {
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.p-progressspinner {
+  width: 3rem;
+  height: 3rem;
+}
+
+.app-empty-state,
+.app-state-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.app-section-shell {
+  border: 1px solid var(--app-border-soft);
+  border-radius: var(--app-radius-md);
+  background: color-mix(in srgb, var(--app-surface-soft) 52%, transparent);
+}
+
+.app-detail-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.app-detail-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--app-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.app-table-link {
+  color: var(--p-primary-700);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.app-table-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .p-card .p-card-body,
+  .p-dialog .p-dialog-content,
+  .p-dialog .p-dialog-footer {
+    padding-inline: 1rem;
+  }
+
+  .p-dialog .p-dialog-header {
+    padding-inline: 1rem;
+  }
+
+  .p-datatable .p-datatable-thead > tr > th,
+  .p-treetable .p-treetable-thead > tr > th,
+  .p-datatable .p-datatable-tbody > tr > td,
+  .p-treetable .p-treetable-tbody > tr > td {
+    padding-inline: 0.85rem;
+  }
+
+  .p-paginator {
+    padding-inline: 0.75rem;
+  }
+}

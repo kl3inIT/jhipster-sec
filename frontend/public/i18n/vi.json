@@ -364,7 +364,8 @@
   "layout": {
     "breadcrumb": "Điều hướng",
     "brand": {
-      "name": "JHipster Security"
+      "name": "JHipster Security",
+      "shortName": "JS"
     },
     "footer": {
       "productName": "JHipster Security Platform"
@@ -372,8 +373,28 @@
     "topbar": {
       "toggleMenu": "Mở hoặc đóng menu",
       "toggleTheme": "Đổi giao diện",
+      "openSettings": "Mở cài đặt",
       "login": "Đăng nhập",
       "logout": "Đăng xuất"
+    },
+    "settings": {
+      "title": "Cài đặt",
+      "subtitle": "Ngôn ngữ, giao diện và tùy chọn bố cục",
+      "language": "Ngôn ngữ",
+      "preset": "Preset",
+      "primary": "Màu chính",
+      "surface": "Bề mặt",
+      "appearance": {
+        "label": "Giao diện",
+        "light": "Sáng",
+        "dark": "Tối"
+      },
+      "menuMode": {
+        "label": "Chế độ menu",
+        "static": "Static",
+        "overlay": "Overlay",
+        "drawer": "Drawer"
+      }
     },
     "language": {
       "en": "English",

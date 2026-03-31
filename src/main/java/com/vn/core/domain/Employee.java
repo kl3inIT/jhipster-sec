@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Employee entity with a sensitive salary field for attribute checks.
@@ -14,6 +16,7 @@ import java.math.BigDecimal;
 @SecuredEntity
 @Entity
 @Table(name = "proof_employee")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Employee implements Serializable {
 

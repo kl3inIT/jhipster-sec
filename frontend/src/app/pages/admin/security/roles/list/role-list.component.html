@@ -35,8 +35,8 @@
               severity="secondary"
               [routerLink]="['/admin/security/roles', role.name, 'permissions']"
             />
-            <p-button [label]="'entity.action.edit' | translate" icon="pi pi-pencil" size="small" severity="secondary" (onClick)="openEdit(role)" />
-            <p-button [label]="'entity.action.delete' | translate" icon="pi pi-trash" size="small" severity="danger" [outlined]="true" (onClick)="confirmDelete(role)" />
+            <p-button [label]="'entity.action.edit' | translate" icon="pi pi-pencil" size="small" [outlined]="true" (onClick)="openEdit(role)" />
+            <p-button [label]="'entity.action.delete' | translate" icon="pi pi-trash" size="small" severity="danger" (onClick)="confirmDelete(role)" />
           </div>
         </td>
       </tr>

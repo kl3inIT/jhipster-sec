@@ -13,6 +13,8 @@ import jakarta.persistence.Table;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A permission entry linking an authority (role) to a specific target and action.
@@ -21,6 +23,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "sec_permission")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SecPermission implements Serializable {
 
     @Serial

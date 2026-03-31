@@ -8,29 +8,20 @@
     <i class="pi pi-bars text-xl"></i>
   </button>
   <div class="ml-auto flex items-center gap-2">
-    <div class="flex items-center gap-1 rounded-full surface-100 p-1">
-      @for (language of languages; track language) {
-        <button
-          type="button"
-          class="rounded-full border-0 px-3 py-1 text-sm font-medium cursor-pointer"
-          [class.bg-white]="activeLanguage() === language"
-          [class.shadow-1]="activeLanguage() === language"
-          [attr.aria-label]="('layout.language.' + language) | translate"
-          [attr.aria-pressed]="activeLanguage() === language"
-          (click)="changeLanguage(language)"
-        >
-          {{ ('layout.language.' + language) | translate }}
-        </button>
+    <div #settingsWrapper class="layout-topbar-config-wrapper">
+      <button
+        type="button"
+        class="inline-flex items-center justify-center p-2 rounded-lg border-0 cursor-pointer"
+        [attr.aria-label]="'layout.topbar.openSettings' | translate"
+        [attr.aria-expanded]="settingsOpen()"
+        (click)="toggleSettings($event)"
+      >
+        <i class="pi pi-cog text-xl"></i>
+      </button>
+      @if (settingsOpen()) {
+        <app-configurator />
       }
     </div>
-    <button
-      type="button"
-      class="inline-flex items-center justify-center p-2 rounded-lg border-0 cursor-pointer"
-      (click)="toggleDarkMode()"
-      [attr.aria-label]="'layout.topbar.toggleTheme' | translate"
-    >
-      <i [ngClass]="{ 'pi text-xl': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme() }"></i>
-    </button>
     @if (currentAccount) {
       <span class="text-sm font-medium">{{ currentAccount.login }}</span>
       <button

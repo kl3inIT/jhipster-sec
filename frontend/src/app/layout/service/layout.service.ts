@@ -5,7 +5,7 @@ export interface LayoutConfig {
   primary: string;
   surface: string | undefined | null;
   darkTheme: boolean;
-  menuMode: string;
+  menuMode: 'static' | 'overlay' | 'drawer';
 }
 
 interface LayoutState {
@@ -23,8 +23,8 @@ interface LayoutState {
 export class LayoutService {
   layoutConfig = signal<LayoutConfig>({
     preset: 'Aura',
-    primary: 'emerald',
-    surface: null,
+    primary: 'teal',
+    surface: 'slate',
     darkTheme: false,
     menuMode: 'static',
   });
@@ -49,6 +49,8 @@ export class LayoutService {
   getSurface = computed(() => this.layoutConfig().surface);
 
   isOverlay = computed(() => this.layoutConfig().menuMode === 'overlay');
+
+  isDrawer = computed(() => this.layoutConfig().menuMode === 'drawer');
 
   transitionComplete = signal<boolean>(false);
 
@@ -93,15 +95,46 @@ export class LayoutService {
   }
 
   onMenuToggle() {
-    if (this.isOverlay()) {
-      this.layoutState.update(prev => ({ ...prev, overlayMenuActive: !this.layoutState().overlayMenuActive }));
-    }
-
     if (this.isDesktop()) {
-      this.layoutState.update(prev => ({ ...prev, staticMenuDesktopInactive: !this.layoutState().staticMenuDesktopInactive }));
+      if (this.isOverlay()) {
+        this.layoutState.update(prev => ({
+          ...prev,
+          overlayMenuActive: !prev.overlayMenuActive,
+          mobileMenuActive: false,
+          menuHoverActive: false,
+        }));
+      } else if (this.isDrawer()) {
+        this.layoutState.update(prev => ({
+          ...prev,
+          overlayMenuActive: !prev.overlayMenuActive,
+          mobileMenuActive: false,
+          menuHoverActive: false,
+        }));
+      } else {
+        this.layoutState.update(prev => ({
+          ...prev,
+          staticMenuDesktopInactive: !prev.staticMenuDesktopInactive,
+          overlayMenuActive: false,
+          menuHoverActive: false,
+        }));
+      }
     } else {
-      this.layoutState.update(prev => ({ ...prev, mobileMenuActive: !this.layoutState().mobileMenuActive }));
+      this.layoutState.update(prev => ({
+        ...prev,
+        mobileMenuActive: !prev.mobileMenuActive,
+        overlayMenuActive: false,
+        menuHoverActive: false,
+      }));
     }
+  }
+
+  closeMenu() {
+    this.layoutState.update(prev => ({
+      ...prev,
+      overlayMenuActive: false,
+      mobileMenuActive: false,
+      menuHoverActive: false,
+    }));
   }
 
   showConfigSidebar() {

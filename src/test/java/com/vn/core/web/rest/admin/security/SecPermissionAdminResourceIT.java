@@ -193,6 +193,81 @@ class SecPermissionAdminResourceIT {
     }
 
     @Test
+    void getPermissions_camelCaseAttributeRoundTripsWithOriginalCasing() throws Exception {
+        // Regression for storedToUiTargets() returning lowercase key instead of original camelCase.
+        // DEPARTMENT.COSTCENTER stored -> must come back as "department.costCenter" (not "department.costcenter")
+        // so the frontend Map lookup keyed by catalog-derived "department.costCenter" succeeds.
+        SecPermissionDTO created = createPermission(createMatrixPermissionDto("ATTRIBUTE", "department.costCenter", "VIEW"));
+
+        SecPermission persisted = secPermissionRepository.findById(created.getId()).orElseThrow();
+        assertThat(persisted.getTarget()).isEqualTo("DEPARTMENT.COSTCENTER");
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL + "?authorityName=" + MATRIX_AUTHORITY_NAME))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].target").value("department.costCenter"));
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL_ID, created.getId()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.target").value("department.costCenter"));
+    }
+
+    @Test
+    void createPermission_matrixGrantReturnsExistingRowInsteadOfCreatingDuplicate() throws Exception {
+        SecPermission existing = secPermissionRepository.saveAndFlush(
+            new SecPermission()
+                .authorityName(MATRIX_AUTHORITY_NAME)
+                .targetType(TargetType.ENTITY)
+                .target("ORGANIZATION")
+                .action("READ")
+                .effect("ALLOW")
+        );
+
+        restMockMvc
+            .perform(
+                post(ENTITY_API_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsBytes(createMatrixPermissionDto("ENTITY", "organization", "READ")))
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(existing.getId()))
+            .andExpect(jsonPath("$.target").value("organization"))
+            .andExpect(jsonPath("$.effect").value("GRANT"));
+
+        assertThat(
+            secPermissionRepository.findAllByAuthorityNameAndTargetTypeAndTargetAndActionOrderByIdAsc(
+                MATRIX_AUTHORITY_NAME,
+                TargetType.ENTITY,
+                "ORGANIZATION",
+                "READ"
+            )
+        ).hasSize(1);
+    }
+
+    @Test
+    void createPermission_entityWildcardGrantStoresAsWildcardAndRoundTripsAsGrant() throws Exception {
+        SecPermissionDTO created = createPermission(createMatrixPermissionDto("ENTITY", "*", "READ"));
+
+        SecPermission persisted = secPermissionRepository.findById(created.getId()).orElseThrow();
+        assertThat(persisted.getTarget()).isEqualTo("*");
+        assertThat(persisted.getEffect()).isEqualTo("ALLOW");
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL + "?authorityName=" + MATRIX_AUTHORITY_NAME))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].target").value("*"))
+            .andExpect(jsonPath("$[0].effect").value("GRANT"));
+
+        restMockMvc
+            .perform(get(ENTITY_API_URL_ID, created.getId()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.target").value("*"))
+            .andExpect(jsonPath("$.effect").value("GRANT"));
+    }
+
+    @Test
     void testGetNonExistingPermission() throws Exception {
         restMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
@@ -232,36 +307,63 @@ class SecPermissionAdminResourceIT {
     @Test
     void getAllPermissions_filterByAuthorityName() throws Exception {
         secPermissionRepository.saveAndFlush(
-            new SecPermission().authorityName(AuthoritiesConstants.ADMIN).targetType(TargetType.ENTITY).target("OrganizationFilter").action("READ").effect("ALLOW")
+            new SecPermission()
+                .authorityName(AuthoritiesConstants.ADMIN)
+                .targetType(TargetType.ENTITY)
+                .target("OrganizationFilter")
+                .action("READ")
+                .effect("ALLOW")
         );
         secPermissionRepository.saveAndFlush(
-            new SecPermission().authorityName(AuthoritiesConstants.USER).targetType(TargetType.ENTITY).target("OrganizationFilterUser").action("READ").effect("ALLOW")
+            new SecPermission()
+                .authorityName(AuthoritiesConstants.USER)
+                .targetType(TargetType.ENTITY)
+                .target("OrganizationFilterUser")
+                .action("READ")
+                .effect("ALLOW")
         );
 
         restMockMvc
             .perform(get(ENTITY_API_URL + "?authorityName=" + AuthoritiesConstants.ADMIN))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$[*].authorityName").value(org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is(AuthoritiesConstants.ADMIN))))
-            .andExpect(jsonPath("$[*].authorityName").value(org.hamcrest.Matchers.not(org.hamcrest.Matchers.hasItem(AuthoritiesConstants.USER))));
+            .andExpect(
+                jsonPath("$[*].authorityName").value(org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is(AuthoritiesConstants.ADMIN)))
+            )
+            .andExpect(
+                jsonPath("$[*].authorityName").value(org.hamcrest.Matchers.not(org.hamcrest.Matchers.hasItem(AuthoritiesConstants.USER)))
+            );
     }
 
     @Test
     void getAllPermissions_noFilterReturnsAll() throws Exception {
         secPermissionRepository.saveAndFlush(
-            new SecPermission().authorityName(AuthoritiesConstants.ADMIN).targetType(TargetType.ENTITY).target("OrganizationAll1").action("READ").effect("ALLOW")
+            new SecPermission()
+                .authorityName(AuthoritiesConstants.ADMIN)
+                .targetType(TargetType.ENTITY)
+                .target("OrganizationAll1")
+                .action("READ")
+                .effect("ALLOW")
         );
         secPermissionRepository.saveAndFlush(
-            new SecPermission().authorityName(AuthoritiesConstants.USER).targetType(TargetType.ENTITY).target("OrganizationAll2").action("READ").effect("ALLOW")
+            new SecPermission()
+                .authorityName(AuthoritiesConstants.USER)
+                .targetType(TargetType.ENTITY)
+                .target("OrganizationAll2")
+                .action("READ")
+                .effect("ALLOW")
         );
 
-        int filteredCount = restMockMvc
-            .perform(get(ENTITY_API_URL + "?authorityName=" + AuthoritiesConstants.ADMIN))
-            .andExpect(status().isOk())
-            .andReturn()
-            .getResponse()
-            .getContentAsString()
-            .split("authorityName").length - 1;
+        int filteredCount =
+            restMockMvc
+                .perform(get(ENTITY_API_URL + "?authorityName=" + AuthoritiesConstants.ADMIN))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString()
+                .split("authorityName")
+                .length -
+            1;
 
         String allResponse = restMockMvc
             .perform(get(ENTITY_API_URL))
@@ -326,4 +428,3 @@ class SecPermissionAdminResourceIT {
         return dto;
     }
 }
-

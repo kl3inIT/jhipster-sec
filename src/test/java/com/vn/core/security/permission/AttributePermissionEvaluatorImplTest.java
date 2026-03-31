@@ -31,6 +31,9 @@ class AttributePermissionEvaluatorImplTest {
     @Mock
     private MergedSecurityService mergedSecurityService;
 
+    @Mock
+    private RequestPermissionSnapshot requestPermissionSnapshot;
+
     @InjectMocks
     private AttributePermissionEvaluatorImpl evaluator;
 

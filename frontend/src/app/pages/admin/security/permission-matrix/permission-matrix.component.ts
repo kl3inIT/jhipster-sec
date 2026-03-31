@@ -91,6 +91,36 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './permission-matrix.component.html',
+  styles: [
+    `
+      .selected-row {
+        outline: 2px solid var(--p-primary-color);
+        outline-offset: -2px;
+      }
+
+      .implied-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 0;
+        border-radius: 0.375rem;
+        background: var(--p-primary-500);
+        color: var(--p-primary-contrast-color, #fff);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .implied-icon:disabled {
+        opacity: 0.8;
+        cursor: not-allowed;
+      }
+
+      .implied-icon--readonly {
+        background: var(--p-surface-500);
+      }
+    `,
+  ],
 })
 export default class PermissionMatrixComponent implements OnInit {
   private readonly defaultMenuApp = 'jhipster-security-platform';
@@ -110,6 +140,7 @@ export default class PermissionMatrixComponent implements OnInit {
   loading = true;
   selectedEntity: ISecCatalogEntry | null = null;
   selectedEntityAttributeRows: AttributeRow[] = [];
+  catalogEntriesWithWildcard: ISecCatalogEntry[] = [];
 
   granted = new Map<string, number>();
   pendingChanges = new Map<string, PendingChange>();
@@ -117,6 +148,7 @@ export default class PermissionMatrixComponent implements OnInit {
 
   // Menu access tab state
   availableMenuApps: string[] = [];
+  menuAppOptions: Array<{ label: string; value: string }> = [];
   selectedMenuApp = this.defaultMenuApp;
   menuDefinitions: ISecMenuDefinition[] = [];
   menuTreeNodes: TreeNode[] = [];
@@ -131,12 +163,10 @@ export default class PermissionMatrixComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initializeComputedCollections();
+
     this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      if (this.selectedEntity) {
-        this.selectedEntityAttributeRows = this.buildAttributeRows(this.selectedEntity);
-      }
-      this.buildMenuTree();
-      this.cdr.detectChanges();
+      this.onLanguageChanged();
     });
 
     this.roleName = this.route.snapshot.paramMap.get('name') ?? '';
@@ -157,18 +187,9 @@ export default class PermissionMatrixComponent implements OnInit {
       )
       .subscribe({
         next: ({ catalogEntries, permissions }) => {
-          this.catalogEntries = catalogEntries;
-          this.granted.clear();
-          permissions.forEach((permission) => {
-            if (permission.id !== undefined) {
-              this.granted.set(
-                this.permissionKey(permission.target, permission.action),
-                permission.id,
-              );
-            }
-          });
+          this.onPermissionDataLoaded(catalogEntries, permissions);
         },
-        error: (err: any) =>
+        error: (err: unknown) =>
           handleHttpError(
             this.messageService,
             this.translateService,
@@ -180,42 +201,98 @@ export default class PermissionMatrixComponent implements OnInit {
     this.loadMenuPermissions();
   }
 
+  private onLanguageChanged(): void {
+    if (this.selectedEntity) {
+      this.selectedEntityAttributeRows = this.buildAttributeRows(this.selectedEntity);
+    }
+    this.initializeComputedCollections();
+    this.buildMenuTree();
+    this.cdr.detectChanges();
+  }
+
+  private initializeComputedCollections(): void {
+    this.catalogEntriesWithWildcard = this.buildCatalogEntriesWithWildcard();
+    this.updateMenuAppOptions();
+  }
+
+  private buildCatalogEntriesWithWildcard(): ISecCatalogEntry[] {
+    const wildcardEntry: ISecCatalogEntry = {
+      code: '*',
+      displayName: this.translateService.instant('security.permissionMatrix.entity.wildcard'),
+      operations: ['CREATE', 'READ', 'UPDATE', 'DELETE'],
+      attributes: [],
+    };
+    return [wildcardEntry, ...this.catalogEntries];
+  }
+
+  private onPermissionDataLoaded(catalogEntries: ISecCatalogEntry[], permissions: ISecPermission[]): void {
+    this.catalogEntries = catalogEntries;
+    this.catalogEntriesWithWildcard = this.buildCatalogEntriesWithWildcard();
+    this.granted.clear();
+    permissions.forEach((permission) => {
+      if (permission.id !== undefined) {
+        this.granted.set(this.permissionKey(permission.target, permission.action), permission.id);
+      }
+    });
+  }
+
   private loadMenuPermissions(): void {
     this.menuLoading = true;
     forkJoin({
       permissions: this.menuPermissionService.query(this.roleName),
       definitions: this.menuDefinitionService.queryAll().pipe(
-        map(response => response.body ?? []),
+        map((response) => response.body ?? []),
         catchError(() => of([])),
       ),
     }).subscribe({
       next: ({ permissions, definitions }) => {
-        this.menuGranted.clear();
-        permissions.forEach((p) => {
-          if (p.id !== undefined) {
-            this.menuGranted.set(this.menuPermissionKey(p.appName, p.menuId), p.id);
-          }
-        });
-        this.availableMenuApps = this.resolveAvailableMenuApps(permissions, definitions);
-        const nextSelectedApp = this.availableMenuApps.includes(this.selectedMenuApp)
-          ? this.selectedMenuApp
-          : (this.availableMenuApps[0] ?? this.defaultMenuApp);
-        this.loadMenuDefinitions(nextSelectedApp);
+        this.onMenuPermissionsLoaded(permissions, definitions);
       },
-      error: (err) => {
-        handleHttpError(
-          this.messageService,
-          this.translateService,
-          err,
-          'feedback.security.menuAccess.loadFailed',
-        );
-        this.menuLoading = false;
-        this.menuDefinitions = [];
-        this.menuTreeNodes = [];
-        this.menuSelectionKeys = {};
-        this.cdr.detectChanges();
+      error: (err: unknown) => {
+        this.onMenuLoadError(err);
       },
     });
+  }
+
+  private onMenuPermissionsLoaded(
+    permissions: ISecMenuPermissionAdmin[],
+    definitions: ISecMenuDefinition[],
+  ): void {
+    this.menuGranted.clear();
+    permissions.forEach((p) => {
+      if (p.id !== undefined) {
+        this.menuGranted.set(this.menuPermissionKey(p.appName, p.menuId), p.id);
+      }
+    });
+    this.availableMenuApps = this.resolveAvailableMenuApps(permissions, definitions);
+    this.updateMenuAppOptions();
+    const nextSelectedApp = this.availableMenuApps.includes(this.selectedMenuApp)
+      ? this.selectedMenuApp
+      : (this.availableMenuApps[0] ?? this.defaultMenuApp);
+    this.loadMenuDefinitions(nextSelectedApp);
+  }
+
+  private onMenuLoadError(err: unknown): void {
+    handleHttpError(
+      this.messageService,
+      this.translateService,
+      err,
+      'feedback.security.menuAccess.loadFailed',
+    );
+    this.menuLoading = false;
+    this.menuDefinitions = [];
+    this.menuTreeNodes = [];
+    this.menuSelectionKeys = {};
+    this.availableMenuApps = [this.defaultMenuApp];
+    this.updateMenuAppOptions();
+    this.cdr.detectChanges();
+  }
+
+  private updateMenuAppOptions(): void {
+    this.menuAppOptions = this.availableMenuApps.map((appName) => ({
+      label: this.currentMenuAppLabel(appName),
+      value: appName,
+    }));
   }
 
   loadMenuDefinitions(appName: string): void {
@@ -415,13 +492,6 @@ export default class PermissionMatrixComponent implements OnInit {
     return appName;
   }
 
-  menuAppOptions(): Array<{ label: string; value: string }> {
-    return this.availableMenuApps.map((appName) => ({
-      label: this.currentMenuAppLabel(appName),
-      value: appName,
-    }));
-  }
-
   onEntitySelect(entry: ISecCatalogEntry): void {
     this.selectedEntity = entry;
     this.selectedEntityAttributeRows = this.buildAttributeRows(entry);
@@ -449,8 +519,67 @@ export default class PermissionMatrixComponent implements OnInit {
     );
   }
 
+  /**
+   * Returns true when EDIT is effectively granted for the given attribute target, either explicitly
+   * or via the entity-level wildcard (entityCode.*:EDIT). This mirrors Jmix behaviour where modify
+   * access inherently implies view access.
+   */
+  isViewImpliedByModify(target: string, entityCode: string): boolean {
+    return this.isAttributeEffectivelyGranted(target, 'EDIT', entityCode);
+  }
+
+  /**
+   * Returns true when the entity-level wildcard (`*`) is effectively granted for the given action.
+   */
+  isEntityWildcardEffectivelyGranted(action: string): boolean {
+    return this.isEffectivelyGranted('*', action);
+  }
+
+  /**
+   * Returns true when either the specific entity or the entity-level wildcard (`*`) is effectively
+   * granted for the given action.
+   */
+  isEntityEffectivelyGranted(entityCode: string, action: string): boolean {
+    return this.isEffectivelyGranted(entityCode, action) || this.isEntityWildcardEffectivelyGranted(action);
+  }
+
   isPendingChange(target: string, action: string): boolean {
     return this.pendingChanges.has(this.permissionKey(target, action));
+  }
+
+  /**
+   * Returns true when the permission is granted only because the wildcard covers it (not explicitly
+   * granted on its own). Used to render the Jmix-style dash icon on implied cells.
+   */
+  isImpliedByEntityWildcard(entityCode: string, action: string): boolean {
+    if (entityCode === '*') return false;
+    return this.isEntityWildcardEffectivelyGranted(action) && !this.isEffectivelyGranted(entityCode, action);
+  }
+
+  isImpliedByAttributeWildcard(target: string, action: string, entityCode: string): boolean {
+    if (target === `${entityCode}.*`) return false;
+    return this.isWildcardEffectivelyGranted(entityCode, action) && !this.isEffectivelyGranted(target, action);
+  }
+
+  /** True when any CRUD op is effectively granted for the entity row (for green row bg). */
+  isEntityRowGranted(entityCode: string): boolean {
+    if (entityCode === '*') {
+      return ['CREATE', 'READ', 'UPDATE', 'DELETE'].some((op) => this.isEffectivelyGranted('*', op));
+    }
+    return ['CREATE', 'READ', 'UPDATE', 'DELETE'].some((op) => this.isEntityEffectivelyGranted(entityCode, op));
+  }
+
+  /** True when VIEW or EDIT is effectively granted for the attribute row (for green row bg). */
+  isAttributeRowGranted(target: string, entityCode: string): boolean {
+    const viewGranted =
+      this.isAttributeEffectivelyGranted(target, 'VIEW', entityCode) ||
+      this.isViewImpliedByModify(target, entityCode);
+    const editGranted = this.isAttributeEffectivelyGranted(target, 'EDIT', entityCode);
+    return viewGranted || editGranted;
+  }
+
+  permissionRowColor(granted: boolean): string {
+    return granted ? 'rgba(34, 197, 94, 0.16)' : 'rgba(239, 68, 68, 0.16)';
   }
 
   private buildAttributeRows(entity: ISecCatalogEntry): AttributeRow[] {
@@ -465,13 +594,192 @@ export default class PermissionMatrixComponent implements OnInit {
   }
 
   togglePermission(targetType: string, target: string, action: string, checked: boolean): void {
+    if (targetType === 'ENTITY') {
+      this.toggleEntityPermission(target, action, checked);
+    } else if (targetType === 'ATTRIBUTE') {
+      this.toggleAttributePermission(target, action, checked);
+    } else {
+      this.applySimpleToggle(targetType, target, action, checked);
+    }
+    this.cdr.detectChanges();
+  }
+
+  private applySimpleToggle(targetType: string, target: string, action: string, checked: boolean): void {
     const key = this.permissionKey(target, action);
     if (checked === this.isGranted(target, action)) {
       this.pendingChanges.delete(key);
     } else {
       this.pendingChanges.set(key, { checked, targetType, target, action });
     }
-    this.cdr.detectChanges();
+  }
+
+  private toggleEntityPermission(target: string, action: string, checked: boolean): void {
+    if (target === '*') {
+      this.applySimpleToggle('ENTITY', '*', action, checked);
+      if (checked) {
+        // wildcard turned ON: mark all granted specifics as pending-delete; remove any pending-adds
+        for (const entry of this.catalogEntries) {
+          const key = this.permissionKey(entry.code, action);
+          const pending = this.pendingChanges.get(key);
+          if (pending?.checked) {
+            this.pendingChanges.delete(key);
+          } else if (!pending && this.granted.has(key)) {
+            this.pendingChanges.set(key, { checked: false, targetType: 'ENTITY', target: entry.code, action });
+          }
+        }
+      } else {
+        // wildcard turned OFF: remove auto-generated pending-deletes for specifics
+        for (const entry of this.catalogEntries) {
+          const key = this.permissionKey(entry.code, action);
+          const pending = this.pendingChanges.get(key);
+          if (pending && !pending.checked && !this.granted.has(key)) {
+            // it was never in DB — only pending-delete due to wildcard expansion; remove it
+            this.pendingChanges.delete(key);
+          }
+        }
+      }
+    } else {
+      // Specific entity toggled
+      const wildcardEffective = this.isEntityWildcardEffectivelyGranted(action);
+      if (!checked && wildcardEffective) {
+        // Unticking a specific while wildcard is active: expand wildcard into individual permissions
+        // 1. Remove wildcard (or mark wildcard as pending-delete)
+        this.applySimpleToggle('ENTITY', '*', action, false);
+        // 2. Remove auto-generated pending-deletes from any prior wildcard-on that are still there
+        //    and add pending-add for all OTHER specifics that are not already in DB
+        for (const entry of this.catalogEntries) {
+          if (entry.code === target) {
+            // This one is being unticked — ensure it's marked unchecked (not granted by wildcard anymore)
+            const key = this.permissionKey(entry.code, action);
+            if (this.granted.has(key)) {
+              this.pendingChanges.set(key, { checked: false, targetType: 'ENTITY', target: entry.code, action });
+            } else {
+              this.pendingChanges.delete(key);
+            }
+          } else {
+            // All others should remain checked — add pending-add only if not already in DB
+            const key = this.permissionKey(entry.code, action);
+            if (!this.granted.has(key)) {
+              this.pendingChanges.set(key, { checked: true, targetType: 'ENTITY', target: entry.code, action });
+            } else {
+              // Already in DB — remove any pending-delete that may have been set
+              this.pendingChanges.delete(key);
+            }
+          }
+        }
+      } else {
+        this.applySimpleToggle('ENTITY', target, action, checked);
+        if (checked) {
+          this.checkAutoPromoteEntity(action);
+        }
+      }
+    }
+  }
+
+  private checkAutoPromoteEntity(action: string): void {
+    const allGranted = this.catalogEntries.every((entry) =>
+      this.isEffectivelyGranted(entry.code, action),
+    );
+    if (!allGranted) return;
+    // All specifics are now checked — promote to wildcard
+    this.applySimpleToggle('ENTITY', '*', action, true);
+    // Mark all specifically-granted entries as pending-delete (wildcard supersedes)
+    for (const entry of this.catalogEntries) {
+      const key = this.permissionKey(entry.code, action);
+      const pending = this.pendingChanges.get(key);
+      if (pending?.checked) {
+        // Was pending-add, no longer needed
+        this.pendingChanges.delete(key);
+      } else if (!pending && this.granted.has(key)) {
+        this.pendingChanges.set(key, { checked: false, targetType: 'ENTITY', target: entry.code, action });
+      }
+    }
+  }
+
+  private toggleAttributePermission(target: string, action: string, checked: boolean): void {
+    const entity = this.selectedEntity;
+    if (!entity) {
+      this.applySimpleToggle('ATTRIBUTE', target, action, checked);
+      return;
+    }
+    const wildcardTarget = `${entity.code}.*`;
+    if (target === wildcardTarget) {
+      this.applySimpleToggle('ATTRIBUTE', wildcardTarget, action, checked);
+      if (checked) {
+        // wildcard turned ON: mark all granted specifics as pending-delete; remove pending-adds
+        for (const attr of entity.attributes) {
+          const specificTarget = `${entity.code}.${attr}`;
+          const key = this.permissionKey(specificTarget, action);
+          const pending = this.pendingChanges.get(key);
+          if (pending?.checked) {
+            this.pendingChanges.delete(key);
+          } else if (!pending && this.granted.has(key)) {
+            this.pendingChanges.set(key, { checked: false, targetType: 'ATTRIBUTE', target: specificTarget, action });
+          }
+        }
+      } else {
+        // wildcard turned OFF: remove auto-generated pending-deletes for specifics
+        for (const attr of entity.attributes) {
+          const specificTarget = `${entity.code}.${attr}`;
+          const key = this.permissionKey(specificTarget, action);
+          const pending = this.pendingChanges.get(key);
+          if (pending && !pending.checked && !this.granted.has(key)) {
+            this.pendingChanges.delete(key);
+          }
+        }
+      }
+    } else {
+      // Specific attribute toggled
+      const wildcardEffective = this.isWildcardEffectivelyGranted(entity.code, action);
+      if (!checked && wildcardEffective) {
+        // Unticking a specific while wildcard is active
+        this.applySimpleToggle('ATTRIBUTE', wildcardTarget, action, false);
+        for (const attr of entity.attributes) {
+          const specificTarget = `${entity.code}.${attr}`;
+          if (specificTarget === target) {
+            const key = this.permissionKey(specificTarget, action);
+            if (this.granted.has(key)) {
+              this.pendingChanges.set(key, { checked: false, targetType: 'ATTRIBUTE', target: specificTarget, action });
+            } else {
+              this.pendingChanges.delete(key);
+            }
+          } else {
+            const key = this.permissionKey(specificTarget, action);
+            if (!this.granted.has(key)) {
+              this.pendingChanges.set(key, { checked: true, targetType: 'ATTRIBUTE', target: specificTarget, action });
+            } else {
+              this.pendingChanges.delete(key);
+            }
+          }
+        }
+      } else {
+        this.applySimpleToggle('ATTRIBUTE', target, action, checked);
+        if (checked) {
+          this.checkAutoPromoteAttribute(entity.code, action);
+        }
+      }
+    }
+  }
+
+  private checkAutoPromoteAttribute(entityCode: string, action: string): void {
+    const entity = this.catalogEntries.find((e) => e.code === entityCode);
+    if (!entity || entity.attributes.length === 0) return;
+    const allGranted = entity.attributes.every((attr) =>
+      this.isEffectivelyGranted(`${entityCode}.${attr}`, action),
+    );
+    if (!allGranted) return;
+    const wildcardTarget = `${entityCode}.*`;
+    this.applySimpleToggle('ATTRIBUTE', wildcardTarget, action, true);
+    for (const attr of entity.attributes) {
+      const specificTarget = `${entityCode}.${attr}`;
+      const key = this.permissionKey(specificTarget, action);
+      const pending = this.pendingChanges.get(key);
+      if (pending?.checked) {
+        this.pendingChanges.delete(key);
+      } else if (!pending && this.granted.has(key)) {
+        this.pendingChanges.set(key, { checked: false, targetType: 'ATTRIBUTE', target: specificTarget, action });
+      }
+    }
   }
 
   confirmSave(): void {

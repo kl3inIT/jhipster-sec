@@ -99,8 +99,26 @@ public class SecPermissionUiContractService {
     }
 
     private Map<String, String> storedToUiTargets() {
+        // Build directly from catalog so attribute names preserve their original camelCase form.
+        // Inverting uiToStoredTargets() would return the lowercase key used as input for that map,
+        // causing camelCase attributes (e.g. "DEPARTMENT.COSTCENTER" -> "department.costcenter"
+        // instead of the correct "department.costCenter") to silently miss frontend Map lookups.
         Map<String, String> mappings = new HashMap<>();
-        uiToStoredTargets().forEach((uiTarget, storedTarget) -> mappings.put(storedTarget.toUpperCase(Locale.ROOT), uiTarget));
+        for (SecuredEntityEntry entry : securedEntityCatalog.entries()) {
+            String uiEntityTarget = entry.code();
+            String storedEntityTarget = entry.entityClass().getSimpleName().toUpperCase(Locale.ROOT);
+            mappings.put(storedEntityTarget, uiEntityTarget);
+            mappings.put(storedEntityTarget + ATTRIBUTE_WILDCARD, uiEntityTarget + ATTRIBUTE_WILDCARD);
+            entityManager
+                .getMetamodel()
+                .entity(entry.entityClass())
+                .getAttributes()
+                .stream()
+                .map(Attribute::getName)
+                .forEach(attribute ->
+                    mappings.put(storedEntityTarget + "." + attribute.toUpperCase(Locale.ROOT), uiEntityTarget + "." + attribute)
+                );
+        }
         return mappings;
     }
 

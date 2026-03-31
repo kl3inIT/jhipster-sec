@@ -2,6 +2,8 @@ package com.vn.core.web.rest.admin.security;
 
 import com.vn.core.repository.AuthorityRepository;
 import com.vn.core.security.AuthoritiesConstants;
+import com.vn.core.security.domain.SecPermission;
+import com.vn.core.security.permission.TargetType;
 import com.vn.core.security.repository.SecPermissionRepository;
 import com.vn.core.service.dto.security.SecPermissionDTO;
 import com.vn.core.service.mapper.security.SecPermissionMapper;
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,6 +76,7 @@ public class SecPermissionAdminResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
+    @Transactional
     public ResponseEntity<SecPermissionDTO> createPermission(@Valid @RequestBody SecPermissionDTO dto) throws URISyntaxException {
         LOG.debug("REST request to create SecPermission : {}", dto);
         if (dto.getId() != null) {
@@ -82,8 +86,36 @@ public class SecPermissionAdminResource {
             throw new BadRequestAlertException("The specified role does not exist", ENTITY_NAME, "rolenotfound");
         }
         SecPermissionDTO normalizedDto = secPermissionUiContractService.normalizeIncoming(dto);
+        List<SecPermission> existingPermissions = secPermissionRepository.findAllByAuthorityNameAndTargetTypeAndTargetAndActionOrderByIdAsc(
+            normalizedDto.getAuthorityName(),
+            TargetType.valueOf(normalizedDto.getTargetType()),
+            normalizedDto.getTarget(),
+            normalizedDto.getAction()
+        );
+        if (!existingPermissions.isEmpty()) {
+            SecPermission canonicalPermission = existingPermissions
+                .stream()
+                .filter(permission -> normalizedDto.getEffect().equals(permission.getEffect()))
+                .findFirst()
+                .orElse(existingPermissions.getFirst());
+            if (!normalizedDto.getEffect().equals(canonicalPermission.getEffect())) {
+                canonicalPermission.setEffect(normalizedDto.getEffect());
+                canonicalPermission = secPermissionRepository.save(canonicalPermission);
+            }
+            Long canonicalPermissionId = canonicalPermission.getId();
+            List<SecPermission> duplicatesToDelete = existingPermissions
+                .stream()
+                .filter(permission -> !permission.getId().equals(canonicalPermissionId))
+                .toList();
+            if (!duplicatesToDelete.isEmpty()) {
+                secPermissionRepository.deleteAll(duplicatesToDelete);
+            }
+            deleteRedundantSpecificPermissions(normalizedDto);
+            return ResponseEntity.ok(secPermissionUiContractService.normalizeOutgoing(secPermissionMapper.toDto(canonicalPermission)));
+        }
         var entity = secPermissionMapper.toEntity(normalizedDto);
         entity = secPermissionRepository.save(entity);
+        deleteRedundantSpecificPermissions(normalizedDto);
         SecPermissionDTO result = secPermissionMapper.toDto(entity);
         return ResponseEntity.created(new URI("/api/admin/sec/permissions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -117,7 +149,10 @@ public class SecPermissionAdminResource {
     @GetMapping("/{id}")
     public ResponseEntity<SecPermissionDTO> getPermission(@PathVariable("id") Long id) {
         LOG.debug("REST request to get SecPermission : {}", id);
-        Optional<SecPermissionDTO> dto = secPermissionRepository.findById(id).map(secPermissionMapper::toDto).map(secPermissionUiContractService::normalizeOutgoing);
+        Optional<SecPermissionDTO> dto = secPermissionRepository
+            .findById(id)
+            .map(secPermissionMapper::toDto)
+            .map(secPermissionUiContractService::normalizeOutgoing);
         return ResponseUtil.wrapOrNotFound(dto);
     }
 
@@ -150,15 +185,49 @@ public class SecPermissionAdminResource {
     }
 
     /**
+     * Deletes redundant specific permissions when a wildcard is saved.
+     * <ul>
+     *   <li>Entity wildcard ({@code target='*'}): removes all specific entity rows for same authority+action+effect.</li>
+     *   <li>Attribute wildcard ({@code target='ENTITY.*'}): removes all specific attribute rows under the same entity prefix.</li>
+     * </ul>
+     */
+    private void deleteRedundantSpecificPermissions(SecPermissionDTO normalizedDto) {
+        String targetType = normalizedDto.getTargetType();
+        String target = normalizedDto.getTarget();
+        String authority = normalizedDto.getAuthorityName();
+        String action = normalizedDto.getAction();
+        String effect = normalizedDto.getEffect();
+
+        if (TargetType.ENTITY.name().equals(targetType) && "*".equals(target)) {
+            secPermissionRepository.deleteSpecificEntityPermissions(authority, action, effect);
+        } else if (TargetType.ATTRIBUTE.name().equals(targetType) && target != null && target.endsWith(".*")) {
+            String entityCode = target.substring(0, target.length() - 2);
+            secPermissionRepository.deleteSpecificAttributePermissions(authority, entityCode + ".%", target, action, effect);
+        }
+    }
+
+    /**
      * {@code DELETE /api/admin/sec/permissions/{id}} : Delete a permission.
      *
      * @param id the id of the permission to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (No Content)}.
      */
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<Void> deletePermission(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete SecPermission : {}", id);
-        secPermissionRepository.deleteById(id);
+        secPermissionRepository
+            .findById(id)
+            .ifPresent(permission ->
+                secPermissionRepository.deleteAll(
+                    secPermissionRepository.findAllByAuthorityNameAndTargetTypeAndTargetAndActionOrderByIdAsc(
+                        permission.getAuthorityName(),
+                        permission.getTargetType(),
+                        permission.getTarget(),
+                        permission.getAction()
+                    )
+                )
+            );
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
