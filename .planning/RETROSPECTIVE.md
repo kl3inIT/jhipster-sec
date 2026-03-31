@@ -36,6 +36,38 @@
 
 ---
 
+## Milestone: v1.1 - Enterprise Admin Experience
+
+**Shipped:** 2026-03-31
+**Phases:** 10 | **Plans:** 39 | **Git commits:** not tracked in retrospective metadata
+
+### What Was Built
+- Delivered enterprise admin parity in the standalone frontend: backend-driven navigation, full user-management flows, and menu/permission management.
+- Completed security-core realignment: live authority refresh, typed secured-entity internals, explicit fail-closed validation, and row-policy retirement.
+- Shipped performance/documentation work for secured entities and completed Phase 11 hardening to meet PERF-04 overhead target with load-test proof.
+
+### What Worked
+- Keeping security enforcement behind `SecureDataManager`/`DataManager` boundaries allowed aggressive refactors without API contract breakage.
+- Phase-level verification artifacts made gap discovery fast when traceability drift appeared.
+
+### What Was Inefficient
+- Milestone metadata drifted (ROADMAP progress table, REQUIREMENTS traceability, and milestone audit naming), requiring end-of-milestone bookkeeping cleanup.
+- Some summary metadata (for example one-liner fields) remained inconsistent, reducing automation quality in milestone summarization.
+
+### Patterns Established
+- Performance regressions in secured pipelines should be closed with benchmark artifacts committed under `load-tests/results/` as release evidence.
+- Requirement closure needs synchronized updates across summary frontmatter, verification tables, and REQUIREMENTS traceability in the same phase window.
+
+### Key Lessons
+1. Technical delivery can be complete while planning artifacts are still stale; close documentation drift before archival to avoid false blockers.
+2. Security performance improvements are most reliable when each optimization is paired with measurable before/after evidence and explicit pass/fail KPI framing.
+
+### Cost Observations
+- Model mix: balanced profile used across planning and execution artifacts
+- Sessions: not tracked directly in retrospective metadata
+- Notable: highest effort concentrated in security-pipeline performance diagnosis and closure (Phases 10-11)
+
+---
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -43,14 +75,17 @@
 | Milestone | Sessions | Phases | Key Change |
 |-----------|----------|--------|------------|
 | v1.0 | not tracked | 5 | Established the security-platform migration pattern: preserve baseline flows, centralize enforcement, prove on sample entities, then ship the frontend |
+| v1.1 | not tracked | 10 | Extended the pattern with benchmark-driven performance closure and tighter requirements/verification traceability discipline |
 
 ### Cumulative Quality
 
 | Milestone | Tests | Coverage | Zero-Dep Additions |
 |-----------|-------|----------|-------------------|
 | v1.0 | Backend unit + integration coverage plus frontend Vitest and human UAT | Coverage not aggregated in planning artifacts | Several runtime additions reused the existing Spring and Angular stack rather than introducing a new platform dependency |
+| v1.1 | Added targeted unit/integration suites for security pipeline hot paths plus benchmark artifacts | PERF-04 proven by committed load-test results; frontend reliability backlog remains | Continued reusing existing Spring/Angular/Hazelcast stack without introducing new platform dependencies |
 
 ### Top Lessons (Verified Across Milestones)
 
 1. Final human-verification outcomes must be folded back into planning docs before archival.
 2. Security features are safer to scale when CRUD, row, attribute, and fetch-plan enforcement share one explicit access pipeline.
+
