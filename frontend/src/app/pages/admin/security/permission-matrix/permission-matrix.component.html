@@ -69,9 +69,7 @@
       </p-tablist>
       <p-tabpanels>
         <p-tabpanel value="0">
-          <div
-            class="grid grid-cols-1 items-start gap-4 xl:items-stretch xl:grid-cols-[minmax(0,1.45fr)_minmax(24rem,1fr)]"
-          >
+          <div class="permission-entity-layout grid items-start gap-4">
             <section class="permission-section min-w-0">
               <div class="permission-section__header">
                 <h2 class="permission-section__title">
@@ -425,22 +423,26 @@
                   <ng-template #body let-rowNode let-rowData="rowData">
                     <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
                       <td>
-                        <div class="flex items-center justify-between gap-4 max-md:flex-col max-md:items-start">
+                        <div
+                          class="flex items-center justify-between gap-4 max-md:flex-col max-md:items-start"
+                        >
                           <div class="flex min-w-0 flex-1 items-center gap-3">
                             <p-treetable-toggler [rowNode]="rowNode" />
                             <p-treetable-checkbox [value]="rowNode" />
                             @if (rowData.icon) {
-                              <span
-                                class="inline-flex flex-shrink-0 items-center justify-center "
-                              >
+                              <span class="inline-flex flex-shrink-0 items-center justify-center">
                                 <i [class]="rowData.icon"></i>
                               </span>
                             }
                             <div class="flex min-w-0 flex-1 flex-col gap-0.5">
-                              <span class="block max-w-full font-semibold leading-6 text-slate-900 [overflow-wrap:anywhere]">
+                              <span
+                                class="block max-w-full font-semibold leading-6 text-slate-900 [overflow-wrap:anywhere]"
+                              >
                                 {{ rowNode.node.label }}
                               </span>
-                              <span class="block max-w-full text-xs text-slate-500 [overflow-wrap:anywhere]">
+                              <span
+                                class="block max-w-full text-xs text-slate-500 [overflow-wrap:anywhere]"
+                              >
                                 {{ rowData.menuId }}
                               </span>
                             </div>

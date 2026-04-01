@@ -123,6 +123,10 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
         overflow: hidden;
       }
 
+      .permission-entity-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
       .permission-section__header {
         padding: 1.1rem 1.25rem 0.35rem;
       }
@@ -151,6 +155,17 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
 
       .permission-attribute-column {
         min-height: 0;
+      }
+
+      @media (min-width: 72rem) {
+        .permission-entity-layout {
+          align-items: stretch;
+          grid-template-columns: minmax(0, 1.35fr) minmax(22rem, 1fr);
+        }
+
+        .permission-attribute-column {
+          height: 100%;
+        }
       }
 
       :host ::ng-deep .permission-tabs {
