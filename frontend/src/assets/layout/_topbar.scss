@@ -4,6 +4,7 @@
   position: sticky;
   top: 0;
   z-index: 997;
+  margin-inline: calc(-1 * var(--layout-content-gutter, 0rem));
   padding: 0 1rem;
   background-color: var(--surface-ground);
   border-bottom: 1px solid var(--surface-border);
@@ -62,7 +63,11 @@
     border-radius: 1.5rem;
     border: 1px solid var(--app-border-strong);
     background:
-      linear-gradient(180deg, color-mix(in srgb, var(--app-surface-soft) 56%, white) 0%, var(--p-content-background) 24%),
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--app-surface-soft) 56%, white) 0%,
+        var(--p-content-background) 24%
+      ),
       var(--p-content-background);
     box-shadow: var(--app-shadow-md);
     backdrop-filter: blur(14px);

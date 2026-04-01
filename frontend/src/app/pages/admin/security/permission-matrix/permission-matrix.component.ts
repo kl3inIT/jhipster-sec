@@ -98,17 +98,29 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       }
 
       .permission-section {
-        margin: 0 1rem 1rem;
+        margin: 0;
         border: 1px solid rgba(148, 163, 184, 0.18);
         border-radius: 1rem;
-        background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.98),
+          color-mix(in srgb, var(--surface-ground) 82%, white 18%)
+        );
         box-shadow: 0 18px 36px rgba(15, 23, 42, 0.06);
         overflow: hidden;
       }
 
       .permission-section--attributes {
         margin-top: 0;
+      }
+
+      .permission-section--attributes-scroll {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        min-height: 0;
+        max-height: 32rem;
+        overflow: hidden;
       }
 
       .permission-section__header {
@@ -123,7 +135,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       }
 
       .permission-empty-state {
-        margin: 0 1rem 1rem;
+        margin: 0;
         padding: 1rem 1.25rem;
         border: 1px dashed rgba(148, 163, 184, 0.35);
         border-radius: 1rem;
@@ -131,17 +143,27 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
         background: rgba(248, 250, 252, 0.82);
       }
 
+      .permission-attribute-column {
+        min-height: 0;
+      }
+
       :host ::ng-deep .permission-tabs {
-        padding: 0 1rem;
+        padding: 0;
+        --p-tabs-tabpanel-background: transparent;
+        --p-tabs-tabpanel-color: inherit;
+        background: transparent !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
       }
 
       :host ::ng-deep .permission-tabs .p-tablist {
         margin: 0 0 0.85rem;
-        padding: 0;
-        border: 0;
-        border-radius: 0;
-        background: transparent;
-        box-shadow: none;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
       }
 
       :host ::ng-deep .permission-tabs .p-tablist::before,
@@ -153,19 +175,21 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       }
 
       :host ::ng-deep .permission-tabs .p-tablist-tab-list {
-        gap: 1.25rem;
+        gap: 0.35rem;
         border: 0;
+        border-radius: 0.85rem !important;
+        background: transparent !important;
         box-shadow: none;
       }
 
       :host ::ng-deep .permission-tabs .p-tab {
         border: 0 !important;
         border-bottom: 0 !important;
-        border-radius: 0;
+        border-radius: 0.8rem;
         background: transparent;
         color: #475569;
         font-weight: 700;
-        padding: 0.9rem 0.15rem 0.8rem;
+        padding: 0.8rem 1rem;
         box-shadow: none;
         transition:
           background-color 0.18s ease,
@@ -176,21 +200,37 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
 
       :host ::ng-deep .permission-tabs .p-tab:hover {
         color: #0f766e;
-        background: transparent;
+        background: rgba(255, 255, 255, 0.72);
       }
 
       :host ::ng-deep .permission-tabs .p-tab.p-tab-active {
         color: #0f766e;
-        background: transparent;
+        background: rgba(255, 255, 255, 0.96);
         border: 0 !important;
         border-bottom: 0 !important;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08) !important;
+      }
+
+      :host ::ng-deep .permission-tabs .p-tablist-content {
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
         box-shadow: none !important;
       }
 
-      :host ::ng-deep .permission-tabs .p-tablist-content,
-      :host ::ng-deep .permission-tabs .p-tabpanels,
+      :host ::ng-deep .permission-tabs .p-tabpanels {
+        padding: var(--p-tabs-tabpanel-padding);
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+      }
+
       :host ::ng-deep .permission-tabs .p-tabpanel {
-        border: 0;
+        padding: 0 !important;
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
       }
 
       :host ::ng-deep .permission-tabs .p-tablist-active-bar {
@@ -285,6 +325,27 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
         border-radius: 0 0 1rem 1rem;
       }
 
+      :host ::ng-deep .permission-matrix-table--attributes {
+        display: flex;
+        flex: 1 1 auto;
+        min-height: 0;
+        flex-direction: column;
+      }
+
+      :host ::ng-deep .permission-matrix-table--attributes .p-datatable-table-container {
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      :host ::ng-deep .permission-matrix-table--attributes .p-datatable-table-container::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+
       :host ::ng-deep .permission-matrix-table .p-datatable-thead > tr > th {
         padding: 0.85rem 1rem;
         border-width: 0 0 1px;
@@ -311,23 +372,48 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
         border-bottom: 0;
       }
 
-      :host ::ng-deep .permission-matrix-table .p-datatable-tbody > tr.permission-row--clickable:hover > td {
+      :host
+        ::ng-deep
+        .permission-matrix-table
+        .p-datatable-tbody
+        > tr.permission-row--clickable:hover
+        > td {
         background: rgba(239, 246, 255, 0.92);
       }
 
-      :host ::ng-deep .permission-matrix-table .p-datatable-tbody > tr.permission-row--selected > td {
+      :host
+        ::ng-deep
+        .permission-matrix-table
+        .p-datatable-tbody
+        > tr.permission-row--selected
+        > td {
         background: rgba(14, 165, 233, 0.08);
       }
 
-      :host ::ng-deep .permission-matrix-table .p-datatable-tbody > tr.permission-row--active > td:first-child {
+      :host
+        ::ng-deep
+        .permission-matrix-table
+        .p-datatable-tbody
+        > tr.permission-row--active
+        > td:first-child {
         box-shadow: inset 3px 0 0 rgba(16, 185, 129, 0.85);
       }
 
-      :host ::ng-deep .permission-matrix-table .p-datatable-tbody > tr.permission-row--selected > td:first-child {
+      :host
+        ::ng-deep
+        .permission-matrix-table
+        .p-datatable-tbody
+        > tr.permission-row--selected
+        > td:first-child {
         box-shadow: inset 3px 0 0 var(--p-primary-color);
       }
 
-      :host ::ng-deep .permission-matrix-table .p-datatable-tbody > tr.permission-row--wildcard > td {
+      :host
+        ::ng-deep
+        .permission-matrix-table
+        .p-datatable-tbody
+        > tr.permission-row--wildcard
+        > td {
         background: rgba(15, 23, 42, 0.035);
       }
 
@@ -474,7 +560,10 @@ export default class PermissionMatrixComponent implements OnInit {
     return [wildcardEntry, ...this.catalogEntries];
   }
 
-  private onPermissionDataLoaded(catalogEntries: ISecCatalogEntry[], permissions: ISecPermission[]): void {
+  private onPermissionDataLoaded(
+    catalogEntries: ISecCatalogEntry[],
+    permissions: ISecPermission[],
+  ): void {
     this.catalogEntries = catalogEntries;
     this.catalogEntriesWithWildcard = this.buildCatalogEntriesWithWildcard();
     this.granted.clear();
@@ -579,6 +668,10 @@ export default class PermissionMatrixComponent implements OnInit {
       return;
     }
     this.loadMenuDefinitions(appName);
+  }
+
+  onActiveTabValueChange(value: string | number | undefined): void {
+    this.activeTabValue = value?.toString() ?? '0';
   }
 
   private buildMenuTree(): void {
@@ -703,8 +796,8 @@ export default class PermissionMatrixComponent implements OnInit {
   ): string[] {
     const apps = Array.from(
       new Set([
-        ...permissions.map(permission => permission.appName).filter(appName => appName?.trim()),
-        ...definitions.map(definition => definition.appName).filter(appName => appName?.trim()),
+        ...permissions.map((permission) => permission.appName).filter((appName) => appName?.trim()),
+        ...definitions.map((definition) => definition.appName).filter((appName) => appName?.trim()),
       ]),
     ).sort((left, right) => {
       if (left === this.defaultMenuApp) {
@@ -789,7 +882,10 @@ export default class PermissionMatrixComponent implements OnInit {
    * granted for the given action.
    */
   isEntityEffectivelyGranted(entityCode: string, action: string): boolean {
-    return this.isEffectivelyGranted(entityCode, action) || this.isEntityWildcardEffectivelyGranted(action);
+    return (
+      this.isEffectivelyGranted(entityCode, action) ||
+      this.isEntityWildcardEffectivelyGranted(action)
+    );
   }
 
   isPendingChange(target: string, action: string): boolean {
@@ -802,20 +898,30 @@ export default class PermissionMatrixComponent implements OnInit {
    */
   isImpliedByEntityWildcard(entityCode: string, action: string): boolean {
     if (entityCode === '*') return false;
-    return this.isEntityWildcardEffectivelyGranted(action) && !this.isEffectivelyGranted(entityCode, action);
+    return (
+      this.isEntityWildcardEffectivelyGranted(action) &&
+      !this.isEffectivelyGranted(entityCode, action)
+    );
   }
 
   isImpliedByAttributeWildcard(target: string, action: string, entityCode: string): boolean {
     if (target === `${entityCode}.*`) return false;
-    return this.isWildcardEffectivelyGranted(entityCode, action) && !this.isEffectivelyGranted(target, action);
+    return (
+      this.isWildcardEffectivelyGranted(entityCode, action) &&
+      !this.isEffectivelyGranted(target, action)
+    );
   }
 
   /** True when any CRUD op is effectively granted for the entity row. */
   isEntityRowGranted(entityCode: string): boolean {
     if (entityCode === '*') {
-      return ['CREATE', 'READ', 'UPDATE', 'DELETE'].some((op) => this.isEffectivelyGranted('*', op));
+      return ['CREATE', 'READ', 'UPDATE', 'DELETE'].some((op) =>
+        this.isEffectivelyGranted('*', op),
+      );
     }
-    return ['CREATE', 'READ', 'UPDATE', 'DELETE'].some((op) => this.isEntityEffectivelyGranted(entityCode, op));
+    return ['CREATE', 'READ', 'UPDATE', 'DELETE'].some((op) =>
+      this.isEntityEffectivelyGranted(entityCode, op),
+    );
   }
 
   /** True when VIEW or EDIT is effectively granted for the attribute row. */
@@ -849,7 +955,12 @@ export default class PermissionMatrixComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  private applySimpleToggle(targetType: string, target: string, action: string, checked: boolean): void {
+  private applySimpleToggle(
+    targetType: string,
+    target: string,
+    action: string,
+    checked: boolean,
+  ): void {
     const key = this.permissionKey(target, action);
     if (checked === this.isGranted(target, action)) {
       this.pendingChanges.delete(key);
@@ -869,7 +980,12 @@ export default class PermissionMatrixComponent implements OnInit {
           if (pending?.checked) {
             this.pendingChanges.delete(key);
           } else if (!pending && this.granted.has(key)) {
-            this.pendingChanges.set(key, { checked: false, targetType: 'ENTITY', target: entry.code, action });
+            this.pendingChanges.set(key, {
+              checked: false,
+              targetType: 'ENTITY',
+              target: entry.code,
+              action,
+            });
           }
         }
       } else {
@@ -897,7 +1013,12 @@ export default class PermissionMatrixComponent implements OnInit {
             // This one is being unticked — ensure it's marked unchecked (not granted by wildcard anymore)
             const key = this.permissionKey(entry.code, action);
             if (this.granted.has(key)) {
-              this.pendingChanges.set(key, { checked: false, targetType: 'ENTITY', target: entry.code, action });
+              this.pendingChanges.set(key, {
+                checked: false,
+                targetType: 'ENTITY',
+                target: entry.code,
+                action,
+              });
             } else {
               this.pendingChanges.delete(key);
             }
@@ -905,7 +1026,12 @@ export default class PermissionMatrixComponent implements OnInit {
             // All others should remain checked — add pending-add only if not already in DB
             const key = this.permissionKey(entry.code, action);
             if (!this.granted.has(key)) {
-              this.pendingChanges.set(key, { checked: true, targetType: 'ENTITY', target: entry.code, action });
+              this.pendingChanges.set(key, {
+                checked: true,
+                targetType: 'ENTITY',
+                target: entry.code,
+                action,
+              });
             } else {
               // Already in DB — remove any pending-delete that may have been set
               this.pendingChanges.delete(key);
@@ -936,7 +1062,12 @@ export default class PermissionMatrixComponent implements OnInit {
         // Was pending-add, no longer needed
         this.pendingChanges.delete(key);
       } else if (!pending && this.granted.has(key)) {
-        this.pendingChanges.set(key, { checked: false, targetType: 'ENTITY', target: entry.code, action });
+        this.pendingChanges.set(key, {
+          checked: false,
+          targetType: 'ENTITY',
+          target: entry.code,
+          action,
+        });
       }
     }
   }
@@ -959,7 +1090,12 @@ export default class PermissionMatrixComponent implements OnInit {
           if (pending?.checked) {
             this.pendingChanges.delete(key);
           } else if (!pending && this.granted.has(key)) {
-            this.pendingChanges.set(key, { checked: false, targetType: 'ATTRIBUTE', target: specificTarget, action });
+            this.pendingChanges.set(key, {
+              checked: false,
+              targetType: 'ATTRIBUTE',
+              target: specificTarget,
+              action,
+            });
           }
         }
       } else {
@@ -984,14 +1120,24 @@ export default class PermissionMatrixComponent implements OnInit {
           if (specificTarget === target) {
             const key = this.permissionKey(specificTarget, action);
             if (this.granted.has(key)) {
-              this.pendingChanges.set(key, { checked: false, targetType: 'ATTRIBUTE', target: specificTarget, action });
+              this.pendingChanges.set(key, {
+                checked: false,
+                targetType: 'ATTRIBUTE',
+                target: specificTarget,
+                action,
+              });
             } else {
               this.pendingChanges.delete(key);
             }
           } else {
             const key = this.permissionKey(specificTarget, action);
             if (!this.granted.has(key)) {
-              this.pendingChanges.set(key, { checked: true, targetType: 'ATTRIBUTE', target: specificTarget, action });
+              this.pendingChanges.set(key, {
+                checked: true,
+                targetType: 'ATTRIBUTE',
+                target: specificTarget,
+                action,
+              });
             } else {
               this.pendingChanges.delete(key);
             }
@@ -1022,7 +1168,12 @@ export default class PermissionMatrixComponent implements OnInit {
       if (pending?.checked) {
         this.pendingChanges.delete(key);
       } else if (!pending && this.granted.has(key)) {
-        this.pendingChanges.set(key, { checked: false, targetType: 'ATTRIBUTE', target: specificTarget, action });
+        this.pendingChanges.set(key, {
+          checked: false,
+          targetType: 'ATTRIBUTE',
+          target: specificTarget,
+          action,
+        });
       }
     }
   }
