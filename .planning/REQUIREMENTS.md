@@ -1,54 +1,57 @@
 # Requirements: JHipster Security Platform
 
 **Defined:** 2026-04-01
+**Milestone:** v1.2 CI/CD & Production Validation
 **Core Value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, authority, and attribute-level access decisions.
 
-## v1 Requirements
+## Milestone v1.2 Requirements
 
-Requirements for milestone v1.2 CI/CD & Production Validation.
+### Production Configuration And Runtime Baseline
 
-### CI/CD
+- [ ] **PROD-01**: The project can start a production-like application stack from committed configuration and compose assets without depending on dev-only shortcuts.
+- [ ] **PROD-02**: The production-like stack preserves brownfield-safe auth, account, admin-user, mail, and secured-entity behavior so validation can run against a realistic runtime shape.
 
-- [ ] **CICD-01**: Developer can run a GitHub Actions backend pipeline that builds and verifies the Spring Boot application on Java 25.
-- [ ] **CICD-02**: Developer can run a GitHub Actions frontend pipeline that builds and verifies the standalone Angular frontend on Node 24.
-- [ ] **CICD-03**: Developer can run an integration validation workflow that starts the production-like container stack and verifies the application becomes healthy.
+### CI/CD Pipeline Separation
 
-### Production Deployment
+- [ ] **CICD-01**: CI separates backend and frontend verification so failures are isolated to the lane that broke instead of blocking all feedback behind one monolithic job.
+- [ ] **CICD-02**: CI can run the production-validation prerequisites needed by this milestone, including the production-like stack and benchmark entry points, in a repeatable automated flow.
 
-- [ ] **DEPLOY-01**: Operator can start a production-like Docker Compose stack for backend, frontend, and PostgreSQL using environment-driven configuration instead of hardcoded secrets.
-- [ ] **DEPLOY-02**: Operator can serve the standalone frontend through a production-ready container path that works behind VPN and Nginx Proxy Manager.
-- [ ] **DEPLOY-03**: Operator can verify the production profile starts cleanly with hardened configuration suitable for a private server deployment.
+### Production-Like Benchmark Baseline And Validation
 
-### Performance
+- [ ] **BENCH-02**: Benchmarking uses a production-like dataset with realistic row counts, multiple secured tables, and representative relationship depth instead of a narrow single-table seed.
+- [ ] **BENCH-03**: Benchmark runs measure secured vs baseline behavior under multiple concurrency levels and persist comparable summaries that can be reviewed before optimization work begins.
+- [ ] **VAL-01**: The milestone establishes a trusted benchmark baseline and stack-validation report before any deeper permission-lookup optimization is treated as ready to start.
 
-- [ ] **PERF-05**: Developer can evaluate permission lookup overhead at projected scale and replace repeated brute-force permission scans with lookup-friendly request-lifecycle structures where needed.
-- [ ] **PERF-06**: Developer can identify and implement meaningful request-path optimizations without changing the security model’s authorization semantics.
-- [ ] **PERF-07**: Developer can run production-topology benchmark validation and compare secured-endpoint behavior against the current performance baseline.
+### Permission Lookup Optimization
 
-### Security Validation
+- [ ] **PERF-05**: Permission lookup work reduces the benchmarked overhead identified in the production-like baseline without weakening CRUD, authority, attribute-level, or fetch-plan security behavior.
 
-- [ ] **SECVAL-01**: Developer can prove auth refresh behavior remains correct in the production-like environment.
-- [ ] **SECVAL-02**: Developer can prove secured-entity CRUD and attribute-level permission enforcement remain correct in the production-like environment.
-- [ ] **SECVAL-03**: Developer can prove authorization guarantees do not regress under production-like load and deployment conditions.
+### Production Security Proof
 
-## v2 Requirements
+- [ ] **SEC-05**: The final milestone proof demonstrates that the production-like stack, benchmark evidence, and optimized permission path still enforce the expected security outcomes under realistic runtime conditions.
 
-Deferred to a future milestone.
+## Future Requirements
 
-### Frontend Reliability
+### Deferred Platform Expansion
 
-- **TEST-01**: Add reliable automated frontend coverage for the new admin experience.
-- **TEST-02**: Expand reliability coverage around routing, shared UI infrastructure, and registration.
-- **TEST-03**: Add CI-executed browser-level validation for critical frontend flows.
+- **TEST-01**: Add reliable automated frontend coverage for user-management CRUD and role-assignment behavior across success and failure paths.
+- **TEST-02**: Add automated frontend coverage for backend-driven routing, menu visibility, and permission-based access denial.
+- **TEST-03**: Add automated frontend coverage for the enterprise shell and critical migrated UI components so copied JHipster support files do not regress behavior.
+- **MIG-01**: Migrate additional `angapp` business domains beyond current parity scope once the production-validation baseline is proven.
+- **DATA-06**: Introduce fetch-plan authoring UI only if runtime administration truly needs it.
+- **API-01**: Remove remaining boundary DTOs only where public contracts and validation remain stable.
+- **ADMIN-01**: Migrate legacy ops or admin utilities such as health, metrics, logs, configuration, and docs only if operational users need them in `frontend/`.
 
 ## Out of Scope
 
+Explicitly excluded from this milestone.
+
 | Feature | Reason |
 |---------|--------|
-| Kubernetes / Helm deployment | Docker Compose is the chosen v1.2 production-like target |
-| Public internet ingress redesign | Deployment is behind VPN with Nginx Proxy Manager already in place |
-| Multi-node Hazelcast clustering | Not required for this milestone’s production validation |
-| New end-user business features | v1.2 is operational maturity, not feature expansion |
+| Literal full `angapp` clone | This milestone validates production-readiness and CI behavior, not broad legacy feature migration |
+| Database-backed fetch-plan metadata | Project constraints still require fetch plans to live only in YAML or code |
+| New row-policy replacement model | Row policy was retired in Phase 08.3 and is not part of v1.2 scope |
+| Broad feature expansion beyond production-validation needs | v1.2 is focused on deployable runtime proof, benchmark trust, and targeted security optimization |
 
 ## Traceability
 
@@ -56,24 +59,21 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CICD-01 | Phase TBD | Pending |
-| CICD-02 | Phase TBD | Pending |
-| CICD-03 | Phase TBD | Pending |
-| DEPLOY-01 | Phase TBD | Pending |
-| DEPLOY-02 | Phase TBD | Pending |
-| DEPLOY-03 | Phase TBD | Pending |
-| PERF-05 | Phase TBD | Pending |
-| PERF-06 | Phase TBD | Pending |
-| PERF-07 | Phase TBD | Pending |
-| SECVAL-01 | Phase TBD | Pending |
-| SECVAL-02 | Phase TBD | Pending |
-| SECVAL-03 | Phase TBD | Pending |
+| PROD-01 | Phase 12 | Pending |
+| PROD-02 | Phase 12 | Pending |
+| CICD-01 | Phase 13 | Pending |
+| CICD-02 | Phase 13 | Pending |
+| BENCH-02 | Phase 14 | Pending |
+| BENCH-03 | Phase 14 | Pending |
+| VAL-01 | Phase 14 | Pending |
+| PERF-05 | Phase 15 | Pending |
+| SEC-05 | Phase 16 | Pending |
 
 **Coverage:**
-- v1 requirements: 12 total
-- Mapped to phases: 0
-- Unmapped: 12 ⚠️
+- Milestone requirements: 9 total
+- Mapped to phases: 9
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-01*
-*Last updated: 2026-04-01 after initial definition*
+*Last updated: 2026-04-01 after roadmap revision prioritizing benchmark baselines before optimization*
