@@ -1,68 +1,150 @@
 # Feature Landscape
 
-**Domain:** security platform brownfield migration
-**Researched:** 2026-03-21
+**Domain:** CI/CD, production deployment, permission optimization, and security validation for JHipster Security Platform
+**Researched:** 2026-04-01
+**Milestone:** v1.2 CI/CD & Production Validation
 
 ## Table Stakes
 
-These are the v1 features the migration must ship. Missing any of them means the new platform regresses either the current backend contract or the working `angapp` security behavior.
+Features the v1.2 milestone must ship. Missing any of these means the platform lacks operational maturity and cannot prove production readiness.
 
-| Feature | Why It Is Table Stakes | Concrete Evidence |
-|---------|-------------------------|-------------------|
-| Authentication and account lifecycle parity | The current product already exposes login, registration, activation, account profile, password change, and password reset flows. The standalone frontend must preserve them unchanged. | Current REST surface: `src/main/java/com/vn/core/web/rest/AuthenticateController.java`, `src/main/java/com/vn/core/web/rest/AccountResource.java`. Frontend reference: `aef-main/aef-main/src/app/pages/account/account.routes.ts`. |
-| Admin user management parity | The migration cannot regress admin ability to create, update, paginate, inspect, activate/deactivate, and delete users. | Current REST surface: `src/main/java/com/vn/core/web/rest/UserResource.java`. Angular reference: `angapp/src/main/webapp/app/admin/user-management/list/user-management.component.ts`, `angapp/src/main/webapp/app/admin/user-management/update/user-management-update.component.ts`, `angapp/src/main/webapp/app/admin/user-management/user-management.model.ts`. |
-| Authority management parity | The backend already supports CRUD-lite authority administration and `angapp` exposes it as an entity screen. This must remain available because role assignment starts from user authorities. | Current REST surface: `src/main/java/com/vn/core/web/rest/AuthorityResource.java`. Angular reference: `angapp/src/main/webapp/app/entities/admin/authority/authority.routes.ts`. |
-| Security metadata administration: roles | v1 needs first-class CRUD for security roles, not just static seed data, because `angapp` already has a role editor and the migration goal is project-native role/permission management. | UI routes and form shape: `angapp/src/main/webapp/app/entities/sec-role/sec-role.routes.ts`, `angapp/src/main/webapp/app/entities/sec-role/sec-role.model.ts`, `angapp/src/main/webapp/app/entities/sec-role/update/sec-role-form.service.ts`. |
-| Security metadata administration: permissions | Role management is incomplete without permission CRUD across entity, attribute, row-policy, and fetch-plan targets. This is core admin functionality, not a later enhancement. | UI routes and form shape: `angapp/src/main/webapp/app/entities/sec-permission/sec-permission.routes.ts`, `angapp/src/main/webapp/app/entities/sec-permission/sec-permission.model.ts`, `angapp/src/main/webapp/app/entities/sec-permission/update/sec-permission-form.service.ts`. Seed data also proves intended usage: `angapp/src/main/resources/config/liquibase/changelog/20260319001000_security_seed_roles_permissions.xml`, `angapp/src/main/resources/config/liquibase/changelog/20260320000000_security_seed_fetch_plans_and_attribute_permissions.xml`. |
-| Security metadata administration: row policies | End-to-end security management requires admins to create and maintain row-level policies, not just hardcode them. `angapp` already exposes list/create/edit/delete for these records. | UI routes and form shape: `angapp/src/main/webapp/app/entities/sec-row-policy/sec-row-policy.routes.ts`, `angapp/src/main/webapp/app/entities/sec-row-policy/sec-row-policy.model.ts`, `angapp/src/main/webapp/app/entities/sec-row-policy/update/sec-row-policy-form.service.ts`. Metadata table: `angapp/src/main/resources/config/liquibase/changelog/20260319000100_security_metadata.xml`. |
-| Protected sample entity CRUD for verification | The migration needs at least the `Department` and `Organization` flows to prove that entity CRUD, row filtering, attribute filtering, and secure serialization work against real business data. | Frontend references: `angapp/src/main/webapp/app/entities/department/**`, `angapp/src/main/webapp/app/entities/organization/**`, `aef-main/aef-main/src/app/pages/entities/department/**`, `aef-main/aef-main/src/app/pages/entities/organization/**`. Backend enforcement references: `angapp/src/main/java/com/mycompany/myapp/service/impl/DepartmentServiceImpl.java`, `angapp/src/main/java/com/mycompany/myapp/service/impl/OrganizationServiceImpl.java`. |
-| Standalone frontend route protection and authority-aware navigation | The new frontend must gate routes and menu entries by authority, or the migrated admin/security screens are not operable end to end. | Guard/auth references: `aef-main/aef-main/src/app/core/auth/user-route-access.service.ts`, `aef-main/aef-main/src/app/core/auth/account.service.ts`, `aef-main/aef-main/src/app/shared/auth/has-any-authority.directive.ts`, `aef-main/aef-main/src/app/layout/component/menu/app.menu.ts`. |
+| Feature | Why Expected | Complexity | Dependencies | Notes |
+|---------|--------------|------------|--------------|-------|
+| GitHub Actions CI workflow for backend (Gradle + Java 25) | JHipster explicitly documents CI/CD as a first-class concern because of the dual-stack build requirement. Without automated backend CI, regressions slip through on every push. | Low | None - Gradle build already works locally | JHipster recommends `jhipster ci-cd` generator but the generated workflow needs customization for Java 25 + separate frontend. Standard pattern: checkout, setup-java, setup-gradle, `./gradlew -Pprod check`, Testcontainers for integration tests. |
+| GitHub Actions CI workflow for frontend (Angular 21 + Node 24) | The frontend is a standalone app in `frontend/` with its own build toolchain. It must be validated independently because backend changes do not trigger frontend failures and vice versa. | Low | None - `npm run build` already works | Standard pattern: checkout, setup-node with npm cache, `npm ci`, `npm run lint`, `npm run test -- --watch=false`, `npm run build -- --configuration production`. |
+| Jib-based Docker image build for backend | The project already has `jhipster.docker-conventions.gradle` with Jib configured targeting `jhipster-sec:latest` on `eclipse-temurin:25-jre-noble`. This is the JHipster-standard production image pattern. Must be wired into CI. | Low | Backend CI workflow | Already configured: `./gradlew -Pprod bootJar jibDockerBuild`. Just needs CI integration. |
+| Docker Compose production stack (backend + PostgreSQL + frontend) | JHipster generates `src/main/docker/app.yml` as the production entry point. The project has `postgresql.yml` and `services.yml` but no `app.yml` yet (it exists in `angapp/` reference). Production proof requires a working multi-container stack. | Medium | Jib image build, frontend production build | Need: `app.yml` with backend (prod profile), PostgreSQL (with auth), and nginx serving frontend static assets. The `entrypoint.sh` already supports Docker secrets via `file_env`. |
+| Spring Boot `prod` profile hardening | The existing `application-prod.yml` has hardcoded credentials (`password: admin123`) and a remote database URL. Production deployment must use environment variables or Docker secrets for all sensitive config. | Low | None | The `entrypoint.sh` already handles `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD` via `file_env`. Just need to update `application-prod.yml` to use `${...}` placeholders. |
+| Frontend production build with nginx container | The standalone `frontend/` app needs a production container. Standard pattern is multi-stage Dockerfile: Node build stage then nginx serve stage. The Angular CLI `--configuration production` flag handles AOT, tree-shaking, and minification. | Medium | None | Need `frontend/Dockerfile` and `frontend/nginx.conf` with API reverse proxy to backend service. |
+| Permission matrix pre-processing into indexed lookup | The current `PermissionMatrix` uses `Set<String>` with string-key lookups (`"ENTITY:TARGET:ACTION"`). This is already O(1) via `HashSet.contains()`. However, `isAttributePermitted()` does string splitting on every call (`attrTarget.split("\\.")`) and checks up to 4 keys. At 200 entities with 10+ attributes each, the per-attribute overhead adds up across serialization. | Medium | Existing `PermissionMatrix`, `RequestPermissionSnapshot` | Jmix pattern: `ResourcePoliciesIndex` pre-groups policies into `Map<String, Map<String, List<ResourcePolicy>>>` (type -> resource -> policies) at construction time. The current project's `PermissionMatrix` is simpler (flat `Set<String>`) but should adopt the same principle: pre-split attribute targets at construction, pre-build entity-name groupings for attribute wildcards. |
+| Request-path optimization audit | Phase 11 achieved PERF-04 (p95 overhead < 10%). v1.2 must verify this holds under production conditions and identify any remaining per-request overhead. The `SecureDataManagerImpl` pipeline has 6 steps: catalog lookup, CRUD check, specification build, load, fetch-plan resolve, serialize. Each should be profiled. | Medium | k6 infrastructure (already exists), production Docker stack | The catalog already caches entries in `MetamodelSecuredEntityCatalog.cachedEntries` (constructed once at boot). Fetch-plan resolution uses `YamlFetchPlanRepository`. Both are already efficient. Focus should be on serialization overhead under production JVM settings. |
+| Security regression tests under production conditions | The security pipeline must be proven correct under production profile, not just dev/test. This means: JWT auth works end-to-end, permission enforcement blocks unauthorized access, attribute filtering strips fields, cache eviction propagates. | High | Production Docker stack, test data seeding | This is the core validation deliverable. Must cover: (1) authenticated CRUD allowed/denied, (2) attribute visibility filtering, (3) permission change propagation via Hazelcast cache eviction, (4) multi-role union-of-ALLOW semantics. |
+| Production deployment proof | A documented, reproducible `docker compose up` that starts the full stack and passes a smoke test suite. This is the milestone's exit criterion. | Medium | All above | Combines Docker Compose stack + security regression + k6 benchmarks running against the production containers. |
 
 ## Differentiators
 
-These are the `angapp` behaviors that make this a security platform migration rather than a plain JHipster admin UI port. They should still be treated as required in v1 because they are the reason this migration exists.
+Features that go beyond table stakes and demonstrate enterprise-grade operational maturity. Not strictly required but high-value for the project's goals.
 
-| Feature | Why It Matters | Concrete Evidence |
-|---------|----------------|-------------------|
-| Secure data access goes through a central security-aware data layer | The project brief explicitly says security must be enforced in data access, not only in controllers. This is the core behavior to preserve from `angapp`. | Project brief: `.planning/PROJECT.md`. Implementation references: `angapp/src/main/java/com/mycompany/core/data/SecureDataManager.java`, `angapp/src/main/java/com/mycompany/core/data/SecureDataManagerImpl.java`. |
-| Entity CRUD permission enforcement | Business CRUD must fail when the caller lacks entity-level permission; otherwise the role/permission UI is cosmetic. | Enforcement references: `angapp/src/main/java/com/mycompany/core/security/access/CrudEntityContext.java`, `angapp/src/main/java/com/mycompany/core/security/access/CrudEntityConstraint.java`, `angapp/src/main/java/com/mycompany/core/security/permission/EntityPermissionEvaluatorImpl.java`. |
-| Attribute-level view and edit enforcement | The platform must be able to hide fields on read and block field updates on write. This is the main behavior missing from the current backend surface. | Read filtering: `angapp/src/main/java/com/mycompany/core/serialize/SecureEntitySerializerImpl.java`. Write filtering: `angapp/src/main/java/com/mycompany/core/merge/SecureMergeServiceImpl.java`. Seed examples: `angapp/src/main/resources/config/liquibase/changelog/20260320000000_security_seed_fetch_plans_and_attribute_permissions.xml`. |
-| Row-level filtering on reads, updates, and deletes | Permission management is incomplete without row scoping. The secure data manager applies row constraints before load, save, and delete. | Enforcement references: `angapp/src/main/java/com/mycompany/core/security/row/RowLevelPolicyProviderDbImpl.java`, `angapp/src/main/java/com/mycompany/core/security/row/RowLevelSpecificationBuilder.java`, `angapp/src/main/java/com/mycompany/core/data/SecureDataManagerImpl.java`. |
-| Fetch-plan-driven secure reads | The system is designed to shape API responses by approved fetch plans instead of broad DTO expansion. This must survive the merge. | YAML source of truth: `angapp/src/main/resources/fetch-plans.yml`. Resolver: `angapp/src/main/java/com/mycompany/core/fetch/FetchPlanResolverImpl.java`. Project requirement: `.planning/PROJECT.md`. |
-| Role/permission model mapped to actual runtime authorities | v1 needs a coherent bridge between user authorities and the new security engine so that admin changes affect real access outcomes. | Seed mapping reference: `angapp/src/main/resources/config/liquibase/changelog/20260319001000_security_seed_roles_permissions.xml`. Current user authority surface: `src/main/java/com/vn/core/web/rest/UserResource.java`, `src/main/java/com/vn/core/web/rest/AuthorityResource.java`. |
+| Feature | Value Proposition | Complexity | Dependencies | Notes |
+|---------|-------------------|------------|--------------|-------|
+| Jmix-informed `ResourcePoliciesIndex`-style permission structure | Replace flat `Set<String>` in `PermissionMatrix` with a two-level `Map<TargetType, Map<String, Set<String>>>` that groups policies by type and target at construction time. Eliminates per-call string splitting and wildcard fallback iteration. | Medium | Understanding of Jmix `ResourceRole.ResourcePoliciesIndex` (researched) | Jmix source confirms: policies are grouped into `Map<String, Map<String, List<ResourcePolicy>>>` keyed by `(policyType, resource)` at role-set time. Construction cost is O(n) once; lookups are O(1) HashMap get. The current project's `HashSet<String>` approach is already fast but the attribute path does `split(".")` on every call. Pre-indexing attribute permissions by entity name at construction eliminates this. |
+| CI matrix for multiple environments (dev + prod profiles) | Run backend tests under both `testdev` and `testprod` Spring profiles in CI. The project already defines both (`springTestProfiles` in `spring-boot.gradle`). Running both catches profile-specific config bugs before deployment. | Low | Backend CI workflow | Already supported by Gradle: `./gradlew test` uses `test,testdev`, `./gradlew -Pprod test` uses `test,testprod`. Just add a matrix job. |
+| k6 load tests in CI against Docker Compose stack | Run the existing k6 benchmark scripts (`load-tests/scripts/org-list-benchmark.js`) against the production Docker Compose stack in CI. Catches performance regressions automatically. | Medium | Production Docker stack in CI, k6 installed in runner | The k6 scripts already output markdown summaries and JSON. CI can archive these as artifacts and fail on threshold violations (the scripts already define `thresholds`). |
+| Health check and readiness probe configuration | Spring Boot Actuator health endpoints (`/management/health`) already exist. Wire them into Docker Compose `healthcheck` and document for production use. The `angapp/src/main/docker/app.yml` already shows this pattern. | Low | Docker Compose stack | Standard JHipster pattern: `test: ['CMD', 'curl', '-f', 'http://localhost:8080/management/health']`. |
+| Permission matrix Hazelcast serialization optimization | The `PermissionMatrix` is cached in Hazelcast but uses default Java serialization. For cross-request caching at scale, a compact serializer (Hazelcast `IdentifiedDataSerializable` or `Compact`) reduces network overhead and GC pressure. | Medium | Hazelcast configuration | Only matters at cluster scale. For single-node Docker Compose deployment this is premature. Flag for later if multi-node Hazelcast is needed. |
+| Automated security test suite as reusable regression harness | Structure security validation tests so they can run as both: (1) Spring Boot integration tests (`@SpringBootTest` with Testcontainers) and (2) external HTTP tests against the Docker Compose stack. Same assertions, two execution modes. | High | Test infrastructure | The integration test mode already exists. The external mode needs a lightweight HTTP client test runner (could be k6 scripts with assertion-heavy checks, or a Gradle `integrationTest` task pointing at an external URL). |
 
-## Frontend Capabilities Required For End-to-End Role/Permission Management
+## Anti-Features
 
-The `aef-main` skeleton is a useful shell, but it does not yet contain the security-management feature area. v1 needs these frontend capabilities added on top of it.
+Features to explicitly NOT build in v1.2.
 
-| Frontend Capability | Why Required | Concrete Evidence |
-|--------------------|--------------|-------------------|
-| Security admin navigation | Admins need discoverable entry points for roles, permissions, row policies, users, and authorities. `aef-main` currently has admin menu stubs for users/settings only and no security metadata menu items. | Existing shell: `aef-main/aef-main/src/app/layout/component/menu/app.menu.ts`. Existing `angapp` entity routing: `angapp/src/main/webapp/app/entities/entity.routes.ts`, `angapp/src/main/webapp/app/admin/admin.routes.ts`. |
-| Paginated sortable list screens for roles, permissions, and row policies | `angapp` already treats these as pageable admin datasets. The new frontend should preserve list, sort, create, edit, and delete affordances. | List implementations: `angapp/src/main/webapp/app/entities/sec-role/list/sec-role.component.ts`, `angapp/src/main/webapp/app/entities/sec-permission/list/sec-permission.component.ts`, `angapp/src/main/webapp/app/entities/sec-row-policy/list/sec-row-policy.component.ts`. |
-| Create/edit forms with constrained enums and validation | End-to-end management requires structured editors for role type, permission target type/effect, and row-policy operation/type; freeform JSON would be a regression. | Forms: `angapp/src/main/webapp/app/entities/sec-role/update/sec-role-form.service.ts`, `angapp/src/main/webapp/app/entities/sec-permission/update/sec-permission-form.service.ts`, `angapp/src/main/webapp/app/entities/sec-row-policy/update/sec-row-policy-form.service.ts`. |
-| User editor with authority assignment | Admins must be able to manage the authority set on each user because runtime access still starts from user authorities. | User form references: `angapp/src/main/webapp/app/admin/user-management/update/user-management-update.component.ts`, `angapp/src/main/webapp/app/admin/user-management/user-management.model.ts`. |
-| Safe error handling for access-denied and missing-resource cases | Once attribute and row security are enforced, the frontend must tolerate 403/404 outcomes as normal product behavior. | Shell references: `aef-main/aef-main/src/app/pages/access-denied/access-denied.component.ts`, `aef-main/aef-main/src/app/core/interceptor/error-handler.interceptor.ts`, `angapp/src/main/webapp/app/entities/sec-role/route/sec-role-routing-resolve.service.ts`. |
-| Preservation of account self-service flows in the same frontend | Security administration without login/account recovery is incomplete for the standalone app. | Account routes and services: `aef-main/aef-main/src/app/pages/account/account.routes.ts`, `aef-main/aef-main/src/app/pages/account/register/register.service.ts`, `aef-main/aef-main/src/app/pages/account/password/password.service.ts`, `aef-main/aef-main/src/app/pages/account/password-reset/**`, `aef-main/aef-main/src/app/pages/account/activate/activate.service.ts`. |
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| Kubernetes / Helm deployment | Premature for this milestone. Docker Compose is the production target. K8s adds orchestration complexity that provides no value until multi-replica scaling is needed. | Stick with Docker Compose. The Jib images are K8s-compatible when the time comes. |
+| Full Playwright E2E in CI | The milestone explicitly defers TEST-01/02/03 to v1.3. Running Playwright against the Docker stack would be valuable but is out of scope. | Keep Playwright as local-only for now. v1.3 will add it to CI. |
+| Multi-node Hazelcast cluster in Docker Compose | Single-node Hazelcast is sufficient for production validation. Multi-node adds service discovery complexity and is only needed for HA deployment. | Use embedded Hazelcast in the single backend container. The `5701/udp` port in Jib config is already exposed for future clustering. |
+| Database-backed fetch plan storage | Explicitly out of scope per project constraints. Fetch plans stay YAML-only. | Continue using `fetch-plans.yml` loaded by `YamlFetchPlanRepository`. |
+| Custom Docker registry / artifact publishing | Publishing to DockerHub or a private registry is not needed for production validation. Local `jibDockerBuild` produces a local image that Docker Compose can reference. | Build and use local images. Add registry push as a future CI enhancement if needed. |
+| Grafana/Prometheus monitoring stack in CI | The project has `monitoring.yml`, `prometheus.yml`, and Grafana dashboards but these are observability tools, not validation requirements. | Keep monitoring YAML files as opt-in local development tools. |
+| Frontend SSR or pre-rendering | Angular standalone SPA served from nginx is the correct pattern. SSR adds server complexity for no security-platform benefit. | Stick with static `ng build` output served by nginx. |
 
-## Anti-Features / Deferred Beyond v1
+## Feature Dependencies
 
-These are the items that should be explicitly deferred so v1 stays focused on secure migration instead of becoming an open-ended rebuild.
+```
+GitHub Actions Backend CI --> Jib Docker Image Build --> Docker Compose Stack
+GitHub Actions Frontend CI --> Frontend Dockerfile (nginx) --> Docker Compose Stack
+Docker Compose Stack --> Security Regression Tests --> Production Deployment Proof
+Docker Compose Stack --> k6 Load Tests in Production --> Performance Validation
 
-| Anti-Feature / Deferred Item | Why Defer or Exclude | What v1 Should Do Instead |
-|-----------------------------|----------------------|---------------------------|
-| Rebuilding all legacy `angapp` business modules | `.planning/PROJECT.md` explicitly says existing business screens and workflows are out of scope for v1. | Ship the security platform plus the minimum proof entities under `Department` and `Organization`. |
-| Database-backed fetch-plan administration UI | The project explicitly rejects DB-managed fetch plans, and `angapp` already contains a drop changelog for `sec_fetch_plan`. | Keep fetch plans defined in YAML/code only through `angapp/src/main/resources/fetch-plans.yml` and supporting builder/resolver code. |
-| Generic fetch-plan CRUD as a user-facing feature | Even if metadata once existed in DB, the migration direction is configuration-driven fetch plans, not runtime fetch-plan authoring by admins. | Expose fetch-plan effects indirectly through secured entity screens and tests, not through a dedicated CRUD page. |
-| Rich row-policy authoring for `JPQL` and `JAVA` policy types | The UI enum lists `SPECIFICATION`, `JPQL`, and `JAVA`, but the current runtime implementation only executes a narrow `SPECIFICATION` subset (`field = CURRENT_USER_ID`). Shipping a broad designer in v1 would overpromise. | Support the currently implemented subset first, document the limitation, and treat richer policy execution as later work. |
-| Full employee / org-link management UI | The backend security example already uses nested organization employee links, but neither `angapp` nor `aef-main` frontend currently exposes a complete employee management surface. | Use `Department` and `Organization` as the primary v1 proof flows; only add deeper employee tooling when needed to exercise a specific security rule. |
-| Non-security admin extras from the shell | `aef-main` includes dashboard and admin menu stubs, but those are not part of the brownfield migration objective. | Prioritize user, authority, role, permission, row-policy, and protected-entity screens. |
+PermissionMatrix Optimization --> Benchmark Validation (k6 against Docker stack)
+PermissionMatrix Optimization (independent of CI/Docker, can parallel)
 
-## v1 Recommendation
+Spring Boot prod profile hardening --> Docker Compose Stack (needs env-var config)
+```
 
-Prioritize this exact feature cut for v1:
+Dependency ordering:
+1. **CI workflows** and **prod profile hardening** can start immediately (no dependencies)
+2. **Permission matrix optimization** can start immediately (code-only, no infra dependency)
+3. **Docker Compose stack** requires CI image build and prod profile work
+4. **Security regression tests** require the Docker Compose stack to be running
+5. **Production deployment proof** is the final integration of everything
 
-1. Preserve the current account/auth/admin-user/authority contract from `src/main/java/com/vn/core/web/rest/**`.
-2. Add project-native CRUD for roles, permissions, and row policies matching the working `angapp` screens under `angapp/src/main/webapp/app/entities/sec-role/**`, `angapp/src/main/webapp/app/entities/sec-permission/**`, and `angapp/src/main/webapp/app/entities/sec-row-policy/**`.
-3. Prove the security engine end to end on `Department` and `Organization`, with secure reads and writes flowing through `angapp/src/main/java/com/mycompany/core/data/SecureDataManagerImpl.java`.
+## MVP Recommendation
 
-Anything beyond that is useful, but it is not necessary to declare the migration successful.
+Prioritize in this order:
+
+1. **GitHub Actions CI for both stacks** - Immediate regression safety net for all subsequent work. Backend workflow with Gradle + Testcontainers + Java 25, frontend workflow with Node 24 + Angular build + Vitest.
+
+2. **Spring Boot prod profile hardening** - Remove hardcoded credentials from `application-prod.yml`, switch to environment variable placeholders. Required before Docker Compose production stack.
+
+3. **Docker Compose production stack** - `app.yml` with backend (Jib image, prod profile), PostgreSQL (with password auth), nginx (serving frontend build, proxying API). This is the production environment that all validation runs against.
+
+4. **Permission matrix pre-processing** - Adopt Jmix `ResourcePoliciesIndex` pattern: pre-group permissions by type and target at construction time. Eliminate per-call `String.split()` in `isAttributePermitted()`. Benchmark at 200-entity scale.
+
+5. **Security regression validation** - Comprehensive test suite proving auth, CRUD enforcement, attribute filtering, and cache eviction work under production conditions.
+
+6. **Production deployment proof** - Final integration: `docker compose up`, seed data, run security tests and k6 benchmarks, document results.
+
+Defer to v1.3: Playwright E2E in CI (TEST-01/02/03), multi-node Hazelcast, Kubernetes.
+
+## Jmix Authorization Pattern Analysis
+
+The Jmix framework's approach to permission evaluation was researched by reading the actual source code from the `jmix-framework/jmix` GitHub repository. Key findings relevant to v1.2 optimization:
+
+### How Jmix Indexes Permissions (HIGH confidence - source code verified)
+
+Jmix's `ResourceRole.ResourcePoliciesIndex` is the critical optimization structure:
+
+```java
+// From jmix-security/security/src/main/java/io/jmix/security/model/ResourceRole.java
+public static class ResourcePoliciesIndex implements Serializable {
+    // type -> (resource -> List<ResourcePolicy>)
+    private final Map<String, Map<String, List<ResourcePolicy>>> policiesByTypeAndResource;
+    private final Map<String, List<ResourcePolicy>> policiesByType;
+
+    ResourcePoliciesIndex(Collection<ResourcePolicy> policies) {
+        policiesByType = policies.stream()
+                .collect(Collectors.groupingBy(ResourcePolicy::getType));
+        for (Map.Entry<String, List<ResourcePolicy>> entry : policiesByType.entrySet()) {
+            Map<String, List<ResourcePolicy>> policiesByResource = entry.getValue().stream()
+                    .collect(Collectors.groupingBy(ResourcePolicy::getResource));
+            policiesByTypeAndResource.put(policyType, policiesByResource);
+        }
+    }
+}
+```
+
+**Key design decisions:**
+- Pre-groups at construction time (O(n) once)
+- Two-level HashMap: `policyType -> resource -> List<Policy>` for O(1) lookups
+- Built when policies are set on a role, not per-request
+- Stored on the role object itself, not in a separate cache
+
+### How Jmix Evaluates Entity Permissions (HIGH confidence - source code verified)
+
+The `SecureOperationsImpl` evaluates entity CRUD by:
+1. Getting policies from `PolicyStore.getEntityResourcePolicies(metaClass)` - which delegates to the indexed structure
+2. Checking if any policy has ALLOW effect for the requested action
+3. Falling back to wildcard `"*"` entity policies if no direct match
+
+The `AuthenticationPolicyStore` iterates the user's `GrantedAuthority` entries, resolves each to a `ResourceRole` from the `ResourceRoleRepository`, and delegates to `ResourcePoliciesIndex.getPoliciesByTypeAndResource()`.
+
+### Implications for This Project
+
+The current `PermissionMatrix` already uses `Set<String>` for O(1) lookups, which is structurally similar to Jmix's indexed approach but flatter. The main optimization opportunities are:
+
+1. **Eliminate `String.split(".")` in `isAttributePermitted()`** - Pre-extract entity names from attribute targets at construction time
+2. **Pre-build wildcard key sets** - Currently wildcards are checked via separate `contains()` calls; pre-building a secondary index of entity-to-wildcard mappings would reduce redundant lookups
+3. **Consider entity-grouped attribute sets** - Like Jmix's two-level map, group attribute permissions by entity name to enable bulk attribute checks without per-attribute key construction
+
+## Sources
+
+- JHipster CI/CD documentation: https://www.jhipster.tech/setting-up-ci/ (MEDIUM confidence - docs describe generator approach, actual workflow needs customization)
+- JHipster Docker Compose documentation: https://www.jhipster.tech/docker-compose/ (MEDIUM confidence - standard JHipster patterns, confirmed Jib + Docker Compose flow)
+- Jmix authorization documentation: https://docs.jmix.io/jmix/security/authorization.html (HIGH confidence - official docs)
+- Jmix `ResourceRole.ResourcePoliciesIndex` source: `jmix-framework/jmix` GitHub repo, `jmix-security/security/src/main/java/io/jmix/security/model/ResourceRole.java` (HIGH confidence - read actual source code)
+- Jmix `SecureOperationsImpl` source: `jmix-framework/jmix` GitHub repo, `jmix-security/security/src/main/java/io/jmix/security/impl/constraint/SecureOperationsImpl.java` (HIGH confidence - read actual source code)
+- Jmix `AuthenticationPolicyStore` source: `jmix-framework/jmix` GitHub repo, `jmix-security/security/src/main/java/io/jmix/security/impl/constraint/AuthenticationPolicyStore.java` (HIGH confidence - read actual source code)
+- Jmix `CrudEntityConstraint` source: `jmix-framework/jmix` GitHub repo (HIGH confidence)
+- Project `PermissionMatrix.java`, `RequestPermissionSnapshot.java`, `SecureDataManagerImpl.java`, `MetamodelSecuredEntityCatalog.java` - direct code review (HIGH confidence)
+- Project `build.gradle`, `jhipster.docker-conventions.gradle`, `application-prod.yml`, Docker infrastructure files - direct code review (HIGH confidence)
