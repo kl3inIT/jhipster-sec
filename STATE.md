@@ -1,6 +1,6 @@
 # GSD State Tracker
 
-## Active Task: Apply shadcn-style PrimeNG theme across the Angular frontend
+## Active Task: Move PrimeNG component styling into token-based shadcn-like presets
 
 **Status:** COMPLETED
 **Started:** 2026-04-01
@@ -10,26 +10,28 @@
 
 ### Goal
 
-Reshape the current Angular + PrimeNG frontend so shared component surfaces follow a shadcn-like visual system while preserving the repo's PrimeNG-first architecture.
+Move the shadcn-like visual system from broad CSS overrides into PrimeNG component variables so the Angular frontend stays PrimeNG-native while core component styling is driven by official theme tokens.
 
 ### Plan
 
-1. Audit the shared theme and layout files that control most PrimeNG visuals
-2. Update global tokens and component styling toward a shadcn-like appearance
-3. Keep the implementation Angular-native and PrimeNG-based rather than introducing React/Radix code
-4. Verify the frontend build after the theme changes
+1. Inventory the PrimeNG components actually used in `frontend/src/app`
+2. Promote their styling into `components` tokens inside the shared PrimeUIX preset
+3. Keep only the structural SCSS that cannot be expressed cleanly with PrimeNG tokens
+4. Verify the frontend build after the token migration
 
 ### Completion Summary
 
-Applied a shadcn-inspired design layer to the existing Angular frontend by updating shared PrimeNG theme primitives, the topbar/sidebar shell, configurator radius tokens, and local screen overrides. The rollout now covers the permission matrix, auth screens, organization workbench detail, and user-management list so these high-traffic views share the same flatter surfaces, tighter radii, neutral borders, and lighter shadows.
+Moved the shared shadcn-like styling into PrimeUIX `components` tokens for the PrimeNG widgets that drive this project: buttons, cards, inputs, selects, multiselects, datatables, treetables, paginators, dialogs, tabs, tags, messages, toasts, checkboxes, confirm dialogs, password overlays, and input-number controls. The configurator now reapplies the same token layer when switching preset or primary color, while `_primeng-theme.scss` was reduced to structural adjustments that PrimeNG token APIs do not expose cleanly.
 
 **Verification:**
 
-- ✅ Updated shared theme tokens, PrimeNG component styling, shell surfaces, and additional feature-page overrides
+- ✅ Added token-based component theming in `frontend/src/app/theme/app-theme.preset.ts`
+- ✅ Wired the configurator to preserve those tokens during runtime preset changes
+- ✅ Reduced overlapping CSS overrides in `frontend/src/assets/app/_primeng-theme.scss`
 - ✅ `frontend`: `npm run build` passed
-- ⚠️ Existing Angular bundle budget warnings remain, but no build failure was introduced by this change
+- ⚠️ Existing Angular bundle budget warnings remain, but no build failure was introduced by this pass
 
 ### Notes
 
-- Scope implemented as a shadcn-like theme on top of PrimeNG, not a literal `shadcn/ui` port
-- This matches the repo's Angular stack and PrimeNG-first project constraint
+- Scope remains a shadcn-like PrimeNG theme layer, not a literal React `shadcn/ui` port
+- Tokens were prioritized for the PrimeNG components actually used by the Angular frontend in this repo

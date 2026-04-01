@@ -13,6 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { LANGUAGE_DEFAULT, LANGUAGES } from 'app/config/language.constants';
 import { StateStorageService } from 'app/core/auth/state-storage.service';
 import { LayoutService } from 'app/layout/service/layout.service';
+import { APP_COMPONENT_TOKENS, APP_PRIMITIVE_TOKENS } from 'app/theme/app-theme.preset';
 
 const PRESETS = {
   Aura,
@@ -416,16 +417,7 @@ export class AppConfigurator {
 
     if (primaryColor?.name === 'noir') {
       return {
-        primitive: {
-          borderRadius: {
-            none: '0',
-            xs: '0.25rem',
-            sm: '0.375rem',
-            md: '0.5rem',
-            lg: '0.75rem',
-            xl: '1rem',
-          },
-        },
+        primitive: APP_PRIMITIVE_TOKENS,
         semantic: {
           primary: {
             50: '{surface.50}',
@@ -478,6 +470,7 @@ export class AppConfigurator {
             },
           },
         },
+        components: APP_COMPONENT_TOKENS,
       };
     }
 
@@ -486,16 +479,7 @@ export class AppConfigurator {
     const primaryPalette = primaryColor?.palette ?? defaultPalette;
 
     return {
-      primitive: {
-        borderRadius: {
-          none: '0',
-          xs: '0.25rem',
-          sm: '0.375rem',
-          md: '0.5rem',
-          lg: '0.75rem',
-          xl: '1rem',
-        },
-      },
+      primitive: APP_PRIMITIVE_TOKENS,
       semantic: {
         primary: primaryPalette,
         focusRing: {
@@ -572,6 +556,7 @@ export class AppConfigurator {
           },
         },
       },
+      components: APP_COMPONENT_TOKENS,
     };
   }
 }
