@@ -166,17 +166,23 @@ class SecureDataManagerImplTest {
     }
 
     @Test
-    void loadOne_returnsSerializedEntityFromLegacyWrapper() {
+    void loadOne_returnsSerializedEntityViaDirectIdLoad() {
+        // D-07: loadOneInternal uses checkCrud + unconstrained().load() instead of Criteria API Specification
         when(catalog.findByCode("TEST_ENTITY")).thenReturn(Optional.of(testEntry));
+        when(dataManager.unconstrained()).thenReturn(unconstrainedDataManager);
 
         TestEntity entity = new TestEntity(1L);
-        when(dataManager.loadOne(eq(TestEntity.class), any(Specification.class), eq(EntityOp.READ))).thenReturn(Optional.of(entity));
+        when(unconstrainedDataManager.load(TestEntity.class, 1L)).thenReturn(entity);
         when(fetchPlanResolver.resolve(TestEntity.class, "base")).thenReturn(testFetchPlan);
         when(secureEntitySerializer.serialize(entity, testFetchPlan)).thenReturn(Map.of("id", 1L));
 
         Optional<Map<String, Object>> result = secureDataManager.loadOne("TEST_ENTITY", 1L, "base");
 
         assertThat(result).contains(Map.of("id", 1L));
+        // Verify CRUD check ran before direct load (D-07: checkCrud before unconstrained fetch)
+        verify(dataManager).checkCrud(TestEntity.class, EntityOp.READ);
+        // Verify no Criteria API path (old Specification-based id lookup is eliminated)
+        verify(dataManager, never()).loadOne(eq(TestEntity.class), any(Specification.class), eq(EntityOp.READ));
     }
 
     @Test

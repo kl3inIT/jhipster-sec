@@ -1,142 +1,54 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: verifying
-stopped_at: Completed 10-01-PLAN.md
-last_updated: "2026-03-31T08:21:37.448Z"
-last_activity: 2026-03-31
+milestone: v1.1
+milestone_name: enterprise-admin-experience
+status: milestone_complete
+stopped_at: Completed milestone v1.1 archival and release prep
+last_updated: "2026-04-01T00:35:00+07:00"
+last_activity: 2026-04-01
 progress:
-  total_phases: 9
-  completed_phases: 9
-  total_plans: 37
-  completed_plans: 37
+  total_phases: 10
+  completed_phases: 10
+  total_plans: 39
+  completed_plans: 39
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-27)
+See: .planning/PROJECT.md (updated 2026-04-01)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, authority, and attribute-level access decisions.
-**Current focus:** Phase 10 — performance-benchmarking-and-openapi-documentation
+**Current focus:** Plan v1.2 milestone scope and requirements
 
 ## Current Position
 
-Phase: 10 (performance-benchmarking-and-openapi-documentation) — COMPLETE
-Plan: 4 of 4 complete
-Status: Phase 10 complete - ready for verification and milestone review
-Last activity: 2026-03-31
-Next: Run /gsd:verify-work or /gsd:audit-milestone
+Phase: Milestone closed (v1.1)
+Plan: None active
+Status: Ready for next-milestone definition
+Last activity: 2026-04-01
+Next: Run /gsd-new-milestone
 
-## Performance Metrics
+## Milestone Summary (v1.1)
 
-**Velocity:**
+- Completed phases: 6, 7, 07.1, 8, 08.1, 08.2, 08.3, 9, 10, 11
+- Completed plans: 39
+- Key outcome: PERF-04 passed with Phase 11 benchmark evidence in `load-tests/results/benchmark-run-summary-2026-03-31.md`
+- Archive files created: `.planning/milestones/v1.1-ROADMAP.md`, `.planning/milestones/v1.1-REQUIREMENTS.md`, `.planning/milestones/v1.1-MILESTONE-AUDIT.md`
 
-- Total plans completed this milestone: 7
-- Average duration: 12.1 min
-- Total execution time: 1.4 hours
+## Pending Todos
 
-**By Phase:**
+- Start v1.2 milestone definition and fresh requirements via `$gsd-new-milestone`.
+- Decide whether to archive phase directories now or later via `$gsd-cleanup`.
 
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 6 - Frontend Parity Foundation | 6 | 50 min | 8.3 min |
-| 7 - Enterprise Navigation Shell | 0 | - | - |
-| 07.1 - Menu Management | 3 | - | - |
-| 8 - User Management Delivery | 0 | - | - |
-| 8.1 - Jmix-Style DataManager Core Alignment | 3 | 60 min | 20.0 min |
-| 8.2 - Multi-App Menu Roles and Jmix-Style JSON Entity Controllers | 0 | - | - |
-| 8.3 - Registration, Live Permission Refresh, Typed Entity Flow, Validation, And Row-Policy Removal | 0 | - | - |
-| 9 - Enterprise UX And Performance Hardening | 3 | 31 min | 10.3 min |
-| 10 - Frontend Reliability And Regression Coverage | 0 | - | - |
+## Blockers/Concerns
 
-**Recent Trend:**
-
-- Phase 08.1 completed with verified `DataManager` / `UnconstrainedDataManager` layering and union-of-`ALLOW` resource semantics.
-- Phase 08.2 completed with explicit secure `PATCH`, per-app menu isolation proof, first-grant multi-app role assignment, and green backend or frontend verification.
-- Phase 08.3 completed with standalone registration, request-time authority refresh, typed secured entity flow, explicit validation hardening, and full row-policy retirement.
-- Phase 9 completed with request-scoped permission caching, signal-based entity lists, responsive columns, and first-render skeleton visibility fixes.
-
-| Phase 07 P05 | 4 | 2 tasks | 19 files |
-| Phase 07.1-menu-management P01 | 25 | 2 tasks | 10 files |
-| Phase 07.1-menu-management P02 | 5 | 2 tasks | 10 files |
-| Phase 07.1-menu-management P03 | 5 | 2 tasks | 4 files |
-| Phase 08 P01 | 2 | 2 tasks | 4 files |
-| Phase 08 P02 | 10 | 2 tasks | 14 files |
-| Phase 08 P03 | 10 min | 2 tasks | 12 files |
-| Phase 08 P04 | 5 min | 2 tasks | 2 files |
-| Phase 08.1 P01 | 14 min | 2 tasks | 8 files |
-| Phase 08.1 P02 | 11 min | 2 tasks | 9 files |
-| Phase 08.1 P03 | 35 min | 2 tasks | 4 files |
-| Phase 08.2 P03 | 23 min | 2 tasks | 12 files |
-| Phase 08.2 P02 | 16 min | 2 tasks | 6 files |
-| Phase 08.2 P04 | 9 min | 2 tasks | 9 files |
-| Phase 09 P01 | 7 min | 3 tasks | 7 files |
-| Phase 09 P02 | 22 min | 2 tasks | 8 files |
-| Phase 09 P03 | 2 min | 2 tasks | 3 files |
-| Phase 10 P01 | 11 min | 2 tasks | 6 files |
-| Phase 10 P02 | 15 min | 2 tasks | 6 files |
-| Phase 10 P03 | 8 min | 2 tasks | 5 files |
-| Phase 10 P04 | 3 min | 2 tasks | 4 files |
-
-## Accumulated Context
-
-### Roadmap Evolution
-
-- Phase 07.1 inserted after Phase 7: Menu Management (INSERTED) - admin CRUD for `SecMenuDefinition` and role-based `SecMenuPermission` assignment.
-- Phase 08.1 inserted after Phase 8: Jmix-Style DataManager Core Alignment (URGENT) - aligned the internal data-access architecture with a Jmix-style `DataManager` / `UnconstrainedDataManager` split while preserving the `SecureDataManager` facade and brownfield contract.
-- Phase 08.2 inserted after Phase 08.1: Multi-App Menu Roles and Jmix-Style JSON Entity Controllers (URGENT) - restored secured `loadByQuery`, supported multi-app menu-role assignment, and moved protected entity boundaries to raw JSON with explicit `PATCH`.
-- Phase 08.3 inserted after Phase 08.2: User registration, live permission refresh, entity-native serialization, validation hardening, and row-policy removal - closes missing self-registration, removes stale authority snapshots, hardens the secured entity pipeline, and retires row policy before Phase 9.
-- Phase 10 replaced: original frontend reliability and regression coverage phase removed; replaced with performance benchmarking (JMeter/k6 load tests, secured vs standard pipeline) and OpenAPI documentation (Swagger annotations for variable response schemas and fetch-plan params).
-- Phase 11 added: Security Pipeline Performance Hardening — reduce p95 overhead to under 10% by caching permission matrix and authority validation, fixing Criteria API ID lookup, and resolving per-entity fetch-plan resolution overhead.
-
-### Decisions
-
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
-
-- `SecureDataManager` remains the stable application-facing facade while `DataManager` becomes the secure-default internal layer with explicit `unconstrained()` bypass.
-- Resource permissions now use default deny plus union-of-`ALLOW` semantics across entity, attribute, menu, and capability surfaces.
-- Verification for this repository must run under Java 25 and use Gradle's `integrationTest` task for `*IT` suites because the `test` task excludes integration classes by design.
-- Phase 08.3 will refresh current-user authorities from database state at request time rather than trusting the authority snapshot captured at login.
-- Phase 08.3 will move secured entity internals toward typed entity-native flows and keep JSON parsing or serialization confined to explicit edge adapters.
-- Phase 08.3 will remove row policy completely instead of expanding or preserving it as a long-term platform feature.
-- [Phase 09]: Request-local permission snapshot (D-01/D-02): caches authority validation and PermissionMatrix per HTTP request, destroyed at request end, with graceful non-web fallback via isRequestScopeActive() guard
-- [Phase 09]: Use fromEvent(window, resize) with debounceTime for responsive detection since @angular/cdk is not available
-- [Phase 09]: Skeleton loaders use tableValue computed signal switching between 5 skeletonRows and real data array for initial-fetch-only skeleton
-- [Phase 09]: Initialize entity list loading signals to true so first-render skeleton rows appear before data arrives.
-- [Phase 09]: Use an empty verification commit when a required task only performs build validation and introduces no tracked file changes.
-- [Phase 10]: Benchmark baseline reuses SecuredEntityJsonAdapter serialization to isolate security-check overhead from serializer differences
-- [Phase 10]: Benchmark endpoint is gated to api-docs profile and hidden from OpenAPI so it remains dev-only
-
-### Pending Todos
-
-- Run manual k6 benchmarks and capture baseline result snapshots using the new load-tests scripts.
-- Consider milestone audit and review for v1.1 completion.
-
-### Blockers/Concerns
-
-- No open milestone blockers.
-- Frontend production build still exceeds the configured initial bundle budget warning threshold.
-- Planning debt remains on validation metadata for phases 1, 3, and 4; product verification and the milestone audit both passed.
-
-### Quick Tasks Completed
-
-| # | Description | Date | Commit | Directory |
-|---|-------------|------|--------|-----------|
-| 260327-shg | Jmix-style 3-layer organization workbench with nested reference CRUD for security/performance testing | 2026-03-27 | pending | [260327-shg-task-l-m-m-t-m-n-v-i-t-nh-t-3-l-p-v-d-s-](./quick/260327-shg-task-l-m-m-t-m-n-v-i-t-nh-t-3-l-p-v-d-s-/) |
-| 260327-usx | Convert menu permission appName from String to enum with schema migration | 2026-03-27 | pending | [260327-usx-ch-qu-n-l-quy-n-c-a-menu-i-c-i-appname-t](./quick/260327-usx-ch-qu-n-l-quy-n-c-a-menu-i-c-i-appname-t/) |
-| 260328-d4b | configure local mail catcher for dev registration | 2026-03-28 | pending | [260328-d4b-configure-local-mail-catcher-for-dev-reg](./quick/260328-d4b-configure-local-mail-catcher-for-dev-reg/) |
-| 260328-f1a | fix duplicate register text on login page | 2026-03-28 | pending | [260328-f1a-fix-duplicate-register-text-on-login-pag](./quick/260328-f1a-fix-duplicate-register-text-on-login-pag/) |
-| 260330-e78 | Fix permission matrix: modify-implies-view and entity wildcard row | 2026-03-30 | 7c2a0d4 | [260330-e78-fix-permission-matrix-attribute-logic-li](./quick/260330-e78-fix-permission-matrix-attribute-logic-li/) |
-| 260330-eke | fix backend permission evaluation: entity wildcard (*) and edit-implies-view attribute cascade | 2026-03-30 | eec037e | [260330-eke-fix-backend-permission-evaluation-entity](./quick/260330-eke-fix-backend-permission-evaluation-entity/) |
-| 260330-l8t | wildcard permission cleanup and mutual exclusion UI | 2026-03-30 | 84eedbf | [260330-l8t-wildcard-permission-cleanup-and-mutual-e](./quick/260330-l8t-wildcard-permission-cleanup-and-mutual-e/) |
+- No open release blockers.
+- Frontend bundle warning budget remains above configured warning threshold.
 
 ## Session Continuity
 
-Last activity: 2026-03-31 - Completed 10-01 benchmark baseline and k6 infrastructure
-Last session: 2026-03-31T04:03:11.378Z
-Stopped at: Completed 10-01-PLAN.md
+Last activity: 2026-04-01 - Milestone v1.1 completion workflow executed
+Stopped at: Ready for next milestone planning
 Resume file: None

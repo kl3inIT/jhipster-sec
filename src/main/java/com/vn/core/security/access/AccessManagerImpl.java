@@ -7,6 +7,10 @@ import org.springframework.stereotype.Component;
 /**
  * Default implementation of {@link AccessManager} that applies all
  * registered {@link AccessConstraint}s in order.
+ *
+ * <p>D-11: Constraints are sorted once at construction time by {@link AccessConstraint#getOrder()}
+ * rather than on every {@link #applyRegisteredConstraints} call, eliminating per-request sort
+ * overhead in the hot security-check path.
  */
 @Component
 public class AccessManagerImpl implements AccessManager {
@@ -14,7 +18,8 @@ public class AccessManagerImpl implements AccessManager {
     private final List<AccessConstraint<?>> constraints;
 
     public AccessManagerImpl(List<AccessConstraint<?>> constraints) {
-        this.constraints = constraints;
+        // D-11: sort once at construction time; the order never changes at runtime.
+        this.constraints = constraints.stream().sorted(Comparator.comparingInt(AccessConstraint::getOrder)).toList();
     }
 
     @Override
@@ -23,7 +28,6 @@ public class AccessManagerImpl implements AccessManager {
         constraints
             .stream()
             .filter(c -> c.supports().isAssignableFrom(context.getClass()))
-            .sorted(Comparator.comparingInt(AccessConstraint::getOrder))
             .forEach(c -> ((AccessConstraint<C>) c).applyTo(context));
         return context;
     }

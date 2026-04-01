@@ -2,23 +2,21 @@
 
 ## What This Is
 
-This is a brownfield JHipster security-platform migration that already shipped a standalone Angular frontend and merged security runtime in `v1.0`. `v1.1` carried a security-core realignment in Phase 08.3, then continues with enterprise UX, performance, and regression hardening in Phases 9 and 10.
+This is a brownfield JHipster security-platform migration that shipped a standalone Angular frontend and merged security runtime in `v1.0`, then shipped enterprise admin experience and security/performance hardening in `v1.1`.
 
 ## Core Value
 
 Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, authority, and attribute-level access decisions.
 
-## Current Milestone: v1.1 Enterprise Admin Experience
+## Milestone Status
 
-**Goal:** Deliver an enterprise-grade frontend administration milestone without weakening the platform's security guarantees, now that Phase 08.3 has already repaired the remaining auth and secured-data foundations that Phase 9 depends on.
+`v1.1 Enterprise Admin Experience` shipped on 2026-03-31 with phases 6-11 complete.
 
-**Target features:**
-- Full admin user-management flows in `frontend/`, including create, update, delete, activate, deactivate, and role assignment.
-- A real standalone frontend registration flow on top of the preserved backend `/api/register` behavior.
-- Live permission refresh so changed authorities affect current-user outcomes without forcing logout or login.
-- A typed secured-entity flow with explicit JSON serialization or deserialization edges and strict JSON validation.
-- Complete row-policy retirement across schema, backend, frontend, and tests.
-- A Jmix-style enterprise shell with better responsiveness, consistent interaction design, performance optimizations, and focused frontend coverage.
+Primary outcomes:
+- Full standalone admin user-management and backend-driven enterprise navigation.
+- Registration parity plus request-time authority refresh without forced re-authentication.
+- Typed secured-entity pipeline with explicit validation hardening and row-policy retirement.
+- Phase 11 performance hardening with load-test proof that PERF-04 is within target.
 
 ## Current State
 
@@ -42,12 +40,22 @@ The repository now includes:
 
 **Phase 9 complete** - Backend N+1 permission query explosion eliminated via request-scoped `RequestPermissionSnapshot` caching (one authority query + one bulk permission query per HTTP request). Department, Employee, and Organization list components migrated to signal-based pagination with `OnPush` change detection, `p-skeleton` loaders for initial data fetch, and responsive column hiding below 1024px. Validated in Phase 9: UI-05, PERF-01, PERF-02, PERF-03.
 
-The next part of `v1.1` now starts from this context:
+**Phase 10 complete** - k6 load tests established Phase 10 baseline: secured list p95=497ms (+70% overhead vs baseline 291ms), secured detail p95=340ms (+426% overhead vs baseline 64ms). OpenAPI annotations added for variable response schemas and fetch-plan params.
+
+**Phase 11 complete** - Security pipeline performance hardening achieved PERF-04 target. Six optimizations shipped: JWT authority direct trust (D-05/D-06), cross-request Hazelcast PermissionMatrix cache keyed by authority set (D-01/D-04), write-path cache eviction in SecPermissionService (D-02/D-03), direct id load eliminating Criteria API spec (D-07), single fetch-plan resolution per response (D-08), constructor-time constraint sorting (D-11). Phase 11 k6 results: list overhead +0.2%, detail overhead −0.8% — **PERF-04 PASS**. Validated in Phase 11: PERF-04.
+
+The milestone is now complete:
 
 - The backend and standalone frontend now share the preserved registration contract end to end.
 - Current-user menu and capability state can refresh without forcing logout or login, so Phase 9 can focus on responsiveness and redundant work reduction instead of stale-auth repair.
 - The secured entity pipeline now uses typed entity mutations internally with explicit JSON parsing and serialization edges.
-- Validation hardening and row-policy retirement are complete, so the remaining milestone work is UX, performance, and regression coverage.
+- Validation hardening and row-policy retirement are complete, and v1.1 is closed with benchmark-backed performance proof.
+
+## Next Milestone Goals
+
+- Define v1.2 requirements and roadmap via `$gsd-new-milestone`.
+- Expand automated frontend reliability coverage (TEST-01, TEST-02, TEST-03).
+- Continue enterprise UX and performance polish while preserving secured data-access guarantees.
 
 ## Requirements
 
@@ -61,6 +69,8 @@ The next part of `v1.1` now starts from this context:
 - UMGT-01 through UMGT-03 validated in Phase 8: User Management Delivery, covering browse or search, full admin CRUD, inline authority assignment, and downstream access effects from saved authority changes.
 - PH83-01 through PH83-05 validated in Phase 08.3, covering standalone registration, live-authority refresh, typed secured flow, explicit JSON validation, and complete row-policy retirement.
 - UI-05, PERF-01, PERF-02, PERF-03 validated in Phase 9, covering entity list signal migration, skeleton loaders, responsive columns, request-scoped permission caching, and lazy loading.
+- BENCH-01 and OPENAPI-01 validated in Phase 10, covering k6 benchmark infrastructure and OpenAPI contract documentation for secured endpoints.
+- PERF-04 validated in Phase 11, with committed benchmark evidence showing secured endpoint p95 overhead under 10%.
 
 ### Active
 
@@ -77,7 +87,7 @@ The next part of `v1.1` now starts from this context:
 
 `v1.0` covered 5 phases, 30 plans, 43 documented tasks, 160 milestone commits, and roughly 359 files / 45,043 inserted lines across planning, backend, tests, and the new frontend. Final human UAT passed on 2026-03-25 with 3/3 checks green: login or session behavior, admin security-management persistence, and protected-entity gating.
 
-Current context shaping `v1.1`:
+Current context shaping the next milestone:
 
 - `angapp/` is still the canonical donor for missing account or registration flows plus shared support files that the standalone frontend has not finished migrating.
 - `aef-main/aef-main/` remains the canonical frontend reference for `frontend/`, especially for standalone bootstrap, route or layout structure, and shared UI composition.
@@ -106,12 +116,12 @@ Current context shaping `v1.1`:
 |----------|-----------|---------|
 | Merge the security models into a project-native role or permission design | The project must preserve `angapp` behavior without forcing a brittle one-to-one schema copy | Confirmed in `v1.0` |
 | Create a standalone Angular app under `frontend/` using `aef-main/aef-main` as the canonical frontend reference | The new client needed a clear Angular or PrimeNG foundation that still fit JHipster conventions | Shipped in `v1.0` |
-| Keep PrimeNG Sakai as the canonical frontend shell, layout, and component baseline | Enterprise UX work needs a stable visual and structural system instead of multiple competing frontend patterns | Active in `v1.1` |
+| Keep PrimeNG Sakai as the canonical frontend shell, layout, and component baseline | Enterprise UX work needs a stable visual and structural system instead of multiple competing frontend patterns | Confirmed through `v1.1` |
 | Use `SecureDataManager` as the stable application-facing secured facade and `UnconstrainedDataManager` as the explicit bypass | Security enforcement had to stay centralized and explicit | Validated in phases 3-5 and 08.1 |
 | Use proof-domain entities to validate the merged security engine end to end | The platform needed real sample entities to prove CRUD and attribute behavior | Validated in phase 4 |
 | Use fetch plans from YAML and code builders only | Database-backed fetch-plan storage was explicitly disallowed by project constraints | Confirmed in `v1.0` |
 | Remove DTOs incrementally rather than project-wide on day one | Existing JHipster user or account APIs still benefit from contract-protecting boundary models | Confirmed in `v1.0` |
-| Use `angapp` as the canonical donor for user-management, registration, i18n, and shared support files | The standalone frontend still has migration gaps in account-facing flows | Active in `v1.1` |
+| Use `angapp` as the canonical donor for user-management, registration, i18n, and shared support files | The standalone frontend still has migration gaps in account-facing flows | Continuing into next milestone |
 | Replace hardcoded frontend menus with backend-driven navigation contracts | Enterprise role-based navigation must scale with backend-managed permissions | Validated in Phase 7 |
 | Refresh current-user authorities from database state at request time instead of trusting the login-time snapshot in JWT or frontend caches | Permission changes must take effect without forcing logout or login | Validated in Phase 08.3 |
 | Move secured entity internals toward typed entity-native flow and keep JSON parsing or serialization in explicit edge adapters | Map or string carriers were the main source of drift and validation gaps in the secured entity path | Validated in Phase 08.3 |
@@ -135,4 +145,5 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-28 after Phase 08.3 completion and Phase 9 handoff*
+*Last updated: 2026-04-01 after v1.1 milestone completion*
+

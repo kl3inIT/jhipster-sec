@@ -3,6 +3,7 @@ package com.vn.core.config;
 import com.hazelcast.config.*;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.vn.core.security.permission.RequestPermissionSnapshot;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,7 @@ public class CacheConfiguration {
         config.setManagementCenterConfig(new ManagementCenterConfig());
         config.addMapConfig(initializeDefaultMapConfig(jHipsterProperties));
         config.addMapConfig(initializeDomainMapConfig(jHipsterProperties));
+        config.addMapConfig(initializePermissionMatrixMapConfig(jHipsterProperties));
         return Hazelcast.newHazelcastInstance(config);
     }
 
@@ -99,6 +101,25 @@ public class CacheConfiguration {
     private MapConfig initializeDomainMapConfig(JHipsterProperties jHipsterProperties) {
         MapConfig mapConfig = new MapConfig("com.vn.core.domain.*");
         mapConfig.setTimeToLiveSeconds(jHipsterProperties.getCache().getHazelcast().getTimeToLiveSeconds());
+        return mapConfig;
+    }
+
+    /**
+     * Named Hazelcast map for the cross-request {@link com.vn.core.security.permission.PermissionMatrix}
+     * cache keyed by JWT authority-name set.
+     *
+     * <p>The TTL is set to 3600 s as a non-semantic safety ceiling only. Actual cache correctness
+     * comes from write-path eviction on every {@code SecPermission} create, update, or delete
+     * (D-02, D-03). The TTL prevents unbounded map growth if eviction is somehow missed in a
+     * deployment edge case; it is not intended as the freshness mechanism.
+     */
+    private MapConfig initializePermissionMatrixMapConfig(JHipsterProperties jHipsterProperties) {
+        MapConfig mapConfig = new MapConfig(RequestPermissionSnapshot.PERMISSION_MATRIX_CACHE);
+        // Safety ceiling TTL — correctness comes from write-path eviction, not time expiry.
+        mapConfig.setTimeToLiveSeconds(3600);
+        mapConfig.setBackupCount(jHipsterProperties.getCache().getHazelcast().getBackupCount());
+        mapConfig.getEvictionConfig().setEvictionPolicy(EvictionPolicy.LRU);
+        mapConfig.getEvictionConfig().setMaxSizePolicy(MaxSizePolicy.USED_HEAP_SIZE);
         return mapConfig;
     }
 }

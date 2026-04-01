@@ -131,8 +131,10 @@ public class SecureDataManagerImpl implements SecureDataManager {
     }
 
     private <E> Optional<E> loadOneInternal(Class<E> entityClass, Object id) {
-        Specification<E> idSpec = (root, query, cb) -> cb.equal(root.get("id"), id);
-        return dataManager.loadOne(entityClass, idSpec, EntityOp.READ);
+        // D-07: route through direct id load after CRUD check to avoid Criteria API id-spec overhead.
+        dataManager.checkCrud(entityClass, EntityOp.READ);
+        E entity = dataManager.unconstrained().load(entityClass, id);
+        return Optional.ofNullable(entity);
     }
 
     private <E> E saveInternal(Class<E> entityClass, Object id, EntityMutation<E> mutation) {

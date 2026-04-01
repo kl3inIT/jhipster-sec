@@ -16,6 +16,12 @@ import org.springframework.stereotype.Component;
  * declared in the {@link FetchPlan} that the current user is permitted to view.
  * Denied attributes are silently omitted (read-side fail-open per D-15).
  * The {@code id} attribute is always included when present in the fetch plan (D-16).
+ *
+ * <p>A single {@link BeanWrapperImpl} is instantiated once per entity call and reused
+ * for all scalar and association reads, avoiding per-property descriptor overhead.
+ * Jackson {@code convertValue} is intentionally not used here because bidirectional
+ * JPA associations (e.g. Organization↔Department) cause infinite recursion on full-entity
+ * conversion; BeanWrapper reads only the properties requested by the FetchPlan.
  */
 @Component
 public class SecureEntitySerializerImpl implements SecureEntitySerializer {
@@ -34,13 +40,15 @@ public class SecureEntitySerializerImpl implements SecureEntitySerializer {
 
         Class<?> entityClass = entity.getClass();
         Map<String, Object> values = new LinkedHashMap<>();
+
+        // Instantiate once per entity; reused for both scalar and association reads.
         BeanWrapperImpl wrapper = new BeanWrapperImpl(entity);
 
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             String attr = property.name();
 
             if (property.fetchPlan() != null) {
-                // Association/reference property — permission check then recursive serialization
+                // Association/reference property — permission check then recursive serialization.
                 if (!attributePermissionEvaluator.canView(entityClass, attr)) {
                     // silently skip denied reference attributes per D-15
                     continue;
@@ -57,7 +65,7 @@ public class SecureEntitySerializerImpl implements SecureEntitySerializer {
                     values.put(attr, serialize(refValue, property.fetchPlan()));
                 }
             } else {
-                // Scalar property — id is always visible per D-16; others require canView
+                // Scalar property — id is always visible per D-16; others require canView.
                 if (isAlwaysVisible(attr) || attributePermissionEvaluator.canView(entityClass, attr)) {
                     values.put(attr, wrapper.getPropertyValue(attr));
                 }

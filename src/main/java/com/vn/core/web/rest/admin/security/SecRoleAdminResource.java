@@ -7,6 +7,7 @@ import com.vn.core.repository.UserRepository;
 import com.vn.core.security.AuthoritiesConstants;
 import com.vn.core.security.repository.SecPermissionRepository;
 import com.vn.core.service.dto.security.SecRoleDTO;
+import com.vn.core.service.security.SecPermissionService;
 import com.vn.core.web.rest.errors.BadRequestAlertException;
 import com.vn.core.web.rest.errors.RoleInUseException;
 import jakarta.validation.Valid;
@@ -45,14 +46,18 @@ public class SecRoleAdminResource {
 
     private final UserRepository userRepository;
 
+    private final SecPermissionService secPermissionService;
+
     public SecRoleAdminResource(
         AuthorityRepository authorityRepository,
         SecPermissionRepository secPermissionRepository,
-        UserRepository userRepository
+        UserRepository userRepository,
+        SecPermissionService secPermissionService
     ) {
         this.authorityRepository = authorityRepository;
         this.secPermissionRepository = secPermissionRepository;
         this.userRepository = userRepository;
+        this.secPermissionService = secPermissionService;
     }
 
     /**
@@ -136,7 +141,7 @@ public class SecRoleAdminResource {
         if (assignedUserCount > 0) {
             throw new RoleInUseException();
         }
-        secPermissionRepository.deleteByAuthorityName(name);
+        secPermissionService.deleteAllByAuthorityName(name);
         authorityRepository.deleteById(name);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, name)).build();
     }
