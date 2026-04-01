@@ -5,11 +5,11 @@ export const AppThemePreset = definePreset(Aura, {
   primitive: {
     borderRadius: {
       none: '0',
-      xs: '6px',
-      sm: '10px',
-      md: '14px',
-      lg: '18px',
-      xl: '24px',
+      xs: '0.375rem',
+      sm: '0.625rem',
+      md: '0.875rem',
+      lg: '1.125rem',
+      xl: '1.5rem',
     },
   },
   semantic: {
@@ -27,10 +27,10 @@ export const AppThemePreset = definePreset(Aura, {
       950: '{teal.950}',
     },
     focusRing: {
-      width: '2px',
+      width: '0.125rem',
       style: 'solid',
       color: '{primary.300}',
-      offset: '2px',
+      offset: '0.125rem',
       shadow: 'none',
     },
     colorScheme: {

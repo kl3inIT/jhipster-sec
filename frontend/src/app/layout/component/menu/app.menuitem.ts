@@ -25,7 +25,9 @@ import { filter } from 'rxjs/operators';
       >
         <i [ngClass]="item().icon" class="layout-menuitem-icon"></i>
         @if (!compact() || root()) {
-          <span class="layout-menuitem-text" [class.layout-menuitem-text-compact]="compact()">{{ item().label }}</span>
+          <span class="layout-menuitem-text" [class.layout-menuitem-text-compact]="compact()">{{
+            item().label
+          }}</span>
         }
         @if (hasChildren() && !compact()) {
           <i class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
@@ -38,7 +40,14 @@ import { filter } from 'rxjs/operators';
         [ngClass]="item().class"
         [routerLink]="item().routerLink"
         routerLinkActive="active-route"
-        [routerLinkActiveOptions]="item().routerLinkActiveOptions || { paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }"
+        [routerLinkActiveOptions]="
+          item().routerLinkActiveOptions || {
+            paths: 'exact',
+            queryParams: 'ignored',
+            matrixParams: 'ignored',
+            fragment: 'ignored',
+          }
+        "
         [fragment]="item().fragment"
         [queryParamsHandling]="item().queryParamsHandling"
         [preserveFragment]="item().preserveFragment"
@@ -54,7 +63,9 @@ import { filter } from 'rxjs/operators';
       >
         <i [ngClass]="item().icon" class="layout-menuitem-icon"></i>
         @if (!compact() || root()) {
-          <span class="layout-menuitem-text" [class.layout-menuitem-text-compact]="compact()">{{ item().label }}</span>
+          <span class="layout-menuitem-text" [class.layout-menuitem-text-compact]="compact()">{{
+            item().label
+          }}</span>
         }
         @if (hasChildren() && !compact()) {
           <i class="pi pi-fw pi-angle-down layout-submenu-toggler"></i>
@@ -64,7 +75,14 @@ import { filter } from 'rxjs/operators';
     @if (!compact() && hasChildren() && isVisible() && (root() || isActive())) {
       <ul [class.layout-root-submenulist]="root()">
         @for (child of item().items; track child?.label) {
-          <li app-menuitem [item]="child" [parentPath]="fullPath()" [root]="false" [compact]="compact()" [class]="child['badgeClass']"></li>
+          <li
+            app-menuitem
+            [item]="child"
+            [parentPath]="fullPath()"
+            [root]="false"
+            [compact]="compact()"
+            [class]="child['badgeClass']"
+          ></li>
         }
       </ul>
     }
@@ -82,12 +100,24 @@ import { filter } from 'rxjs/operators';
         animation: p-animate-submenu-collapse 450ms cubic-bezier(0.86, 0, 0.07, 1) forwards;
       }
       @keyframes p-animate-submenu-expand {
-        from { max-height: 0; overflow: hidden; }
-        to { max-height: 1000px; overflow: visible; }
+        from {
+          max-height: 0;
+          overflow: hidden;
+        }
+        to {
+          max-height: 62.5rem;
+          overflow: visible;
+        }
       }
       @keyframes p-animate-submenu-collapse {
-        from { max-height: 1000px; overflow: hidden; }
-        to { max-height: 0; overflow: hidden; }
+        from {
+          max-height: 62.5rem;
+          overflow: hidden;
+        }
+        to {
+          max-height: 0;
+          overflow: hidden;
+        }
       }
     `,
   ],
@@ -126,7 +156,7 @@ export class AppMenuitem {
   initialized = signal<boolean>(false);
 
   constructor() {
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       if (this.item()?.routerLink) {
         this.updateActiveStateFromRoute();
       }
@@ -159,7 +189,7 @@ export class AppMenuitem {
     if (isRouteActive) {
       const parentPath = this.parentPath();
       if (parentPath) {
-        this.layoutService.layoutState.update(val => ({
+        this.layoutService.layoutState.update((val) => ({
           ...val,
           activePath: parentPath,
         }));
@@ -175,7 +205,8 @@ export class AppMenuitem {
       this.compact() &&
       this.root() &&
       this.layoutService.isDesktop() &&
-      (config.menuMode === 'overlay' || (config.menuMode === 'static' && state.staticMenuDesktopInactive));
+      (config.menuMode === 'overlay' ||
+        (config.menuMode === 'static' && state.staticMenuDesktopInactive));
 
     if (item?.disabled) {
       event.preventDefault();
@@ -193,11 +224,14 @@ export class AppMenuitem {
         const itemCount = this.item()?.items?.length ?? 0;
         const estimatedPopoverHeight = Math.min(56 + itemCount * 52, 360);
         const rawTop = currentTarget ? currentTarget.getBoundingClientRect().top - 8 : 84;
-        const clampedTop = Math.max(16, Math.min(rawTop, window.innerHeight - estimatedPopoverHeight - 16));
+        const clampedTop = Math.max(
+          16,
+          Math.min(rawTop, window.innerHeight - estimatedPopoverHeight - 16),
+        );
         const nextPath = this.fullPath();
         const shouldCloseCurrent = state.overlayMenuActive && state.activePath === nextPath;
 
-        this.layoutService.layoutState.update(val => ({
+        this.layoutService.layoutState.update((val) => ({
           ...val,
           overlayMenuActive: !shouldCloseCurrent,
           activePath: nextPath,
@@ -205,19 +239,19 @@ export class AppMenuitem {
           compactMenuPopoverTop: shouldCloseCurrent ? null : clampedTop,
         }));
       } else if (this.isActive()) {
-        this.layoutService.layoutState.update(val => ({
+        this.layoutService.layoutState.update((val) => ({
           ...val,
           activePath: this.parentPath(),
         }));
       } else {
-        this.layoutService.layoutState.update(val => ({
+        this.layoutService.layoutState.update((val) => ({
           ...val,
           activePath: this.fullPath(),
           menuHoverActive: true,
         }));
       }
     } else {
-      this.layoutService.layoutState.update(val => ({
+      this.layoutService.layoutState.update((val) => ({
         ...val,
         overlayMenuActive: false,
         staticMenuMobileActive: false,

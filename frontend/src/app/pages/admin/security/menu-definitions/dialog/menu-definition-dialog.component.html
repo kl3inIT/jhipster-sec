@@ -2,18 +2,23 @@
 <p-confirmDialog />
 
 <p-dialog
-  [header]="isEditMode ? ('security.menuDefinitions.dialog.editTitle' | translate) : ('security.menuDefinitions.dialog.createTitle' | translate)"
+  [header]="
+    isEditMode
+      ? ('security.menuDefinitions.dialog.editTitle' | translate)
+      : ('security.menuDefinitions.dialog.createTitle' | translate)
+  "
   [visible]="visible()"
   (onHide)="onHide()"
   [modal]="true"
-  [style]="{ width: '480px' }"
+  [style]="{ width: '30rem' }"
   [closable]="true"
 >
   <form [formGroup]="form">
     <div class="flex flex-col gap-4 pt-2">
       <div class="mb-4">
         <label for="menuId" class="mb-2 block font-semibold">
-          {{ 'security.menuDefinitions.dialog.menuId' | translate }} <span class="text-red-500">*</span>
+          {{ 'security.menuDefinitions.dialog.menuId' | translate }}
+          <span class="text-red-500">*</span>
         </label>
         <input
           pInputText
@@ -23,48 +28,93 @@
           [placeholder]="'security.menuDefinitions.dialog.menuIdPlaceholder' | translate"
         />
         @if (form.get('menuId')!.invalid && form.get('menuId')!.touched) {
-          <small class="text-red-500">{{ 'security.menuDefinitions.dialog.menuIdRequired' | translate }}</small>
+          <small class="text-red-500">{{
+            'security.menuDefinitions.dialog.menuIdRequired' | translate
+          }}</small>
         }
       </div>
 
       <div class="mb-4">
         <label for="menuName" class="mb-2 block font-semibold">
-          {{ 'security.menuDefinitions.dialog.menuName' | translate }} <span class="text-red-500">*</span>
+          {{ 'security.menuDefinitions.dialog.menuName' | translate }}
+          <span class="text-red-500">*</span>
         </label>
-        <input pInputText id="menuName" formControlName="menuName" class="w-full" [placeholder]="'security.menuDefinitions.dialog.menuNamePlaceholder' | translate" />
+        <input
+          pInputText
+          id="menuName"
+          formControlName="menuName"
+          class="w-full"
+          [placeholder]="'security.menuDefinitions.dialog.menuNamePlaceholder' | translate"
+        />
         @if (form.get('menuName')!.invalid && form.get('menuName')!.touched) {
-          <small class="text-red-500">{{ 'security.menuDefinitions.dialog.menuNameRequired' | translate }}</small>
+          <small class="text-red-500">{{
+            'security.menuDefinitions.dialog.menuNameRequired' | translate
+          }}</small>
         }
       </div>
 
       <div class="mb-4">
         <label for="label" class="mb-2 block font-semibold">
-          {{ 'security.menuDefinitions.dialog.label' | translate }} <span class="text-red-500">*</span>
+          {{ 'security.menuDefinitions.dialog.label' | translate }}
+          <span class="text-red-500">*</span>
         </label>
-        <input pInputText id="label" formControlName="label" class="w-full" [placeholder]="'security.menuDefinitions.dialog.labelPlaceholder' | translate" />
+        <input
+          pInputText
+          id="label"
+          formControlName="label"
+          class="w-full"
+          [placeholder]="'security.menuDefinitions.dialog.labelPlaceholder' | translate"
+        />
         @if (form.get('label')!.invalid && form.get('label')!.touched) {
-          <small class="text-red-500">{{ 'security.menuDefinitions.dialog.labelRequired' | translate }}</small>
+          <small class="text-red-500">{{
+            'security.menuDefinitions.dialog.labelRequired' | translate
+          }}</small>
         }
       </div>
 
       <div class="mb-4">
-        <label for="parentMenuId" class="mb-2 block font-semibold">{{ 'security.menuDefinitions.dialog.parentMenuId' | translate }}</label>
-        <input pInputText id="parentMenuId" formControlName="parentMenuId" class="w-full" [placeholder]="'security.menuDefinitions.dialog.parentMenuIdPlaceholder' | translate" />
+        <label for="parentMenuId" class="mb-2 block font-semibold">{{
+          'security.menuDefinitions.dialog.parentMenuId' | translate
+        }}</label>
+        <input
+          pInputText
+          id="parentMenuId"
+          formControlName="parentMenuId"
+          class="w-full"
+          [placeholder]="'security.menuDefinitions.dialog.parentMenuIdPlaceholder' | translate"
+        />
       </div>
 
       <div class="mb-4">
-        <label for="route" class="mb-2 block font-semibold">{{ 'security.menuDefinitions.dialog.route' | translate }}</label>
-        <input pInputText id="route" formControlName="route" class="w-full" [placeholder]="'security.menuDefinitions.dialog.routePlaceholder' | translate" />
+        <label for="route" class="mb-2 block font-semibold">{{
+          'security.menuDefinitions.dialog.route' | translate
+        }}</label>
+        <input
+          pInputText
+          id="route"
+          formControlName="route"
+          class="w-full"
+          [placeholder]="'security.menuDefinitions.dialog.routePlaceholder' | translate"
+        />
       </div>
 
       <div class="mb-4">
-        <label for="icon" class="mb-2 block font-semibold">{{ 'security.menuDefinitions.dialog.icon' | translate }}</label>
-        <input pInputText id="icon" formControlName="icon" class="w-full" [placeholder]="'security.menuDefinitions.dialog.iconPlaceholder' | translate" />
+        <label for="icon" class="mb-2 block font-semibold">{{
+          'security.menuDefinitions.dialog.icon' | translate
+        }}</label>
+        <input
+          pInputText
+          id="icon"
+          formControlName="icon"
+          class="w-full"
+          [placeholder]="'security.menuDefinitions.dialog.iconPlaceholder' | translate"
+        />
       </div>
 
       <div class="mb-4">
         <label for="ordering" class="mb-2 block font-semibold">
-          {{ 'security.menuDefinitions.dialog.ordering' | translate }} <span class="text-red-500">*</span>
+          {{ 'security.menuDefinitions.dialog.ordering' | translate }}
+          <span class="text-red-500">*</span>
         </label>
         <p-inputNumber
           id="ordering"
@@ -74,19 +124,34 @@
           class="w-full"
         />
         @if (form.get('ordering')!.invalid && form.get('ordering')!.touched) {
-          <small class="text-red-500">{{ 'security.menuDefinitions.dialog.orderingRequired' | translate }}</small>
+          <small class="text-red-500">{{
+            'security.menuDefinitions.dialog.orderingRequired' | translate
+          }}</small>
         }
       </div>
 
       <div class="mb-4">
-        <label for="description" class="mb-2 block font-semibold">{{ 'security.menuDefinitions.dialog.description' | translate }}</label>
-        <textarea pTextarea id="description" formControlName="description" rows="3" class="w-full"></textarea>
+        <label for="description" class="mb-2 block font-semibold">{{
+          'security.menuDefinitions.dialog.description' | translate
+        }}</label>
+        <textarea
+          pTextarea
+          id="description"
+          formControlName="description"
+          rows="3"
+          class="w-full"
+        ></textarea>
       </div>
     </div>
   </form>
 
   <ng-template #footer>
-    <p-button [label]="'entity.action.cancel' | translate" severity="secondary" [outlined]="true" (onClick)="onHide()" />
+    <p-button
+      [label]="'entity.action.cancel' | translate"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="onHide()"
+    />
     <p-button
       [label]="'entity.action.save' | translate"
       [loading]="isSaving"

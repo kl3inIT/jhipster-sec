@@ -153,11 +153,11 @@ const SURFACES: ThemeOption[] = [
               class="rounded-full border-0 px-3 py-1 text-sm font-medium cursor-pointer"
               [class.bg-white]="activeLanguage() === language"
               [class.shadow-1]="activeLanguage() === language"
-              [attr.aria-label]="('layout.language.' + language) | translate"
+              [attr.aria-label]="'layout.language.' + language | translate"
               [attr.aria-pressed]="activeLanguage() === language"
               (click)="changeLanguage(language)"
             >
-              {{ ('layout.language.' + language) | translate }}
+              {{ 'layout.language.' + language | translate }}
             </button>
           }
         </div>
@@ -243,13 +243,15 @@ const SURFACES: ThemeOption[] = [
 export class AppConfigurator {
   readonly languages = LANGUAGES;
   readonly surfaces = SURFACES;
-  readonly presetOptions = (Object.keys(PRESETS) as PresetName[]).map(preset => ({
+  readonly presetOptions = (Object.keys(PRESETS) as PresetName[]).map((preset) => ({
     label: preset,
     value: preset,
   }));
   readonly activeLanguage = signal<string>(LANGUAGE_DEFAULT);
   readonly selectedPrimaryColor = computed(() => this.layoutService.layoutConfig().primary);
-  readonly selectedSurfaceColor = computed(() => this.layoutService.layoutConfig().surface ?? 'slate');
+  readonly selectedSurfaceColor = computed(
+    () => this.layoutService.layoutConfig().surface ?? 'slate',
+  );
   readonly selectedPreset = computed(() => this.layoutService.layoutConfig().preset as PresetName);
   readonly menuMode = computed(() => this.layoutService.layoutConfig().menuMode);
   readonly appearanceMode = computed(() =>
@@ -314,7 +316,7 @@ export class AppConfigurator {
 
     return [
       { name: 'noir', palette: {} },
-      ...colors.map(name => ({
+      ...colors.map((name) => ({
         name,
         palette: presetPalette[name],
       })),
@@ -349,14 +351,14 @@ export class AppConfigurator {
   }
 
   onAppearanceChange(mode: 'light' | 'dark'): void {
-    this.layoutService.layoutConfig.update(state => ({
+    this.layoutService.layoutConfig.update((state) => ({
       ...state,
       darkTheme: mode === 'dark',
     }));
   }
 
   onPresetChange(preset: PresetName): void {
-    this.layoutService.layoutConfig.update(state => ({
+    this.layoutService.layoutConfig.update((state) => ({
       ...state,
       preset,
     }));
@@ -364,7 +366,7 @@ export class AppConfigurator {
   }
 
   onMenuModeChange(menuMode: 'static' | 'overlay' | 'drawer'): void {
-    this.layoutService.layoutConfig.update(state => ({
+    this.layoutService.layoutConfig.update((state) => ({
       ...state,
       menuMode,
     }));
@@ -373,13 +375,13 @@ export class AppConfigurator {
 
   updateColors(event: MouseEvent, type: 'primary' | 'surface', color: ThemeOption): void {
     if (type === 'primary') {
-      this.layoutService.layoutConfig.update(state => ({
+      this.layoutService.layoutConfig.update((state) => ({
         ...state,
         primary: color.name,
       }));
       updatePreset(this.getPresetExtension());
     } else {
-      this.layoutService.layoutConfig.update(state => ({
+      this.layoutService.layoutConfig.update((state) => ({
         ...state,
         surface: color.name,
       }));
@@ -397,7 +399,7 @@ export class AppConfigurator {
 
   private applyThemeSystem(presetName: PresetName): void {
     const surfacePalette =
-      this.surfaces.find(surface => surface.name === this.selectedSurfaceColor())?.palette ??
+      this.surfaces.find((surface) => surface.name === this.selectedSurfaceColor())?.palette ??
       this.surfaces[0]?.palette;
 
     $t()
@@ -409,7 +411,7 @@ export class AppConfigurator {
 
   private getPresetExtension(): any {
     const primaryColor = this.primaryColors().find(
-      color => color.name === this.selectedPrimaryColor(),
+      (color) => color.name === this.selectedPrimaryColor(),
     );
 
     if (primaryColor?.name === 'noir') {
@@ -417,11 +419,11 @@ export class AppConfigurator {
         primitive: {
           borderRadius: {
             none: '0',
-            xs: '6px',
-            sm: '10px',
-            md: '14px',
-            lg: '18px',
-            xl: '24px',
+            xs: '0.375rem',
+            sm: '0.625rem',
+            md: '0.875rem',
+            lg: '1.125rem',
+            xl: '1.5rem',
           },
         },
         semantic: {
@@ -439,10 +441,10 @@ export class AppConfigurator {
             950: '{surface.950}',
           },
           focusRing: {
-            width: '2px',
+            width: '0.125rem',
             style: 'solid',
             color: '{primary.300}',
-            offset: '2px',
+            offset: '0.125rem',
             shadow: 'none',
           },
           colorScheme: {
@@ -487,20 +489,20 @@ export class AppConfigurator {
       primitive: {
         borderRadius: {
           none: '0',
-          xs: '6px',
-          sm: '10px',
-          md: '14px',
-          lg: '18px',
-          xl: '24px',
+          xs: '0.375rem',
+          sm: '0.625rem',
+          md: '0.875rem',
+          lg: '1.125rem',
+          xl: '1.5rem',
         },
       },
       semantic: {
         primary: primaryPalette,
         focusRing: {
-          width: '2px',
+          width: '0.125rem',
           style: 'solid',
           color: '{primary.300}',
-          offset: '2px',
+          offset: '0.125rem',
           shadow: 'none',
         },
         colorScheme: {

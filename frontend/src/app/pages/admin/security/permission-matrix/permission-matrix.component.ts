@@ -99,14 +99,14 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
 
       .permission-section {
         margin: 0;
-        border: 1px solid rgba(148, 163, 184, 0.18);
+        border: 0.0625rem solid rgba(148, 163, 184, 0.18);
         border-radius: 1rem;
         background: linear-gradient(
           180deg,
           rgba(255, 255, 255, 0.98),
           color-mix(in srgb, var(--surface-ground) 82%, white 18%)
         );
-        box-shadow: 0 18px 36px rgba(15, 23, 42, 0.06);
+        box-shadow: 0 1.125rem 2.25rem rgba(15, 23, 42, 0.06);
         overflow: hidden;
       }
 
@@ -137,7 +137,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       .permission-empty-state {
         margin: 0;
         padding: 1rem 1.25rem;
-        border: 1px dashed rgba(148, 163, 184, 0.35);
+        border: 0.0625rem dashed rgba(148, 163, 184, 0.35);
         border-radius: 1rem;
         color: #64748b;
         background: rgba(248, 250, 252, 0.82);
@@ -214,7 +214,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
         background: rgba(255, 255, 255, 0.96);
         border: 0 !important;
         border-bottom: 0 !important;
-        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08) !important;
+        box-shadow: 0 0.5rem 1.125rem rgba(15, 23, 42, 0.08) !important;
       }
 
       :host ::ng-deep .permission-tabs .p-tablist-content {
@@ -275,7 +275,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       .permission-entity-cell__code {
         flex-shrink: 0;
         padding: 0.2rem 0.6rem;
-        border-radius: 999px;
+        border-radius: 62.4375rem;
         background: rgba(148, 163, 184, 0.16);
         color: #475569;
         font-size: 0.75rem;
@@ -307,7 +307,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       :host ::ng-deep .permission-toggle .p-checkbox-box {
         width: 1.45rem;
         height: 1.45rem;
-        border-radius: 999px;
+        border-radius: 62.4375rem;
         transition:
           border-color 0.18s ease,
           box-shadow 0.18s ease,
@@ -320,7 +320,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
 
       :host ::ng-deep .permission-toggle--pending .p-checkbox-box {
         border-color: rgba(245, 158, 11, 0.55);
-        box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.14);
+        box-shadow: 0 0 0 0.125rem rgba(251, 191, 36, 0.14);
       }
 
       :host ::ng-deep .permission-matrix-table .p-datatable-header {
@@ -346,7 +346,10 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
         -ms-overflow-style: none;
       }
 
-      :host ::ng-deep .permission-matrix-table--attributes .p-datatable-table-container::-webkit-scrollbar {
+      :host
+        ::ng-deep
+        .permission-matrix-table--attributes
+        .p-datatable-table-container::-webkit-scrollbar {
         display: none;
         width: 0;
         height: 0;
@@ -358,7 +361,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
 
       :host ::ng-deep .permission-menu-tree .p-treetable-thead > tr > th {
         padding: 0.9rem 1.15rem;
-        border-width: 0 0 1px;
+        border-width: 0 0 0.0625rem;
         border-color: rgba(226, 232, 240, 0.9);
         background: rgba(255, 255, 255, 0.72);
         color: #64748b;
@@ -370,7 +373,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
 
       :host ::ng-deep .permission-menu-tree .p-treetable-tbody > tr > td {
         padding: 0.95rem 1.15rem;
-        border-width: 0 0 1px;
+        border-width: 0 0 0.0625rem;
         border-color: rgba(226, 232, 240, 0.78);
         background: rgba(255, 255, 255, 0.9);
         transition: background-color 0.18s ease;
@@ -386,7 +389,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
 
       :host ::ng-deep .permission-matrix-table .p-datatable-thead > tr > th {
         padding: 0.85rem 1rem;
-        border-width: 0 0 1px;
+        border-width: 0 0 0.0625rem;
         border-color: rgba(226, 232, 240, 0.9);
         background: transparent;
         color: #64748b;
@@ -398,7 +401,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
 
       :host ::ng-deep .permission-matrix-table .p-datatable-tbody > tr > td {
         padding: 0.8rem 1rem;
-        border-width: 0 0 1px;
+        border-width: 0 0 0.0625rem;
         border-color: rgba(226, 232, 240, 0.75);
         background: rgba(255, 255, 255, 0.86);
         transition:
@@ -434,7 +437,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
         .p-datatable-tbody
         > tr.permission-row--active
         > td:first-child {
-        box-shadow: inset 3px 0 0 rgba(16, 185, 129, 0.85);
+        box-shadow: inset 0.1875rem 0 0 rgba(16, 185, 129, 0.85);
       }
 
       :host
@@ -443,7 +446,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
         .p-datatable-tbody
         > tr.permission-row--selected
         > td:first-child {
-        box-shadow: inset 3px 0 0 var(--p-primary-color);
+        box-shadow: inset 0.1875rem 0 0 var(--p-primary-color);
       }
 
       :host
@@ -458,8 +461,8 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       .implied-icon {
         width: 1.55rem;
         height: 1.55rem;
-        border: 1px solid rgba(13, 148, 136, 0.24);
-        border-radius: 999px;
+        border: 0.0625rem solid rgba(13, 148, 136, 0.24);
+        border-radius: 62.4375rem;
         background: rgba(20, 184, 166, 0.14);
         color: #0f766e;
         display: inline-flex;
@@ -474,7 +477,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
 
       .permission-toggle--pending .implied-icon {
         border-color: rgba(245, 158, 11, 0.55);
-        box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.14);
+        box-shadow: 0 0 0 0.125rem rgba(251, 191, 36, 0.14);
       }
 
       .implied-icon:not(:disabled):hover {
@@ -1449,10 +1452,11 @@ export default class PermissionMatrixComponent implements OnInit {
   }
 
   private humanizeIdentifier(value: string): string {
-    const normalized = value
-      .split('.')
-      .filter((segment) => segment.trim())
-      .at(-1) ?? value;
+    const normalized =
+      value
+        .split('.')
+        .filter((segment) => segment.trim())
+        .at(-1) ?? value;
 
     return normalized
       .replace(/[-_]+/g, ' ')

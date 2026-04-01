@@ -2,17 +2,23 @@
 <p-toast />
 
 <p-dialog
-  [header]="role ? ('security.roles.dialog.editTitle' | translate) : ('security.roles.dialog.createTitle' | translate)"
+  [header]="
+    role
+      ? ('security.roles.dialog.editTitle' | translate)
+      : ('security.roles.dialog.createTitle' | translate)
+  "
   [visible]="visible"
   (visibleChange)="visibleChange.emit($event)"
   [modal]="true"
-  [style]="{ width: '480px' }"
+  [style]="{ width: '30rem' }"
   [closable]="true"
 >
   <form [formGroup]="editForm" (ngSubmit)="save()">
     <div class="flex flex-col gap-4 pt-2">
       <div class="flex flex-col gap-1">
-        <label for="roleName" class="font-semibold">{{ 'security.roles.dialog.name' | translate }}</label>
+        <label for="roleName" class="font-semibold">{{
+          'security.roles.dialog.name' | translate
+        }}</label>
         <input
           pInputText
           id="roleName"
@@ -27,12 +33,22 @@
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="roleDisplayName" class="font-semibold">{{ 'security.roles.dialog.displayName' | translate }}</label>
-        <input pInputText id="roleDisplayName" formControlName="displayName" [placeholder]="'security.roles.dialog.displayNamePlaceholder' | translate" class="w-full" />
+        <label for="roleDisplayName" class="font-semibold">{{
+          'security.roles.dialog.displayName' | translate
+        }}</label>
+        <input
+          pInputText
+          id="roleDisplayName"
+          formControlName="displayName"
+          [placeholder]="'security.roles.dialog.displayNamePlaceholder' | translate"
+          class="w-full"
+        />
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="roleType" class="font-semibold">{{ 'security.roles.dialog.type' | translate }}</label>
+        <label for="roleType" class="font-semibold">{{
+          'security.roles.dialog.type' | translate
+        }}</label>
         <p-select
           inputId="roleType"
           formControlName="type"
@@ -50,7 +66,12 @@
   </form>
 
   <ng-template #footer>
-    <p-button [label]="'entity.action.cancel' | translate" severity="secondary" [outlined]="true" (onClick)="close()" />
+    <p-button
+      [label]="'entity.action.cancel' | translate"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="close()"
+    />
     <p-button [label]="'entity.action.save' | translate" [loading]="isSaving" (onClick)="save()" />
   </ng-template>
 </p-dialog>
