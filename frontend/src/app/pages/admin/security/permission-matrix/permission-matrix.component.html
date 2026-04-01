@@ -1,8 +1,8 @@
 <p-toast />
 <p-confirmDialog />
 
-<div class="p-6">
-  <div class="mb-6 flex items-center gap-4">
+<div class="p-0">
+  <div class="mb-0 flex items-center gap-4 pb-4">
     <button
       pButton
       type="button"
@@ -55,256 +55,411 @@
       <p-progressSpinner />
     </div>
   } @else {
-    <p-tabs [value]="activeTabValue" (valueChange)="activeTabValue = $event?.toString() ?? '0'">
+    <p-tabs
+      class="permission-tabs"
+      [value]="activeTabValue"
+      styleClass="permission-tabs"
+      [style.--p-tabs-tabpanel-background]="'transparent'"
+      [style.--p-tabs-tabpanel-color]="'inherit'"
+      (valueChange)="onActiveTabValueChange($event)"
+    >
       <p-tablist>
         <p-tab value="0">{{ 'security.permissionMatrix.tabs.entity' | translate }}</p-tab>
         <p-tab value="1">{{ 'security.permissionMatrix.tabs.menu' | translate }}</p-tab>
       </p-tablist>
       <p-tabpanels>
         <p-tabpanel value="0">
-          <div class="p-4">
-            <h2 class="mb-4 text-base font-semibold">
-              {{ 'security.permissionMatrix.entity.heading' | translate }}
-            </h2>
+          <div
+            class="grid grid-cols-1 items-start gap-4 xl:items-stretch xl:grid-cols-[minmax(0,1.45fr)_minmax(24rem,1fr)]"
+          >
+            <section class="permission-section min-w-0">
+              <div class="permission-section__header">
+                <h2 class="permission-section__title">
+                  {{ 'security.permissionMatrix.entity.heading' | translate }}
+                </h2>
+              </div>
 
-            <p-table [value]="catalogEntriesWithWildcard" dataKey="code" [scrollable]="true">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th>{{ 'security.permissionMatrix.entity.name' | translate }}</th>
-                  <th class="text-center" style="width: 80px">
-                    {{ 'security.permissionMatrix.entity.create' | translate }}
-                  </th>
-                  <th class="text-center" style="width: 80px">
-                    {{ 'security.permissionMatrix.entity.read' | translate }}
-                  </th>
-                  <th class="text-center" style="width: 80px">
-                    {{ 'security.permissionMatrix.entity.update' | translate }}
-                  </th>
-                  <th class="text-center" style="width: 80px">
-                    {{ 'security.permissionMatrix.entity.delete' | translate }}
-                  </th>
-                </tr>
-              </ng-template>
-
-              <ng-template pTemplate="body" let-entry>
-                <tr
-                  (click)="entry.code !== '*' ? onEntitySelect(entry) : null"
-                  [style.cursor]="entry.code !== '*' ? 'pointer' : 'default'"
-                  [style.background-color]="permissionRowColor(isEntityRowGranted(entry.code))"
-                  [class.selected-row]="selectedEntity?.code === entry.code"
-                  [class.font-semibold]="entry.code === '*'"
-                >
-                  <td>{{ entry.displayName }}</td>
-                  @for (op of ['CREATE', 'READ', 'UPDATE', 'DELETE']; track op) {
-                    <td class="text-center">
-                      <span
-                        class="inline-flex items-center rounded-sm"
-                        [class.border-l-2]="isPendingChange(entry.code, op)"
-                        [class.border-orange-400]="isPendingChange(entry.code, op)"
-                        [class.bg-orange-50]="isPendingChange(entry.code, op)"
-                        [class.pl-1]="isPendingChange(entry.code, op)"
-                      >
-                        @if (isImpliedByEntityWildcard(entry.code, op)) {
-                          <button
-                            type="button"
-                            class="implied-icon"
-                            [attr.aria-label]="'security.permissionMatrix.impliedByWildcard' | translate"
-                            [disabled]="saving"
-                            (click)="$event.stopPropagation(); togglePermission('ENTITY', entry.code, op, false)"
-                          >
-                            <i class="pi pi-minus"></i>
-                          </button>
-                        } @else {
-                          <p-checkbox
-                            [binary]="true"
-                            [ngModel]="isEntityEffectivelyGranted(entry.code, op)"
-                            [disabled]="saving"
-                            (ngModelChange)="togglePermission('ENTITY', entry.code, op, $event)"
-                          />
-                        }
-                      </span>
-                    </td>
-                  }
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
-
-          @if (!selectedEntity) {
-            <p class="p-4 text-color-secondary">
-              {{ 'security.permissionMatrix.entity.emptySelection' | translate }}
-            </p>
-          } @else if (selectedEntity.attributes.length === 0) {
-            <p class="p-4 text-color-secondary">
-              {{ 'security.permissionMatrix.attribute.none' | translate }}
-            </p>
-          } @else {
-            <div class="p-4">
-              <h2 class="mb-4 text-base font-semibold">
-                {{
-                  'security.permissionMatrix.attribute.heading'
-                    | translate: { entity: selectedEntity!.displayName }
-                }}
-              </h2>
-
-              <p-table [value]="selectedEntityAttributeRows" [scrollable]="true">
+              <p-table
+                [value]="catalogEntriesWithWildcard"
+                dataKey="code"
+                [scrollable]="true"
+                styleClass="permission-matrix-table"
+              >
                 <ng-template pTemplate="header">
                   <tr>
-                    <th>{{ 'security.permissionMatrix.attribute.name' | translate }}</th>
-                    <th class="text-center" style="width: 80px">
-                      {{ 'security.permissionMatrix.attribute.view' | translate }}
+                    <th class="permission-matrix__entity-col">
+                      {{ 'security.permissionMatrix.entity.name' | translate }}
                     </th>
-                    <th class="text-center" style="width: 80px">
-                      {{ 'security.permissionMatrix.attribute.modify' | translate }}
+                    <th class="permission-matrix__action-col">
+                      {{ 'security.permissionMatrix.entity.create' | translate }}
+                    </th>
+                    <th class="permission-matrix__action-col">
+                      {{ 'security.permissionMatrix.entity.read' | translate }}
+                    </th>
+                    <th class="permission-matrix__action-col">
+                      {{ 'security.permissionMatrix.entity.update' | translate }}
+                    </th>
+                    <th class="permission-matrix__action-col">
+                      {{ 'security.permissionMatrix.entity.delete' | translate }}
                     </th>
                   </tr>
                 </ng-template>
 
-                <ng-template pTemplate="body" let-row>
+                <ng-template pTemplate="body" let-entry>
                   <tr
-                    [style.background-color]="permissionRowColor(isAttributeRowGranted(row.target, selectedEntity!.code))"
-                    [class.font-semibold]="row.isWildcard"
+                    (click)="entry.code !== '*' ? onEntitySelect(entry) : null"
+                    [style.cursor]="entry.code !== '*' ? 'pointer' : 'default'"
+                    [class.permission-row--clickable]="entry.code !== '*'"
+                    [class.permission-row--selected]="selectedEntity?.code === entry.code"
+                    [class.permission-row--active]="isEntityRowGranted(entry.code)"
+                    [class.permission-row--wildcard]="entry.code === '*'"
                   >
                     <td>
-                      {{
-                        row.isWildcard
-                          ? ('security.permissionMatrix.attribute.wildcard' | translate)
-                          : row.label
-                      }}
+                      <div class="permission-entity-cell">
+                        <span
+                          class="permission-entity-cell__label"
+                          [class.permission-entity-cell__label--wildcard]="entry.code === '*'"
+                        >
+                          {{ entry.displayName }}
+                        </span>
+                        <span class="permission-entity-cell__code">{{ entry.code }}</span>
+                      </div>
                     </td>
-                    <td class="text-center">
-                      <span
-                        class="inline-flex items-center rounded-sm"
-                        [class.border-l-2]="isPendingChange(row.target, 'VIEW')"
-                        [class.border-orange-400]="isPendingChange(row.target, 'VIEW')"
-                        [class.bg-orange-50]="isPendingChange(row.target, 'VIEW')"
-                        [class.pl-1]="isPendingChange(row.target, 'VIEW')"
-                      >
-                        @if (isViewImpliedByModify(row.target, selectedEntity!.code) && !isEffectivelyGranted(row.target, 'VIEW')) {
-                          <!-- VIEW implied by EDIT — show dash, not interactive -->
-                          <button type="button" class="implied-icon implied-icon--readonly" disabled aria-hidden="true">
-                            <i class="pi pi-minus"></i>
-                          </button>
-                        } @else if (!row.isWildcard && isImpliedByAttributeWildcard(row.target, 'VIEW', selectedEntity!.code)) {
-                          <button
-                            type="button"
-                            class="implied-icon"
-                            [attr.aria-label]="'security.permissionMatrix.impliedByWildcard' | translate"
-                            [disabled]="saving"
-                            (click)="togglePermission('ATTRIBUTE', row.target, 'VIEW', false)"
-                          >
-                            <i class="pi pi-minus"></i>
-                          </button>
-                        } @else {
-                          <p-checkbox
-                            [binary]="true"
-                            [ngModel]="
-                              isAttributeEffectivelyGranted(row.target, 'VIEW', selectedEntity!.code) ||
-                              isViewImpliedByModify(row.target, selectedEntity!.code)
-                            "
-                            [disabled]="saving || isViewImpliedByModify(row.target, selectedEntity!.code)"
-                            (ngModelChange)="togglePermission('ATTRIBUTE', row.target, 'VIEW', $event)"
-                          />
-                        }
-                      </span>
-                    </td>
-                    <td class="text-center">
-                      <span
-                        class="inline-flex items-center rounded-sm"
-                        [class.border-l-2]="isPendingChange(row.target, 'EDIT')"
-                        [class.border-orange-400]="isPendingChange(row.target, 'EDIT')"
-                        [class.bg-orange-50]="isPendingChange(row.target, 'EDIT')"
-                        [class.pl-1]="isPendingChange(row.target, 'EDIT')"
-                      >
-                        @if (!row.isWildcard && isImpliedByAttributeWildcard(row.target, 'EDIT', selectedEntity!.code)) {
-                          <button
-                            type="button"
-                            class="implied-icon"
-                            [attr.aria-label]="'security.permissionMatrix.impliedByWildcard' | translate"
-                            [disabled]="saving"
-                            (click)="togglePermission('ATTRIBUTE', row.target, 'EDIT', false)"
-                          >
-                            <i class="pi pi-minus"></i>
-                          </button>
-                        } @else {
-                          <p-checkbox
-                            [binary]="true"
-                            [ngModel]="isAttributeEffectivelyGranted(row.target, 'EDIT', selectedEntity!.code)"
-                            [disabled]="saving"
-                            (ngModelChange)="togglePermission('ATTRIBUTE', row.target, 'EDIT', $event)"
-                          />
-                        }
-                      </span>
-                    </td>
+                    @for (op of ['CREATE', 'READ', 'UPDATE', 'DELETE']; track op) {
+                      <td class="permission-cell">
+                        <span
+                          class="permission-toggle"
+                          [class.permission-toggle--pending]="isPendingChange(entry.code, op)"
+                        >
+                          @if (isImpliedByEntityWildcard(entry.code, op)) {
+                            <button
+                              type="button"
+                              class="implied-icon"
+                              [attr.aria-label]="
+                                'security.permissionMatrix.impliedByWildcard' | translate
+                              "
+                              [disabled]="saving"
+                              (click)="
+                                $event.stopPropagation();
+                                togglePermission('ENTITY', entry.code, op, false)
+                              "
+                            >
+                              <i class="pi pi-minus"></i>
+                            </button>
+                          } @else {
+                            <p-checkbox
+                              [binary]="true"
+                              [ngModel]="isEntityEffectivelyGranted(entry.code, op)"
+                              [disabled]="saving"
+                              (ngModelChange)="togglePermission('ENTITY', entry.code, op, $event)"
+                            />
+                          }
+                        </span>
+                      </td>
+                    }
                   </tr>
                 </ng-template>
               </p-table>
+            </section>
+
+            <div class="permission-attribute-column flex min-w-0 flex-col">
+              @if (!selectedEntity) {
+                <p class="permission-empty-state h-full">
+                  {{ 'security.permissionMatrix.entity.emptySelection' | translate }}
+                </p>
+              } @else if (selectedEntity.attributes.length === 0) {
+                <p class="permission-empty-state h-full">
+                  {{ 'security.permissionMatrix.attribute.none' | translate }}
+                </p>
+              } @else {
+                <section
+                  class="permission-section permission-section--attributes permission-section--attributes-scroll min-w-0"
+                >
+                  <div class="permission-section__header">
+                    <h2 class="permission-section__title">
+                      {{
+                        'security.permissionMatrix.attribute.heading'
+                          | translate: { entity: selectedEntity!.displayName }
+                      }}
+                    </h2>
+                  </div>
+
+                  <p-table
+                    [value]="selectedEntityAttributeRows"
+                    [scrollable]="true"
+                    scrollHeight="flex"
+                    styleClass="permission-matrix-table permission-matrix-table--attributes"
+                  >
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th class="permission-matrix__entity-col">
+                          {{ 'security.permissionMatrix.attribute.name' | translate }}
+                        </th>
+                        <th class="permission-matrix__action-col">
+                          {{ 'security.permissionMatrix.attribute.view' | translate }}
+                        </th>
+                        <th class="permission-matrix__action-col">
+                          {{ 'security.permissionMatrix.attribute.modify' | translate }}
+                        </th>
+                      </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-row>
+                      <tr
+                        [class.permission-row--active]="
+                          isAttributeRowGranted(row.target, selectedEntity!.code)
+                        "
+                        [class.permission-row--wildcard]="row.isWildcard"
+                      >
+                        <td class="permission-attribute-cell">
+                          <span [class.font-semibold]="row.isWildcard">
+                            {{
+                              row.isWildcard
+                                ? ('security.permissionMatrix.attribute.wildcard' | translate)
+                                : row.label
+                            }}
+                          </span>
+                        </td>
+                        <td class="permission-cell">
+                          <span
+                            class="permission-toggle"
+                            [class.permission-toggle--pending]="isPendingChange(row.target, 'VIEW')"
+                          >
+                            @if (
+                              isViewImpliedByModify(row.target, selectedEntity!.code) &&
+                              !isEffectivelyGranted(row.target, 'VIEW')
+                            ) {
+                              <!-- VIEW implied by EDIT — show dash, not interactive -->
+                              <button
+                                type="button"
+                                class="implied-icon implied-icon--readonly"
+                                disabled
+                                aria-hidden="true"
+                              >
+                                <i class="pi pi-minus"></i>
+                              </button>
+                            } @else if (
+                              !row.isWildcard &&
+                              isImpliedByAttributeWildcard(row.target, 'VIEW', selectedEntity!.code)
+                            ) {
+                              <button
+                                type="button"
+                                class="implied-icon"
+                                [attr.aria-label]="
+                                  'security.permissionMatrix.impliedByWildcard' | translate
+                                "
+                                [disabled]="saving"
+                                (click)="togglePermission('ATTRIBUTE', row.target, 'VIEW', false)"
+                              >
+                                <i class="pi pi-minus"></i>
+                              </button>
+                            } @else {
+                              <p-checkbox
+                                [binary]="true"
+                                [ngModel]="
+                                  isAttributeEffectivelyGranted(
+                                    row.target,
+                                    'VIEW',
+                                    selectedEntity!.code
+                                  ) || isViewImpliedByModify(row.target, selectedEntity!.code)
+                                "
+                                [disabled]="
+                                  saving || isViewImpliedByModify(row.target, selectedEntity!.code)
+                                "
+                                (ngModelChange)="
+                                  togglePermission('ATTRIBUTE', row.target, 'VIEW', $event)
+                                "
+                              />
+                            }
+                          </span>
+                        </td>
+                        <td class="permission-cell">
+                          <span
+                            class="permission-toggle"
+                            [class.permission-toggle--pending]="isPendingChange(row.target, 'EDIT')"
+                          >
+                            @if (
+                              !row.isWildcard &&
+                              isImpliedByAttributeWildcard(row.target, 'EDIT', selectedEntity!.code)
+                            ) {
+                              <button
+                                type="button"
+                                class="implied-icon"
+                                [attr.aria-label]="
+                                  'security.permissionMatrix.impliedByWildcard' | translate
+                                "
+                                [disabled]="saving"
+                                (click)="togglePermission('ATTRIBUTE', row.target, 'EDIT', false)"
+                              >
+                                <i class="pi pi-minus"></i>
+                              </button>
+                            } @else {
+                              <p-checkbox
+                                [binary]="true"
+                                [ngModel]="
+                                  isAttributeEffectivelyGranted(
+                                    row.target,
+                                    'EDIT',
+                                    selectedEntity!.code
+                                  )
+                                "
+                                [disabled]="saving"
+                                (ngModelChange)="
+                                  togglePermission('ATTRIBUTE', row.target, 'EDIT', $event)
+                                "
+                              />
+                            }
+                          </span>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </section>
+              }
             </div>
-          }
+          </div>
         </p-tabpanel>
 
         <p-tabpanel value="1">
-          <div class="p-4">
-            <div class="mb-4 max-w-sm">
-              <label for="menuAppSelect" class="mb-2 block text-sm font-semibold">
-                {{ 'security.permissionMatrix.menu.appLabel' | translate }}
-              </label>
-
-              @if (menuAppOptions.length > 0) {
-                <p-select
-                  inputId="menuAppSelect"
-                  [ngModel]="selectedMenuApp"
-                  [ngModelOptions]="{ standalone: true }"
-                  [options]="menuAppOptions"
-                  optionLabel="label"
-                  optionValue="value"
-                  [emptyMessage]="'security.permissionMatrix.menu.noApps' | translate"
-                  [disabled]="saving || menuLoading"
-                  class="w-full"
-                  (ngModelChange)="onSelectedMenuAppChange($event)"
-                />
-              } @else {
-                <p class="text-color-secondary">
-                  {{ 'security.permissionMatrix.menu.noApps' | translate }}
+          <div class="flex flex-col gap-4 pt-2">
+            <section
+              class="grid gap-4 rounded-2xl border border-slate-200/70 bg-white/90 px-5 py-5 shadow-sm lg:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)] lg:items-end"
+            >
+              <div class="min-w-0">
+                <p class="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-teal-700">
+                  {{ 'security.permissionMatrix.menu.sectionLabel' | translate }}
                 </p>
-              }
-            </div>
+                <h2 class="m-0 text-[1.35rem] font-extrabold text-slate-900">
+                  {{ currentMenuAppLabel(selectedMenuApp) }}
+                </h2>
+                <p class="mt-2 max-w-3xl leading-6 text-slate-500">
+                  {{ 'security.permissionMatrix.menu.appHint' | translate }}
+                </p>
+              </div>
+
+              <div class="flex min-w-0 flex-col gap-3">
+                <label for="menuAppSelect" class="text-sm font-bold text-slate-700">
+                  {{ 'security.permissionMatrix.menu.appLabel' | translate }}
+                </label>
+
+                @if (menuAppOptions.length > 0) {
+                  <p-select
+                    inputId="menuAppSelect"
+                    [ngModel]="selectedMenuApp"
+                    [ngModelOptions]="{ standalone: true }"
+                    [options]="menuAppOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    [emptyMessage]="'security.permissionMatrix.menu.noApps' | translate"
+                    [disabled]="saving || menuLoading"
+                    class="w-full"
+                    (ngModelChange)="onSelectedMenuAppChange($event)"
+                  />
+                } @else {
+                  <p class="text-color-secondary">
+                    {{ 'security.permissionMatrix.menu.noApps' | translate }}
+                  </p>
+                }
+
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    class="inline-flex items-center rounded-full border border-slate-200/70 bg-white/80 px-3 py-1 text-xs font-semibold text-slate-600"
+                  >
+                    {{
+                      'security.permissionMatrix.menu.nodeCount'
+                        | translate: { count: currentMenuNodeCount() }
+                    }}
+                  </span>
+                  <span
+                    class="inline-flex items-center rounded-full border border-slate-200/70 bg-white/80 px-3 py-1 text-xs font-semibold text-slate-600"
+                  >
+                    {{
+                      'security.permissionMatrix.menu.grantedCount'
+                        | translate: { count: currentMenuGrantedCount() }
+                    }}
+                  </span>
+                </div>
+              </div>
+            </section>
 
             @if (!menuLoading && !currentMenuAppHasDefinitions()) {
-              <p class="mb-4 text-color-secondary">
-                {{
-                  'security.permissionMatrix.menu.emptyDefinitions'
-                    | translate: { appName: selectedMenuApp }
-                }}
-              </p>
-            }
+              <div class="permission-empty-state permission-empty-state--menu">
+                <strong class="block">
+                  {{ 'security.permissionMatrix.menu.emptyTitle' | translate }}
+                </strong>
+                <span>
+                  {{
+                    'security.permissionMatrix.menu.emptyDefinitions'
+                      | translate: { appName: currentMenuAppLabel(selectedMenuApp) }
+                  }}
+                </span>
+              </div>
+            } @else {
+              <section class="permission-section permission-section--menu min-w-0">
+                <div class="permission-section__header pb-3">
+                  <div>
+                    <h2 class="permission-section__title">
+                      {{ 'security.permissionMatrix.menu.treeTitle' | translate }}
+                    </h2>
+                    <p class="mt-1 text-sm leading-6 text-slate-500">
+                      {{ 'security.permissionMatrix.menu.treeDescription' | translate }}
+                    </p>
+                  </div>
+                </div>
 
-            <p-treetable
-              [value]="menuTreeNodes"
-              selectionMode="checkbox"
-              [(selectionKeys)]="menuSelectionKeys"
-              dataKey="key"
-              [loading]="menuLoading"
-              (selectionKeysChange)="onMenuSelectionKeysChange($any($event))"
-              [tableStyle]="{ 'min-width': '24rem' }"
-            >
-              <ng-template #header>
-                <tr>
-                  <th>{{ 'security.permissionMatrix.menu.node' | translate }}</th>
-                </tr>
-              </ng-template>
-              <ng-template #body let-rowNode let-rowData="rowData">
-                <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
-                  <td>
-                    <div class="flex items-center gap-2">
-                      <p-treetable-toggler [rowNode]="rowNode" />
-                      <p-treetable-checkbox [value]="rowNode" />
-                      <span>{{ rowNode.node.label }}</span>
-                    </div>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-treetable>
+                <p-treetable
+                  [value]="menuTreeNodes"
+                  selectionMode="checkbox"
+                  [(selectionKeys)]="menuSelectionKeys"
+                  dataKey="key"
+                  [loading]="menuLoading"
+                  styleClass="permission-menu-tree"
+                  (selectionKeysChange)="onMenuSelectionKeysChange($any($event))"
+                  [tableStyle]="{ 'min-width': '24rem' }"
+                >
+                  <ng-template #header>
+                    <tr>
+                      <th>{{ 'security.permissionMatrix.menu.node' | translate }}</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template #body let-rowNode let-rowData="rowData">
+                    <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
+                      <td>
+                        <div class="flex items-center justify-between gap-4 max-md:flex-col max-md:items-start">
+                          <div class="flex min-w-0 flex-1 items-center gap-3">
+                            <p-treetable-toggler [rowNode]="rowNode" />
+                            <p-treetable-checkbox [value]="rowNode" />
+                            @if (rowData.icon) {
+                              <span
+                                class="inline-flex flex-shrink-0 items-center justify-center "
+                              >
+                                <i [class]="rowData.icon"></i>
+                              </span>
+                            }
+                            <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+                              <span class="block max-w-full font-semibold leading-6 text-slate-900 [overflow-wrap:anywhere]">
+                                {{ rowNode.node.label }}
+                              </span>
+                              <span class="block max-w-full text-xs text-slate-500 [overflow-wrap:anywhere]">
+                                {{ rowData.menuId }}
+                              </span>
+                            </div>
+                          </div>
+
+                          @if (rowData.route) {
+                            <span
+                              class="ml-auto max-w-full flex-shrink-0 overflow-hidden text-ellipsis whitespace-nowrap rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600"
+                            >
+                              {{ rowData.route }}
+                            </span>
+                          }
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-treetable>
+              </section>
+            }
           </div>
         </p-tabpanel>
       </p-tabpanels>

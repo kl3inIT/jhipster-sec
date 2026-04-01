@@ -196,10 +196,17 @@ describe('PermissionMatrixComponent', () => {
       security: {
         permissionMatrix: {
           menu: {
+            sectionLabel: 'Menu Scope',
             appLabel: 'Application',
+            appHint: 'Choose an application, then enable the navigation nodes this role should be able to access.',
+            treeTitle: 'Navigation Tree',
+            treeDescription: 'Check nodes to allow access. Parent nodes reflect the combined state of their children.',
             emptyDefinitions: 'No menu definitions found for {{ appName }}.',
             noApps: 'No applications available.',
             node: 'Navigation Node',
+            nodeCount: '{{ count }} nodes',
+            grantedCount: '{{ count }} granted',
+            emptyTitle: 'No menus available',
           },
           entity: {
             emptySelection: 'Select an entity above',
