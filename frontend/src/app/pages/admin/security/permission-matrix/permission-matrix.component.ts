@@ -99,14 +99,10 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
 
       .permission-section {
         margin: 0;
-        border: 0.0625rem solid rgba(148, 163, 184, 0.18);
-        border-radius: 1rem;
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.98),
-          color-mix(in srgb, var(--surface-ground) 82%, white 18%)
-        );
-        box-shadow: 0 1.125rem 2.25rem rgba(15, 23, 42, 0.06);
+        border: 0.0625rem solid var(--app-border-soft);
+        border-radius: var(--app-radius-lg);
+        background: var(--app-surface-soft);
+        box-shadow: var(--app-shadow-xs);
         overflow: hidden;
       }
 
@@ -141,10 +137,10 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       .permission-empty-state {
         margin: 0;
         padding: 1rem 1.25rem;
-        border: 0.0625rem dashed rgba(148, 163, 184, 0.35);
-        border-radius: 1rem;
-        color: #64748b;
-        background: rgba(248, 250, 252, 0.82);
+        border: 0.0625rem dashed var(--app-border-strong);
+        border-radius: var(--app-radius-md);
+        color: var(--app-text-muted);
+        background: var(--app-surface-muted);
       }
 
       .permission-empty-state--menu {
@@ -198,38 +194,34 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       :host ::ng-deep .permission-tabs .p-tablist-tab-list {
         gap: 0.35rem;
         border: 0;
-        border-radius: 0.85rem !important;
+        border-radius: 0 !important;
         background: transparent !important;
         box-shadow: none;
       }
 
       :host ::ng-deep .permission-tabs .p-tab {
-        border: 0 !important;
-        border-bottom: 0 !important;
-        border-radius: 0.8rem;
+        border-radius: var(--app-radius-sm) var(--app-radius-sm) 0 0;
         background: transparent;
-        color: #475569;
-        font-weight: 700;
+        color: var(--app-text-muted);
+        font-weight: 600;
         padding: 0.8rem 1rem;
         box-shadow: none;
         transition:
           background-color 0.18s ease,
-          box-shadow 0.18s ease,
           color 0.18s ease,
           border-color 0.18s ease;
       }
 
       :host ::ng-deep .permission-tabs .p-tab:hover {
-        color: #0f766e;
-        background: rgba(255, 255, 255, 0.72);
+        color: var(--text-color, #18181b);
+        background: var(--app-surface-muted);
       }
 
       :host ::ng-deep .permission-tabs .p-tab.p-tab-active {
-        color: #0f766e;
-        background: rgba(255, 255, 255, 0.96);
-        border: 0 !important;
-        border-bottom: 0 !important;
-        box-shadow: 0 0.5rem 1.125rem rgba(15, 23, 42, 0.08) !important;
+        color: var(--text-color, #18181b);
+        background: var(--app-surface-soft);
+        border-color: var(--app-border-strong) !important;
+        border-bottom-color: var(--app-surface-soft) !important;
       }
 
       :host ::ng-deep .permission-tabs .p-tablist-content {
@@ -290,9 +282,9 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       .permission-entity-cell__code {
         flex-shrink: 0;
         padding: 0.2rem 0.6rem;
-        border-radius: 62.4375rem;
-        background: rgba(148, 163, 184, 0.16);
-        color: #475569;
+        border-radius: var(--app-radius-sm);
+        background: var(--app-surface-muted);
+        color: var(--app-text-muted);
         font-size: 0.75rem;
         line-height: 1.2;
       }
@@ -322,7 +314,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       :host ::ng-deep .permission-toggle .p-checkbox-box {
         width: 1.45rem;
         height: 1.45rem;
-        border-radius: 62.4375rem;
+        border-radius: 0.25rem;
         transition:
           border-color 0.18s ease,
           box-shadow 0.18s ease,
@@ -343,7 +335,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       }
 
       :host ::ng-deep .permission-matrix-table .p-datatable-table-container {
-        border-radius: 0 0 1rem 1rem;
+        border-radius: 0 0 var(--app-radius-lg) var(--app-radius-lg);
       }
 
       :host ::ng-deep .permission-matrix-table--attributes {
@@ -371,15 +363,15 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       }
 
       :host ::ng-deep .permission-menu-tree .p-treetable-table-container {
-        border-radius: 0 0 1rem 1rem;
+        border-radius: 0 0 var(--app-radius-lg) var(--app-radius-lg);
       }
 
       :host ::ng-deep .permission-menu-tree .p-treetable-thead > tr > th {
         padding: 0.9rem 1.15rem;
         border-width: 0 0 0.0625rem;
-        border-color: rgba(226, 232, 240, 0.9);
-        background: rgba(255, 255, 255, 0.72);
-        color: #64748b;
+        border-color: var(--app-border-soft);
+        background: var(--app-surface-muted);
+        color: var(--app-text-muted);
         font-size: 0.77rem;
         font-weight: 700;
         letter-spacing: 0.08em;
@@ -389,8 +381,8 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       :host ::ng-deep .permission-menu-tree .p-treetable-tbody > tr > td {
         padding: 0.95rem 1.15rem;
         border-width: 0 0 0.0625rem;
-        border-color: rgba(226, 232, 240, 0.78);
-        background: rgba(255, 255, 255, 0.9);
+        border-color: var(--app-border-soft);
+        background: var(--app-surface-soft);
         transition: background-color 0.18s ease;
       }
 
@@ -399,15 +391,15 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       }
 
       :host ::ng-deep .permission-menu-tree .p-treetable-tbody > tr:hover > td {
-        background: rgba(248, 250, 252, 0.96);
+        background: var(--app-surface-muted);
       }
 
       :host ::ng-deep .permission-matrix-table .p-datatable-thead > tr > th {
         padding: 0.85rem 1rem;
         border-width: 0 0 0.0625rem;
-        border-color: rgba(226, 232, 240, 0.9);
+        border-color: var(--app-border-soft);
         background: transparent;
-        color: #64748b;
+        color: var(--app-text-muted);
         font-size: 0.77rem;
         font-weight: 700;
         letter-spacing: 0.08em;
@@ -417,8 +409,8 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
       :host ::ng-deep .permission-matrix-table .p-datatable-tbody > tr > td {
         padding: 0.8rem 1rem;
         border-width: 0 0 0.0625rem;
-        border-color: rgba(226, 232, 240, 0.75);
-        background: rgba(255, 255, 255, 0.86);
+        border-color: var(--app-border-soft);
+        background: var(--app-surface-soft);
         transition:
           background-color 0.18s ease,
           box-shadow 0.18s ease;
@@ -434,7 +426,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
         .p-datatable-tbody
         > tr.permission-row--clickable:hover
         > td {
-        background: rgba(239, 246, 255, 0.92);
+        background: var(--app-surface-muted);
       }
 
       :host
@@ -443,7 +435,7 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
         .p-datatable-tbody
         > tr.permission-row--selected
         > td {
-        background: rgba(14, 165, 233, 0.08);
+        background: color-mix(in srgb, var(--p-primary-color) 8%, var(--app-surface-soft));
       }
 
       :host
@@ -470,15 +462,15 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
         .p-datatable-tbody
         > tr.permission-row--wildcard
         > td {
-        background: rgba(15, 23, 42, 0.035);
+        background: var(--app-surface-muted);
       }
 
       .implied-icon {
         width: 1.55rem;
         height: 1.55rem;
         border: 0.0625rem solid rgba(13, 148, 136, 0.24);
-        border-radius: 62.4375rem;
-        background: rgba(20, 184, 166, 0.14);
+        border-radius: 0.25rem;
+        background: color-mix(in srgb, var(--p-primary-color) 10%, var(--app-surface-soft));
         color: #0f766e;
         display: inline-flex;
         align-items: center;

@@ -5,11 +5,11 @@ export const AppThemePreset = definePreset(Aura, {
   primitive: {
     borderRadius: {
       none: '0',
-      xs: '0.375rem',
-      sm: '0.625rem',
-      md: '0.875rem',
-      lg: '1.125rem',
-      xl: '1.5rem',
+      xs: '0.25rem',
+      sm: '0.375rem',
+      md: '0.5rem',
+      lg: '0.75rem',
+      xl: '1rem',
     },
   },
   semantic: {

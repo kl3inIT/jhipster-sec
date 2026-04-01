@@ -1,46 +1,35 @@
 :root {
-  --app-shell-bg:
-    radial-gradient(circle at top right, rgba(148, 163, 184, 0.12), transparent 28%),
-    linear-gradient(180deg, rgba(248, 250, 252, 0.96) 0%, rgba(255, 255, 255, 0) 26%),
-    var(--surface-ground, var(--p-surface-50));
-  --app-surface-soft: color-mix(in srgb, white 88%, #f1f5f9);
-  --app-surface-muted: color-mix(in srgb, white 80%, #e2e8f0);
-  --app-surface-strong: color-mix(in srgb, white 68%, #cbd5e1);
-  --app-border-soft: color-mix(in srgb, #cbd5e1 28%, var(--surface-border, #dbe3ea));
-  --app-border-strong: color-mix(in srgb, #94a3b8 24%, var(--surface-border, #dbe3ea));
-  --app-text-muted: color-mix(in srgb, var(--text-color-secondary, #475569) 88%, #64748b);
-  --app-shadow-xs: 0 0.75rem 1.75rem -1.5rem rgba(15, 23, 42, 0.26);
-  --app-shadow-sm: 0 1.25rem 2.75rem -2rem rgba(15, 23, 42, 0.32);
-  --app-shadow-md: 0 1.5rem 3.625rem -2.125rem rgba(15, 23, 42, 0.38);
-  --app-radius-sm: 0.875rem;
-  --app-radius-md: 1.125rem;
-  --app-radius-lg: 1.5rem;
-  --app-btn-primary-bg: var(--p-primary-color);
-  --app-btn-primary-border: var(--p-primary-color);
-  --app-btn-primary-hover: var(--p-primary-hover-color, var(--p-primary-color));
-  --app-btn-primary-color: var(--p-primary-contrast-color, #ffffff);
-  --app-btn-secondary-bg: color-mix(
-    in srgb,
-    var(--p-primary-color) 8%,
-    var(--p-surface-0, #ffffff)
+  --app-shell-bg: linear-gradient(180deg, #fafafa 0%, #f4f4f5 100%);
+  --app-surface-soft: #ffffff;
+  --app-surface-muted: #fafafa;
+  --app-surface-strong: #f4f4f5;
+  --app-border-soft: #e4e4e7;
+  --app-border-strong: #d4d4d8;
+  --app-text-muted: #71717a;
+  --app-shadow-xs: 0 0.0625rem 0.125rem rgba(15, 23, 42, 0.05);
+  --app-shadow-sm:
+    0 0.0625rem 0.1875rem rgba(15, 23, 42, 0.1), 0 0.0625rem 0.125rem rgba(15, 23, 42, 0.06);
+  --app-shadow-md: 0 1rem 2.5rem -1rem rgba(15, 23, 42, 0.24);
+  --app-radius-sm: 0.375rem;
+  --app-radius-md: 0.5rem;
+  --app-radius-lg: 0.75rem;
+  --app-btn-primary-bg: var(--p-primary-700, var(--p-primary-color));
+  --app-btn-primary-border: var(--p-primary-700, var(--p-primary-color));
+  --app-btn-primary-hover: var(
+    --p-primary-800,
+    var(--p-primary-hover-color, var(--p-primary-color))
   );
-  --app-btn-secondary-border: color-mix(
-    in srgb,
-    var(--p-primary-color) 24%,
-    var(--surface-border, #dbe3ea)
-  );
-  --app-btn-secondary-hover: color-mix(
-    in srgb,
-    var(--p-primary-color) 14%,
-    var(--p-surface-0, #ffffff)
-  );
-  --app-btn-secondary-color: var(--p-primary-color);
-  --app-btn-text-hover: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
-  --app-btn-text-color: var(--p-primary-color);
-  --app-btn-text-hover-color: var(--p-primary-hover-color, var(--p-primary-color));
-  --app-btn-outlined-border: color-mix(in srgb, var(--p-primary-color) 70%, transparent);
-  --app-btn-outlined-hover: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
-  --app-btn-outlined-color: var(--p-primary-color);
+  --app-btn-primary-color: #ffffff;
+  --app-btn-secondary-bg: #ffffff;
+  --app-btn-secondary-border: var(--app-border-strong);
+  --app-btn-secondary-hover: var(--app-surface-muted);
+  --app-btn-secondary-color: var(--text-color, #18181b);
+  --app-btn-text-hover: var(--app-surface-muted);
+  --app-btn-text-color: var(--text-color, #18181b);
+  --app-btn-text-hover-color: var(--text-color, #18181b);
+  --app-btn-outlined-border: var(--app-border-strong);
+  --app-btn-outlined-hover: var(--app-surface-muted);
+  --app-btn-outlined-color: var(--text-color, #18181b);
   --app-btn-success-bg: #166534;
   --app-btn-success-border: #166534;
   --app-btn-success-hover: #14532d;
@@ -53,42 +42,43 @@
   --app-btn-danger-border: #b91c1c;
   --app-btn-danger-hover: #991b1b;
   --app-btn-danger-color: #ffffff;
-  --app-field-bg: color-mix(in srgb, white 92%, #f8fafc);
-  --app-field-bg-hover: color-mix(in srgb, white 84%, #f1f5f9);
-  --app-field-border: color-mix(in srgb, #cbd5e1 36%, #dbe3ea);
-  --app-field-border-hover: color-mix(in srgb, #94a3b8 34%, #cbd5e1);
-  --app-field-shadow: 0 0 0 0.25rem rgba(148, 163, 184, 0.14);
-  --app-overlay-bg: color-mix(in srgb, white 94%, #f8fafc);
+  --app-field-bg: #ffffff;
+  --app-field-bg-hover: #ffffff;
+  --app-field-border: #d4d4d8;
+  --app-field-border-hover: #a1a1aa;
+  --app-field-shadow: 0 0 0 0.1875rem rgba(15, 23, 42, 0.08);
+  --app-overlay-bg: #ffffff;
 }
 
 .app-dark {
-  --app-shell-bg:
-    radial-gradient(circle at top right, rgba(148, 163, 184, 0.12), transparent 26%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.64) 0%, rgba(15, 23, 42, 0) 32%),
-    var(--surface-ground, var(--p-surface-950));
-  --app-surface-soft: color-mix(in srgb, var(--p-surface-900) 86%, #0f172a);
-  --app-surface-muted: color-mix(in srgb, var(--p-surface-900) 76%, #111827);
-  --app-surface-strong: color-mix(in srgb, var(--p-surface-900) 64%, #1f2937);
-  --app-border-soft: color-mix(in srgb, #475569 22%, var(--surface-border, #334155));
-  --app-border-strong: color-mix(in srgb, #64748b 24%, var(--surface-border, #334155));
-  --app-text-muted: color-mix(in srgb, var(--text-color-secondary, #cbd5e1) 86%, #94a3b8);
-  --app-shadow-xs: 0 0.875rem 2rem -1.5rem rgba(2, 6, 23, 0.52);
-  --app-shadow-sm: 0 1.5rem 3rem -1.875rem rgba(2, 6, 23, 0.62);
-  --app-shadow-md: 0 1.875rem 4.375rem -2.125rem rgba(2, 6, 23, 0.7);
-  --app-btn-primary-bg: var(--p-primary-color);
-  --app-btn-primary-border: var(--p-primary-color);
-  --app-btn-primary-hover: var(--p-primary-hover-color, var(--p-primary-color));
-  --app-btn-primary-color: var(--p-primary-contrast-color, var(--p-surface-950));
-  --app-btn-secondary-bg: color-mix(in srgb, var(--p-primary-color) 16%, transparent);
-  --app-btn-secondary-border: color-mix(in srgb, var(--p-primary-color) 34%, transparent);
-  --app-btn-secondary-hover: color-mix(in srgb, var(--p-primary-color) 24%, transparent);
-  --app-btn-secondary-color: var(--p-primary-color);
-  --app-btn-text-hover: color-mix(in srgb, var(--p-primary-color) 16%, transparent);
-  --app-btn-text-color: var(--p-primary-color);
-  --app-btn-text-hover-color: var(--p-primary-hover-color, var(--p-primary-color));
-  --app-btn-outlined-border: color-mix(in srgb, var(--p-primary-color) 70%, transparent);
-  --app-btn-outlined-hover: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
-  --app-btn-outlined-color: var(--p-primary-color);
+  --app-shell-bg: linear-gradient(180deg, #09090b 0%, #18181b 100%);
+  --app-surface-soft: #09090b;
+  --app-surface-muted: #18181b;
+  --app-surface-strong: #27272a;
+  --app-border-soft: #27272a;
+  --app-border-strong: #3f3f46;
+  --app-text-muted: #a1a1aa;
+  --app-shadow-xs: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.45);
+  --app-shadow-sm:
+    0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.5), 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.35);
+  --app-shadow-md: 0 1rem 2.5rem -1rem rgba(0, 0, 0, 0.65);
+  --app-btn-primary-bg: var(--p-primary-400, var(--p-primary-color));
+  --app-btn-primary-border: var(--p-primary-400, var(--p-primary-color));
+  --app-btn-primary-hover: var(
+    --p-primary-300,
+    var(--p-primary-hover-color, var(--p-primary-color))
+  );
+  --app-btn-primary-color: #042f2e;
+  --app-btn-secondary-bg: #09090b;
+  --app-btn-secondary-border: var(--app-border-strong);
+  --app-btn-secondary-hover: #18181b;
+  --app-btn-secondary-color: #fafafa;
+  --app-btn-text-hover: #18181b;
+  --app-btn-text-color: #fafafa;
+  --app-btn-text-hover-color: #fafafa;
+  --app-btn-outlined-border: var(--app-border-strong);
+  --app-btn-outlined-hover: #18181b;
+  --app-btn-outlined-color: #fafafa;
   --app-btn-success-bg: #22c55e;
   --app-btn-success-border: #22c55e;
   --app-btn-success-hover: #4ade80;
@@ -101,12 +91,12 @@
   --app-btn-danger-border: #ef4444;
   --app-btn-danger-hover: #f87171;
   --app-btn-danger-color: #450a0a;
-  --app-field-bg: color-mix(in srgb, var(--p-surface-950) 90%, #0f172a);
-  --app-field-bg-hover: color-mix(in srgb, var(--p-surface-950) 78%, #111827);
-  --app-field-border: color-mix(in srgb, #475569 28%, #334155);
-  --app-field-border-hover: color-mix(in srgb, #64748b 30%, #475569);
-  --app-field-shadow: 0 0 0 0.25rem rgba(100, 116, 139, 0.18);
-  --app-overlay-bg: color-mix(in srgb, var(--p-surface-900) 92%, #111827);
+  --app-field-bg: #09090b;
+  --app-field-bg-hover: #09090b;
+  --app-field-border: #3f3f46;
+  --app-field-border-hover: #52525b;
+  --app-field-shadow: 0 0 0 0.1875rem rgba(250, 250, 250, 0.08);
+  --app-overlay-bg: #09090b;
 }
 
 body {
@@ -178,15 +168,8 @@ a {
 .p-card {
   overflow: hidden;
   border: 0.0625rem solid var(--app-border-strong);
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--app-surface-soft) 62%, white) 0%,
-      var(--p-content-background) 26%
-    ),
-    var(--p-content-background);
-  box-shadow: var(--app-shadow-sm);
-  backdrop-filter: blur(0.625rem);
+  background: var(--app-surface-soft);
+  box-shadow: var(--app-shadow-xs);
 }
 
 .p-card .p-card-body {
@@ -204,13 +187,13 @@ a {
 
 .p-button,
 .p-button.p-component {
-  border-radius: 62.4375rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  box-shadow: var(--app-shadow-xs);
+  min-height: 2.5rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: var(--app-radius-sm);
+  font-weight: 500;
+  letter-spacing: 0;
+  box-shadow: none;
   transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease,
     background-color 0.18s ease,
     border-color 0.18s ease,
     color 0.18s ease;
@@ -225,8 +208,6 @@ a {
 
 .p-button:not(:disabled):hover,
 .p-button.p-component:not(:disabled):hover {
-  transform: translateY(-0.0625rem);
-  box-shadow: var(--app-shadow-sm);
   background: var(--app-btn-primary-hover);
   border-color: var(--app-btn-primary-hover);
   color: var(--app-btn-primary-color);
@@ -322,12 +303,14 @@ a {
 }
 
 .p-button.p-button-sm {
-  padding-inline: 0.85rem;
+  min-height: 2.1rem;
+  padding-inline: 0.75rem;
 }
 
 .p-button.p-button-icon-only {
   width: 2.5rem;
   height: 2.5rem;
+  padding: 0;
 }
 
 .p-inputtext,
@@ -337,8 +320,10 @@ a {
 .p-select,
 .p-multiselect {
   border-radius: var(--app-radius-sm);
+  border-width: 0.0625rem;
   border-color: var(--app-field-border);
   background: var(--app-field-bg);
+  box-shadow: var(--app-shadow-xs);
   transition:
     border-color 0.18s ease,
     background-color 0.18s ease,
@@ -364,7 +349,7 @@ a {
 
 .p-select,
 .p-multiselect {
-  min-height: 3rem;
+  min-height: 2.5rem;
   align-items: center;
 }
 
@@ -406,8 +391,9 @@ small.text-red-500,
 }
 
 .p-checkbox .p-checkbox-box {
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
   border-color: var(--app-field-border);
+  box-shadow: var(--app-shadow-xs);
   transition:
     background-color 0.18s ease,
     border-color 0.18s ease,
@@ -428,20 +414,20 @@ small.text-red-500,
   overflow: hidden;
   border: 0.0625rem solid var(--app-border-strong);
   border-radius: var(--app-radius-sm);
-  background: color-mix(in srgb, var(--p-content-background) 92%, var(--app-surface-soft));
+  background: var(--app-surface-soft);
 }
 
 .p-datatable .p-datatable-header,
 .p-treetable .p-treetable-header {
   border-bottom: 0.0625rem solid var(--app-border-strong);
-  background: linear-gradient(180deg, var(--app-surface-soft) 0%, var(--app-surface-muted) 100%);
+  background: var(--app-surface-soft);
 }
 
 .p-datatable .p-datatable-thead > tr > th,
 .p-treetable .p-treetable-thead > tr > th {
   padding: 0.95rem 1rem;
   border-bottom: 0.0625rem solid var(--app-border-strong);
-  background: linear-gradient(180deg, var(--app-surface-soft) 0%, var(--app-surface-muted) 100%);
+  background: var(--app-surface-muted);
   color: var(--app-text-muted);
   font-size: 0.75rem;
   font-weight: 700;
@@ -468,7 +454,7 @@ small.text-red-500,
 
 .p-datatable .p-datatable-tbody > tr:hover,
 .p-treetable .p-treetable-tbody > tr:hover {
-  background: color-mix(in srgb, var(--app-surface-soft) 70%, transparent);
+  background: var(--app-surface-muted);
 }
 
 .p-datatable .p-datatable-tbody > tr.p-highlight,
@@ -491,7 +477,7 @@ small.text-red-500,
 .p-paginator .p-paginator-rpp-dropdown {
   min-width: 2.25rem;
   height: 2.25rem;
-  border-radius: 62.4375rem;
+  border-radius: var(--app-radius-sm);
 }
 
 .p-paginator .p-paginator-page.p-highlight {
@@ -502,21 +488,16 @@ small.text-red-500,
 .p-dialog {
   overflow: hidden;
   border: 0.0625rem solid var(--app-border-strong);
-  border-radius: calc(var(--app-radius-lg) + 0.25rem);
+  border-radius: var(--app-radius-lg);
   background: var(--app-overlay-bg);
   box-shadow: var(--app-shadow-md);
-  backdrop-filter: blur(0.875rem);
 }
 
 .p-dialog .p-dialog-header,
 .p-confirmdialog .p-dialog-header {
   padding: 1.2rem 1.35rem 0.8rem;
   border-bottom: 0.0625rem solid color-mix(in srgb, var(--app-border-soft) 68%, transparent);
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--app-surface-soft) 68%, transparent),
-    transparent
-  );
+  background: var(--app-surface-soft);
 }
 
 .p-dialog .p-dialog-title {
@@ -535,18 +516,14 @@ small.text-red-500,
   gap: 0.75rem;
   padding: 0.85rem 1.35rem 1.35rem;
   border-top: 0.0625rem solid color-mix(in srgb, var(--app-border-soft) 68%, transparent);
-  background: linear-gradient(
-    180deg,
-    transparent,
-    color-mix(in srgb, var(--app-surface-soft) 52%, transparent)
-  );
+  background: var(--app-surface-soft);
 }
 
 .p-toast .p-toast-message {
   border: 0.0625rem solid var(--app-border-strong);
   border-radius: var(--app-radius-md);
   box-shadow: var(--app-shadow-sm);
-  backdrop-filter: blur(0.75rem);
+  background: var(--app-overlay-bg);
 }
 
 .p-toast .p-toast-message-content {
@@ -563,24 +540,28 @@ small.text-red-500,
 
 .p-tabs .p-tablist {
   gap: 0.4rem;
-  border-radius: 62.4375rem;
-  border: 0.0625rem solid var(--app-border-strong);
-  background: color-mix(in srgb, var(--app-surface-soft) 66%, transparent);
-  padding: 0.35rem;
+  border-bottom: 0.0625rem solid var(--app-border-strong);
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
 }
 
 .p-tabs .p-tab {
-  border-radius: 62.4375rem;
+  margin-bottom: -0.0625rem;
+  border-radius: var(--app-radius-sm) var(--app-radius-sm) 0 0;
   color: var(--app-text-muted);
   font-weight: 600;
-  border: 0;
+  border: 0.0625rem solid transparent;
   transition:
     background-color 0.18s ease,
+    border-color 0.18s ease,
     color 0.18s ease;
 }
 
 .p-tabs .p-tab.p-tab-active {
-  background: color-mix(in srgb, var(--p-primary-color) 12%, white);
+  background: var(--app-surface-soft);
+  border-color: var(--app-border-strong);
+  border-bottom-color: var(--app-surface-soft);
   color: var(--p-primary-700);
 }
 
@@ -617,13 +598,13 @@ small.text-red-500,
 }
 
 .p-selectbutton .p-button.p-highlight {
-  background: color-mix(in srgb, var(--p-primary-color) 14%, white);
-  border-color: color-mix(in srgb, var(--p-primary-color) 26%, transparent);
+  background: color-mix(in srgb, var(--p-primary-color) 10%, white);
+  border-color: color-mix(in srgb, var(--p-primary-color) 22%, transparent);
   color: var(--p-primary-700);
 }
 
 .p-tag {
-  border-radius: 62.4375rem;
+  border-radius: var(--app-radius-sm);
   font-weight: 600;
   letter-spacing: 0;
 }
@@ -647,7 +628,7 @@ small.text-red-500,
 .app-section-shell {
   border: 0.0625rem solid var(--app-border-soft);
   border-radius: var(--app-radius-md);
-  background: color-mix(in srgb, var(--app-surface-soft) 52%, transparent);
+  background: var(--app-surface-soft);
 }
 
 .app-detail-grid {

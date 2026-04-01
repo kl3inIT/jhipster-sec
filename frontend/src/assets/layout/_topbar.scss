@@ -6,8 +6,8 @@
   z-index: 997;
   margin-inline: calc(-1 * var(--layout-content-gutter, 0rem));
   padding: 0 1rem;
-  background-color: var(--surface-ground);
-  border-bottom: 0.0625rem solid var(--surface-border);
+  background-color: color-mix(in srgb, var(--app-surface-soft) 92%, transparent);
+  border-bottom: 0.0625rem solid var(--app-border-soft);
   flex-shrink: 0;
 
   .layout-menubar,
@@ -60,17 +60,10 @@
 
   .layout-topbar-config-panel {
     animation: layout-panel-scalein 0.15s ease-out;
-    border-radius: 1.5rem;
-    border: 0.0625rem solid var(--app-border-strong);
-    background:
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--app-surface-soft) 56%, white) 0%,
-        var(--p-content-background) 24%
-      ),
-      var(--p-content-background);
+    border-radius: var(--app-radius-lg);
+    border: 0.0625rem solid var(--app-border-soft);
+    background: var(--app-surface-soft);
     box-shadow: var(--app-shadow-md);
-    backdrop-filter: blur(0.875rem);
   }
 
   /* Color swatches in configurator: always solid circles (no stripes/gradients) */
@@ -78,12 +71,12 @@
     .config-color-swatch {
       width: 1.25rem !important;
       height: 1.25rem !important;
-      border-radius: 624.9375rem !important;
+      border-radius: var(--app-radius-sm) !important;
       border-width: 0 !important;
       border-style: none !important;
       padding: 0 !important;
       background-image: none !important;
-      box-shadow: 0 0 0 0.0625rem var(--surface-border);
+      box-shadow: 0 0 0 0.0625rem var(--app-border-strong);
     }
   }
 
@@ -91,13 +84,11 @@
     background: transparent;
     transition:
       background-color 0.18s ease,
-      color 0.18s ease,
-      transform 0.18s ease;
+      color 0.18s ease;
 
     &:hover {
-      background: color-mix(in srgb, var(--app-surface-soft) 76%, transparent);
+      background: var(--app-surface-muted);
       color: var(--p-primary-700);
-      transform: translateY(-0.0625rem);
     }
   }
 
