@@ -1,8 +1,8 @@
 <p-confirmDialog></p-confirmDialog>
 <p-toast></p-toast>
 
-<div class="space-y-4">
-  <div class="flex flex-wrap items-start justify-between gap-3">
+<div class="app-page-shell">
+  <div class="app-page-header">
     <div class="space-y-1">
       <h1 class="m-0 text-2xl font-semibold">
         {{ 'angappApp.organization.detail.title' | translate }}
@@ -64,60 +64,58 @@
       </div>
     </p-card>
   } @else if (organization(); as organization) {
-    <p-card class="shadow-sm">
-      <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-        <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium">{{ 'angappApp.organization.id' | translate }}</span>
+    <p-card>
+      <div class="app-meta-grid xl:grid-cols-5">
+        <div class="app-meta-item">
+          <span class="app-detail-label">{{ 'angappApp.organization.id' | translate }}</span>
           <span>{{ organization.id }}</span>
         </div>
         @if (canViewOrganizationField('code')) {
-          <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">{{ 'angappApp.organization.code' | translate }}</span>
+          <div class="app-meta-item">
+            <span class="app-detail-label">{{ 'angappApp.organization.code' | translate }}</span>
             <span>{{ organization.code }}</span>
           </div>
         }
         @if (canViewOrganizationField('name')) {
-          <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">{{ 'angappApp.organization.name' | translate }}</span>
+          <div class="app-meta-item">
+            <span class="app-detail-label">{{ 'angappApp.organization.name' | translate }}</span>
             <span>{{ organization.name }}</span>
           </div>
         }
         @if (canViewOrganizationField('ownerLogin')) {
-          <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">{{
+          <div class="app-meta-item">
+            <span class="app-detail-label">{{
               'angappApp.organization.ownerLogin' | translate
             }}</span>
             <span>{{ organization.ownerLogin }}</span>
           </div>
         }
         @if (showBudgetSummary()) {
-          <div class="flex flex-col gap-1">
-            <span class="text-sm font-medium">{{
-              'angappApp.organization.budget' | translate
-            }}</span>
+          <div class="app-meta-item">
+            <span class="app-detail-label">{{ 'angappApp.organization.budget' | translate }}</span>
             <span>{{ organization.budget | number: '1.2-2' }}</span>
           </div>
         }
       </div>
 
-      <div class="mt-4 grid gap-3 md:grid-cols-2">
-        <div class="rounded-xl border p-4" style="border-color: var(--surface-border)">
-          <div class="text-sm text-color-secondary">
+      <div class="app-summary-grid mt-4 md:grid-cols-2">
+        <div class="app-summary-card">
+          <div class="app-summary-label">
             {{ 'angappApp.organization.detail.workbench.departmentCountLabel' | translate }}
           </div>
-          <div class="mt-1 text-2xl font-semibold">{{ departmentCount() }}</div>
+          <div class="app-summary-value">{{ departmentCount() }}</div>
         </div>
-        <div class="rounded-xl border p-4" style="border-color: var(--surface-border)">
-          <div class="text-sm text-color-secondary">
+        <div class="app-summary-card">
+          <div class="app-summary-label">
             {{ 'angappApp.organization.detail.workbench.employeeCountLabel' | translate }}
           </div>
-          <div class="mt-1 text-2xl font-semibold">{{ employeeCount() }}</div>
+          <div class="app-summary-value">{{ employeeCount() }}</div>
         </div>
       </div>
     </p-card>
 
-    <div class="grid gap-4 xl:grid-cols-[22rem_minmax(0,1fr)]">
-      <p-card class="shadow-sm">
+    <div class="app-master-detail-layout">
+      <p-card>
         <div class="flex items-center justify-between gap-3">
           <div>
             <h2 class="m-0 text-xl font-semibold">
@@ -129,25 +127,17 @@
           </div>
         </div>
 
-        <div class="mt-4 space-y-3">
+        <div class="app-master-list mt-4">
           @if (sortedDepartments().length === 0) {
-            <div
-              class="rounded-xl border border-dashed px-4 py-6 text-center text-color-secondary"
-              style="border-color: var(--surface-border)"
-            >
+            <div class="app-empty-dashed py-6">
               {{ 'angappApp.organization.detail.workbench.emptyDepartments' | translate }}
             </div>
           } @else {
             @for (department of sortedDepartments(); track department.id ?? $index) {
               <button
                 type="button"
-                class="block w-full rounded-xl border px-4 py-4 text-left transition-colors"
-                style="border-color: var(--surface-border); background: var(--surface-card)"
-                [style.borderColor]="
-                  selectedDepartmentId() === department.id
-                    ? 'var(--primary-color)'
-                    : 'var(--surface-border)'
-                "
+                class="app-selectable-card"
+                [class.is-selected]="selectedDepartmentId() === department.id"
                 (click)="selectDepartment(department)"
                 [attr.data-testid]="'department-card-' + (department.id ?? $index)"
               >
@@ -202,7 +192,7 @@
 
       <div class="space-y-4">
         @if (selectedDepartment(); as department) {
-          <p-card class="shadow-sm">
+          <p-card>
             <div class="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2 class="m-0 text-xl font-semibold">{{ department.name ?? department.code }}</h2>
@@ -236,33 +226,29 @@
               </div>
             </div>
 
-            <div class="mt-4 grid gap-4 md:grid-cols-3">
-              <div class="flex flex-col gap-1">
-                <span class="text-sm font-medium">{{ 'angappApp.department.id' | translate }}</span>
+            <div class="app-meta-grid mt-4 md:grid-cols-3">
+              <div class="app-meta-item">
+                <span class="app-detail-label">{{ 'angappApp.department.id' | translate }}</span>
                 <span>{{ department.id }}</span>
               </div>
-              <div class="flex flex-col gap-1">
-                <span class="text-sm font-medium">{{
-                  'angappApp.department.code' | translate
-                }}</span>
+              <div class="app-meta-item">
+                <span class="app-detail-label">{{ 'angappApp.department.code' | translate }}</span>
                 <span>{{ department.code }}</span>
               </div>
-              <div class="flex flex-col gap-1">
-                <span class="text-sm font-medium">{{
-                  'angappApp.department.name' | translate
-                }}</span>
+              <div class="app-meta-item">
+                <span class="app-detail-label">{{ 'angappApp.department.name' | translate }}</span>
                 <span>{{ department.name }}</span>
               </div>
               @if (canViewDepartmentField('costCenter')) {
-                <div class="flex flex-col gap-1">
-                  <span class="text-sm font-medium">{{
+                <div class="app-meta-item">
+                  <span class="app-detail-label">{{
                     'angappApp.department.costCenter' | translate
                   }}</span>
                   <span>{{ department.costCenter || '—' }}</span>
                 </div>
               }
-              <div class="flex flex-col gap-1">
-                <span class="text-sm font-medium">{{
+              <div class="app-meta-item">
+                <span class="app-detail-label">{{
                   'angappApp.department.organization' | translate
                 }}</span>
                 <span>{{ organization.name }}</span>
@@ -270,7 +256,7 @@
             </div>
           </p-card>
 
-          <p-card class="shadow-sm">
+          <p-card>
             <div class="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2 class="m-0 text-xl font-semibold">
@@ -320,7 +306,7 @@
                       </td>
                     }
                     <td style="text-align: center">
-                      <div class="flex items-center justify-center gap-1">
+                      <div class="app-table-actions">
                         @if (canUpdateEmployee()) {
                           <button
                             type="button"
@@ -361,11 +347,8 @@
             </div>
           </p-card>
         } @else {
-          <p-card class="shadow-sm">
-            <div
-              class="rounded-xl border border-dashed px-4 py-8 text-center text-color-secondary"
-              style="border-color: var(--surface-border)"
-            >
+          <p-card>
+            <div class="app-empty-dashed py-8">
               {{ 'angappApp.organization.detail.workbench.selectDepartment' | translate }}
             </div>
           </p-card>
@@ -465,10 +448,7 @@
 >
   <form [formGroup]="departmentForm" (ngSubmit)="saveDepartment()">
     <div class="flex flex-col gap-4 pt-2">
-      <div
-        class="rounded-xl border px-3 py-3 text-sm text-color-secondary"
-        style="border-color: var(--surface-border)"
-      >
+      <div class="app-inline-note text-sm">
         <div class="font-medium text-color">
           {{ 'angappApp.department.organization' | translate }}
         </div>

@@ -1,109 +1,179 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 
-<div class="space-y-4">
-  <div class="flex items-center justify-between gap-3">
+<div class="app-page-shell">
+  <div class="app-page-header">
     <h1 class="m-0 text-2xl font-semibold">{{ 'userManagement.home.title' | translate }}</h1>
-    <button pButton type="button" icon="pi pi-plus" [label]="'userManagement.actions.new' | translate"
-      (click)="create()"></button>
+    <button
+      pButton
+      type="button"
+      icon="pi pi-plus"
+      [label]="'userManagement.actions.new' | translate"
+      (click)="create()"
+    ></button>
   </div>
 
   <p-card>
     <div class="mb-4">
       <p-iconfield>
         <p-inputicon styleClass="pi pi-search" />
-        <input type="text" pInputText [formControl]="searchControl"
+        <input
+          type="text"
+          pInputText
+          [formControl]="searchControl"
           [placeholder]="'userManagement.home.searchPlaceholder' | translate"
-          [attr.aria-label]="'userManagement.home.searchPlaceholder' | translate" class="w-full" />
+          [attr.aria-label]="'userManagement.home.searchPlaceholder' | translate"
+          class="w-full"
+        />
       </p-iconfield>
     </div>
 
     @if (loadError()) {
-    <div class="flex flex-column gap-3 py-6 text-center">
-      <i class="pi pi-exclamation-triangle text-4xl text-color-secondary"></i>
-      <p class="m-0 text-color-secondary">{{ 'userManagement.home.loadError' | translate }}</p>
-      <div>
-        <button pButton type="button" severity="secondary" [outlined]="true" icon="pi pi-refresh"
-          [label]="'userManagement.home.refreshListLabel' | translate" (click)="load()"></button>
+      <div class="app-state-panel py-6">
+        <i class="pi pi-exclamation-triangle text-4xl text-color-secondary"></i>
+        <p class="m-0 text-color-secondary">{{ 'userManagement.home.loadError' | translate }}</p>
+        <div>
+          <button
+            pButton
+            type="button"
+            severity="secondary"
+            [outlined]="true"
+            icon="pi pi-refresh"
+            [label]="'userManagement.home.refreshListLabel' | translate"
+            (click)="load()"
+          ></button>
+        </div>
       </div>
-    </div>
     } @else {
-    <p-table [value]="users()" [lazy]="true" [paginator]="true" [rows]="itemsPerPage" [totalRecords]="totalItems()"
-      [first]="firstRow()" [loading]="loading()" [sortField]="sortState().predicate ?? 'id'"
-      [sortOrder]="sortState().order === 'desc' ? -1 : 1" [tableStyle]="{ 'min-width': '100%' }"
-      styleClass="p-datatable-gridlines p-datatable-sm" dataKey="login" (onLazyLoad)="onLazyLoad($event)"
-      [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true">
-      <ng-template pTemplate="header">
-        <tr>
-          <th pSortableColumn="login">{{ 'userManagement.login' | translate }} <p-sortIcon field="login" /></th>
-          <th>{{ 'userManagement.columns.fullName' | translate }}</th>
-          <th pSortableColumn="email">{{ 'userManagement.email' | translate }} <p-sortIcon field="email" /></th>
-          <th>{{ 'userManagement.columns.status' | translate }}</th>
-          <th>{{ 'userManagement.columns.roles' | translate }}</th>
-          <th pSortableColumn="lastModifiedDate">{{ 'userManagement.columns.lastModified' | translate }} <p-sortIcon
-              field="lastModifiedDate" /></th>
-          <th style="width: 14rem; text-align: center">{{ 'userManagement.columns.actions' | translate }}</th>
-        </tr>
-      </ng-template>
+      <p-table
+        [value]="users()"
+        [lazy]="true"
+        [paginator]="true"
+        [rows]="itemsPerPage"
+        [totalRecords]="totalItems()"
+        [first]="firstRow()"
+        [loading]="loading()"
+        [sortField]="sortState().predicate ?? 'id'"
+        [sortOrder]="sortState().order === 'desc' ? -1 : 1"
+        [tableStyle]="{ 'min-width': '100%' }"
+        styleClass="p-datatable-gridlines p-datatable-sm"
+        dataKey="login"
+        (onLazyLoad)="onLazyLoad($event)"
+        [rowsPerPageOptions]="[10, 20, 30]"
+        [showCurrentPageReport]="true"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="login">
+              {{ 'userManagement.login' | translate }} <p-sortIcon field="login" />
+            </th>
+            <th>{{ 'userManagement.columns.fullName' | translate }}</th>
+            <th pSortableColumn="email">
+              {{ 'userManagement.email' | translate }} <p-sortIcon field="email" />
+            </th>
+            <th>{{ 'userManagement.columns.status' | translate }}</th>
+            <th>{{ 'userManagement.columns.roles' | translate }}</th>
+            <th pSortableColumn="lastModifiedDate">
+              {{ 'userManagement.columns.lastModified' | translate }}
+              <p-sortIcon field="lastModifiedDate" />
+            </th>
+            <th style="width: 14rem; text-align: center">
+              {{ 'userManagement.columns.actions' | translate }}
+            </th>
+          </tr>
+        </ng-template>
 
-      <ng-template pTemplate="body" let-user>
-        <tr>
-          <td>
-            <a [routerLink]="['/admin/users', user.login, 'view']" class="font-medium">{{ user.login }}</a>
-          </td>
-          <td>{{ user.firstName }} {{ user.lastName }}</td>
-          <td>{{ user.email }}</td>
-          <td>
-            @if (user.activated) {
-            <p-tag [value]="'userManagement.status.active' | translate" severity="success" />
-            } @else {
-            <p-tag [value]="'userManagement.status.inactive' | translate" severity="danger" />
-            }
-          </td>
-          <td>
-            @for (auth of displayedAuthorities(user); track auth) {
-            <span class="mr-1">{{ getAuthorityLabel(auth) }}</span>
-            }
-            @if (extraAuthorityCount(user) > 0) {
-            <span class="text-color-secondary">+{{ extraAuthorityCount(user) }} more</span>
-            }
-          </td>
-          <td>{{ user.lastModifiedDate }}</td>
-          <td style="text-align: center">
-            <div class="flex items-center justify-center gap-1">
-              <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-eye"
-                [attr.aria-label]="'userManagement.actions.view' | translate" (click)="view(user)"></button>
-              <button pButton type="button" class="p-button-text p-button-sm" icon="pi pi-pencil"
-                [attr.aria-label]="'userManagement.actions.edit' | translate" (click)="edit(user)"></button>
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>
+              <a [routerLink]="['/admin/users', user.login, 'view']" class="font-medium">{{
+                user.login
+              }}</a>
+            </td>
+            <td>{{ user.firstName }} {{ user.lastName }}</td>
+            <td>{{ user.email }}</td>
+            <td>
               @if (user.activated) {
-              <button pButton type="button" class="p-button-text p-button-sm p-button-warning" icon="pi pi-ban"
-                [attr.aria-label]="'userManagement.actions.deactivate' | translate" [disabled]="isSelf(user)"
-                (click)="toggleActivation(user)"></button>
+                <p-tag [value]="'userManagement.status.active' | translate" severity="success" />
               } @else {
-              <button pButton type="button" class="p-button-text p-button-sm p-button-success" icon="pi pi-check"
-                [attr.aria-label]="'userManagement.actions.activate' | translate"
-                (click)="toggleActivation(user)"></button>
+                <p-tag [value]="'userManagement.status.inactive' | translate" severity="danger" />
               }
-              <button pButton type="button" class="p-button-text p-button-danger p-button-sm" icon="pi pi-trash"
-                [attr.aria-label]="'userManagement.actions.delete' | translate" [disabled]="isSelf(user)"
-                (click)="confirmDelete(user)"></button>
-            </div>
-          </td>
-        </tr>
-      </ng-template>
+            </td>
+            <td>
+              @for (auth of displayedAuthorities(user); track auth) {
+                <span class="mr-1">{{ getAuthorityLabel(auth) }}</span>
+              }
+              @if (extraAuthorityCount(user) > 0) {
+                <span class="text-color-secondary">+{{ extraAuthorityCount(user) }} more</span>
+              }
+            </td>
+            <td>{{ user.lastModifiedDate }}</td>
+            <td style="text-align: center">
+              <div class="app-table-actions">
+                <button
+                  pButton
+                  type="button"
+                  class="p-button-text p-button-sm"
+                  icon="pi pi-eye"
+                  [attr.aria-label]="'userManagement.actions.view' | translate"
+                  (click)="view(user)"
+                ></button>
+                <button
+                  pButton
+                  type="button"
+                  class="p-button-text p-button-sm"
+                  icon="pi pi-pencil"
+                  [attr.aria-label]="'userManagement.actions.edit' | translate"
+                  (click)="edit(user)"
+                ></button>
+                @if (user.activated) {
+                  <button
+                    pButton
+                    type="button"
+                    class="p-button-text p-button-sm p-button-warning"
+                    icon="pi pi-ban"
+                    [attr.aria-label]="'userManagement.actions.deactivate' | translate"
+                    [disabled]="isSelf(user)"
+                    (click)="toggleActivation(user)"
+                  ></button>
+                } @else {
+                  <button
+                    pButton
+                    type="button"
+                    class="p-button-text p-button-sm p-button-success"
+                    icon="pi pi-check"
+                    [attr.aria-label]="'userManagement.actions.activate' | translate"
+                    (click)="toggleActivation(user)"
+                  ></button>
+                }
+                <button
+                  pButton
+                  type="button"
+                  class="p-button-text p-button-danger p-button-sm"
+                  icon="pi pi-trash"
+                  [attr.aria-label]="'userManagement.actions.delete' | translate"
+                  [disabled]="isSelf(user)"
+                  (click)="confirmDelete(user)"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
 
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="7" class="text-center py-8">
-            <div class="flex flex-col items-center gap-2 text-color-secondary">
-              <i class="pi pi-users text-4xl"></i>
-              <p class="text-lg font-semibold m-0">{{ 'userManagement.home.emptyTitle' | translate }}</p>
-              <p class="m-0">{{ 'userManagement.home.emptyBody' | translate }}</p>
-            </div>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center py-8">
+              <div class="flex flex-col items-center gap-2 text-color-secondary">
+                <i class="pi pi-users text-4xl"></i>
+                <p class="text-lg font-semibold m-0">
+                  {{ 'userManagement.home.emptyTitle' | translate }}
+                </p>
+                <p class="m-0">{{ 'userManagement.home.emptyBody' | translate }}</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     }
   </p-card>
 </div>

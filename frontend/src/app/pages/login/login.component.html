@@ -1,11 +1,11 @@
-<div class="flex justify-content-center align-items-center min-h-screen surface-ground">
-  <p-card styleClass="w-full max-w-md shadow-3">
+<div class="app-auth-shell">
+  <p-card styleClass="app-auth-card">
     <ng-template pTemplate="header">
-      <div class="flex flex-column gap-2 p-4 pb-0">
+      <div class="app-auth-header">
         <h1 class="m-0 text-2xl font-semibold">{{ 'login.title' | translate }}</h1>
       </div>
     </ng-template>
-    <div class="p-4 pt-0">
+    <div class="app-auth-body">
       @if (authenticationError()) {
         <p-message severity="error" [closable]="true" class="mb-3 w-full">
           <span [innerHTML]="'login.messages.error.authentication' | translate"></span>
@@ -59,10 +59,10 @@
         />
       </form>
 
-      <div
-        class="pt-3 mt-3 border-top-1 surface-border flex justify-content-between align-items-center flex-wrap gap-2 text-sm"
-      >
-        <span class="text-color-secondary">{{ 'global.messages.info.register.noaccount' | translate }}</span>
+      <div class="app-auth-footer">
+        <span class="text-color-secondary">{{
+          'global.messages.info.register.noaccount' | translate
+        }}</span>
         <a routerLink="/register" class="font-medium no-underline hover:underline text-primary">
           {{ 'global.messages.info.register.link' | translate }}
         </a>

@@ -21,11 +21,11 @@ Reshape the current Angular + PrimeNG frontend so shared component surfaces foll
 
 ### Completion Summary
 
-Applied a shadcn-inspired design layer to the existing Angular frontend by updating shared PrimeNG theme primitives, the topbar/sidebar shell, configurator radius tokens, and the permission matrix local overrides. The result keeps the current component stack intact while moving the visuals toward flatter surfaces, smaller radii, neutral borders, and lighter shadows.
+Applied a shadcn-inspired design layer to the existing Angular frontend by updating shared PrimeNG theme primitives, the topbar/sidebar shell, configurator radius tokens, and local screen overrides. The rollout now covers the permission matrix, auth screens, organization workbench detail, and user-management list so these high-traffic views share the same flatter surfaces, tighter radii, neutral borders, and lighter shadows.
 
 **Verification:**
 
-- ✅ Updated shared theme tokens, PrimeNG component styling, and shell surfaces
+- ✅ Updated shared theme tokens, PrimeNG component styling, shell surfaces, and additional feature-page overrides
 - ✅ `frontend`: `npm run build` passed
 - ⚠️ Existing Angular bundle budget warnings remain, but no build failure was introduced by this change
 
