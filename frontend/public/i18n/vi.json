@@ -598,7 +598,17 @@
         "menu": "Quyền menu"
       },
       "menu": {
-        "node": "Nút điều hướng"
+        "sectionLabel": "Phạm vi menu",
+        "appLabel": "Ứng dụng",
+        "appHint": "Chọn ứng dụng rồi bật các nút điều hướng mà vai trò này được phép truy cập.",
+        "treeTitle": "Cây điều hướng",
+        "treeDescription": "Tick để cho phép truy cập. Menu cha sẽ phản ánh trạng thái của các menu con.",
+        "node": "Nút điều hướng",
+        "nodeCount": "{{ count }} node",
+        "grantedCount": "{{ count }} quyền đang bật",
+        "emptyTitle": "Chưa có menu khả dụng",
+        "emptyDefinitions": "Không tìm thấy định nghĩa menu cho {{ appName }}.",
+        "noApps": "Không có ứng dụng khả dụng."
       },
       "entity": {
         "heading": "Quyền thực thể",

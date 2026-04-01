@@ -321,67 +321,145 @@
         </p-tabpanel>
 
         <p-tabpanel value="1">
-          <div class="p-4">
-            <div class="mb-4 max-w-sm">
-              <label for="menuAppSelect" class="mb-2 block text-sm font-semibold">
-                {{ 'security.permissionMatrix.menu.appLabel' | translate }}
-              </label>
-
-              @if (menuAppOptions.length > 0) {
-                <p-select
-                  inputId="menuAppSelect"
-                  [ngModel]="selectedMenuApp"
-                  [ngModelOptions]="{ standalone: true }"
-                  [options]="menuAppOptions"
-                  optionLabel="label"
-                  optionValue="value"
-                  [emptyMessage]="'security.permissionMatrix.menu.noApps' | translate"
-                  [disabled]="saving || menuLoading"
-                  class="w-full"
-                  (ngModelChange)="onSelectedMenuAppChange($event)"
-                />
-              } @else {
-                <p class="text-color-secondary">
-                  {{ 'security.permissionMatrix.menu.noApps' | translate }}
+          <div class="flex flex-col gap-4 pt-2">
+            <section
+              class="grid gap-4 rounded-2xl border border-slate-200/70 bg-white/90 px-5 py-5 shadow-sm lg:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)] lg:items-end"
+            >
+              <div class="min-w-0">
+                <p class="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-teal-700">
+                  {{ 'security.permissionMatrix.menu.sectionLabel' | translate }}
                 </p>
-              }
-            </div>
+                <h2 class="m-0 text-[1.35rem] font-extrabold text-slate-900">
+                  {{ currentMenuAppLabel(selectedMenuApp) }}
+                </h2>
+                <p class="mt-2 max-w-3xl leading-6 text-slate-500">
+                  {{ 'security.permissionMatrix.menu.appHint' | translate }}
+                </p>
+              </div>
+
+              <div class="flex min-w-0 flex-col gap-3">
+                <label for="menuAppSelect" class="text-sm font-bold text-slate-700">
+                  {{ 'security.permissionMatrix.menu.appLabel' | translate }}
+                </label>
+
+                @if (menuAppOptions.length > 0) {
+                  <p-select
+                    inputId="menuAppSelect"
+                    [ngModel]="selectedMenuApp"
+                    [ngModelOptions]="{ standalone: true }"
+                    [options]="menuAppOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    [emptyMessage]="'security.permissionMatrix.menu.noApps' | translate"
+                    [disabled]="saving || menuLoading"
+                    class="w-full"
+                    (ngModelChange)="onSelectedMenuAppChange($event)"
+                  />
+                } @else {
+                  <p class="text-color-secondary">
+                    {{ 'security.permissionMatrix.menu.noApps' | translate }}
+                  </p>
+                }
+
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    class="inline-flex items-center rounded-full border border-slate-200/70 bg-white/80 px-3 py-1 text-xs font-semibold text-slate-600"
+                  >
+                    {{
+                      'security.permissionMatrix.menu.nodeCount'
+                        | translate: { count: currentMenuNodeCount() }
+                    }}
+                  </span>
+                  <span
+                    class="inline-flex items-center rounded-full border border-slate-200/70 bg-white/80 px-3 py-1 text-xs font-semibold text-slate-600"
+                  >
+                    {{
+                      'security.permissionMatrix.menu.grantedCount'
+                        | translate: { count: currentMenuGrantedCount() }
+                    }}
+                  </span>
+                </div>
+              </div>
+            </section>
 
             @if (!menuLoading && !currentMenuAppHasDefinitions()) {
-              <p class="mb-4 text-color-secondary">
-                {{
-                  'security.permissionMatrix.menu.emptyDefinitions'
-                    | translate: { appName: selectedMenuApp }
-                }}
-              </p>
-            }
+              <div class="permission-empty-state permission-empty-state--menu">
+                <strong class="block">
+                  {{ 'security.permissionMatrix.menu.emptyTitle' | translate }}
+                </strong>
+                <span>
+                  {{
+                    'security.permissionMatrix.menu.emptyDefinitions'
+                      | translate: { appName: currentMenuAppLabel(selectedMenuApp) }
+                  }}
+                </span>
+              </div>
+            } @else {
+              <section class="permission-section permission-section--menu min-w-0">
+                <div class="permission-section__header pb-3">
+                  <div>
+                    <h2 class="permission-section__title">
+                      {{ 'security.permissionMatrix.menu.treeTitle' | translate }}
+                    </h2>
+                    <p class="mt-1 text-sm leading-6 text-slate-500">
+                      {{ 'security.permissionMatrix.menu.treeDescription' | translate }}
+                    </p>
+                  </div>
+                </div>
 
-            <p-treetable
-              [value]="menuTreeNodes"
-              selectionMode="checkbox"
-              [(selectionKeys)]="menuSelectionKeys"
-              dataKey="key"
-              [loading]="menuLoading"
-              (selectionKeysChange)="onMenuSelectionKeysChange($any($event))"
-              [tableStyle]="{ 'min-width': '24rem' }"
-            >
-              <ng-template #header>
-                <tr>
-                  <th>{{ 'security.permissionMatrix.menu.node' | translate }}</th>
-                </tr>
-              </ng-template>
-              <ng-template #body let-rowNode let-rowData="rowData">
-                <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
-                  <td>
-                    <div class="flex items-center gap-2">
-                      <p-treetable-toggler [rowNode]="rowNode" />
-                      <p-treetable-checkbox [value]="rowNode" />
-                      <span>{{ rowNode.node.label }}</span>
-                    </div>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-treetable>
+                <p-treetable
+                  [value]="menuTreeNodes"
+                  selectionMode="checkbox"
+                  [(selectionKeys)]="menuSelectionKeys"
+                  dataKey="key"
+                  [loading]="menuLoading"
+                  styleClass="permission-menu-tree"
+                  (selectionKeysChange)="onMenuSelectionKeysChange($any($event))"
+                  [tableStyle]="{ 'min-width': '24rem' }"
+                >
+                  <ng-template #header>
+                    <tr>
+                      <th>{{ 'security.permissionMatrix.menu.node' | translate }}</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template #body let-rowNode let-rowData="rowData">
+                    <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
+                      <td>
+                        <div class="flex items-center justify-between gap-4 max-md:flex-col max-md:items-start">
+                          <div class="flex min-w-0 flex-1 items-center gap-3">
+                            <p-treetable-toggler [rowNode]="rowNode" />
+                            <p-treetable-checkbox [value]="rowNode" />
+                            @if (rowData.icon) {
+                              <span
+                                class="inline-flex flex-shrink-0 items-center justify-center "
+                              >
+                                <i [class]="rowData.icon"></i>
+                              </span>
+                            }
+                            <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+                              <span class="block max-w-full font-semibold leading-6 text-slate-900 [overflow-wrap:anywhere]">
+                                {{ rowNode.node.label }}
+                              </span>
+                              <span class="block max-w-full text-xs text-slate-500 [overflow-wrap:anywhere]">
+                                {{ rowData.menuId }}
+                              </span>
+                            </div>
+                          </div>
+
+                          @if (rowData.route) {
+                            <span
+                              class="ml-auto max-w-full flex-shrink-0 overflow-hidden text-ellipsis whitespace-nowrap rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600"
+                            >
+                              {{ rowData.route }}
+                            </span>
+                          }
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-treetable>
+              </section>
+            }
           </div>
         </p-tabpanel>
       </p-tabpanels>

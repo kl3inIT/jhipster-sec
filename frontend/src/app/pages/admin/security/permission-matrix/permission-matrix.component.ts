@@ -143,6 +143,12 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
         background: rgba(248, 250, 252, 0.82);
       }
 
+      .permission-empty-state--menu {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
       .permission-attribute-column {
         min-height: 0;
       }
@@ -344,6 +350,38 @@ type MenuFlushResult = MenuFlushSuccessResult | MenuFlushErrorResult;
         display: none;
         width: 0;
         height: 0;
+      }
+
+      :host ::ng-deep .permission-menu-tree .p-treetable-table-container {
+        border-radius: 0 0 1rem 1rem;
+      }
+
+      :host ::ng-deep .permission-menu-tree .p-treetable-thead > tr > th {
+        padding: 0.9rem 1.15rem;
+        border-width: 0 0 1px;
+        border-color: rgba(226, 232, 240, 0.9);
+        background: rgba(255, 255, 255, 0.72);
+        color: #64748b;
+        font-size: 0.77rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      :host ::ng-deep .permission-menu-tree .p-treetable-tbody > tr > td {
+        padding: 0.95rem 1.15rem;
+        border-width: 0 0 1px;
+        border-color: rgba(226, 232, 240, 0.78);
+        background: rgba(255, 255, 255, 0.9);
+        transition: background-color 0.18s ease;
+      }
+
+      :host ::ng-deep .permission-menu-tree .p-treetable-tbody > tr:last-child > td {
+        border-bottom: 0;
+      }
+
+      :host ::ng-deep .permission-menu-tree .p-treetable-tbody > tr:hover > td {
+        background: rgba(248, 250, 252, 0.96);
       }
 
       :host ::ng-deep .permission-matrix-table .p-datatable-thead > tr > th {
@@ -679,7 +717,7 @@ export default class PermissionMatrixComponent implements OnInit {
     for (const definition of this.menuDefinitions) {
       nodeMap.set(definition.menuId, {
         key: this.menuPermissionKey(definition.appName, definition.menuId),
-        label: this.translateService.instant(definition.label),
+        label: this.resolveMenuDefinitionLabel(definition),
         data: definition,
         expanded: true,
         children: [],
@@ -831,7 +869,17 @@ export default class PermissionMatrixComponent implements OnInit {
   }
 
   currentMenuAppLabel(appName: string): string {
-    return appName;
+    return this.humanizeIdentifier(appName);
+  }
+
+  currentMenuNodeCount(): number {
+    return this.menuDefinitions.length;
+  }
+
+  currentMenuGrantedCount(): number {
+    return this.collectLeafNodes(this.menuTreeNodes).filter((node) =>
+      this.isMenuEffectivelyGranted(node.key ?? ''),
+    ).length;
   }
 
   onEntitySelect(entry: ISecCatalogEntry): void {
@@ -1376,5 +1424,41 @@ export default class PermissionMatrixComponent implements OnInit {
     fallback = 'feedback.security.permissionMatrix.saveFailed',
   ): void {
     handleHttpError(this.messageService, this.translateService, err, fallback);
+  }
+
+  private resolveMenuDefinitionLabel(definition: ISecMenuDefinition): string {
+    const translatedLabel = this.translateService.instant(definition.label);
+    if (!this.isMissingTranslation(translatedLabel, definition.label)) {
+      return translatedLabel;
+    }
+
+    if (definition.menuName?.trim()) {
+      return definition.menuName.trim();
+    }
+
+    return this.humanizeIdentifier(definition.menuId);
+  }
+
+  private isMissingTranslation(value: string, key: string): boolean {
+    return (
+      !value ||
+      value === key ||
+      value === `translation-not-found[${key}]` ||
+      value.startsWith('translation-not-found[')
+    );
+  }
+
+  private humanizeIdentifier(value: string): string {
+    const normalized = value
+      .split('.')
+      .filter((segment) => segment.trim())
+      .at(-1) ?? value;
+
+    return normalized
+      .replace(/[-_]+/g, ' ')
+      .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   }
 }
