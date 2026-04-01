@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: enterprise-admin-experience
-status: milestone_complete
-stopped_at: Completed milestone v1.1 archival and release prep
-last_updated: "2026-04-01T00:35:00+07:00"
+milestone: v1.2
+milestone_name: cicd-production-validation
+status: defining_requirements
+stopped_at: Milestone v1.2 started, defining requirements
+last_updated: "2026-04-01T12:00:00+07:00"
 last_activity: 2026-04-01
 progress:
-  total_phases: 10
-  completed_phases: 10
-  total_plans: 39
-  completed_plans: 39
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
@@ -20,35 +20,33 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-01)
 
 **Core value:** Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, authority, and attribute-level access decisions.
-**Current focus:** Plan v1.2 milestone scope and requirements
+**Current focus:** Defining v1.2 CI/CD & Production Validation requirements
 
 ## Current Position
 
-Phase: Milestone closed (v1.1)
-Plan: None active
-Status: Ready for next-milestone definition
-Last activity: 2026-04-01
-Next: Run /gsd-new-milestone
-
-## Milestone Summary (v1.1)
-
-- Completed phases: 6, 7, 07.1, 8, 08.1, 08.2, 08.3, 9, 10, 11
-- Completed plans: 39
-- Key outcome: PERF-04 passed with Phase 11 benchmark evidence in `load-tests/results/benchmark-run-summary-2026-03-31.md`
-- Archive files created: `.planning/milestones/v1.1-ROADMAP.md`, `.planning/milestones/v1.1-REQUIREMENTS.md`, `.planning/milestones/v1.1-MILESTONE-AUDIT.md`
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-04-01 — Milestone v1.2 started
 
 ## Pending Todos
 
-- Start v1.2 milestone definition and fresh requirements via `$gsd-new-milestone`.
-- Decide whether to archive phase directories now or later via `$gsd-cleanup`.
+- Complete requirements definition and roadmap creation for v1.2
 
 ## Blockers/Concerns
 
-- No open release blockers.
-- Frontend bundle warning budget remains above configured warning threshold.
+- No open blockers.
+- Frontend bundle warning budget remains above configured warning threshold (carried from v1.1).
+
+## Accumulated Context
+
+- Phase 11 k6 results: list overhead +0.2%, detail overhead −0.8% — PERF-04 PASS at dev scale
+- Permission matrix already has ~70+ entries with few entities — will grow significantly with more entities/attributes
+- Current matrix iteration may use for-each scans that need pre-processing into lookup-friendly structures
+- Jmix authorization performance patterns should inform optimization approach
 
 ## Session Continuity
 
-Last activity: 2026-04-01 - Milestone v1.1 completion workflow executed
-Stopped at: Ready for next milestone planning
+Last activity: 2026-04-01 - Milestone v1.2 started
+Stopped at: Defining requirements
 Resume file: None

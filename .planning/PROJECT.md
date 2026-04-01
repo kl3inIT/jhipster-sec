@@ -8,7 +8,19 @@ This is a brownfield JHipster security-platform migration that shipped a standal
 
 Security rules must be enforced correctly in the data access layer so frontend and backend features can rely on consistent CRUD, authority, and attribute-level access decisions.
 
-## Milestone Status
+## Current Milestone: v1.2 CI/CD & Production Validation
+
+**Goal:** Operational maturity — automated delivery, permission-resolution performance optimization, and security correctness proof under production-like conditions.
+
+**Target features:**
+- GitHub Actions CI/CD pipeline for full-stack build (Java backend + Angular frontend), following JHipster's two-stack CI guidance
+- Docker Compose production environment matching JHipster's production workflow patterns
+- Permission matrix resolution optimization: pre-process into lookup-friendly structures instead of repeated for-each scans; benchmark at ~200 secured entities scale; research Jmix authorization performance patterns
+- Full request-path optimization across the entire secured request path while keeping the core security model intact
+- Security regression validation under production conditions: auth refresh, secured-entity flow, permission enforcement, authorization guarantees
+- Production-like deployment proof with containerized backend + frontend + PostgreSQL
+
+## Milestone History
 
 `v1.1 Enterprise Admin Experience` shipped on 2026-03-31 with phases 6-11 complete.
 
@@ -53,8 +65,7 @@ The milestone is now complete:
 
 ## Next Milestone Goals
 
-- Define v1.2 requirements and roadmap via `$gsd-new-milestone`.
-- Expand automated frontend reliability coverage (TEST-01, TEST-02, TEST-03).
+- v1.3: Expand automated frontend reliability coverage (TEST-01, TEST-02, TEST-03).
 - Continue enterprise UX and performance polish while preserving secured data-access guarantees.
 
 ## Requirements
@@ -74,7 +85,10 @@ The milestone is now complete:
 
 ### Active
 
-- [ ] TEST-01 through TEST-03: Add reliable automated coverage for the new admin experience.
+- [ ] CICD-01 through CICD-03: GitHub Actions CI/CD pipeline for full-stack build, Docker Compose production environment, production deployment proof
+- [ ] PERF-05 through PERF-07: Permission matrix pre-processing optimization, full request-path optimization, Jmix-informed authorization performance analysis
+- [ ] SECVAL-01 through SECVAL-03: Security regression validation under production conditions for auth refresh, secured-entity flow, and permission enforcement
+- [ ] TEST-01 through TEST-03: Add reliable automated coverage for the new admin experience (deferred to v1.3)
 
 ### Out of Scope
 
@@ -145,5 +159,5 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-01 after v1.1 milestone completion*
+*Last updated: 2026-04-01 after v1.2 milestone start*
 
