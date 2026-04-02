@@ -48,7 +48,7 @@ require_command npm
 log "Ensuring backend image $APP_IMAGE exists"
 if ! docker image inspect "$APP_IMAGE" >/dev/null 2>&1; then
   log "Backend image missing; building via existing Jib production path"
-  npm --prefix "$ROOT_DIR" run java:docker:prod
+  bash "$ROOT_DIR/gradlew" bootJar jibDockerBuild -Pprod
 fi
 
 log "Starting production-like compose stack from $COMPOSE_FILE"
