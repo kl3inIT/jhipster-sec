@@ -19,14 +19,18 @@ services:
       - SPRING_MAIL_HOST=${SPRING_MAIL_HOST:-mailpit}
       - SPRING_MAIL_PORT=${SPRING_MAIL_PORT:-1025}
       - JHIPSTER_MAIL_BASE_URL=${JHIPSTER_MAIL_BASE_URL:-http://127.0.0.1:4200}
+      - JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET=${JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET:-NDRmOTU2NmI2YTA1ZWQyNzM2NDZjZGYyZjgzMzM1ZWVlN2M1ZjAxYTYwMzE4NjY4OWQ3MDhlYmE1YTA0YTY0Y2FkZDdjNmZiMjRlYjVhNTM0M2JjY2EyN2VkNWQ4NTBjZDU4MWZjOTE0OTYwZTdhODRkY2Y4ODM5MTI4YjNhYzQ=}
     ports:
       - 127.0.0.1:8080:8080
     healthcheck:
       test:
         - CMD
-        - curl
-        - -f
-        - http://localhost:8080/management/health/readiness
+        - bash
+        - -lc
+        - >-
+          exec 3<>/dev/tcp/127.0.0.1/8080 &&
+          printf 'GET /management/health/readiness HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 &&
+          cat <&3 | grep -q '"status":"UP"'
       interval: 5s
       timeout: 5s
       retries: 40

@@ -22,6 +22,7 @@ created: 2026-04-02
 | **Quick run command** | `npm run phase12:stack:smoke && npm run phase12:backend:prodlike` |
 | **Full suite command** | `npm run phase12:stack:smoke && npm run phase12:backend:prodlike && ./gradlew integrationTest --tests com.vn.core.web.rest.AccountResourceIT --tests com.vn.core.web.rest.UserResourceIT --tests com.vn.core.web.rest.SecuredEntityCapabilityResourceIT --tests com.vn.core.web.rest.SecuredEntityEnforcementIT --tests com.vn.core.service.MailServiceIT` |
 | **Coverage note** | `phase12:stack:smoke` and `phase12:backend:prodlike` are the primary live-stack PROD-02 proof; the Spring integration tests remain complementary coverage that mirrors the same brownfield-safe expectations in-process. |
+| **Runtime prereqs** | The committed compose app service now carries the Phase 12 JWT base64 secret env so the prod profile can boot inside Docker without ad hoc local secret export before smoke or regression runs. |
 | **Estimated runtime** | ~300 seconds |
 
 ---
