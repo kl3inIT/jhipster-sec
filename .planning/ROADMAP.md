@@ -42,7 +42,7 @@ This roadmap starts v1.2 by making the production-like runtime reproducible, the
   3. The stack exposes the runtime dependencies needed for later benchmark and security-validation work, including database-backed application startup and operationally relevant configuration.
 **Plans**: 2 plans
 Plans:
-- [ ] 12-01-PLAN.md — Normalize the prod profile and Docker Compose runtime contract around env-driven configuration and the existing Jib image path.
+- [x] 12-01-PLAN.md — Normalize the prod profile and Docker Compose runtime contract around env-driven configuration and the existing Jib image path.
 - [ ] 12-02-PLAN.md — Add repeatable backend and browser validation entry points for the production-like stack baseline.
 
 ### Phase 13: Split CI Verification Lanes
@@ -90,7 +90,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 12. Production Runtime Foundation | 0/2 | Planned | - |
+| 12. Production Runtime Foundation | 1/2 | In Progress|  |
 | 13. Split CI Verification Lanes | 0/TBD | Not started | - |
 | 14. Production-Like Benchmark Baseline | 0/TBD | Not started | - |
 | 15. Permission Lookup Optimization | 0/TBD | Not started | - |

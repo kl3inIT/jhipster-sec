@@ -8,7 +8,7 @@
 
 ### Production Configuration And Runtime Baseline
 
-- [ ] **PROD-01**: The project can start a production-like application stack from committed configuration and compose assets without depending on dev-only shortcuts.
+- [x] **PROD-01**: The project can start a production-like application stack from committed configuration and compose assets without depending on dev-only shortcuts.
 - [ ] **PROD-02**: The production-like stack preserves brownfield-safe auth, account, admin-user, mail, and secured-entity behavior so validation can run against a realistic runtime shape.
 
 ### CI/CD Pipeline Separation
@@ -59,7 +59,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PROD-01 | Phase 12 | Pending |
+| PROD-01 | Phase 12 | Complete |
 | PROD-02 | Phase 12 | Pending |
 | CICD-01 | Phase 13 | Pending |
 | CICD-02 | Phase 13 | Pending |

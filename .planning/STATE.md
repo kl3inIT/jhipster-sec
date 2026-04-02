@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: v1.2 roadmap revised and files updated for benchmark-first sequencing
-last_updated: "2026-04-02T07:59:15.980Z"
-last_activity: 2026-04-02 -- Phase 12 execution started
+stopped_at: Completed 12-01-PLAN.md
+last_updated: "2026-04-02T08:12:04.325Z"
+last_activity: 2026-04-02
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 2
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-04-01)
 ## Current Position
 
 Phase: 12 (production-runtime-foundation) — EXECUTING
-Plan: 1 of 2
-Status: Executing Phase 12
-Last activity: 2026-04-02 -- Phase 12 execution started
+Plan: 2 of 2
+Status: Ready to execute
+Last activity: 2026-04-02
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -51,6 +51,8 @@ Progress: [░░░░░░░░░░] 0%
 - Last 5 plans: none yet in v1.2
 - Trend: N/A
 
+| Phase 12 P01 | 0 min | 2 tasks | 4 files |
+
 ## Accumulated Context
 
 ### Decisions
@@ -61,6 +63,8 @@ Recent decisions affecting current work:
 - [v1.2] Establish the production-like benchmark baseline before any deeper permission optimization work.
 - [v1.2] Keep milestone flow ordered as production runtime foundation -> split CI -> benchmark baseline -> optimization -> final security proof.
 - [Phase 11] Use benchmark evidence, not intuition, to justify security-pipeline performance work.
+- [Phase 12]: Keep the production-like stack on the existing jhipster-sec:latest Jib image instead of introducing a second container build path. — This preserves one backend packaging path and matches the repository JHipster Jib conventions already used by the project.
+- [Phase 12]: Use one env contract for datasource, Liquibase, and mail base URL across Spring Boot, Compose, and the Jib entrypoint. — A single environment contract removes machine-specific drift and makes the production-like stack portable for later validation and benchmark phases.
 
 ### Pending Todos
 
@@ -75,6 +79,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-04-01 00:35
-Stopped at: v1.2 roadmap revised and files updated for benchmark-first sequencing
-Resume file: .planning/phases/12-production-runtime-foundation/12-CONTEXT.md
+Last session: 2026-04-02T08:11:31.639Z
+Stopped at: Completed 12-01-PLAN.md
+Resume file: None
