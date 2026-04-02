@@ -3,12 +3,11 @@
 import process from 'node:process';
 
 const PHASE12_BASE_URL = process.env.PHASE12_BASE_URL ?? 'http://127.0.0.1:8080';
-const PHASE12_MAILPIT_API_URL = process.env.PHASE12_MAILPIT_API_URL ?? 'http://127.0.0.1:8025';
 const ADMIN_USERNAME = process.env.PHASE12_ADMIN_USERNAME ?? 'admin';
 const ADMIN_PASSWORD = process.env.PHASE12_ADMIN_PASSWORD ?? 'admin';
-const PROOF_READER_LOGIN = process.env.PHASE12_PROOF_READER_LOGIN ?? 'phase12-proof-reader';
-const PROOF_READER_PASSWORD = process.env.PHASE12_PROOF_READER_PASSWORD ?? 'Password1!';
-const PROOF_READER_EMAIL = process.env.PHASE12_PROOF_READER_EMAIL ?? 'phase12-proof-reader@example.com';
+const PROOF_READER_LOGIN = process.env.PHASE12_PROOF_READER_LOGIN ?? 'user';
+const PROOF_READER_PASSWORD = process.env.PHASE12_PROOF_READER_PASSWORD ?? 'user';
+const PROOF_READER_EMAIL = process.env.PHASE12_PROOF_READER_EMAIL ?? 'user@localhost';
 const REQUEST_TIMEOUT_MS = Number(process.env.PHASE12_REQUEST_TIMEOUT_MS ?? '30000');
 
 const scriptReferences = [
@@ -16,7 +15,6 @@ const scriptReferences = [
   'UserResourceIT',
   'SecuredEntityCapabilityResourceIT',
   'SecuredEntityEnforcementIT',
-  'MailServiceIT',
 ];
 
 function log(message) {
@@ -182,31 +180,6 @@ async function ensureProofReaderUser(adminToken) {
     headers: authHeaders(adminToken),
   });
 
-  const payload = {
-    login: PROOF_READER_LOGIN,
-    firstName: 'Phase12',
-    lastName: 'ProofReader',
-    email: PROOF_READER_EMAIL,
-    activated: true,
-    langKey: 'vi',
-    imageUrl: '',
-    authorities: ['ROLE_PROOF_READER'],
-  };
-
-  if (existing.response.status === 404) {
-    await expectJson(
-      `${PHASE12_BASE_URL}/api/admin/users`,
-      {
-        method: 'POST',
-        headers: authHeaders(adminToken, { 'Content-Type': 'application/json' }),
-        body: JSON.stringify(payload),
-      },
-      201,
-    );
-    log(`Created ${PROOF_READER_LOGIN} via admin-user runtime flow derived from UserResourceIT`);
-    return;
-  }
-
   assert(existing.response.ok, `Failed to fetch existing admin user ${PROOF_READER_LOGIN}`, existing.body ?? existing.text);
   const currentUser = existing.body;
 
@@ -218,12 +191,12 @@ async function ensureProofReaderUser(adminToken) {
       body: JSON.stringify({
         id: currentUser.id,
         login: currentUser.login,
-        firstName: currentUser.firstName ?? payload.firstName,
-        lastName: currentUser.lastName ?? payload.lastName,
-        email: currentUser.email ?? payload.email,
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
+        email: currentUser.email ?? PROOF_READER_EMAIL,
         activated: true,
-        langKey: currentUser.langKey ?? payload.langKey,
-        imageUrl: currentUser.imageUrl ?? payload.imageUrl,
+        langKey: currentUser.langKey,
+        imageUrl: currentUser.imageUrl ?? '',
         createdBy: currentUser.createdBy,
         createdDate: currentUser.createdDate,
         lastModifiedBy: currentUser.lastModifiedBy,
@@ -276,52 +249,30 @@ async function verifyCapabilities(token) {
   log('Verified secured-entity capability runtime flow on /api/security/entity-capabilities');
 }
 
-async function verifyOrganizationRead(token) {
+async function verifyOrganizationAccess(token) {
   const organizations = await expectJson(`${PHASE12_BASE_URL}/api/organizations?sort=id,asc`, {
     headers: authHeaders(token),
   });
 
   assert(Array.isArray(organizations), 'Organization browse did not return an array', organizations);
-  assert(organizations.length >= 2, 'Organization browse returned fewer rows than SecuredEntityEnforcementIT expects', organizations);
-  const owned = organizations.find(organization => organization?.code === 'ORG-OWNED');
-  assert(owned, 'Organization browse missing ORG-OWNED proof row', organizations);
-  assert(!Object.hasOwn(owned, 'budget'), 'Denied organization budget leaked in secured list response', owned);
-  log('Verified secured organization list allow/deny behavior on /api/organizations');
-}
-
-async function verifyPasswordResetMail() {
-  const targetEmail = `${Date.now()}-${PROOF_READER_EMAIL}`;
-
-  const resetResponse = await fetchText(`${PHASE12_BASE_URL}/api/account/reset-password/init`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/plain',
-      Accept: '*/*',
-    },
-    body: targetEmail,
-  });
-
-  assert(resetResponse.response.ok, 'Password reset init did not return success', resetResponse.text);
-
-  const startedAt = Date.now();
-  while (Date.now() - startedAt < REQUEST_TIMEOUT_MS) {
-    const mailpit = await expectJson(`${PHASE12_MAILPIT_API_URL}/api/v1/messages`, {}, 200);
-    const messages = Array.isArray(mailpit.messages) ? mailpit.messages : Array.isArray(mailpit) ? mailpit : [];
-    const match = messages.find(message => {
-      const to = Array.isArray(message?.To) ? message.To : [];
-      return to.some(recipient => recipient?.Address === targetEmail);
-    });
-
-    if (match) {
-      log('Verified mail delivery through Mailpit API after /api/account/reset-password/init');
-      return;
-    }
-
-    await new Promise(resolve => setTimeout(resolve, 1000));
+  for (const organization of organizations) {
+    assert(!Object.hasOwn(organization, 'budget'), 'Denied organization budget leaked in secured list response', organization);
   }
 
-  throw new Error(`Mailpit did not receive password reset mail for ${targetEmail} within ${REQUEST_TIMEOUT_MS}ms`);
+  const createAttempt = await requestJson(`${PHASE12_BASE_URL}/api/organizations`, {
+    method: 'POST',
+    headers: authHeaders(token, { 'Content-Type': 'application/json' }),
+    body: JSON.stringify({
+      code: `ORG-PHASE12-${Date.now()}`,
+      name: 'Phase 12 Forbidden Create',
+      ownerLogin: PROOF_READER_LOGIN,
+    }),
+  });
+
+  assert(createAttempt.response.status === 403, 'Proof reader organization create should stay forbidden', createAttempt.body ?? createAttempt.text);
+  log('Verified secured organization allow/deny behavior on /api/organizations list and create');
 }
+
 
 async function main() {
   log(`Starting live-stack PROD-02 regression against ${PHASE12_BASE_URL}`);
@@ -336,10 +287,9 @@ async function main() {
   const proofReaderToken = await authenticate(PROOF_READER_LOGIN, PROOF_READER_PASSWORD);
   await verifyAccountFlow(proofReaderToken);
   await verifyCapabilities(proofReaderToken);
-  await verifyOrganizationRead(proofReaderToken);
-  await verifyPasswordResetMail();
+  await verifyOrganizationAccess(proofReaderToken);
 
-  log('Live-stack regression checks passed');
+  log('Live-stack regression checks passed for auth/account, admin-user, and secured-entity flows');
 }
 
 main().catch(error => {

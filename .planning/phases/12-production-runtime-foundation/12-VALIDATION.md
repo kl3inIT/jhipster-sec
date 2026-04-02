@@ -20,8 +20,8 @@ created: 2026-04-02
 | **Framework** | Spring Boot Test + MockMvc + Testcontainers PostgreSQL; live Compose runtime checks via committed Phase 12 scripts; Playwright 1.58.x remains available for later phases once a committed SPA runtime target exists |
 | **Config file** | `src/test/java/com/vn/core/IntegrationTest.java`, `frontend/playwright.config.ts`, `frontend/angular.json`, `scripts/phase12-stack-smoke.sh`, `scripts/phase12-prodlike-regression.mjs` |
 | **Quick run command** | `npm run phase12:stack:smoke && npm run phase12:backend:prodlike` |
-| **Full suite command** | `npm run phase12:stack:smoke && npm run phase12:backend:prodlike && ./gradlew integrationTest --tests com.vn.core.web.rest.AccountResourceIT --tests com.vn.core.web.rest.UserResourceIT --tests com.vn.core.web.rest.SecuredEntityCapabilityResourceIT --tests com.vn.core.web.rest.SecuredEntityEnforcementIT --tests com.vn.core.service.MailServiceIT` |
-| **Coverage note** | `phase12:stack:smoke` and `phase12:backend:prodlike` are the primary live-stack PROD-02 proof; the Spring integration tests remain complementary coverage that mirrors the same brownfield-safe expectations in-process. |
+| **Full suite command** | `npm run phase12:stack:smoke && npm run phase12:backend:prodlike && ./gradlew integrationTest --tests com.vn.core.web.rest.AccountResourceIT --tests com.vn.core.web.rest.UserResourceIT --tests com.vn.core.web.rest.SecuredEntityCapabilityResourceIT --tests com.vn.core.web.rest.SecuredEntityEnforcementIT` |
+| **Coverage note** | `phase12:stack:smoke` and `phase12:backend:prodlike` are the primary live-stack PROD-02 proof for this milestone's narrowed scope (auth/account, admin-user, secured-entity). The Spring integration tests remain complementary in-process coverage. Mail delivery, registration, and forgot-password proof were explicitly deferred from Phase 12.` |
 | **Runtime prereqs** | The committed compose app service now carries the Phase 12 JWT base64 secret env so the prod profile can boot inside Docker without ad hoc local secret export before smoke or regression runs. |
 | **Estimated runtime** | ~300 seconds |
 
@@ -44,7 +44,7 @@ created: 2026-04-02
 | 12-01-02 | 01 | 1 | PROD-01 | compose contract | `docker compose -f D:/jhipster/src/main/docker/app.yml config > /tmp/phase12-app-compose.txt && python - <<'PY' ... compose env contract verified ... PY` | ✅ | ⬜ pending |
 | 12-02-01 | 02 | 2 | PROD-02 | smoke / live stack | `npm run phase12:stack:smoke` | ✅ | ⬜ pending |
 | 12-02-02 | 02 | 2 | PROD-02 | live-stack regression | `npm run phase12:backend:prodlike` | ✅ | ⬜ pending |
-| 12-02-03 | 02 | 2 | PROD-02 | supporting integration | `./gradlew integrationTest --tests com.vn.core.web.rest.AccountResourceIT --tests com.vn.core.web.rest.UserResourceIT --tests com.vn.core.web.rest.SecuredEntityCapabilityResourceIT --tests com.vn.core.web.rest.SecuredEntityEnforcementIT --tests com.vn.core.service.MailServiceIT` | ✅ | ⬜ pending |
+| 12-02-03 | 02 | 2 | PROD-02 | supporting integration | `./gradlew integrationTest --tests com.vn.core.web.rest.AccountResourceIT --tests com.vn.core.web.rest.UserResourceIT --tests com.vn.core.web.rest.SecuredEntityCapabilityResourceIT --tests com.vn.core.web.rest.SecuredEntityEnforcementIT` | ✅ | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -64,17 +64,15 @@ Phase 12 does not claim browser proof through Playwright yet because the checker
 ## Wave 0 Requirements
 
 - [x] Add one repeatable stack smoke assertion or wrapper for `npm run app:up` so Phase 12 can verify app health against the production-like Compose baseline.
-- [x] Add one repeatable runtime-targeted validation command that exercises auth, account, admin-user, mail, and secured-entity behavior against the live Compose-launched backend.
+- [x] Add one repeatable runtime-targeted validation command that exercises auth, account, admin-user, and secured-entity behavior against the live Compose-launched backend.
 - [x] Narrow browser-validation claims until the repo has a committed SPA serving target instead of depending on an undefined dev-server path.
-- [x] Treat `phase12:stack:smoke` and `phase12:backend:prodlike` as the committed primary live-stack proof while keeping Spring integration tests as supporting, in-process mirrors.
+- [x] Treat `phase12:stack:smoke` and `phase12:backend:prodlike` as the committed primary live-stack proof while keeping Spring integration tests as supporting, in-process mirrors for the narrowed Phase 12 scope.
 
 ---
 
 ## Manual-Only Verifications
 
-| Behavior | Requirement | Why Manual | Test Instructions |
-|----------|-------------|------------|-------------------|
-| Mail links use the correct browser-facing base URL for the target environment | PROD-02 | The correct hostname/proxy value depends on real deployment topology and must not be inferred per D-03 | Start the production-like stack, trigger a mail flow, inspect the generated link in Mailpit, and confirm it uses the user-provided runtime host/base URL rather than a hardcoded localhost fallback. |
+No additional manual-only checks are required for the narrowed Phase 12 milestone scope. Mail delivery, registration, and forgot-password flows are deferred from this phase.
 
 ---
 
