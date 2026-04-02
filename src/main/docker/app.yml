@@ -2,18 +2,23 @@
 name: jhipster-sec
 services:
   app:
-    image: jhipster-sec
+    image: jhipster-sec:latest
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
-      - SPRING_PROFILES_ACTIVE=prod,api-docs
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
       - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/jhipster-sec
-      - SPRING_DATASOURCE_USERNAME=jhipster-sec
-      - SPRING_DATASOURCE_PASSWORD=
-      - SPRING_LIQUIBASE_URL=jdbc:postgresql://postgresql:5432/jhipster-sec
-      - SPRING_MAIL_HOST=mailpit
-      - SPRING_MAIL_PORT=1025
-      - JHIPSTER_MAIL_BASE_URL=http://localhost:4200
+      - POSTGRES_DB=${POSTGRES_DB:-jhipster-sec}
+      - POSTGRES_USER=${POSTGRES_USER:-jhipster-sec}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-jhipster-sec}
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL:-jdbc:postgresql://postgresql:5432/jhipster-sec}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME:-jhipster-sec}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD:-jhipster-sec}
+      - SPRING_LIQUIBASE_URL=${SPRING_LIQUIBASE_URL:-jdbc:postgresql://postgresql:5432/jhipster-sec}
+      - SPRING_LIQUIBASE_USER=${SPRING_LIQUIBASE_USER:-jhipster-sec}
+      - SPRING_LIQUIBASE_PASSWORD=${SPRING_LIQUIBASE_PASSWORD:-jhipster-sec}
+      - SPRING_MAIL_HOST=${SPRING_MAIL_HOST:-mailpit}
+      - SPRING_MAIL_PORT=${SPRING_MAIL_PORT:-1025}
+      - JHIPSTER_MAIL_BASE_URL=${JHIPSTER_MAIL_BASE_URL:-http://127.0.0.1:4200}
     ports:
       - 127.0.0.1:8080:8080
     healthcheck:
@@ -21,7 +26,7 @@ services:
         - CMD
         - curl
         - -f
-        - http://localhost:8080/management/health
+        - http://localhost:8080/management/health/readiness
       interval: 5s
       timeout: 5s
       retries: 40
