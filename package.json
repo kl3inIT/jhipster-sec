@@ -8,6 +8,9 @@
   "scripts": {
     "app:start": "./gradlew",
     "app:up": "docker compose -f src/main/docker/app.yml up --wait",
+    "phase12:stack:smoke": "bash ./scripts/phase12-stack-smoke.sh",
+    "phase12:stack:down": "docker compose -f src/main/docker/app.yml down -v",
+    "phase12:backend:prodlike": "node ./scripts/phase12-prodlike-regression.mjs",
     "backend:build-cache": "npm run backend:info && npm run backend:nohttp:test && npm run ci:e2e:package -- -x webapp -x webapp_test",
     "backend:doc:test": "./gradlew javadoc ",
     "backend:info": "./gradlew -v",

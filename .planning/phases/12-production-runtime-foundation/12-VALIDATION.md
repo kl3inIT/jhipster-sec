@@ -21,6 +21,7 @@ created: 2026-04-02
 | **Config file** | `src/test/java/com/vn/core/IntegrationTest.java`, `frontend/playwright.config.ts`, `frontend/angular.json`, `scripts/phase12-stack-smoke.sh`, `scripts/phase12-prodlike-regression.mjs` |
 | **Quick run command** | `npm run phase12:stack:smoke && npm run phase12:backend:prodlike` |
 | **Full suite command** | `npm run phase12:stack:smoke && npm run phase12:backend:prodlike && ./gradlew integrationTest --tests com.vn.core.web.rest.AccountResourceIT --tests com.vn.core.web.rest.UserResourceIT --tests com.vn.core.web.rest.SecuredEntityCapabilityResourceIT --tests com.vn.core.web.rest.SecuredEntityEnforcementIT --tests com.vn.core.service.MailServiceIT` |
+| **Coverage note** | `phase12:stack:smoke` and `phase12:backend:prodlike` are the primary live-stack PROD-02 proof; the Spring integration tests remain complementary coverage that mirrors the same brownfield-safe expectations in-process. |
 | **Estimated runtime** | ~300 seconds |
 
 ---
@@ -40,8 +41,8 @@ created: 2026-04-02
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
 | 12-01-01 | 01 | 1 | PROD-01 | contract | `python - <<'PY' ... application-prod env contract verified ... PY` | ✅ | ⬜ pending |
 | 12-01-02 | 01 | 1 | PROD-01 | compose contract | `docker compose -f D:/jhipster/src/main/docker/app.yml config > /tmp/phase12-app-compose.txt && python - <<'PY' ... compose env contract verified ... PY` | ✅ | ⬜ pending |
-| 12-02-01 | 02 | 2 | PROD-02 | smoke / live stack | `npm run phase12:stack:smoke` | MISSING — Wave 2 creates `scripts/phase12-stack-smoke.sh` first | ⬜ pending |
-| 12-02-02 | 02 | 2 | PROD-02 | live-stack regression | `npm run phase12:backend:prodlike` | MISSING — Wave 2 creates `scripts/phase12-prodlike-regression.mjs` first | ⬜ pending |
+| 12-02-01 | 02 | 2 | PROD-02 | smoke / live stack | `npm run phase12:stack:smoke` | ✅ | ⬜ pending |
+| 12-02-02 | 02 | 2 | PROD-02 | live-stack regression | `npm run phase12:backend:prodlike` | ✅ | ⬜ pending |
 | 12-02-03 | 02 | 2 | PROD-02 | supporting integration | `./gradlew integrationTest --tests com.vn.core.web.rest.AccountResourceIT --tests com.vn.core.web.rest.UserResourceIT --tests com.vn.core.web.rest.SecuredEntityCapabilityResourceIT --tests com.vn.core.web.rest.SecuredEntityEnforcementIT --tests com.vn.core.service.MailServiceIT` | ✅ | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
@@ -64,6 +65,7 @@ Phase 12 does not claim browser proof through Playwright yet because the checker
 - [x] Add one repeatable stack smoke assertion or wrapper for `npm run app:up` so Phase 12 can verify app health against the production-like Compose baseline.
 - [x] Add one repeatable runtime-targeted validation command that exercises auth, account, admin-user, mail, and secured-entity behavior against the live Compose-launched backend.
 - [x] Narrow browser-validation claims until the repo has a committed SPA serving target instead of depending on an undefined dev-server path.
+- [x] Treat `phase12:stack:smoke` and `phase12:backend:prodlike` as the committed primary live-stack proof while keeping Spring integration tests as supporting, in-process mirrors.
 
 ---
 
