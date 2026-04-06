@@ -55,7 +55,7 @@ Plans:
   3. The production-validation prerequisites for this milestone can be launched through repeatable CI automation instead of manual operator setup.
 **Plans**: 2 plans
 Plans:
-- [ ] 13-01-PLAN.md u2014 Create the backend CI verification lane as a standalone GitHub Actions workflow.
+- [x] 13-01-PLAN.md u2014 Create the backend CI verification lane as a standalone GitHub Actions workflow.
 - [ ] 13-02-PLAN.md u2014 Create the frontend CI lane and production-validation lane as GitHub Actions workflows.
 
 ### Phase 14: Production-Like Benchmark Baseline
@@ -94,7 +94,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|----------|
 | 12. Production Runtime Foundation | 1/2 | In Progress|  |
-| 13. Split CI Verification Lanes | 0/2 | Not started | - |
+| 13. Split CI Verification Lanes | 1/2 | In Progress|  |
 | 14. Production-Like Benchmark Baseline | 0/TBD | Not started | - |
 | 15. Permission Lookup Optimization | 0/TBD | Not started | - |
 | 16. Production Security Proof | 0/TBD | Not started | - |
