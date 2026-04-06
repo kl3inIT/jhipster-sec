@@ -1,25 +1,26 @@
-# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+# Production deployment template: app-only container using an operator-managed PostgreSQL instance.
+# Copy this file to ~/app/app.yml on the server and pair it with ~/app/app.env.
 name: jhipster-sec
 services:
   app:
-    image: jhipster-sec:latest
+    image: ${APP_IMAGE:?set APP_IMAGE in app.env}
+    restart: unless-stopped
+    env_file:
+      - ./app.env
     environment:
-      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - _JAVA_OPTIONS=${_JAVA_OPTIONS:--Xmx512m -Xms256m}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
-      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
-      - POSTGRES_DB=${POSTGRES_DB:-jhipster-sec}
-      - POSTGRES_USER=${POSTGRES_USER:-jhipster-sec}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-jhipster-sec}
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL:-jdbc:postgresql://postgresql:5432/jhipster-sec}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME:-jhipster-sec}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD:-jhipster-sec}
-      - SPRING_LIQUIBASE_URL=${SPRING_LIQUIBASE_URL:-jdbc:postgresql://postgresql:5432/jhipster-sec}
-      - SPRING_LIQUIBASE_USER=${SPRING_LIQUIBASE_USER:-jhipster-sec}
-      - SPRING_LIQUIBASE_PASSWORD=${SPRING_LIQUIBASE_PASSWORD:-jhipster-sec}
-      - SPRING_MAIL_HOST=${SPRING_MAIL_HOST:-mailpit}
-      - SPRING_MAIL_PORT=${SPRING_MAIL_PORT:-1025}
-      - JHIPSTER_MAIL_BASE_URL=${JHIPSTER_MAIL_BASE_URL:-http://127.0.0.1:4200}
-      - JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET=${JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET:-NDRmOTU2NmI2YTA1ZWQyNzM2NDZjZGYyZjgzMzM1ZWVlN2M1ZjAxYTYwMzE4NjY4OWQ3MDhlYmE1YTA0YTY0Y2FkZDdjNmZiMjRlYjVhNTM0M2JjY2EyN2VkNWQ4NTBjZDU4MWZjOTE0OTYwZTdhODRkY2Y4ODM5MTI4YjNhYzQ=}
+      - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=${MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED:-true}
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL:-jdbc:postgresql://postgres:5432/jhipster-sec}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME:-postgres}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD:-change-me}
+      - SPRING_LIQUIBASE_URL=${SPRING_LIQUIBASE_URL:-jdbc:postgresql://postgres:5432/jhipster-sec}
+      - SPRING_LIQUIBASE_USER=${SPRING_LIQUIBASE_USER:-postgres}
+      - SPRING_LIQUIBASE_PASSWORD=${SPRING_LIQUIBASE_PASSWORD:-change-me}
+      - SPRING_MAIL_HOST=${SPRING_MAIL_HOST:-127.0.0.1}
+      - SPRING_MAIL_PORT=${SPRING_MAIL_PORT:-25}
+      - JHIPSTER_MAIL_BASE_URL=${JHIPSTER_MAIL_BASE_URL:-http://27.118.20.28}
+      - JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET=${JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET:-change-me-with-a-base64-secret}
     ports:
       - 127.0.0.1:8080:8080
     healthcheck:
@@ -34,16 +35,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 40
-    depends_on:
-      postgresql:
-        condition: service_healthy
-      mailpit:
-        condition: service_healthy
-  postgresql:
-    extends:
-      file: ./postgresql.yml
-      service: postgresql
-  mailpit:
-    extends:
-      file: ./mailpit.yml
-      service: mailpit
+networks:
+  default:
+    external: true
+    name: ${DOCKER_NETWORK:-app-network}

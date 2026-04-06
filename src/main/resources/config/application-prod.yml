@@ -46,8 +46,8 @@ spring:
     user: ${SPRING_LIQUIBASE_USER:${SPRING_DATASOURCE_USERNAME}}
     password: ${SPRING_LIQUIBASE_PASSWORD:${SPRING_DATASOURCE_PASSWORD}}
   mail:
-    host: ${SPRING_MAIL_HOST:mailpit}
-    port: ${SPRING_MAIL_PORT:1025}
+    host: ${SPRING_MAIL_HOST:127.0.0.1}
+    port: ${SPRING_MAIL_PORT:25}
   thymeleaf:
     cache: true
 

@@ -1,4 +1,5 @@
-# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+# Development-only PostgreSQL container. Production deployment uses src/main/docker/app.yml
+# with an operator-managed PostgreSQL database on the existing external network.
 name: jhipster-sec
 services:
   postgresql:

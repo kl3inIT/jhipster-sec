@@ -61,8 +61,11 @@ jobs:
           echo "- The production server is already authenticated for private GHCR pulls (for example via docker login ghcr.io)."
           echo "- The deploy account has Docker Compose access and can run docker compose without interactive sudo."
           echo "- The production compose file exists at ~/app/app.yml on the server."
+          echo "- The matching environment file exists at ~/app/app.env and is populated from src/main/docker/app.env.example with real secrets."
+          echo "- The app container can reach the existing PostgreSQL database named postgres from the external Docker network app-network."
           echo "- DEPLOY_HOST resolves to a runner-reachable host or ingress path that serves /management/health/readiness through the real VPN/Nginx Proxy Manager topology."
           echo "- ssh-keyscan host verification below must succeed before SSH deployment runs."
+          echo "- ~/app/app.yml stays app-only; PostgreSQL and mail infrastructure remain operator-managed and are not started by this workflow."
 
       - name: Start SSH agent
         uses: webfactory/ssh-agent@v0.9.0

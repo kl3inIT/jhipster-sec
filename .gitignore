@@ -164,3 +164,10 @@ aef-main/
 __pycache__/
 *.pyc
 
+.ssh
+
+# Production deployment env files
+src/main/docker/app.env
+app.env
+*.env.local
+
