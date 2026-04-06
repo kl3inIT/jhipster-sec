@@ -35,6 +35,7 @@ file_env 'SPRING_DATASOURCE_PASSWORD'
 file_env 'SPRING_LIQUIBASE_URL'
 file_env 'SPRING_LIQUIBASE_USER'
 file_env 'SPRING_LIQUIBASE_PASSWORD'
+file_env 'JHIPSTER_MAIL_BASE_URL'
 file_env 'JHIPSTER_REGISTRY_PASSWORD'
 
 exec java ${JAVA_OPTS} -noverify -XX:+AlwaysPreTouch -cp /app/resources/:/app/classes/:/app/libs/* "com.vn.core.JhipsterSecApp"  "$@"
