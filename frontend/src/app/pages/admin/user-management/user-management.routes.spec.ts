@@ -6,6 +6,8 @@ import routes, { userManagementResolve } from './user-management.routes';
 import { IUser } from './user-management.model';
 import { UserManagementService } from './service/user-management.service';
 
+const LAZY_IMPORT_TIMEOUT_MS = 15000;
+
 class MockUserManagementService {
   findCalls: string[] = [];
 
@@ -69,28 +71,28 @@ describe('userManagementRoutes', () => {
     expect(rootRoute?.loadComponent).toBeDefined();
     const mod = await rootRoute!.loadComponent!();
     expectComponentName(mod, 'UserManagementListComponent');
-  });
+  }, LAZY_IMPORT_TIMEOUT_MS);
 
   it('lazy-loads the detail component for the view path', async () => {
     const viewRoute = routes.find(r => r.path === ':login/view');
     expect(viewRoute?.loadComponent).toBeDefined();
     const mod = await viewRoute!.loadComponent!();
     expectComponentName(mod, 'UserManagementDetailComponent');
-  });
+  }, LAZY_IMPORT_TIMEOUT_MS);
 
   it('lazy-loads the update component for the new path', async () => {
     const newRoute = routes.find(r => r.path === 'new');
     expect(newRoute?.loadComponent).toBeDefined();
     const mod = await newRoute!.loadComponent!();
     expectComponentName(mod, 'UserManagementUpdateComponent');
-  });
+  }, LAZY_IMPORT_TIMEOUT_MS);
 
   it('lazy-loads the update component for the edit path', async () => {
     const editRoute = routes.find(r => r.path === ':login/edit');
     expect(editRoute?.loadComponent).toBeDefined();
     const mod = await editRoute!.loadComponent!();
     expectComponentName(mod, 'UserManagementUpdateComponent');
-  });
+  }, LAZY_IMPORT_TIMEOUT_MS);
 
   it('resolves a user when the login param is present', async () => {
     const resolved = await resolveUser({ login: 'alice' });

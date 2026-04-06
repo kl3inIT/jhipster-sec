@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
-import { activateRoute, registerRoute } from './app/app.routes';
 
 export const appRoutes: Routes = [
   {
@@ -8,8 +7,16 @@ export const appRoutes: Routes = [
     loadComponent: () => import('./app/pages/login/login.component'),
     title: 'pageTitle.login',
   },
-  registerRoute,
-  activateRoute,
+  {
+    path: 'register',
+    loadComponent: () => import('./app/pages/register/register.component'),
+    title: 'register.title',
+  },
+  {
+    path: 'activate',
+    loadComponent: () => import('./app/pages/activate/activate.component'),
+    title: 'activate.title',
+  },
   {
     path: '',
     loadComponent: () => import('./app/layout/component/main/app.layout').then((m) => m.AppLayout),
