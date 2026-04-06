@@ -42,8 +42,8 @@ This roadmap starts v1.2 by making the production-like runtime reproducible, the
   3. The stack exposes the runtime dependencies needed for later benchmark and security-validation work, including database-backed application startup and operationally relevant configuration.
 **Plans**: 2 plans
 Plans:
-- [x] 12-01-PLAN.md — Normalize the prod profile and Docker Compose runtime contract around env-driven configuration and the existing Jib image path.
-- [ ] 12-02-PLAN.md — Add repeatable backend and browser validation entry points for the production-like stack baseline.
+- [x] 12-01-PLAN.md u2014 Normalize the prod profile and Docker Compose runtime contract around env-driven configuration and the existing Jib image path.
+- [ ] 12-02-PLAN.md u2014 Add repeatable backend and browser validation entry points for the production-like stack baseline.
 
 ### Phase 13: Split CI Verification Lanes
 **Goal**: CI feedback is separated into reliable backend, frontend, and production-validation lanes so milestone regressions are easier to detect and rerun.
@@ -53,7 +53,10 @@ Plans:
   1. Backend verification can fail independently from frontend verification so one lane does not hide the status of the other.
   2. Frontend verification can run without waiting on unrelated backend-only work when the UI lane is the only thing that changed.
   3. The production-validation prerequisites for this milestone can be launched through repeatable CI automation instead of manual operator setup.
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 13-01-PLAN.md u2014 Create the backend CI verification lane as a standalone GitHub Actions workflow.
+- [ ] 13-02-PLAN.md u2014 Create the frontend CI lane and production-validation lane as GitHub Actions workflows.
 
 ### Phase 14: Production-Like Benchmark Baseline
 **Goal**: The project has a trusted production-like benchmark and validation baseline with realistic data volume, multiple secured tables, and concurrency evidence before optimization decisions are made.
@@ -89,9 +92,9 @@ Plans:
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
+|-------|----------------|--------|----------|
 | 12. Production Runtime Foundation | 1/2 | In Progress|  |
-| 13. Split CI Verification Lanes | 0/TBD | Not started | - |
+| 13. Split CI Verification Lanes | 0/2 | Not started | - |
 | 14. Production-Like Benchmark Baseline | 0/TBD | Not started | - |
 | 15. Permission Lookup Optimization | 0/TBD | Not started | - |
 | 16. Production Security Proof | 0/TBD | Not started | - |
