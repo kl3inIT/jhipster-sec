@@ -53,3 +53,34 @@ jobs:
             -Djib.to.tags=sha-${SHORT_SHA} \
             -Djib.to.auth.username=${{ github.repository_owner }} \
             -Djib.to.auth.password=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Operator prerequisites for first production deployment
+        run: |
+          echo "Before the first live run, confirm these operator-managed prerequisites:"
+          echo "- Repository secrets DEPLOY_HOST and DEPLOY_SSH_KEY are configured."
+          echo "- The production server is already authenticated for private GHCR pulls (for example via docker login ghcr.io)."
+          echo "- The deploy account has Docker Compose access and can run docker compose without interactive sudo."
+          echo "- The production compose file exists at ~/app/app.yml on the server."
+          echo "- DEPLOY_HOST resolves to a runner-reachable host or ingress path that serves /management/health/readiness through the real VPN/Nginx Proxy Manager topology."
+          echo "- ssh-keyscan host verification below must succeed before SSH deployment runs."
+
+      - name: Start SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Add deployment host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy backend image with remote docker compose
+        run: |
+          ssh deploy@${{ secrets.DEPLOY_HOST }} \
+            'docker compose -f ~/app/app.yml pull && docker compose -f ~/app/app.yml up -d'
+
+      - name: Verify deployment readiness
+        run: |
+          echo "Polling readiness at http://${{ secrets.DEPLOY_HOST }}/management/health/readiness"
+          timeout 60 bash -c 'until curl -sf http://${{ secrets.DEPLOY_HOST }}/management/health/readiness; do sleep 3; done'
+          echo "Deployment is ready."
