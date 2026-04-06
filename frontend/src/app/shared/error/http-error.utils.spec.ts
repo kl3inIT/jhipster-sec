@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { TestBed } from '@angular/core/testing';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
@@ -37,6 +37,20 @@ interface FeedbackTranslations {
 
 type TranslationObject = Parameters<TranslateService['setTranslation']>[1];
 
+const resolveTranslationPath = (locale: string): string => {
+  const candidates = [
+    resolve(process.cwd(), 'public', 'i18n', `${locale}.json`),
+    resolve(process.cwd(), 'frontend', 'public', 'i18n', `${locale}.json`),
+  ];
+
+  const match = candidates.find((candidate) => existsSync(candidate));
+  if (!match) {
+    throw new Error(`Missing translation fixture for locale "${locale}"`);
+  }
+
+  return match;
+};
+
 describe('http-error.utils', () => {
   let translateService: TranslateService;
   let addedMessages: unknown[];
@@ -56,12 +70,8 @@ describe('http-error.utils', () => {
       add: (message: unknown) => addedMessages.push(message),
     } as unknown as MessageService;
 
-    enTranslations = JSON.parse(
-      readFileSync(resolve(process.cwd(), 'frontend/public/i18n/en.json'), 'utf8'),
-    ) as FeedbackTranslations;
-    viTranslations = JSON.parse(
-      readFileSync(resolve(process.cwd(), 'frontend/public/i18n/vi.json'), 'utf8'),
-    ) as FeedbackTranslations;
+    enTranslations = JSON.parse(readFileSync(resolveTranslationPath('en'), 'utf8')) as FeedbackTranslations;
+    viTranslations = JSON.parse(readFileSync(resolveTranslationPath('vi'), 'utf8')) as FeedbackTranslations;
 
     translateService.setTranslation('en', enTranslations as unknown as TranslationObject);
     translateService.setTranslation('vi', viTranslations as unknown as TranslationObject);
