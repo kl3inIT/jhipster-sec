@@ -38,7 +38,7 @@ This roadmap starts v1.2 by making the production-like runtime reproducible, the
 **Requirements**: PROD-01, PROD-02
 **Success Criteria** (what must be TRUE):
   1. The application stack can be started from committed production-like configuration and compose assets without requiring ad hoc local-only setup.
-  2. Auth, account, admin-user, mail, and secured-entity flows work in the production-like stack so later validation is grounded in a realistic runtime shape.
+  2. Auth, account, admin-user, and secured-entity flows work in the production-like stack so later validation is grounded in a realistic runtime shape.
   3. The stack exposes the runtime dependencies needed for later benchmark and security-validation work, including database-backed application startup and operationally relevant configuration.
 **Plans**: 2 plans
 Plans:

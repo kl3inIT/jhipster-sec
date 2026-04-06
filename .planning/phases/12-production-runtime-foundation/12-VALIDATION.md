@@ -21,7 +21,7 @@ created: 2026-04-02
 | **Config file** | `src/test/java/com/vn/core/IntegrationTest.java`, `frontend/playwright.config.ts`, `frontend/angular.json`, `scripts/phase12-stack-smoke.sh`, `scripts/phase12-prodlike-regression.mjs` |
 | **Quick run command** | `npm run phase12:stack:smoke && npm run phase12:backend:prodlike` |
 | **Full suite command** | `npm run phase12:stack:smoke && npm run phase12:backend:prodlike && ./gradlew integrationTest --tests com.vn.core.web.rest.AccountResourceIT --tests com.vn.core.web.rest.UserResourceIT --tests com.vn.core.web.rest.SecuredEntityCapabilityResourceIT --tests com.vn.core.web.rest.SecuredEntityEnforcementIT --tests com.vn.core.service.MailServiceIT` |
-| **Coverage note** | `phase12:stack:smoke` and `phase12:backend:prodlike` are the primary live-stack PROD-02 proof for this milestone's narrowed backend scope: auth, account, admin-user, mail, and secured-entity behavior against the committed Compose-launched runtime. The Spring integration tests remain complementary in-process coverage. Browser proof is explicitly deferred until a committed SPA serving target exists.` |
+| **Coverage note** | `phase12:stack:smoke` and `phase12:backend:prodlike` are the primary live-stack PROD-02 proof for this milestone's narrowed backend scope: auth, account, admin-user, and secured-entity behavior against the committed Compose-launched runtime. The Spring integration tests remain complementary in-process coverage. Browser proof is explicitly deferred until a committed SPA serving target exists.` |
 | **Runtime prereqs** | The committed compose app service now carries the Phase 12 JWT base64 secret env so the prod profile can boot inside Docker without ad hoc local secret export before smoke or regression runs. |
 | **Estimated runtime** | ~300 seconds |
 
@@ -64,7 +64,7 @@ Phase 12 does not claim browser proof through Playwright yet because the checker
 ## Wave 0 Requirements
 
 - [x] Add one repeatable stack smoke assertion or wrapper for `npm run app:up` so Phase 12 can verify app health against the production-like Compose baseline.
-- [x] Add one repeatable runtime-targeted validation command that exercises auth, account, admin-user, mail, and secured-entity behavior against the live Compose-launched backend.
+- [x] Add one repeatable runtime-targeted validation command that exercises auth, account, admin-user, and secured-entity behavior against the live Compose-launched backend.
 - [x] Narrow browser-validation claims until the repo has a committed SPA serving target instead of depending on an undefined dev-server path.
 - [x] Treat `phase12:stack:smoke` and `phase12:backend:prodlike` as the committed primary live-stack proof while keeping Spring integration tests as supporting, in-process mirrors for the narrowed Phase 12 backend scope.
 
@@ -72,7 +72,7 @@ Phase 12 does not claim browser proof through Playwright yet because the checker
 
 ## Manual-Only Verifications
 
-No additional manual-only checks are required for the narrowed Phase 12 milestone scope. Browser proof remains deferred until the repo has a committed SPA serving target; mail remains part of the automated PROD-02 validation contract.
+No additional manual-only checks are required for the narrowed Phase 12 milestone scope. Browser proof remains deferred until the repo has a committed SPA serving target.
 
 ---
 
