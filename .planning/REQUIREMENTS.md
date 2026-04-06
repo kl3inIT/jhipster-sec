@@ -14,7 +14,7 @@
 ### CI/CD Pipeline Separation
 
 - [x] **CICD-01**: CI separates backend and frontend verification so failures are isolated to the lane that broke instead of blocking all feedback behind one monolithic job.
-- [ ] **CICD-02**: CI can run the production-validation prerequisites needed by this milestone, including the production-like stack and benchmark entry points, in a repeatable automated flow.
+- [x] **CICD-02**: CI can run the production-validation prerequisites needed by this milestone, including the production-like stack and benchmark entry points, in a repeatable automated flow.
 
 ### Production-Like Benchmark Baseline And Validation
 
@@ -62,7 +62,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROD-01 | Phase 12 | Complete |
 | PROD-02 | Phase 12 | Complete |
 | CICD-01 | Phase 13 | Complete |
-| CICD-02 | Phase 13 | Pending |
+| CICD-02 | Phase 13 | Complete |
 | BENCH-02 | Phase 14 | Pending |
 | BENCH-03 | Phase 14 | Pending |
 | VAL-01 | Phase 14 | Pending |

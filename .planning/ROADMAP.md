@@ -25,7 +25,7 @@ This roadmap starts v1.2 by making the production-like runtime reproducible, the
 - `v1.1` ended at Phase 11, so `v1.2` starts at Phase 12.
 
 - [ ] **Phase 12: Production Runtime Foundation** - Make the production-like compose and runtime configuration usable as the baseline environment for the milestone.
-- [ ] **Phase 13: Split CI Verification Lanes** - Separate backend, frontend, and production-validation automation so failures are isolated and repeatable.
+- [x] **Phase 13: Split CI Verification Lanes** - Separate backend, frontend, and production-validation automation so failures are isolated and repeatable. (completed 2026-04-06)
 - [ ] **Phase 14: Production-Like Benchmark Baseline** - Establish the trusted benchmark dataset, concurrency runs, and stack validation evidence before optimization starts.
 - [ ] **Phase 15: Permission Lookup Optimization** - Improve permission-path performance against the trusted benchmark baseline without weakening security guarantees.
 - [ ] **Phase 16: Production Security Proof** - Prove the optimized system still enforces the right security behavior in the production-like stack.
@@ -56,7 +56,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 13-01-PLAN.md u2014 Create the backend CI verification lane as a standalone GitHub Actions workflow.
-- [ ] 13-02-PLAN.md u2014 Create the frontend CI lane and production-validation lane as GitHub Actions workflows.
+- [x] 13-02-PLAN.md u2014 Create the frontend CI lane and production-validation lane as GitHub Actions workflows.
 
 ### Phase 14: Production-Like Benchmark Baseline
 **Goal**: The project has a trusted production-like benchmark and validation baseline with realistic data volume, multiple secured tables, and concurrency evidence before optimization decisions are made.
@@ -94,7 +94,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|----------|
 | 12. Production Runtime Foundation | 1/2 | In Progress|  |
-| 13. Split CI Verification Lanes | 1/2 | In Progress|  |
+| 13. Split CI Verification Lanes | 2/2 | Complete   | 2026-04-06 |
 | 14. Production-Like Benchmark Baseline | 0/TBD | Not started | - |
 | 15. Permission Lookup Optimization | 0/TBD | Not started | - |
 | 16. Production Security Proof | 0/TBD | Not started | - |

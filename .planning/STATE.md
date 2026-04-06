@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 13-split-ci-verification-lanes-01-PLAN.md
-last_updated: "2026-04-06T03:37:48.038Z"
+stopped_at: Completed 13-split-ci-verification-lanes-13-02-PLAN.md
+last_updated: "2026-04-06T03:40:53.490Z"
 last_activity: 2026-04-06
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 3
-  percent: 75
+  completed_plans: 4
+  percent: 100
 ---
 
 # Project State
@@ -53,6 +53,7 @@ Progress: [░░░░░░░░░░] 0%
 
 | Phase 12 P01 | 0 min | 2 tasks | 4 files |
 | Phase 13-split-ci-verification-lanes P01 | 29 | 2 tasks | 1 files |
+| Phase 13-split-ci-verification-lanes P02 | 8 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -69,6 +70,9 @@ Recent decisions affecting current work:
 - [Phase 13-split-ci-verification-lanes]: No path-based filtering on backend lane (D-07) — triggers on all push/PR to main
 - [Phase 13-split-ci-verification-lanes]: gradle/actions/setup-gradle@v4 used for Gradle caching (recommended over manual actions/cache)
 - [Phase 13-split-ci-verification-lanes]: npm ci required before ci:backend:test because scripts are in root package.json
+- [Phase 13-split-ci-verification-lanes]: Frontend lane uses two sequential jobs (build-and-test then e2e) so unit test failures give fast feedback before expensive E2E setup
+- [Phase 13-split-ci-verification-lanes]: prod-validation.yml is workflow_dispatch-only to keep PR feedback fast and avoid running Jib and full Compose on every push
+- [Phase 13-split-ci-verification-lanes]: E2E job backgrounds ci:e2e:server:start then polls health via ci:server:await (180s) matching existing package.json pattern
 
 ### Pending Todos
 
@@ -83,6 +87,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-04-06T03:37:48.032Z
-Stopped at: Completed 13-split-ci-verification-lanes-01-PLAN.md
+Last session: 2026-04-06T03:40:53.486Z
+Stopped at: Completed 13-split-ci-verification-lanes-13-02-PLAN.md
 Resume file: None
