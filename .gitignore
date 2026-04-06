@@ -168,6 +168,7 @@ __pycache__/
 
 # Production deployment env files
 src/main/docker/app.env
+src/main/docker/app.env.example
 app.env
 *.env.local
 
