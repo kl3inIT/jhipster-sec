@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Phase 13.1 context gathered (discuss mode)
-last_updated: "2026-04-06T03:55:19.172Z"
+stopped_at: Completed 13.1-01-PLAN.md
+last_updated: "2026-04-06T04:39:00.364Z"
 last_activity: 2026-04-06
 progress:
   total_phases: 6
-  completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
+  completed_phases: 3
+  total_plans: 5
+  completed_plans: 5
   percent: 100
 ---
 
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-04-01)
 
 Phase: 13 (split-ci-verification-lanes) — COMPLETE
 Plan: 2 of 2
-Status: Verified — ready for Phase 14
+Status: Phase complete — ready for verification
 Last activity: 2026-04-06
 
 Progress: [████░░░░░░] 40%
@@ -54,6 +54,7 @@ Progress: [████░░░░░░] 40%
 | Phase 12 P01 | 0 min | 2 tasks | 4 files |
 | Phase 13-split-ci-verification-lanes P01 | 29 | 2 tasks | 1 files |
 | Phase 13-split-ci-verification-lanes P02 | 8 | 2 tasks | 2 files |
+| Phase 13.1 P01 | 14 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,9 @@ Recent decisions affecting current work:
 - [Phase 13-split-ci-verification-lanes]: Frontend lane uses two sequential jobs (build-and-test then e2e) so unit test failures give fast feedback before expensive E2E setup
 - [Phase 13-split-ci-verification-lanes]: prod-validation.yml is workflow_dispatch-only to keep PR feedback fast and avoid running Jib and full Compose on every push
 - [Phase 13-split-ci-verification-lanes]: E2E job backgrounds ci:e2e:server:start then polls health via ci:server:await (180s) matching existing package.json pattern
+- [Phase 13.1]: Use workflow_run on Backend CI plus a success guard so CD stays separate from backend.yml and only deploys validated main commits.
+- [Phase 13.1]: Use github.repository_owner with GITHUB_TOKEN for GHCR auth and push latest plus sha-<short_sha> tags from ./gradlew -Pprod jib.
+- [Phase 13.1]: Use webfactory/ssh-agent, ssh-keyscan, and raw ssh to deploy with docker compose -f ~/app/app.yml pull && up -d, then fail closed on a 60-second readiness timeout.
 
 ### Pending Todos
 
@@ -91,6 +95,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-04-06T03:55:19.163Z
-Stopped at: Phase 13.1 context gathered (discuss mode)
-Resume file: .planning/phases/13.1-continuous-deployment-pipeline/13.1-CONTEXT.md
+Last session: 2026-04-06T04:38:46.296Z
+Stopped at: Completed 13.1-01-PLAN.md
+Resume file: None

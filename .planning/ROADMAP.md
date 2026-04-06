@@ -58,6 +58,16 @@ Plans:
 - [x] 13-01-PLAN.md u2014 Create the backend CI verification lane as a standalone GitHub Actions workflow.
 - [x] 13-02-PLAN.md u2014 Create the frontend CI lane and production-validation lane as GitHub Actions workflows.
 
+### Phase 13.1: Continuous Deployment Pipeline (INSERTED)
+
+**Goal:** Add a separate continuous deployment workflow that publishes the Jib-built backend image to GHCR and SSH-deploys to production only after Backend CI succeeds on main, then verifies readiness.
+**Requirements**: D-01 to D-14 (locked in `13.1-CONTEXT.md`)
+**Depends on:** Phase 13
+**Plans:** 1/1 plans complete
+
+Plans:
+- [x] 13.1-01-PLAN.md — Add the GHCR publish, SSH deploy, and readiness-gated Continuous Deployment workflow.
+
 ### Phase 14: Production-Like Benchmark Baseline
 **Goal**: The project has a trusted production-like benchmark and validation baseline with realistic data volume, multiple secured tables, and concurrency evidence before optimization decisions are made.
 **Depends on**: Phase 13
